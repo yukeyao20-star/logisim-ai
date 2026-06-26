@@ -1,0 +1,128 @@
+diff --git a/src/main/java/com/cburch/logisim/std/ttl/Ttl74160.java b/src/main/java/com/cburch/logisim/std/ttl/Ttl74160.java
+new file mode 100644
+index 000000000..000000000
+--- /dev/null
++++ b/src/main/java/com/cburch/logisim/std/ttl/Ttl74160.java
+@@ -0,0 +1,87 @@
++/*
++ * Logisim-evolution - digital logic design tool and simulator
++ * Copyright by the Logisim-evolution developers
++ *
++ * https://github.com/logisim-evolution/
++ *
++ * This is free software released under GNU GPLv3 license
++ */
++
++package com.cburch.logisim.std.ttl;
++
++import com.cburch.logisim.data.BitWidth;
++import com.cburch.logisim.data.Value;
++import com.cburch.logisim.instance.InstanceState;
++import com.cburch.logisim.instance.StdAttr;
++
++public class Ttl74160 extends Ttl74161 {
++  /**
++   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
++   * prevent project files from loading.
++   *
++   * <p>Identifier value must MUST be unique string among all tools.
++   */
++  public static final String _ID = "74160";
++
++  public Ttl74160() {
++    super(_ID);
++  }
++
++  public static void updateDecadeState(InstanceState state, Long value) {
++    var data = getStateData(state);
++    long normalized = value % 10;
++    if (normalized < 0) {
++      normalized = 0;
++    }
++
++    data.setValue(Value.createKnown(BitWidth.create(4), normalized));
++    final var vA = data.getValue().get(0);
++    final var vB = data.getValue().get(1);
++    final var vC = data.getValue().get(2);
++    final var vD = data.getValue().get(3);
++
++    state.setPort(PORT_INDEX_QA, vA, 1);
++    state.setPort(PORT_INDEX_QB, vB, 1);
++    state.setPort(PORT_INDEX_QC, vC, 1);
++    state.setPort(PORT_INDEX_QD, vD, 1);
++
++    // Terminal count for a 74160 decade counter is 9 (1001) gated by ENT.
++    state.setPort(
++        PORT_INDEX_RC0,
++        state
++            .getPortValue(PORT_INDEX_EnT)
++            .and(vA)
++            .and(vB.not())
++            .and(vC.not())
++            .and(vD),
++        1);
++  }
++
++  @Override
++  public void propagateTtl(InstanceState state) {
++    var data = getStateData(state);
++    final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
++    final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();
++    var counter = data.getValue().toLongValue();
++    if (counter > 9) {
++      counter = 0;
++    }
++
++    if (nClear == 0) {
++      counter = 0;
++    } else if (triggered) {
++      final var nLoad = state.getPortValue(PORT_INDEX_nLOAD);
++      if (nLoad.toLongValue() == 0) {
++        counter = state.getPortValue(PORT_INDEX_A).toLongValue();
++        counter += state.getPortValue(PORT_INDEX_B).toLongValue() << 1;
++        counter += state.getPortValue(PORT_INDEX_C).toLongValue() << 2;
++        counter += state.getPortValue(PORT_INDEX_D).toLongValue() << 3;
++        if (counter > 9) {
++          counter = 0;
++        }
++      } else {
++        final var enpAndEnt =
++            state
++                .getPortValue(PORT_INDEX_EnP)
++                .and(state.getPortValue(PORT_INDEX_EnT))
++                .toLongValue();
++        if (enpAndEnt == 1) {
++          counter++;
++          if (counter > 9) {
++            counter = 0;
++          }
++        }
++      }
++    }
++    updateDecadeState(state, counter);
++  }
++}
+diff --git a/src/main/java/com/cburch/logisim/std/ttl/TtlLibrary.java b/src/main/java/com/cburch/logisim/std/ttl/TtlLibrary.java
+index a9c1fa44a..e290b83a4 100644
+--- a/src/main/java/com/cburch/logisim/std/ttl/TtlLibrary.java
++++ b/src/main/java/com/cburch/logisim/std/ttl/TtlLibrary.java
+@@ -65,6 +65,7 @@ public class TtlLibrary extends Library {
+       new FactoryDescription(Ttl74153.class, S.getter("TTL74153"), "ttl.gif"),
+       new FactoryDescription(Ttl74157.class, S.getter("TTL74157"), "ttl.gif"),
+       new FactoryDescription(Ttl74158.class, S.getter("TTL74158"), "ttl.gif"),
++      new FactoryDescription(Ttl74160.class, S.getter("TTL74160"), "ttl.gif"),
+       new FactoryDescription(Ttl74161.class, S.getter("TTL74161"), "ttl.gif"),
+       new FactoryDescription(Ttl74163.class, S.getter("TTL74163"), "ttl.gif"),
+       new FactoryDescription(Ttl74164.class, S.getter("TTL74164"), "ttl.gif"),
+diff --git a/src/main/resources/resources/logisim/strings/std/std.properties b/src/main/resources/resources/logisim/strings/std/std.properties
+index 809cbb8c8..4774a5e12 100644
+--- a/src/main/resources/resources/logisim/strings/std/std.properties
++++ b/src/main/resources/resources/logisim/strings/std/std.properties
+@@ -983,6 +983,7 @@ TTL74138 = 74138: 3-line to 8-line decoder
+ TTL74139 = 74139: Dual 2-line to 4-line decoder
+ TTL7413 = 7413: dual 4-input NAND gate(Schmitt trigger)
+ TTL7414 = 7414: hex inverter (Schmitt trigger)
++TTL74160 = 74160: 4-bit sync decade counter with async clear
+ TTL74161 = 74161: 4-bit sync counter with async clear
+ TTL74163 = 74163: 4-bit sync counter with sync clear
+ TTL74164 = 74164: 8-bit serial-to-parallel shift register

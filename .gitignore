@@ -1,0 +1,29 @@
+# Local runtimes and caches
+.gradle/
+.gradle-local/
+.jdks/
+build/
+
+# Agent/tool state
+.agents/
+.claude/
+.codex/
+temp/
+
+# Editor/FUSE temporary files
+**/.fuse_hidden*
+**/XX*
+
+# Third-party checkout is kept outside this recovery repository.
+# Intentional Logisim source changes are preserved as patch files under patches/.
+third_party/
+
+# Generated binaries and reports
+*.class
+*.jar
+*.log
+
+# Keep generated Logisim examples small and useful for recovery.
+!generated/
+!generated/circ/
+!generated/circ/*.circ
