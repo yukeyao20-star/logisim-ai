@@ -1,294 +1,266 @@
 package com.logisim_ai.experiment;
 
-import com.cburch.logisim.Main;
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitMutation;
-import com.cburch.logisim.circuit.Wire;
-import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.comp.ComponentFactory;
-import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
-import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.wiring.Pin;
-import com.cburch.logisim.std.wiring.Tunnel;
-import com.cburch.logisim.tools.AddTool;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
+import com.logisim_ai.compiler.LogisimCompiler;
+import com.logisim_ai.ir.CircuitSpec;
+import com.logisim_ai.ir.ComponentSpec;
+import com.logisim_ai.ir.EndpointRef;
+import com.logisim_ai.ir.ExternalPort;
+import com.logisim_ai.ir.LayoutHint;
+import com.logisim_ai.ir.NetSpec;
+import com.logisim_ai.ir.PortDirection;
+import com.logisim_ai.layout.PortSide;
+import com.logisim_ai.validation.CircuitSemanticValidator;
 import java.io.File;
-import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Experiment 4 (v2): TTL 74151 8-to-1 Multiplexer macro generated through IR netlist compiler.
+ *
+ * <p>74151 logic:
+ * - 8 data inputs D0-D7, 3 select lines S0-S2, enable nG (active low)
+ * - Output Y = EN & (D0&nS2&nS1&nS0 | D1&nS2&nS1&S0 | ... | D7&S2&S1&S0)
+ * - Output nW = NOT Y
+ *
+ * <p>Each minterm uses a chain of 4 two-input AND gates:
+ *   and_i_a: Di AND EN
+ *   and_i_b: result AND (s0 or nS0)
+ *   and_i_c: result AND (s1 or nS1)
+ *   and_i_d: result AND (s2 or nS2)  → Ti (minterm)
+ *
+ * <p>OR tree uses 7 two-input OR gates: 8→4→2→1
+ *
+ * <p>Replaces the old GenerateTtl74151Macro that used direct API + Tunnels.
+ */
 public final class GenerateTtl74151Macro {
   private static final String[] DATA = {"D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7"};
 
   private GenerateTtl74151Macro() {}
 
   public static void main(String[] args) {
-    Main.headless = true;
-    System.setProperty("java.awt.headless", "true");
-
-    GenerationContext context = null;
     try {
-      context = createEmptyProject();
-      var gates = registerBuiltin(context, "Gates");
-      var wiring = registerBuiltin(context, "Wiring");
+      List<ComponentSpec> components = new ArrayList<>();
+      List<ExternalPort> ports = new ArrayList<>();
+      List<NetSpec> nets = new ArrayList<>();
+      List<LayoutHint> hints = new ArrayList<>();
 
-      var notFactory = findFactory(gates, "NOT Gate");
-      var andFactory = findFactory(gates, "AND Gate");
-      var orFactory = findFactory(gates, "OR Gate");
-      var tunnelFactory = findFactory(wiring, "Tunnel");
+      build74151(components, ports, nets, hints);
 
-      CircuitMutation add = new CircuitMutation(context.circuit());
+      CircuitSpec spec = new CircuitSpec(
+          "ttl_74151_macro",
+          components, ports, nets, hints);
 
-      for (int i = 0; i < DATA.length; i++) {
-        addExternalInput(add, tunnelFactory, DATA[i], 70, 80 + i * 30, 130, 80 + i * 30);
-      }
-      addExternalInput(add, tunnelFactory, "S0", 70, 350, 130, 350);
-      addExternalInput(add, tunnelFactory, "S1", 70, 380, 130, 380);
-      addExternalInput(add, tunnelFactory, "S2", 70, 410, 130, 410);
-      addExternalInput(add, tunnelFactory, "nG", 70, 450, 130, 450);
-      addExternalOutput(add, tunnelFactory, "Y", 850, 260, 800, 260);
-      addExternalOutput(add, tunnelFactory, "nW", 850, 340, 800, 340);
+      CircuitSemanticValidator.requireValid(spec);
+      LogisimCompiler.compileNetlist(spec, new File("generated/circ/ttl_74151_macro.circ"));
+      System.out.println("[OK] ttl_74151_macro.circ generated through IR netlist compiler");
 
-      addInverter(add, notFactory, tunnelFactory, "S0", "nS0", 210, 350);
-      addInverter(add, notFactory, tunnelFactory, "S1", "nS1", 210, 380);
-      addInverter(add, notFactory, tunnelFactory, "S2", "nS2", 210, 410);
-      addInverter(add, notFactory, tunnelFactory, "nG", "EN", 210, 450);
-
-      for (int i = 0; i < DATA.length; i++) {
-        int y = 90 + i * 80;
-        String s0 = (i & 1) == 0 ? "nS0" : "S0";
-        String s1 = (i & 2) == 0 ? "nS1" : "S1";
-        String s2 = (i & 4) == 0 ? "nS2" : "S2";
-        addBinaryGate(add, andFactory, tunnelFactory, "EN", DATA[i], "P" + i + "_A", 420, y);
-        addBinaryGate(add, andFactory, tunnelFactory, "P" + i + "_A", s0, "P" + i + "_B", 520, y);
-        addBinaryGate(add, andFactory, tunnelFactory, "P" + i + "_B", s1, "P" + i + "_C", 620, y);
-        addBinaryGate(add, andFactory, tunnelFactory, "P" + i + "_C", s2, "T" + i, 720, y);
-      }
-
-      addBinaryGate(add, orFactory, tunnelFactory, "T0", "T1", "O01", 860, 140);
-      addBinaryGate(add, orFactory, tunnelFactory, "T2", "T3", "O23", 860, 300);
-      addBinaryGate(add, orFactory, tunnelFactory, "T4", "T5", "O45", 860, 460);
-      addBinaryGate(add, orFactory, tunnelFactory, "T6", "T7", "O67", 860, 620);
-      addBinaryGate(add, orFactory, tunnelFactory, "O01", "O23", "O03", 980, 220);
-      addBinaryGate(add, orFactory, tunnelFactory, "O45", "O67", "O47", 980, 540);
-      addBinaryGate(add, orFactory, tunnelFactory, "O03", "O47", "Y", 1100, 380);
-
-      addInverter(add, notFactory, tunnelFactory, "Y", "nW", 720, 340);
-
-      add.execute();
-
-      File macroFile = new File("generated/circ/ttl_74151_macro.circ");
-      save(context, macroFile);
-      verifyText(macroFile, "NOT Gate", "AND Gate", "OR Gate", "Pin", "Tunnel");
-      roundTrip(macroFile, 100, 90);
-
+      // Also generate native 74151
       generateNative74151();
-      System.out.println("[OK] ttl_74151_macro.circ and ttl_74151_native.circ generated");
     } catch (Exception e) {
-      throw new RuntimeException("TTL 74151 macro generation failed", e);
-    } finally {
-      if (context != null) {
-        context.file().stopAutosaveThread(false);
-      }
+      throw new RuntimeException("74151 macro generation failed", e);
     }
   }
 
-  private static void addExternalInput(
-      CircuitMutation add, ComponentFactory tunnelFactory, String label, int pinX, int pinY, int tunnelX, int tunnelY) {
-    Component pin = inputPin(pinX, pinY, label);
-    Component tunnel = tunnel(tunnelFactory, tunnelX, tunnelY, label, Direction.WEST);
-    add.add(pin);
-    add.add(tunnel);
-    wire(add, port(pin), port(tunnel));
-  }
+  private static void build74151(
+      List<ComponentSpec> components,
+      List<ExternalPort> ports,
+      List<NetSpec> nets,
+      List<LayoutHint> hints) {
 
-  private static void addExternalOutput(
-      CircuitMutation add, ComponentFactory tunnelFactory, String label, int pinX, int pinY, int tunnelX, int tunnelY) {
-    Component pin = outputPin(pinX, pinY, label);
-    Component tunnel = tunnel(tunnelFactory, tunnelX, tunnelY, label, Direction.EAST);
-    add.add(pin);
-    add.add(tunnel);
-    wire(add, port(tunnel), port(pin));
-  }
+    // ---- Inverters for select lines and enable ----
+    components.add(new ComponentSpec("not_s0", "Gates", "NOT Gate", 1, ""));
+    components.add(new ComponentSpec("not_s1", "Gates", "NOT Gate", 1, ""));
+    components.add(new ComponentSpec("not_s2", "Gates", "NOT Gate", 1, ""));
+    components.add(new ComponentSpec("not_ng", "Gates", "NOT Gate", 1, ""));
 
-  private static void addInverter(
-      CircuitMutation add,
-      ComponentFactory notFactory,
-      ComponentFactory tunnelFactory,
-      String inLabel,
-      String outLabel,
-      int x,
-      int y) {
-    Component in = tunnel(tunnelFactory, x - 50, y, inLabel, Direction.EAST);
-    Component not = gate(notFactory, x, y);
-    Component out = tunnel(tunnelFactory, x + 70, y, outLabel, Direction.WEST);
-    add.add(in);
-    add.add(not);
-    add.add(out);
-    wire(add, port(in), input(not, 1));
-    wire(add, output(not), port(out));
-  }
+    // ---- 2-input AND gate chains for minterms ----
+    // and_i_a: Di & EN, and_i_b: & s0/nS0, and_i_c: & s1/nS1, and_i_d: & s2/nS2
+    // 2-input AND: end 0=output, end 1=input0, end 2=input1
+    for (int i = 0; i < 8; i++) {
+      components.add(new ComponentSpec("and" + i + "_a", "Gates", "AND Gate", 1, ""));
+      components.add(new ComponentSpec("and" + i + "_b", "Gates", "AND Gate", 1, ""));
+      components.add(new ComponentSpec("and" + i + "_c", "Gates", "AND Gate", 1, ""));
+      components.add(new ComponentSpec("and" + i + "_d", "Gates", "AND Gate", 1, ""));
+    }
 
-  private static void addBinaryGate(
-      CircuitMutation add,
-      ComponentFactory gateFactory,
-      ComponentFactory tunnelFactory,
-      String inA,
-      String inB,
-      String outLabel,
-      int x,
-      int y) {
-    Component gate = gate(gateFactory, x, y);
-    Location inputA = input(gate, 1);
-    Location inputB = input(gate, 2);
-    Component a = tunnel(tunnelFactory, inputA.getX() - 40, inputA.getY(), inA, Direction.EAST);
-    Component b = tunnel(tunnelFactory, inputB.getX() - 40, inputB.getY(), inB, Direction.EAST);
-    Component out = tunnel(tunnelFactory, output(gate).getX() + 70, output(gate).getY(), outLabel, Direction.WEST);
-    add.add(gate);
-    add.add(a);
-    add.add(b);
-    add.add(out);
-    wire(add, port(a), inputA);
-    wire(add, port(b), inputB);
-    wire(add, output(gate), port(out));
-  }
+    // ---- OR tree: 8 inputs → 1 output (7 two-input OR gates) ----
+    components.add(new ComponentSpec("or01", "Gates", "OR Gate", 1, ""));
+    components.add(new ComponentSpec("or23", "Gates", "OR Gate", 1, ""));
+    components.add(new ComponentSpec("or45", "Gates", "OR Gate", 1, ""));
+    components.add(new ComponentSpec("or67", "Gates", "OR Gate", 1, ""));
+    components.add(new ComponentSpec("or03", "Gates", "OR Gate", 1, ""));
+    components.add(new ComponentSpec("or47", "Gates", "OR Gate", 1, ""));
+    components.add(new ComponentSpec("or_y", "Gates", "OR Gate", 1, ""));
 
-  private static Component inputPin(int x, int y, String label) {
-    var attrs = Pin.FACTORY.createAttributeSet();
-    attrs.setValue(StdAttr.LABEL, label);
-    attrs.setValue(StdAttr.FACING, Direction.EAST);
-    return Pin.FACTORY.createComponent(Location.create(x, y, true), attrs);
-  }
+    // ---- Output inverter ----
+    components.add(new ComponentSpec("not_y", "Gates", "NOT Gate", 1, ""));
 
-  private static Component outputPin(int x, int y, String label) {
-    var attrs = Pin.FACTORY.createAttributeSet();
-    attrs.setValue(Pin.ATTR_TYPE, Pin.OUTPUT);
-    attrs.setValue(StdAttr.LABEL, label);
-    attrs.setValue(StdAttr.FACING, Direction.WEST);
-    return Pin.FACTORY.createComponent(Location.create(x, y, true), attrs);
+    // ---- External ports ----
+    // Data inputs D0-D7 on left, target and_i_a input1
+    for (int i = 0; i < 8; i++) {
+      ports.add(new ExternalPort(
+          "d" + i, DATA[i], 1, PortDirection.INPUT, PortSide.LEFT,
+          "and" + i + "_a", 1));
+    }
+    // Select inputs S0-S2 on left
+    ports.add(new ExternalPort("s0", "S0", 1, PortDirection.INPUT, PortSide.LEFT, "not_s0", 1));
+    ports.add(new ExternalPort("s1", "S1", 1, PortDirection.INPUT, PortSide.LEFT, "not_s1", 1));
+    ports.add(new ExternalPort("s2", "S2", 1, PortDirection.INPUT, PortSide.LEFT, "not_s2", 1));
+    // Enable nG on left
+    ports.add(new ExternalPort("ng", "nG", 1, PortDirection.INPUT, PortSide.LEFT, "not_ng", 1));
+    // Outputs Y and nW on right
+    ports.add(new ExternalPort("y", "Y", 1, PortDirection.OUTPUT, PortSide.RIGHT, "or_y", 0));
+    ports.add(new ExternalPort("nw", "nW", 1, PortDirection.OUTPUT, PortSide.RIGHT, "not_y", 0));
+
+    // ---- Nets ----
+
+    // EN fanout: not_ng output → all and_i_a input2
+    List<EndpointRef> enFans = new ArrayList<>();
+    enFans.add(new EndpointRef("not_ng", 0));
+    for (int i = 0; i < 8; i++) {
+      enFans.add(new EndpointRef("and" + i + "_a", 2));
+    }
+    nets.add(new NetSpec("en_fanout", enFans));
+
+    // S0 fanout: to not_s0 input, and to and_i_b input1 (for odd minterms)
+    List<EndpointRef> s0Fans = new ArrayList<>();
+    s0Fans.add(new EndpointRef("not_s0", 1));
+    for (int i = 0; i < 8; i++) {
+      if ((i & 1) != 0) {
+        s0Fans.add(new EndpointRef("and" + i + "_b", 1));
+      }
+    }
+    nets.add(new NetSpec("s0_fanout", s0Fans));
+
+    // nS0 fanout: from not_s0 output to and_i_b input1 (for even minterms)
+    List<EndpointRef> ns0Fans = new ArrayList<>();
+    ns0Fans.add(new EndpointRef("not_s0", 0));
+    for (int i = 0; i < 8; i++) {
+      if ((i & 1) == 0) {
+        ns0Fans.add(new EndpointRef("and" + i + "_b", 1));
+      }
+    }
+    nets.add(new NetSpec("ns0_fanout", ns0Fans));
+
+    // S1 fanout: to not_s1 input, and to and_i_c input1 (for minterms with bit1=1)
+    List<EndpointRef> s1Fans = new ArrayList<>();
+    s1Fans.add(new EndpointRef("not_s1", 1));
+    for (int i = 0; i < 8; i++) {
+      if ((i & 2) != 0) {
+        s1Fans.add(new EndpointRef("and" + i + "_c", 1));
+      }
+    }
+    nets.add(new NetSpec("s1_fanout", s1Fans));
+
+    // nS1 fanout: from not_s1 output to and_i_c input1
+    List<EndpointRef> ns1Fans = new ArrayList<>();
+    ns1Fans.add(new EndpointRef("not_s1", 0));
+    for (int i = 0; i < 8; i++) {
+      if ((i & 2) == 0) {
+        ns1Fans.add(new EndpointRef("and" + i + "_c", 1));
+      }
+    }
+    nets.add(new NetSpec("ns1_fanout", ns1Fans));
+
+    // S2 fanout: to not_s2 input, and to and_i_d input1
+    List<EndpointRef> s2Fans = new ArrayList<>();
+    s2Fans.add(new EndpointRef("not_s2", 1));
+    for (int i = 0; i < 8; i++) {
+      if ((i & 4) != 0) {
+        s2Fans.add(new EndpointRef("and" + i + "_d", 1));
+      }
+    }
+    nets.add(new NetSpec("s2_fanout", s2Fans));
+
+    // nS2 fanout: from not_s2 output to and_i_d input1
+    List<EndpointRef> ns2Fans = new ArrayList<>();
+    ns2Fans.add(new EndpointRef("not_s2", 0));
+    for (int i = 0; i < 8; i++) {
+      if ((i & 4) == 0) {
+        ns2Fans.add(new EndpointRef("and" + i + "_d", 1));
+      }
+    }
+    nets.add(new NetSpec("ns2_fanout", ns2Fans));
+
+    // AND chain internal nets for each minterm
+    for (int i = 0; i < 8; i++) {
+      // and_i_a output → and_i_b input2
+      nets.add(new NetSpec("a" + i + "_to_b", List.of(
+          new EndpointRef("and" + i + "_a", 0),
+          new EndpointRef("and" + i + "_b", 2))));
+      // and_i_b output → and_i_c input2
+      nets.add(new NetSpec("b" + i + "_to_c", List.of(
+          new EndpointRef("and" + i + "_b", 0),
+          new EndpointRef("and" + i + "_c", 2))));
+      // and_i_c output → and_i_d input2
+      nets.add(new NetSpec("c" + i + "_to_d", List.of(
+          new EndpointRef("and" + i + "_c", 0),
+          new EndpointRef("and" + i + "_d", 2))));
+    }
+
+    // AND outputs (minterms) to OR tree level 1
+    nets.add(new NetSpec("t0_to_or01", List.of(new EndpointRef("and0_d", 0), new EndpointRef("or01", 1))));
+    nets.add(new NetSpec("t1_to_or01", List.of(new EndpointRef("and1_d", 0), new EndpointRef("or01", 2))));
+    nets.add(new NetSpec("t2_to_or23", List.of(new EndpointRef("and2_d", 0), new EndpointRef("or23", 1))));
+    nets.add(new NetSpec("t3_to_or23", List.of(new EndpointRef("and3_d", 0), new EndpointRef("or23", 2))));
+    nets.add(new NetSpec("t4_to_or45", List.of(new EndpointRef("and4_d", 0), new EndpointRef("or45", 1))));
+    nets.add(new NetSpec("t5_to_or45", List.of(new EndpointRef("and5_d", 0), new EndpointRef("or45", 2))));
+    nets.add(new NetSpec("t6_to_or67", List.of(new EndpointRef("and6_d", 0), new EndpointRef("or67", 1))));
+    nets.add(new NetSpec("t7_to_or67", List.of(new EndpointRef("and7_d", 0), new EndpointRef("or67", 2))));
+
+    // OR tree level 2
+    nets.add(new NetSpec("or01_to_03", List.of(new EndpointRef("or01", 0), new EndpointRef("or03", 1))));
+    nets.add(new NetSpec("or23_to_03", List.of(new EndpointRef("or23", 0), new EndpointRef("or03", 2))));
+    nets.add(new NetSpec("or45_to_47", List.of(new EndpointRef("or45", 0), new EndpointRef("or47", 1))));
+    nets.add(new NetSpec("or67_to_47", List.of(new EndpointRef("or67", 0), new EndpointRef("or47", 2))));
+
+    // OR tree level 3
+    nets.add(new NetSpec("or03_to_y", List.of(new EndpointRef("or03", 0), new EndpointRef("or_y", 1))));
+    nets.add(new NetSpec("or47_to_y", List.of(new EndpointRef("or47", 0), new EndpointRef("or_y", 2))));
+
+    // Y to nW inverter
+    nets.add(new NetSpec("y_to_nw", List.of(new EndpointRef("or_y", 0), new EndpointRef("not_y", 1))));
+
+    // ---- Layout hints ----
+    // Rank 0: NOT gates
+    hints.add(new LayoutHint("not_s0", 0, 0, 0, null));
+    hints.add(new LayoutHint("not_s1", 0, 0, 1, null));
+    hints.add(new LayoutHint("not_s2", 0, 0, 2, null));
+    hints.add(new LayoutHint("not_ng", 0, 0, 3, null));
+
+    // Ranks 1-4: AND gate chains for each minterm
+    for (int i = 0; i < 8; i++) {
+      hints.add(new LayoutHint("and" + i + "_a", 1, 1, i, null));
+      hints.add(new LayoutHint("and" + i + "_b", 2, 2, i, null));
+      hints.add(new LayoutHint("and" + i + "_c", 3, 3, i, null));
+      hints.add(new LayoutHint("and" + i + "_d", 4, 4, i, null));
+    }
+
+    // Rank 5: OR tree level 1
+    hints.add(new LayoutHint("or01", 5, 5, 0, null));
+    hints.add(new LayoutHint("or23", 5, 5, 1, null));
+    hints.add(new LayoutHint("or45", 5, 5, 2, null));
+    hints.add(new LayoutHint("or67", 5, 5, 3, null));
+
+    // Rank 6: OR tree level 2
+    hints.add(new LayoutHint("or03", 6, 6, 0, null));
+    hints.add(new LayoutHint("or47", 6, 6, 1, null));
+
+    // Rank 7: OR tree level 3 + output inverter
+    hints.add(new LayoutHint("or_y", 7, 7, 0, null));
+    hints.add(new LayoutHint("not_y", 7, 7, 1, null));
   }
 
   private static void generateNative74151() throws Exception {
-    GenerationContext context = createEmptyProject();
-    try {
-      Library ttl = registerBuiltin(context, "TTL");
-      ComponentFactory factory = findFactory(ttl, "74151");
-      Component chip = factory.createComponent(Location.create(420, 220, true),
-          factory.createAttributeSet());
+    CircuitSpec spec = new CircuitSpec(
+        "ttl_74151_native",
+        List.of(new ComponentSpec("mux", "TTL", "74151", 1, "")),
+        List.of(
+            new ExternalPort("d0", "D0", 1, PortDirection.INPUT, PortSide.LEFT, "mux", 1),
+            new ExternalPort("y", "Y", 1, PortDirection.OUTPUT, PortSide.RIGHT, "mux", 0)));
 
-      CircuitMutation add = new CircuitMutation(context.circuit());
-      add.add(chip);
-      add.execute();
-
-      File nativeFile = new File("generated/circ/ttl_74151_native.circ");
-      save(context, nativeFile);
-      roundTrip(nativeFile, 1, 0);
-    } finally {
-      context.file().stopAutosaveThread(false);
-    }
+    CircuitSemanticValidator.requireValid(spec);
+    LogisimCompiler.compileSingleComponent(spec, new File("generated/circ/ttl_74151_native.circ"));
+    System.out.println("[OK] ttl_74151_native.circ generated through IR compiler");
   }
-
-  private static Component gate(ComponentFactory factory, int x, int y) {
-    return factory.createComponent(Location.create(x, y, true), factory.createAttributeSet());
-  }
-
-  private static Component tunnel(ComponentFactory factory, int x, int y, String label, Direction facing) {
-    var attrs = factory.createAttributeSet();
-    attrs.setValue(StdAttr.LABEL, label);
-    attrs.setValue(StdAttr.FACING, facing);
-    return factory.createComponent(Location.create(x, y, true), attrs);
-  }
-
-  private static Location port(Component component) {
-    return component.getEnd(0).getLocation();
-  }
-
-  private static Location output(Component gate) {
-    return gate.getEnd(0).getLocation();
-  }
-
-  private static Location input(Component gate, int index) {
-    return gate.getEnd(index).getLocation();
-  }
-
-  private static void wire(CircuitMutation mutation, Location from, Location to) {
-    if (from.equals(to)) {
-      return;
-    }
-    if (from.getX() != to.getX() && from.getY() != to.getY()) {
-      throw new IllegalArgumentException("Only horizontal/vertical wires are allowed: " + from + " -> " + to);
-    }
-    mutation.add(Wire.create(from, to));
-  }
-
-  private static GenerationContext createEmptyProject() {
-    Loader loader = new Loader(null);
-    LogisimFile file = LogisimFile.createNew(loader, null);
-    LogisimProjectSetup.configureGuiDefaults(loader, file);
-    return new GenerationContext(loader, file, file.getMainCircuit());
-  }
-
-  private static Library registerBuiltin(GenerationContext context, String name) {
-    return LogisimProjectSetup.addLibrary(context.loader(), context.file(), name);
-  }
-
-  private static ComponentFactory findFactory(Library library, String name) {
-    for (Tool tool : library.getTools()) {
-      if (tool instanceof AddTool addTool && name.equals(addTool.getFactory().getName())) {
-        return addTool.getFactory();
-      }
-    }
-    throw new IllegalStateException("Missing factory: " + name);
-  }
-
-  private static void save(GenerationContext context, File outputFile) {
-    File parent = outputFile.getParentFile();
-    if (parent != null && !parent.exists()) {
-      parent.mkdirs();
-    }
-    if (!context.loader().save(context.file(), outputFile)) {
-      throw new IllegalStateException("Loader.save returned false");
-    }
-    try {
-      LogisimProjectSetup.patchV38Compat(outputFile);
-    } catch (Exception e) {
-      throw new IllegalStateException("Failed to patch v3.8 toolbar", e);
-    }
-  }
-
-  private static void verifyText(File file, String... names) throws Exception {
-    String content = Files.readString(file.toPath());
-    if (content.contains("name=\"74151\"")) {
-      throw new IllegalStateException("Macro file must not depend on a native 74151 component");
-    }
-    for (String name : names) {
-      if (!content.contains("name=\"" + name + "\"")) {
-        throw new IllegalStateException("Missing component in circ: " + name);
-      }
-    }
-  }
-
-  private static void roundTrip(File file, int minComponents, int minWires) throws Exception {
-    Loader loader = new Loader(null);
-    LogisimFile loaded = loader.openLogisimFile(file);
-    try {
-      if (loaded == null || loaded.getMainCircuit() == null) {
-        throw new IllegalStateException("Round-trip load failed");
-      }
-      if (loaded.getMainCircuit().getNonWires().size() < minComponents) {
-        throw new IllegalStateException("Round-trip component count too small");
-      }
-      if (loaded.getMainCircuit().getWires().size() < minWires) {
-        throw new IllegalStateException("Round-trip wire count too small");
-      }
-    } finally {
-      if (loaded != null) {
-        loaded.stopAutosaveThread(false);
-      }
-    }
-  }
-
-  private record GenerationContext(Loader loader, LogisimFile file, Circuit circuit) {}
 }

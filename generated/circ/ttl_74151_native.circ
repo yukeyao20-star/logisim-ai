@@ -20,7 +20,7 @@
   <lib desc="#BFH-Praktika" name="11"/>
   <lib desc="#Input/Output-Extra" name="12"/>
   <lib desc="#Soc" name="13"/>
-  <main name="main"/>
+  <main name="ttl_74151_native"/>
   <options>
     <a name="gateUndefined" val="ignore"/>
     <a name="simlimit" val="1000"/>
@@ -46,6 +46,34 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="main"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="8" loc="(420,220)" name="74151"/>
+    <a name="simulationFrequency" val="1.0"/>
+  </circuit>
+  <circuit name="ttl_74151_native">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="ttl_74151_native"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <comp lib="1" loc="(160,250)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="D0"/>
+    </comp>
+    <comp lib="1" loc="(760,250)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="Y"/>
+      <a name="type" val="output"/>
+    </comp>
+    <comp lib="8" loc="(460,250)" name="74151"/>
+    <wire from="(160,250)" to="(310,250)"/>
+    <wire from="(310,250)" to="(310,280)"/>
+    <wire from="(310,280)" to="(470,280)"/>
+    <wire from="(470,280)" to="(490,280)"/>
+    <wire from="(490,280)" to="(510,280)"/>
+    <wire from="(510,280)" to="(530,280)"/>
+    <wire from="(530,280)" to="(550,280)"/>
+    <wire from="(550,280)" to="(570,280)"/>
+    <wire from="(570,280)" to="(590,280)"/>
+    <wire from="(590,280)" to="(630,280)"/>
+    <wire from="(630,250)" to="(630,280)"/>
+    <wire from="(630,250)" to="(760,250)"/>
   </circuit>
 </project>

@@ -20,7 +20,7 @@
   <lib desc="#BFH-Praktika" name="11"/>
   <lib desc="#Input/Output-Extra" name="12"/>
   <lib desc="#Soc" name="13"/>
-  <main name="main"/>
+  <main name="jk_flipflop"/>
   <options>
     <a name="gateUndefined" val="ignore"/>
     <a name="simlimit" val="1000"/>
@@ -46,62 +46,68 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="main"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(160,190)" name="Pin">
+    <a name="simulationFrequency" val="1.0"/>
+  </circuit>
+  <circuit name="jk_flipflop">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="jk_flipflop"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <comp lib="1" loc="(160,200)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="J"/>
     </comp>
-    <comp lib="1" loc="(160,240)" name="Pin">
+    <comp lib="1" loc="(160,250)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="K"/>
     </comp>
-    <comp lib="1" loc="(160,290)" name="Pin">
+    <comp lib="1" loc="(160,300)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="CLK"/>
     </comp>
-    <comp lib="1" loc="(460,410)" name="Pin">
+    <comp lib="1" loc="(460,420)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="north"/>
       <a name="label" val="CLR"/>
     </comp>
-    <comp lib="1" loc="(460,70)" name="Pin">
+    <comp lib="1" loc="(460,80)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="south"/>
       <a name="label" val="PRE"/>
     </comp>
-    <comp lib="1" loc="(760,220)" name="Pin">
+    <comp lib="1" loc="(760,230)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="Q"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(760,270)" name="Pin">
+    <comp lib="1" loc="(760,280)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="/Q"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="6" loc="(460,240)" name="J-K Flip-Flop">
+    <comp lib="6" loc="(460,250)" name="J-K Flip-Flop">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="JK"/>
     </comp>
-    <wire from="(160,190)" to="(300,190)"/>
-    <wire from="(160,240)" to="(320,240)"/>
-    <wire from="(160,290)" to="(450,290)"/>
-    <wire from="(300,190)" to="(300,250)"/>
-    <wire from="(300,250)" to="(450,250)"/>
-    <wire from="(320,240)" to="(320,270)"/>
-    <wire from="(320,270)" to="(450,270)"/>
-    <wire from="(380,240)" to="(480,240)"/>
-    <wire from="(380,70)" to="(380,240)"/>
-    <wire from="(380,70)" to="(460,70)"/>
-    <wire from="(460,410)" to="(540,410)"/>
-    <wire from="(480,300)" to="(540,300)"/>
-    <wire from="(510,250)" to="(620,250)"/>
-    <wire from="(510,290)" to="(640,290)"/>
-    <wire from="(540,300)" to="(540,410)"/>
-    <wire from="(620,220)" to="(620,250)"/>
-    <wire from="(620,220)" to="(760,220)"/>
-    <wire from="(640,270)" to="(640,290)"/>
-    <wire from="(640,270)" to="(760,270)"/>
+    <wire from="(160,200)" to="(310,200)"/>
+    <wire from="(160,250)" to="(320,250)"/>
+    <wire from="(160,300)" to="(450,300)"/>
+    <wire from="(310,200)" to="(310,260)"/>
+    <wire from="(310,260)" to="(450,260)"/>
+    <wire from="(320,250)" to="(320,280)"/>
+    <wire from="(320,280)" to="(450,280)"/>
+    <wire from="(430,310)" to="(480,310)"/>
+    <wire from="(430,80)" to="(430,310)"/>
+    <wire from="(430,80)" to="(460,80)"/>
+    <wire from="(440,250)" to="(440,420)"/>
+    <wire from="(440,250)" to="(480,250)"/>
+    <wire from="(440,420)" to="(460,420)"/>
+    <wire from="(510,260)" to="(650,260)"/>
+    <wire from="(510,300)" to="(660,300)"/>
+    <wire from="(650,230)" to="(650,260)"/>
+    <wire from="(650,230)" to="(760,230)"/>
+    <wire from="(660,280)" to="(660,300)"/>
+    <wire from="(660,280)" to="(760,280)"/>
   </circuit>
 </project>

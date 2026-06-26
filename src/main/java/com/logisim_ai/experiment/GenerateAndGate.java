@@ -14,7 +14,6 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.io.File;
 import java.nio.file.Files;
-
 public final class GenerateAndGate {
   private GenerateAndGate() {}
 
@@ -64,6 +63,14 @@ public final class GenerateAndGate {
       case "7", "74160" -> {
         System.out.println("[dispatch] Running experiment 7: native TTL 74160 demo");
         GenerateTtlCounters.main(new String[]{"74160"});
+        System.exit(0);
+        return;
+      }
+      case "8", "nl" -> {
+        // Natural language circuit generation
+        String nlQuery = (args.length > 1) ? args[1] : "full adder";
+        System.out.println("[dispatch] Running experiment 8: NL generation for '" + nlQuery + "'");
+        runNlGeneration(nlQuery);
         System.exit(0);
         return;
       }
@@ -179,6 +186,43 @@ public final class GenerateAndGate {
     String content = Files.readString(outputFile.toPath());
     if (!content.contains("name=\"AND Gate\"")) {
       throw new IllegalStateException("File does not contain AND Gate component");
+    }
+  }
+
+  /**
+   * Run natural-language circuit generation.
+   *
+   * <p>Uses {@link com.logisim_ai.ai.NaturalLanguageCircuitPlanner} to convert
+   * a natural language query into a {@link com.logisim_ai.ir.CircuitSpec},
+   * then compiles it via {@link com.logisim_ai.compiler.LogisimCompiler}.
+   */
+  private static void runNlGeneration(String query) {
+    try {
+      var result = com.logisim_ai.ai.NaturalLanguageCircuitPlanner.plan(query);
+      if (result == null) {
+        System.err.println("[NL] No template matched for: '" + query + "'");
+        System.err.println("[NL] Supported: " + com.logisim_ai.ai.NaturalLanguageCircuitPlanner.supportedCircuits());
+        System.exit(1);
+        return;
+      }
+
+      System.out.println("[NL] " + result.description());
+      com.logisim_ai.ir.CircuitSpec spec = result.spec();
+
+      // Validate
+      com.logisim_ai.validation.CircuitSemanticValidator.requireValid(spec);
+      System.out.println("[NL] Semantic validation passed");
+
+      // Compile
+      File outputFile = new File("generated/circ/" + spec.name() + ".circ");
+      if (spec.isNetlist()) {
+        com.logisim_ai.compiler.LogisimCompiler.compileNetlist(spec, outputFile);
+      } else {
+        com.logisim_ai.compiler.LogisimCompiler.compileSingleComponent(spec, outputFile);
+      }
+      System.out.println("[OK] " + spec.name() + ".circ generated via NL path");
+    } catch (Exception e) {
+      throw new RuntimeException("NL generation failed for: " + query, e);
     }
   }
 
