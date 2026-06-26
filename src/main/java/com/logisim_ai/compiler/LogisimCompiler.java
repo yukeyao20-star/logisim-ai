@@ -30,6 +30,7 @@ import com.logisim_ai.layout.PlacedComponent;
 import com.logisim_ai.layout.PlacedPort;
 import com.logisim_ai.layout.ReadableChipLayout;
 import com.logisim_ai.validation.CircuitLayoutInspector;
+import com.logisim_ai.validation.CircuitSemanticValidator;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -94,10 +95,10 @@ public final class LogisimCompiler {
    *
    * <p>Steps:
    * 1. Create project and main circuit.
-   * 2. Instantiate all components from ComponentSpecs.
-   * 3. Run grid layout to assign positions.
-   * 4. Create input/output Pins from ExternalPorts.
-   * 5. Generate wires from NetSpecs (connecting component endpoints).
+   * 2. Phase 1: Compute logic component positions via GridLayoutEngine.
+   * 3. Phase 2: Instantiate components at their computed positions.
+   * 4. Phase 3: Compute port pin positions aligned to component endpoints.
+   * 5. Phase 4: Create pins and wire everything together.
    * 6. Save .circ, post-process XML, round-trip check, layout check.
    */
   public static void compileNetlist(CircuitSpec spec, File outputFile) throws Exception {
@@ -113,17 +114,11 @@ public final class LogisimCompiler {
     file.setMainCircuit(circuit);
 
     try {
-      // Step 2: Instantiate components (at origin initially; layout will position them)
-      Map<String, Component> components = instantiateComponentsAt(loader, file, spec, Location.create(0, 0, true));
+      // Phase 1: Compute logic component positions
+      GridLayoutEngine.ComponentLayoutResult compLayout =
+          GridLayoutEngine.layoutComponents(spec.components(), spec.layoutHints());
 
-      // Step 3: Run grid layout
-      GridLayoutEngine.LayoutResult layout = GridLayoutEngine.layout(
-          spec.components(),
-          spec.externalPorts(),
-          spec.layoutHints(),
-          components);
-
-      // Re-instantiate components at their layout positions
+      // Phase 2: Instantiate components at their computed positions
       Map<String, Component> positioned = new HashMap<>();
       for (ComponentSpec cs : spec.components()) {
         Library library = LogisimProjectSetup.addLibrary(loader, file, cs.libraryName());
@@ -133,8 +128,8 @@ public final class LogisimCompiler {
         if (cs.label() != null && !cs.label().isBlank()) {
           setIfPresent(attrs, StdAttr.LABEL, cs.label());
         }
-        // Find the placed position for this component
-        Location loc = layout.components().stream()
+        // Find the planned position for this component
+        Location loc = compLayout.components().stream()
             .filter(pc -> pc.id().equals(cs.id()))
             .map(PlacedComponent::location)
             .findFirst()
@@ -142,15 +137,20 @@ public final class LogisimCompiler {
         positioned.put(cs.id(), factory.createComponent(loc, attrs));
       }
 
-      // Step 4: Create external port pins
+      // Phase 3: Compute port pin positions aligned to component endpoints
+      int outputPinX = compLayout.totalWidth() - 100;
+      GridLayoutEngine.PortLayoutResult portLayout =
+          GridLayoutEngine.layoutPorts(spec.externalPorts(), positioned, outputPinX);
+
+      // Phase 4: Create circuit
       CircuitMutation mutation = new CircuitMutation(circuit);
       positioned.values().forEach(mutation::add);
 
-      // Map from componentId -> created pin (for net wiring)
+      // Create external port pins and connect them to target components
       Map<String, Component> pinMap = new HashMap<>();
       for (int i = 0; i < spec.externalPorts().size(); i++) {
         ExternalPort ep = spec.externalPorts().get(i);
-        PlacedPort pp = layout.ports().get(i);
+        PlacedPort pp = portLayout.ports().get(i);
         Component pin = createPin(ep, pp);
         mutation.add(pin);
         pinMap.put(ep.id(), pin);
@@ -174,31 +174,44 @@ public final class LogisimCompiler {
         }
       }
 
-      // Step 5: Generate wires from NetSpecs
+      // Runtime validation: check endpoint bounds and bit widths
+      CircuitSemanticValidator.requireValidRuntime(spec, positioned, pinMap);
+
+      // Wire internal nets
+      int netIndex = 0;
       for (NetSpec net : spec.nets()) {
-        wireNet(mutation, net, positioned, pinMap);
+        wireNet(mutation, net, positioned, pinMap, compLayout, netIndex);
+        netIndex++;
       }
 
       mutation.execute();
 
-      // Step 6: Save and verify
+      // Save and verify
       saveAndVerify(loader, file, outputFile);
     } finally {
       file.stopAutosaveThread(false);
     }
   }
 
-  /** Wire all endpoints in a net together using a simple bus approach. */
+  /**
+   * Wire all endpoints in a net together using a trunk-and-branch approach.
+   *
+   * <p>For nets with 2 endpoints: simple orthogonal connection.
+   * For nets with 3+ endpoints (fanout): draw a vertical trunk at a
+   * dedicated channel, then branch from the trunk to each sink.
+   */
   private static void wireNet(
       CircuitMutation mutation,
       NetSpec net,
       Map<String, Component> components,
-      Map<String, Component> pinMap) {
+      Map<String, Component> pinMap,
+      GridLayoutEngine.ComponentLayoutResult compLayout,
+      int netIndex) {
 
     List<EndpointRef> refs = net.endpoints();
     if (refs.size() < 2) return;
 
-    // Get all port locations for this net
+    // Resolve all endpoint locations
     java.util.List<Location> portLocs = new java.util.ArrayList<>();
     for (EndpointRef ref : refs) {
       Component comp = components.get(ref.componentId());
@@ -218,17 +231,74 @@ public final class LogisimCompiler {
       portLocs.add(comp.getEnd(ref.endIndex()).getLocation());
     }
 
-    // Simple wiring: connect first endpoint to each subsequent one using orthogonal wires
-    // Use a channel column between the leftmost and rightmost x coordinates
-    Location first = portLocs.get(0);
-    for (int i = 1; i < portLocs.size(); i++) {
-      Location other = portLocs.get(i);
-      // Channel is between the two points
-      int channel = (first.getX() + other.getX()) / 2;
-      // Snap to grid of 10
-      channel = (channel / 10) * 10;
-      connectOrthogonal(mutation, first, other, channel);
+    if (refs.size() == 2) {
+      // Simple point-to-point: use a channel between the two endpoints
+      Location from = portLocs.get(0);
+      Location to = portLocs.get(1);
+      int channel = computeChannel(from, to, netIndex);
+      connectOrthogonal(mutation, from, to, channel);
+    } else {
+      // Fanout: trunk-and-branch wiring
+      // The first endpoint is the source (driver), rest are sinks
+      Location source = portLocs.get(0);
+
+      // Compute trunk x position: between source and the average x of sinks
+      int avgSinkX = 0;
+      for (int i = 1; i < portLocs.size(); i++) {
+        avgSinkX += portLocs.get(i).getX();
+      }
+      avgSinkX /= (portLocs.size() - 1);
+      int trunkX = snapToGrid((source.getX() + avgSinkX) / 2 + netIndex * 10);
+
+      // Draw trunk: vertical line from source y to the furthest sink y
+      int minY = source.getY();
+      int maxY = source.getY();
+      for (int i = 1; i < portLocs.size(); i++) {
+        int y = portLocs.get(i).getY();
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+
+      // Source to trunk
+      Location trunkSource = Location.create(trunkX, source.getY(), true);
+      connectOrthogonal(mutation, source, trunkSource, trunkX);
+
+      // Trunk vertical line (if needed)
+      if (minY != maxY) {
+        mutation.add(Wire.create(
+            Location.create(trunkX, minY, true),
+            Location.create(trunkX, maxY, true)));
+      }
+
+      // Branch from trunk to each sink
+      for (int i = 1; i < portLocs.size(); i++) {
+        Location sink = portLocs.get(i);
+        Location trunkBranch = Location.create(trunkX, sink.getY(), true);
+        // Connect trunk branch point to sink
+        if (!trunkBranch.equals(sink)) {
+          if (trunkBranch.getX() == sink.getX()) {
+            // Same x: just a vertical wire
+            mutation.add(Wire.create(trunkBranch, sink));
+          } else {
+            // Horizontal wire from trunk to sink
+            mutation.add(Wire.create(trunkBranch, sink));
+          }
+        }
+      }
     }
+  }
+
+  /**
+   * Compute a channel x-coordinate for orthogonal wiring between two points.
+   *
+   * <p>The channel is placed between the two x-coordinates, offset by
+   * netIndex to avoid overlapping channels for different nets.
+   */
+  private static int computeChannel(Location from, Location to, int netIndex) {
+    int midX = (from.getX() + to.getX()) / 2;
+    // Offset by netIndex * 10 to spread channels apart
+    int channel = midX + (netIndex % 5) * 10;
+    return snapToGrid(channel);
   }
 
   // ---- Shared helpers ----
@@ -297,6 +367,10 @@ public final class LogisimCompiler {
     mutation.add(Wire.create(from, first));
     mutation.add(Wire.create(first, second));
     mutation.add(Wire.create(second, to));
+  }
+
+  private static int snapToGrid(int value) {
+    return Math.round(value / 10f) * 10;
   }
 
   private static void saveAndVerify(Loader loader, LogisimFile file, File outputFile) throws Exception {

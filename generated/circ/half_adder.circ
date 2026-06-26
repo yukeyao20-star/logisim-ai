@@ -20,7 +20,7 @@
   <lib desc="#BFH-Praktika" name="11"/>
   <lib desc="#Input/Output-Extra" name="12"/>
   <lib desc="#Soc" name="13"/>
-  <main name="main"/>
+  <main name="half_adder"/>
   <options>
     <a name="gateUndefined" val="ignore"/>
     <a name="simlimit" val="1000"/>
@@ -46,57 +46,44 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="main"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(110,140)" name="Tunnel">
-      <a name="label" val="B"/>
-    </comp>
-    <comp lib="1" loc="(110,80)" name="Tunnel">
-      <a name="label" val="A"/>
-    </comp>
-    <comp lib="1" loc="(150,120)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="B"/>
-    </comp>
-    <comp lib="1" loc="(150,80)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="A"/>
-    </comp>
-    <comp lib="1" loc="(160,180)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="A"/>
-    </comp>
-    <comp lib="1" loc="(160,220)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="B"/>
-    </comp>
-    <comp lib="1" loc="(380,100)" name="Pin">
+    <a name="simulationFrequency" val="1.0"/>
+  </circuit>
+  <circuit name="half_adder">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="half_adder"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <comp lib="1" loc="(520,100)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="SUM"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(380,200)" name="Pin">
+    <comp lib="1" loc="(520,200)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="CARRY"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(50,140)" name="Pin">
+    <comp lib="1" loc="(80,130)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="B"/>
     </comp>
-    <comp lib="1" loc="(50,80)" name="Pin">
+    <comp lib="1" loc="(80,80)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="A"/>
     </comp>
-    <comp lib="2" loc="(220,100)" name="XOR Gate"/>
-    <comp lib="2" loc="(230,200)" name="AND Gate"/>
-    <wire from="(150,120)" to="(160,120)"/>
-    <wire from="(150,80)" to="(160,80)"/>
-    <wire from="(160,180)" to="(180,180)"/>
-    <wire from="(160,220)" to="(180,220)"/>
-    <wire from="(220,100)" to="(380,100)"/>
-    <wire from="(230,200)" to="(380,200)"/>
-    <wire from="(50,140)" to="(110,140)"/>
-    <wire from="(50,80)" to="(110,80)"/>
+    <comp lib="2" loc="(200,100)" name="XOR Gate"/>
+    <comp lib="2" loc="(200,200)" name="AND Gate"/>
+    <wire from="(140,120)" to="(160,120)"/>
+    <wire from="(140,80)" to="(150,80)"/>
+    <wire from="(150,220)" to="(160,220)"/>
+    <wire from="(150,80)" to="(150,180)"/>
+    <wire from="(160,120)" to="(160,220)"/>
+    <wire from="(160,120)" to="(320,120)"/>
+    <wire from="(200,100)" to="(520,100)"/>
+    <wire from="(200,200)" to="(520,200)"/>
+    <wire from="(320,120)" to="(320,130)"/>
+    <wire from="(80,130)" to="(320,130)"/>
+    <wire from="(80,80)" to="(140,80)"/>
   </circuit>
 </project>
