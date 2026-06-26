@@ -1,0 +1,80 @@
+{
+  "name": "mux_4to1",
+  "components": [
+    {"id": "not_s0", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": ""},
+    {"id": "not_s1", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": ""},
+    {"id": "and0", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""},
+    {"id": "and1", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""},
+    {"id": "and2", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""},
+    {"id": "and3", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""},
+    {"id": "or01", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": ""},
+    {"id": "or23", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": ""},
+    {"id": "or_y", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": ""}
+  ],
+  "externalPorts": [
+    {"id": "d0", "label": "D0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and0", "targetEndIndex": 1},
+    {"id": "d1", "label": "D1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and1", "targetEndIndex": 1},
+    {"id": "d2", "label": "D2", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and2", "targetEndIndex": 1},
+    {"id": "d3", "label": "D3", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and3", "targetEndIndex": 1},
+    {"id": "s0", "label": "S0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "not_s0", "targetEndIndex": 1},
+    {"id": "s1", "label": "S1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "not_s1", "targetEndIndex": 1},
+    {"id": "y", "label": "Y", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "or_y", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "s0_fanout", "endpoints": [
+      {"componentId": "not_s0", "endIndex": 1},
+      {"componentId": "and1", "endIndex": 2},
+      {"componentId": "and3", "endIndex": 2}
+    ]},
+    {"id": "ns0_fanout", "endpoints": [
+      {"componentId": "not_s0", "endIndex": 0},
+      {"componentId": "and0", "endIndex": 2},
+      {"componentId": "and2", "endIndex": 2}
+    ]},
+    {"id": "s1_fanout", "endpoints": [
+      {"componentId": "not_s1", "endIndex": 1},
+      {"componentId": "and2", "endIndex": 1},
+      {"componentId": "and3", "endIndex": 1}
+    ]},
+    {"id": "ns1_fanout", "endpoints": [
+      {"componentId": "not_s1", "endIndex": 0},
+      {"componentId": "and0", "endIndex": 1},
+      {"componentId": "and1", "endIndex": 1}
+    ]},
+    {"id": "and0_to_or01", "endpoints": [
+      {"componentId": "and0", "endIndex": 0},
+      {"componentId": "or01", "endIndex": 1}
+    ]},
+    {"id": "and1_to_or01", "endpoints": [
+      {"componentId": "and1", "endIndex": 0},
+      {"componentId": "or01", "endIndex": 2}
+    ]},
+    {"id": "and2_to_or23", "endpoints": [
+      {"componentId": "and2", "endIndex": 0},
+      {"componentId": "or23", "endIndex": 1}
+    ]},
+    {"id": "and3_to_or23", "endpoints": [
+      {"componentId": "and3", "endIndex": 0},
+      {"componentId": "or23", "endIndex": 2}
+    ]},
+    {"id": "or01_to_ory", "endpoints": [
+      {"componentId": "or01", "endIndex": 0},
+      {"componentId": "or_y", "endIndex": 1}
+    ]},
+    {"id": "or23_to_ory", "endpoints": [
+      {"componentId": "or23", "endIndex": 0},
+      {"componentId": "or_y", "endIndex": 2}
+    ]}
+  ],
+  "layoutHints": [
+    {"componentId": "not_s0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "not_s1", "rank": 0, "column": 0, "row": 1, "side": null},
+    {"componentId": "and0", "rank": 1, "column": 1, "row": 0, "side": null},
+    {"componentId": "and1", "rank": 1, "column": 1, "row": 1, "side": null},
+    {"componentId": "and2", "rank": 1, "column": 1, "row": 2, "side": null},
+    {"componentId": "and3", "rank": 1, "column": 1, "row": 3, "side": null},
+    {"componentId": "or01", "rank": 2, "column": 2, "row": 0, "side": null},
+    {"componentId": "or23", "rank": 2, "column": 2, "row": 1, "side": null},
+    {"componentId": "or_y", "rank": 3, "column": 3, "row": 0, "side": null}
+  ]
+}

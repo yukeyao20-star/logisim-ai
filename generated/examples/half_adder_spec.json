@@ -1,0 +1,27 @@
+{
+  "name": "xor_and_demo",
+  "components": [
+    {"id": "xor1", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": ""},
+    {"id": "and1", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "xor1", "targetEndIndex": 1},
+    {"id": "b", "label": "B", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "xor1", "targetEndIndex": 2},
+    {"id": "sum", "label": "SUM", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "xor1", "targetEndIndex": 0},
+    {"id": "carry", "label": "CARRY", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "and1", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "a_to_and1", "endpoints": [
+      {"componentId": "xor1", "endIndex": 1},
+      {"componentId": "and1", "endIndex": 1}
+    ]},
+    {"id": "b_to_and1", "endpoints": [
+      {"componentId": "xor1", "endIndex": 2},
+      {"componentId": "and1", "endIndex": 2}
+    ]}
+  ],
+  "layoutHints": [
+    {"componentId": "xor1", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "and1", "rank": 0, "column": 0, "row": 1, "side": null}
+  ]
+}
