@@ -99,19 +99,19 @@ public final class CircuitSemanticValidator {
       }
     }
 
-    // Check for floating external ports (ports not connected via any net)
+    // Check for floating external ports (ports not connected by any net)
+    // Since ExternalPort auto-wiring was removed in 019, every external port
+    // MUST appear in at least one NetSpec's endpoints.
     if (!spec.nets().isEmpty()) {
-      Set<String> connectedPorts = new HashSet<>();
+      Set<String> portsInNets = new HashSet<>();
       for (NetSpec ns : spec.nets()) {
         for (EndpointRef ref : ns.endpoints()) {
-          connectedPorts.add(ref.componentId());
+          portsInNets.add(ref.componentId());
         }
       }
       for (ExternalPort ep : spec.externalPorts()) {
-        if (!connectedPorts.contains(ep.id())) {
-          // Port is connected directly via ExternalPort wiring, not via a net — this is ok
-          // Only warn if the port targets a component that also isn't connected via nets
-          // Actually, ExternalPort creates its own wiring, so this is not an error
+        if (!portsInNets.contains(ep.id())) {
+          issues.add("ExternalPort '" + ep.id() + "' is not connected by any net");
         }
       }
     }

@@ -37,11 +37,11 @@ public final class GridLayoutEngine {
   private GridLayoutEngine() {}
 
   public static final int INPUT_PIN_X = 80;
-  public static final int COLUMN_SPACING = 200;
-  public static final int ROW_SPACING = 100;
+  public static final int COLUMN_SPACING = 260;
+  public static final int ROW_SPACING = 140;
   public static final int VERTICAL_START = 100;
-  public static final int PIN_TO_COMPONENT_GAP = 120;
-  public static final int MIN_PORT_SPACING = 50;
+  public static final int PIN_TO_COMPONENT_GAP = 180;
+  public static final int MIN_PORT_SPACING = 60;
   public static final int GRID = 10;
 
   /** Result of Phase 1: logic component positions. */

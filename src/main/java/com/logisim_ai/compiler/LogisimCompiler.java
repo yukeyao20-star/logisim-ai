@@ -58,7 +58,10 @@ import java.util.Set;
 public final class LogisimCompiler {
   private LogisimCompiler() {}
 
-  private static final int TUNNEL_OFFSET = 30;  // px from endpoint to tunnel
+  // Tunnel placement distances (increased from 30px to avoid crowding/shorting)
+  private static final int TUNNEL_OFFSET_INPUT = 60;   // px from component input endpoint to tunnel
+  private static final int TUNNEL_OFFSET_OUTPUT = 70;  // px from component output endpoint to tunnel
+  private static final int TUNNEL_OFFSET_PIN = 70;     // px from pin endpoint to tunnel
   private static final int GRID = 10;
 
   /**
@@ -257,22 +260,21 @@ public final class LogisimCompiler {
 
       if (isPin) {
         // Pin placement: determine side based on direction
-        // Find the ExternalPort spec to know which side
         ExternalPort ep = findExternalPort(pinMap, ref.componentId());
         if (ep != null && ep.side() == com.logisim_ai.layout.PortSide.LEFT) {
           // Left-side input Pin: tunnel to the right
           tunnelLoc = Location.create(
-              snap(endpointLoc.getX() + 50), snap(endpointLoc.getY()), true);
+              snap(endpointLoc.getX() + TUNNEL_OFFSET_PIN), snap(endpointLoc.getY()), true);
           tunnelFacing = Direction.WEST;
         } else if (ep != null && ep.side() == com.logisim_ai.layout.PortSide.RIGHT) {
           // Right-side output Pin: tunnel to the left
           tunnelLoc = Location.create(
-              snap(endpointLoc.getX() - 50), snap(endpointLoc.getY()), true);
+              snap(endpointLoc.getX() - TUNNEL_OFFSET_PIN), snap(endpointLoc.getY()), true);
           tunnelFacing = Direction.EAST;
         } else {
           // TOP/BOTTOM: tunnel below/above
           tunnelLoc = Location.create(
-              snap(endpointLoc.getX()), snap(endpointLoc.getY() + 30), true);
+              snap(endpointLoc.getX()), snap(endpointLoc.getY() + TUNNEL_OFFSET_PIN), true);
           tunnelFacing = Direction.NORTH;
         }
       } else {
@@ -281,12 +283,12 @@ public final class LogisimCompiler {
         if (ref.endIndex() == 0) {
           // Output: tunnel to the right
           tunnelLoc = Location.create(
-              snap(endpointLoc.getX() + TUNNEL_OFFSET), snap(endpointLoc.getY()), true);
+              snap(endpointLoc.getX() + TUNNEL_OFFSET_OUTPUT), snap(endpointLoc.getY()), true);
           tunnelFacing = Direction.WEST;
         } else {
           // Input: tunnel to the left
           tunnelLoc = Location.create(
-              snap(endpointLoc.getX() - TUNNEL_OFFSET), snap(endpointLoc.getY()), true);
+              snap(endpointLoc.getX() - TUNNEL_OFFSET_INPUT), snap(endpointLoc.getY()), true);
           tunnelFacing = Direction.EAST;
         }
       }
