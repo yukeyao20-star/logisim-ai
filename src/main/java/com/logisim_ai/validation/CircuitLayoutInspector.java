@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
 
 /** Static checks for generated .circ files before they are shown as deliverables. */
 public final class CircuitLayoutInspector {
+  private static final int SMALL_COMPONENT_CLEARANCE_X = 60;
+  private static final int SMALL_COMPONENT_CLEARANCE_Y = 40;
+
   private static final Pattern COMPONENT =
       Pattern.compile("<comp\\b[^>]*loc=\"\\((-?\\d+),(-?\\d+)\\)\"[^>]*name=\"([^\"]+)\"");
   private static final Pattern WIRE =
@@ -67,8 +70,18 @@ public final class CircuitLayoutInspector {
           issues.add("Components overlap exactly at (" + a.x + "," + a.y + "): "
               + a.name + " and " + b.name);
         }
+        if (isSmallVisualComponent(a) && isSmallVisualComponent(b)
+            && Math.abs(a.x - b.x) < SMALL_COMPONENT_CLEARANCE_X
+            && Math.abs(a.y - b.y) < SMALL_COMPONENT_CLEARANCE_Y) {
+          issues.add("Small components are too close at (" + a.x + "," + a.y + ") and ("
+              + b.x + "," + b.y + "): " + a.name + " and " + b.name);
+        }
       }
     }
+  }
+
+  private static boolean isSmallVisualComponent(ComponentLoc component) {
+    return component.name.equals("Pin") || component.name.equals("Tunnel");
   }
 
   private static void inspectWires(String xml, List<String> issues) {

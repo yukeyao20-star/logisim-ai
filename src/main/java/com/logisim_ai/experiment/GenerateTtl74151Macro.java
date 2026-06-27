@@ -114,7 +114,18 @@ public final class GenerateTtl74151Macro {
 
     // ---- Nets ----
 
+    // External data inputs to first AND stage
+    for (int i = 0; i < 8; i++) {
+      nets.add(new NetSpec("D" + i, List.of(
+          new EndpointRef("d" + i, 0),
+          new EndpointRef("and" + i + "_a", 1))));
+    }
+
     // EN fanout: not_ng output → all and_i_a input2
+    nets.add(new NetSpec("nG", List.of(
+        new EndpointRef("ng", 0),
+        new EndpointRef("not_ng", 1))));
+
     List<EndpointRef> enFans = new ArrayList<>();
     enFans.add(new EndpointRef("not_ng", 0));
     for (int i = 0; i < 8; i++) {
@@ -124,6 +135,7 @@ public final class GenerateTtl74151Macro {
 
     // S0 fanout: to not_s0 input, and to and_i_b input1 (for odd minterms)
     List<EndpointRef> s0Fans = new ArrayList<>();
+    s0Fans.add(new EndpointRef("s0", 0));
     s0Fans.add(new EndpointRef("not_s0", 1));
     for (int i = 0; i < 8; i++) {
       if ((i & 1) != 0) {
@@ -144,6 +156,7 @@ public final class GenerateTtl74151Macro {
 
     // S1 fanout: to not_s1 input, and to and_i_c input1 (for minterms with bit1=1)
     List<EndpointRef> s1Fans = new ArrayList<>();
+    s1Fans.add(new EndpointRef("s1", 0));
     s1Fans.add(new EndpointRef("not_s1", 1));
     for (int i = 0; i < 8; i++) {
       if ((i & 2) != 0) {
@@ -164,6 +177,7 @@ public final class GenerateTtl74151Macro {
 
     // S2 fanout: to not_s2 input, and to and_i_d input1
     List<EndpointRef> s2Fans = new ArrayList<>();
+    s2Fans.add(new EndpointRef("s2", 0));
     s2Fans.add(new EndpointRef("not_s2", 1));
     for (int i = 0; i < 8; i++) {
       if ((i & 4) != 0) {
@@ -218,8 +232,14 @@ public final class GenerateTtl74151Macro {
     nets.add(new NetSpec("or03_to_y", List.of(new EndpointRef("or03", 0), new EndpointRef("or_y", 1))));
     nets.add(new NetSpec("or47_to_y", List.of(new EndpointRef("or47", 0), new EndpointRef("or_y", 2))));
 
-    // Y to nW inverter
-    nets.add(new NetSpec("y_to_nw", List.of(new EndpointRef("or_y", 0), new EndpointRef("not_y", 1))));
+    // Y output also feeds the nW inverter
+    nets.add(new NetSpec("Y", List.of(
+        new EndpointRef("or_y", 0),
+        new EndpointRef("y", 0),
+        new EndpointRef("not_y", 1))));
+    nets.add(new NetSpec("nW", List.of(
+        new EndpointRef("not_y", 0),
+        new EndpointRef("nw", 0))));
 
     // ---- Layout hints ----
     // Rank 0: NOT gates

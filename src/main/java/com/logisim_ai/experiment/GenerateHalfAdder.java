@@ -41,16 +41,22 @@ public final class GenerateHalfAdder {
               new ExternalPort("b", "B", 1, PortDirection.INPUT, PortSide.LEFT, "xor1", 2),
               new ExternalPort("sum", "SUM", 1, PortDirection.OUTPUT, PortSide.RIGHT, "xor1", 0),
               new ExternalPort("carry", "CARRY", 1, PortDirection.OUTPUT, PortSide.RIGHT, "and1", 0)),
-          // Nets (wires between components)
+          // Nets (semantic IR: all connections including external ports)
           List.of(
-              // A -> AND1 input0 (fanout from xor1 input0)
-              new NetSpec("a_to_and1", List.of(
-                  new EndpointRef("xor1", 1),   // source: A input of XOR1
-                  new EndpointRef("and1", 1))), // sink: input0 of AND1
-              // B -> AND1 input1 (fanout from xor1 input1)
-              new NetSpec("b_to_and1", List.of(
-                  new EndpointRef("xor1", 2),   // source: B input of XOR1
-                  new EndpointRef("and1", 2)))), // sink: input1 of AND1
+              new NetSpec("A", List.of(
+                  new EndpointRef("a", 0),
+                  new EndpointRef("xor1", 1),
+                  new EndpointRef("and1", 1))),
+              new NetSpec("B", List.of(
+                  new EndpointRef("b", 0),
+                  new EndpointRef("xor1", 2),
+                  new EndpointRef("and1", 2))),
+              new NetSpec("SUM", List.of(
+                  new EndpointRef("xor1", 0),
+                  new EndpointRef("sum", 0))),
+              new NetSpec("CARRY", List.of(
+                  new EndpointRef("and1", 0),
+                  new EndpointRef("carry", 0)))),
           // Layout hints
           List.of(
               new LayoutHint("xor1", 0, 0, 0, null),

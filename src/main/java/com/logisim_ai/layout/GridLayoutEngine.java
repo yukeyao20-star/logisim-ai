@@ -36,13 +36,13 @@ import java.util.Map;
 public final class GridLayoutEngine {
   private GridLayoutEngine() {}
 
-  public static final int INPUT_PIN_X = 80;
-  public static final int COLUMN_SPACING = 260;
-  public static final int ROW_SPACING = 140;
-  public static final int VERTICAL_START = 100;
-  public static final int PIN_TO_COMPONENT_GAP = 180;
-  public static final int MIN_PORT_SPACING = 60;
-  public static final int GRID = 10;
+  public static final int INPUT_PIN_X = AutoLayoutPolicy.INPUT_PIN_X;
+  public static final int COLUMN_SPACING = AutoLayoutPolicy.COLUMN_SPACING;
+  public static final int ROW_SPACING = AutoLayoutPolicy.ROW_SPACING;
+  public static final int VERTICAL_START = AutoLayoutPolicy.VERTICAL_START;
+  public static final int PIN_TO_COMPONENT_GAP = AutoLayoutPolicy.PIN_TO_COMPONENT_GAP;
+  public static final int MIN_PORT_SPACING = AutoLayoutPolicy.MIN_PORT_SPACING;
+  public static final int GRID = AutoLayoutPolicy.GRID;
 
   /** Result of Phase 1: logic component positions. */
   public record ComponentLayoutResult(
@@ -366,6 +366,6 @@ public final class GridLayoutEngine {
   }
 
   private static int snap(int value) {
-    return Math.round(value / (float) GRID) * GRID;
+    return AutoLayoutPolicy.snap(value);
   }
 }

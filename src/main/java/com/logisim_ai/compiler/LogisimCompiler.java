@@ -26,10 +26,12 @@ import com.logisim_ai.ir.EndpointRef;
 import com.logisim_ai.ir.ExternalPort;
 import com.logisim_ai.ir.NetSpec;
 import com.logisim_ai.ir.PortDirection;
+import com.logisim_ai.layout.AutoLayoutPolicy;
 import com.logisim_ai.layout.ExternalPortSpec;
 import com.logisim_ai.layout.GridLayoutEngine;
 import com.logisim_ai.layout.PlacedComponent;
 import com.logisim_ai.layout.PlacedPort;
+import com.logisim_ai.layout.PortSide;
 import com.logisim_ai.layout.ReadableChipLayout;
 import com.logisim_ai.validation.CircuitLayoutInspector;
 import com.logisim_ai.validation.CircuitSemanticValidator;
@@ -57,12 +59,6 @@ import java.util.Set;
  */
 public final class LogisimCompiler {
   private LogisimCompiler() {}
-
-  // Tunnel placement distances (increased from 30px to avoid crowding/shorting)
-  private static final int TUNNEL_OFFSET_INPUT = 60;   // px from component input endpoint to tunnel
-  private static final int TUNNEL_OFFSET_OUTPUT = 70;  // px from component output endpoint to tunnel
-  private static final int TUNNEL_OFFSET_PIN = 70;     // px from pin endpoint to tunnel
-  private static final int GRID = 10;
 
   /**
    * Compile a single-component circuit (original mode).
@@ -198,7 +194,7 @@ public final class LogisimCompiler {
           label = label + "_2";
         }
         usedNetLabels.add(label);
-        wireNetWithTunnels(mutation, net, positioned, pinMap, tunnelFactory, label);
+        wireNetWithTunnels(mutation, net, positioned, pinMap, spec.externalPorts(), tunnelFactory, label);
       }
 
       mutation.execute();
@@ -219,17 +215,16 @@ public final class LogisimCompiler {
    * - All Tunnels with the same label are logically connected by Logisim
    * - No long physical wires cross the canvas
    *
-   * <p>Tunnel placement rules:
-   * - Component output: Tunnel placed 30px to the right, facing WEST
-   * - Component input: Tunnel placed 30px to the left, facing EAST
-   * - Input Pin (left side): Tunnel placed 50px to the right, facing WEST
-   * - Output Pin (right side): Tunnel placed 50px to the left, facing EAST
+   * <p>Tunnel placement is delegated to {@link AutoLayoutPolicy}. External pin
+   * tunnels live outside the pin row, while component tunnels live beside the
+   * component. This keeps repeated net labels out of the narrow pin-to-gate gap.
    */
   private static void wireNetWithTunnels(
       CircuitMutation mutation,
       NetSpec net,
       Map<String, Component> components,
       Map<String, Component> pinMap,
+      List<ExternalPort> externalPorts,
       ComponentFactory tunnelFactory,
       String label) {
 
@@ -255,46 +250,18 @@ public final class LogisimCompiler {
       }
 
       Location endpointLoc = comp.getEnd(ref.endIndex()).getLocation();
-      Location tunnelLoc;
-      Direction tunnelFacing;
+      AutoLayoutPolicy.TunnelPlacement placement;
 
       if (isPin) {
-        // Pin placement: determine side based on direction
-        ExternalPort ep = findExternalPort(pinMap, ref.componentId());
-        if (ep != null && ep.side() == com.logisim_ai.layout.PortSide.LEFT) {
-          // Left-side input Pin: tunnel to the right
-          tunnelLoc = Location.create(
-              snap(endpointLoc.getX() + TUNNEL_OFFSET_PIN), snap(endpointLoc.getY()), true);
-          tunnelFacing = Direction.WEST;
-        } else if (ep != null && ep.side() == com.logisim_ai.layout.PortSide.RIGHT) {
-          // Right-side output Pin: tunnel to the left
-          tunnelLoc = Location.create(
-              snap(endpointLoc.getX() - TUNNEL_OFFSET_PIN), snap(endpointLoc.getY()), true);
-          tunnelFacing = Direction.EAST;
-        } else {
-          // TOP/BOTTOM: tunnel below/above
-          tunnelLoc = Location.create(
-              snap(endpointLoc.getX()), snap(endpointLoc.getY() + TUNNEL_OFFSET_PIN), true);
-          tunnelFacing = Direction.NORTH;
-        }
+        ExternalPort ep = findExternalPort(externalPorts, ref.componentId());
+        PortSide side = ep == null ? PortSide.LEFT : ep.side();
+        placement = AutoLayoutPolicy.tunnelForExternalPin(endpointLoc, side);
       } else {
-        // Component endpoint: determine if output or input
-        // End 0 = output for gates; ends 1+ = inputs
-        if (ref.endIndex() == 0) {
-          // Output: tunnel to the right
-          tunnelLoc = Location.create(
-              snap(endpointLoc.getX() + TUNNEL_OFFSET_OUTPUT), snap(endpointLoc.getY()), true);
-          tunnelFacing = Direction.WEST;
-        } else {
-          // Input: tunnel to the left
-          tunnelLoc = Location.create(
-              snap(endpointLoc.getX() - TUNNEL_OFFSET_INPUT), snap(endpointLoc.getY()), true);
-          tunnelFacing = Direction.EAST;
-        }
+        placement = AutoLayoutPolicy.tunnelForComponentEnd(endpointLoc, ref.endIndex());
       }
 
       // Create Tunnel
-      Component tunnel = createTunnel(tunnelFactory, label, tunnelLoc, tunnelFacing);
+      Component tunnel = createTunnel(tunnelFactory, label, placement.location(), placement.facing());
       mutation.add(tunnel);
 
       // Short local wire from endpoint to tunnel
@@ -307,7 +274,7 @@ public final class LogisimCompiler {
           // Need a short L-shaped wire: endpoint -> intermediate -> tunnel
           // Use a corner point that avoids crossing other components
           Location corner = Location.create(
-              snap(endpointLoc.getX()), snap(tunnelPort.getY()), true);
+              AutoLayoutPolicy.snap(endpointLoc.getX()), AutoLayoutPolicy.snap(tunnelPort.getY()), true);
           mutation.add(Wire.create(endpointLoc, corner));
           mutation.add(Wire.create(corner, tunnelPort));
         }
@@ -315,20 +282,11 @@ public final class LogisimCompiler {
     }
   }
 
-  /** Find the ExternalPort spec for a given pin id by checking Pin attributes. */
-  private static ExternalPort findExternalPort(Map<String, Component> pinMap, String pinId) {
-    Component pin = pinMap.get(pinId);
-    if (pin == null) return null;
-    boolean isOutput = pin.getAttributeSet().getValue(Pin.ATTR_TYPE) == Pin.OUTPUT;
-    if (isOutput) {
-      // Output pins are on the RIGHT side
-      return new ExternalPort(pinId, pinId, 1, PortDirection.OUTPUT,
-          com.logisim_ai.layout.PortSide.RIGHT, pinId, 0);
-    } else {
-      // Input pins are on the LEFT side
-      return new ExternalPort(pinId, pinId, 1, PortDirection.INPUT,
-          com.logisim_ai.layout.PortSide.LEFT, pinId, 0);
-    }
+  private static ExternalPort findExternalPort(List<ExternalPort> externalPorts, String pinId) {
+    return externalPorts.stream()
+        .filter(port -> port.id().equals(pinId))
+        .findFirst()
+        .orElse(null);
   }
 
   /** Create a Tunnel component. */
@@ -407,11 +365,6 @@ public final class LogisimCompiler {
     mutation.add(Wire.create(first, second));
     mutation.add(Wire.create(second, to));
   }
-
-  private static int snap(int value) {
-    return Math.round(value / (float) GRID) * GRID;
-  }
-
   private static void saveAndVerify(Loader loader, LogisimFile file, File outputFile) throws Exception {
     File parent = outputFile.getParentFile();
     if (parent != null && !parent.exists()) {
