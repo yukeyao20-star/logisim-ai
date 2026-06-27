@@ -8,12 +8,14 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -33,16 +35,36 @@ import com.logisim_ai.validation.CircuitLayoutInspector;
 import com.logisim_ai.validation.CircuitSemanticValidator;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-/** Compiles the project IR into a Logisim-evolution .circ file. */
+/**
+ * Compiles the project IR into a Logisim-evolution .circ file.
+ *
+ * <p>Two compilation modes:
+ * <ul>
+ *   <li>{@link #compileSingleComponent}: direct wiring (safe for single chips)</li>
+ *   <li>{@link #compileNetlist}: Tunnel-based routing (safe for multi-component circuits)</li>
+ * </ul>
+ *
+ * <p>In netlist mode, all connections are made via Tunnel components:
+ * - Each NetSpec creates a set of Tunnels with the same label (= net.id())
+ * - Each endpoint gets a Tunnel placed nearby, with a short local wire
+ * - No long physical wires cross the canvas
+ * - Different nets never share physical connection points
+ */
 public final class LogisimCompiler {
   private LogisimCompiler() {}
+
+  private static final int TUNNEL_OFFSET = 30;  // px from endpoint to tunnel
+  private static final int GRID = 10;
 
   /**
    * Compile a single-component circuit (original mode).
    * The component is placed centrally, and external ports surround it.
+   * Direct orthogonal wiring is used (safe for single chip).
    */
   public static void compileSingleComponent(CircuitSpec spec, File outputFile) throws Exception {
     Main.headless = true;
@@ -91,15 +113,17 @@ public final class LogisimCompiler {
   }
 
   /**
-   * Compile a multi-component netlist circuit.
+   * Compile a multi-component netlist circuit using Tunnel routing.
    *
    * <p>Steps:
    * 1. Create project and main circuit.
-   * 2. Phase 1: Compute logic component positions via GridLayoutEngine.
-   * 3. Phase 2: Instantiate components at their computed positions.
-   * 4. Phase 3: Compute port pin positions aligned to component endpoints.
-   * 5. Phase 4: Create pins and wire everything together.
-   * 6. Save .circ, post-process XML, round-trip check, layout check.
+   * 2. Compute logic component positions via GridLayoutEngine.
+   * 3. Instantiate components at their computed positions.
+   * 4. Compute port pin positions aligned to component endpoints.
+   * 5. Create external port Pins (no auto-wiring).
+   * 6. Wire all nets via Tunnels: each net.id() becomes a Tunnel label,
+   *    each endpoint gets a nearby Tunnel with a short local wire.
+   * 7. Runtime validation + save + verify.
    */
   public static void compileNetlist(CircuitSpec spec, File outputFile) throws Exception {
     Main.headless = true;
@@ -112,6 +136,10 @@ public final class LogisimCompiler {
     Circuit circuit = new Circuit(spec.name(), file, project);
     file.addCircuit(circuit);
     file.setMainCircuit(circuit);
+
+    // Register Wiring library for Tunnels
+    Library wiringLib = LogisimProjectSetup.addLibrary(loader, file, "Wiring");
+    ComponentFactory tunnelFactory = findFactory(wiringLib, "Tunnel");
 
     try {
       // Phase 1: Compute logic component positions
@@ -128,7 +156,6 @@ public final class LogisimCompiler {
         if (cs.label() != null && !cs.label().isBlank()) {
           setIfPresent(attrs, StdAttr.LABEL, cs.label());
         }
-        // Find the planned position for this component
         Location loc = compLayout.components().stream()
             .filter(pc -> pc.id().equals(cs.id()))
             .map(PlacedComponent::location)
@@ -142,11 +169,11 @@ public final class LogisimCompiler {
       GridLayoutEngine.PortLayoutResult portLayout =
           GridLayoutEngine.layoutPorts(spec.externalPorts(), positioned, outputPinX);
 
-      // Phase 4: Create circuit
+      // Phase 4: Create circuit - components + pins (no auto-wiring)
       CircuitMutation mutation = new CircuitMutation(circuit);
       positioned.values().forEach(mutation::add);
 
-      // Create external port pins and connect them to target components
+      // Create external port Pins only - NO auto-wiring to targets
       Map<String, Component> pinMap = new HashMap<>();
       for (int i = 0; i < spec.externalPorts().size(); i++) {
         ExternalPort ep = spec.externalPorts().get(i);
@@ -154,34 +181,21 @@ public final class LogisimCompiler {
         Component pin = createPin(ep, pp);
         mutation.add(pin);
         pinMap.put(ep.id(), pin);
-
-        Component target = positioned.get(ep.targetComponentId());
-        if (target == null) {
-          throw new IllegalStateException("External port '" + ep.id()
-              + "' targets unknown component: " + ep.targetComponentId());
-        }
-        if (ep.targetEndIndex() >= target.getEnds().size()) {
-          throw new IllegalStateException("External port '" + ep.id()
-              + "' target endIndex " + ep.targetEndIndex()
-              + " out of range for component " + ep.targetComponentId());
-        }
-        Location pinPort = pin.getEnd(0).getLocation();
-        Location targetPort = target.getEnd(ep.targetEndIndex()).getLocation();
-        if (ep.direction() == PortDirection.INPUT) {
-          connectOrthogonal(mutation, pinPort, targetPort, routeChannel(pp, i));
-        } else {
-          connectOrthogonal(mutation, targetPort, pinPort, routeChannel(pp, i));
-        }
       }
 
-      // Runtime validation: check endpoint bounds and bit widths
+      // Runtime validation
       CircuitSemanticValidator.requireValidRuntime(spec, positioned, pinMap);
 
-      // Wire internal nets
-      int netIndex = 0;
+      // Phase 5: Wire all nets using Tunnels
+      Set<String> usedNetLabels = new HashSet<>();
       for (NetSpec net : spec.nets()) {
-        wireNet(mutation, net, positioned, pinMap, compLayout, netIndex);
-        netIndex++;
+        String label = net.id();
+        // Ensure unique labels (add suffix if collision)
+        while (usedNetLabels.contains(label)) {
+          label = label + "_2";
+        }
+        usedNetLabels.add(label);
+        wireNetWithTunnels(mutation, net, positioned, pinMap, tunnelFactory, label);
       }
 
       mutation.execute();
@@ -194,29 +208,37 @@ public final class LogisimCompiler {
   }
 
   /**
-   * Wire all endpoints in a net together using a trunk-and-branch approach.
+   * Wire all endpoints in a net together using Tunnel components.
    *
-   * <p>For nets with 2 endpoints: simple orthogonal connection.
-   * For nets with 3+ endpoints (fanout): draw a vertical trunk at a
-   * dedicated channel, then branch from the trunk to each sink.
+   * <p>Strategy:
+   * - Create a Tunnel near each endpoint with the net's label
+   * - Draw a short local wire from each endpoint to its Tunnel
+   * - All Tunnels with the same label are logically connected by Logisim
+   * - No long physical wires cross the canvas
+   *
+   * <p>Tunnel placement rules:
+   * - Component output: Tunnel placed 30px to the right, facing WEST
+   * - Component input: Tunnel placed 30px to the left, facing EAST
+   * - Input Pin (left side): Tunnel placed 50px to the right, facing WEST
+   * - Output Pin (right side): Tunnel placed 50px to the left, facing EAST
    */
-  private static void wireNet(
+  private static void wireNetWithTunnels(
       CircuitMutation mutation,
       NetSpec net,
       Map<String, Component> components,
       Map<String, Component> pinMap,
-      GridLayoutEngine.ComponentLayoutResult compLayout,
-      int netIndex) {
+      ComponentFactory tunnelFactory,
+      String label) {
 
     List<EndpointRef> refs = net.endpoints();
     if (refs.size() < 2) return;
 
-    // Resolve all endpoint locations
-    java.util.List<Location> portLocs = new java.util.ArrayList<>();
     for (EndpointRef ref : refs) {
       Component comp = components.get(ref.componentId());
+      boolean isPin = false;
       if (comp == null) {
         comp = pinMap.get(ref.componentId());
+        isPin = true;
       }
       if (comp == null) {
         throw new IllegalStateException(
@@ -228,77 +250,92 @@ public final class LogisimCompiler {
                 + " out of range for component " + ref.componentId()
                 + " (has " + comp.getEnds().size() + " ends)");
       }
-      portLocs.add(comp.getEnd(ref.endIndex()).getLocation());
-    }
 
-    if (refs.size() == 2) {
-      // Simple point-to-point: use a channel between the two endpoints
-      Location from = portLocs.get(0);
-      Location to = portLocs.get(1);
-      int channel = computeChannel(from, to, netIndex);
-      connectOrthogonal(mutation, from, to, channel);
-    } else {
-      // Fanout: trunk-and-branch wiring
-      // The first endpoint is the source (driver), rest are sinks
-      Location source = portLocs.get(0);
+      Location endpointLoc = comp.getEnd(ref.endIndex()).getLocation();
+      Location tunnelLoc;
+      Direction tunnelFacing;
 
-      // Compute trunk x position: between source and the average x of sinks
-      int avgSinkX = 0;
-      for (int i = 1; i < portLocs.size(); i++) {
-        avgSinkX += portLocs.get(i).getX();
+      if (isPin) {
+        // Pin placement: determine side based on direction
+        // Find the ExternalPort spec to know which side
+        ExternalPort ep = findExternalPort(pinMap, ref.componentId());
+        if (ep != null && ep.side() == com.logisim_ai.layout.PortSide.LEFT) {
+          // Left-side input Pin: tunnel to the right
+          tunnelLoc = Location.create(
+              snap(endpointLoc.getX() + 50), snap(endpointLoc.getY()), true);
+          tunnelFacing = Direction.WEST;
+        } else if (ep != null && ep.side() == com.logisim_ai.layout.PortSide.RIGHT) {
+          // Right-side output Pin: tunnel to the left
+          tunnelLoc = Location.create(
+              snap(endpointLoc.getX() - 50), snap(endpointLoc.getY()), true);
+          tunnelFacing = Direction.EAST;
+        } else {
+          // TOP/BOTTOM: tunnel below/above
+          tunnelLoc = Location.create(
+              snap(endpointLoc.getX()), snap(endpointLoc.getY() + 30), true);
+          tunnelFacing = Direction.NORTH;
+        }
+      } else {
+        // Component endpoint: determine if output or input
+        // End 0 = output for gates; ends 1+ = inputs
+        if (ref.endIndex() == 0) {
+          // Output: tunnel to the right
+          tunnelLoc = Location.create(
+              snap(endpointLoc.getX() + TUNNEL_OFFSET), snap(endpointLoc.getY()), true);
+          tunnelFacing = Direction.WEST;
+        } else {
+          // Input: tunnel to the left
+          tunnelLoc = Location.create(
+              snap(endpointLoc.getX() - TUNNEL_OFFSET), snap(endpointLoc.getY()), true);
+          tunnelFacing = Direction.EAST;
+        }
       }
-      avgSinkX /= (portLocs.size() - 1);
-      int trunkX = snapToGrid((source.getX() + avgSinkX) / 2 + netIndex * 10);
 
-      // Draw trunk: vertical line from source y to the furthest sink y
-      int minY = source.getY();
-      int maxY = source.getY();
-      for (int i = 1; i < portLocs.size(); i++) {
-        int y = portLocs.get(i).getY();
-        minY = Math.min(minY, y);
-        maxY = Math.max(maxY, y);
-      }
+      // Create Tunnel
+      Component tunnel = createTunnel(tunnelFactory, label, tunnelLoc, tunnelFacing);
+      mutation.add(tunnel);
 
-      // Source to trunk
-      Location trunkSource = Location.create(trunkX, source.getY(), true);
-      connectOrthogonal(mutation, source, trunkSource, trunkX);
-
-      // Trunk vertical line (if needed)
-      if (minY != maxY) {
-        mutation.add(Wire.create(
-            Location.create(trunkX, minY, true),
-            Location.create(trunkX, maxY, true)));
-      }
-
-      // Branch from trunk to each sink
-      for (int i = 1; i < portLocs.size(); i++) {
-        Location sink = portLocs.get(i);
-        Location trunkBranch = Location.create(trunkX, sink.getY(), true);
-        // Connect trunk branch point to sink
-        if (!trunkBranch.equals(sink)) {
-          if (trunkBranch.getX() == sink.getX()) {
-            // Same x: just a vertical wire
-            mutation.add(Wire.create(trunkBranch, sink));
-          } else {
-            // Horizontal wire from trunk to sink
-            mutation.add(Wire.create(trunkBranch, sink));
-          }
+      // Short local wire from endpoint to tunnel
+      Location tunnelPort = tunnel.getEnd(0).getLocation();
+      if (!endpointLoc.equals(tunnelPort)) {
+        // Only horizontal or vertical wires allowed
+        if (endpointLoc.getX() == tunnelPort.getX() || endpointLoc.getY() == tunnelPort.getY()) {
+          mutation.add(Wire.create(endpointLoc, tunnelPort));
+        } else {
+          // Need a short L-shaped wire: endpoint -> intermediate -> tunnel
+          // Use a corner point that avoids crossing other components
+          Location corner = Location.create(
+              snap(endpointLoc.getX()), snap(tunnelPort.getY()), true);
+          mutation.add(Wire.create(endpointLoc, corner));
+          mutation.add(Wire.create(corner, tunnelPort));
         }
       }
     }
   }
 
-  /**
-   * Compute a channel x-coordinate for orthogonal wiring between two points.
-   *
-   * <p>The channel is placed between the two x-coordinates, offset by
-   * netIndex to avoid overlapping channels for different nets.
-   */
-  private static int computeChannel(Location from, Location to, int netIndex) {
-    int midX = (from.getX() + to.getX()) / 2;
-    // Offset by netIndex * 10 to spread channels apart
-    int channel = midX + (netIndex % 5) * 10;
-    return snapToGrid(channel);
+  /** Find the ExternalPort spec for a given pin id by checking Pin attributes. */
+  private static ExternalPort findExternalPort(Map<String, Component> pinMap, String pinId) {
+    Component pin = pinMap.get(pinId);
+    if (pin == null) return null;
+    boolean isOutput = pin.getAttributeSet().getValue(Pin.ATTR_TYPE) == Pin.OUTPUT;
+    if (isOutput) {
+      // Output pins are on the RIGHT side
+      return new ExternalPort(pinId, pinId, 1, PortDirection.OUTPUT,
+          com.logisim_ai.layout.PortSide.RIGHT, pinId, 0);
+    } else {
+      // Input pins are on the LEFT side
+      return new ExternalPort(pinId, pinId, 1, PortDirection.INPUT,
+          com.logisim_ai.layout.PortSide.LEFT, pinId, 0);
+    }
+  }
+
+  /** Create a Tunnel component. */
+  private static Component createTunnel(
+      ComponentFactory tunnelFactory, String label, Location loc, Direction facing) {
+    var attrs = tunnelFactory.createAttributeSet();
+    attrs.setValue(StdAttr.LABEL, label);
+    attrs.setValue(StdAttr.FACING, facing);
+    return tunnelFactory.createComponent(loc, attrs);
   }
 
   // ---- Shared helpers ----
@@ -369,8 +406,8 @@ public final class LogisimCompiler {
     mutation.add(Wire.create(second, to));
   }
 
-  private static int snapToGrid(int value) {
-    return Math.round(value / 10f) * 10;
+  private static int snap(int value) {
+    return Math.round(value / (float) GRID) * GRID;
   }
 
   private static void saveAndVerify(Loader loader, LogisimFile file, File outputFile) throws Exception {
