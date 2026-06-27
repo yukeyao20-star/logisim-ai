@@ -58,6 +58,9 @@ public final class CircuitSemanticValidator {
       if (!portIds.add(ep.id())) {
         issues.add("Duplicate external port id: " + ep.id());
       }
+      if (compIds.contains(ep.id())) {
+        issues.add("External port id conflicts with component id: " + ep.id());
+      }
     }
 
     // Check unique net IDs

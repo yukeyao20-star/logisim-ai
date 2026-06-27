@@ -78,12 +78,14 @@ public final class GenerateAndGate {
         // JSON-based circuit generation
         String jsonFile = (args.length > 1) ? args[1] : null;
         if (jsonFile == null) {
-          System.err.println("[json] Usage: experiment 9 <json-file>");
+          System.err.println("[json] Usage: experiment 9 <json-file> [output-circ-file]");
           System.exit(1);
           return;
         }
-        System.out.println("[dispatch] Running experiment 9: JSON generation from " + jsonFile);
-        runJsonGeneration(jsonFile);
+        String outputFile = (args.length > 2) ? args[2] : "generated/circ/circuit_from_json.circ";
+        System.out.println("[dispatch] Running experiment 9: JSON generation from " + jsonFile
+            + " to " + outputFile);
+        runJsonGeneration(jsonFile, outputFile);
         System.exit(0);
         return;
       }
@@ -245,12 +247,12 @@ public final class GenerateAndGate {
    * <p>Reads a JSON file describing a CircuitSpec, parses it via
    * {@link com.logisim_ai.ai.CircuitSpecJsonParser}, then compiles it.
    */
-  private static void runJsonGeneration(String jsonFilePath) {
+  private static void runJsonGeneration(String jsonFilePath, String outputFilePath) {
     try {
       String json = Files.readString(java.nio.file.Path.of(jsonFilePath));
-      File outputFile = new File("generated/circ/circuit_from_json.circ");
+      File outputFile = new File(outputFilePath);
       com.logisim_ai.ai.CircuitSpecJsonParser.parseAndCompile(json, outputFile);
-      System.out.println("[OK] circuit_from_json.circ generated via JSON path");
+      System.out.println("[OK] " + outputFile.getPath() + " generated via JSON path");
     } catch (Exception e) {
       throw new RuntimeException("JSON generation failed for: " + jsonFilePath, e);
     }
