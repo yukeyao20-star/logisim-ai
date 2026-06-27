@@ -15,8 +15,8 @@ public final class AutoLayoutPolicy {
 
   public static final int GRID = 10;
 
-  public static final int INPUT_PIN_X = 140;
-  public static final int PIN_TO_COMPONENT_GAP = 240;
+  public static final int INPUT_PIN_X = 80;
+  public static final int PIN_TO_COMPONENT_GAP = 320;
   public static final int COLUMN_SPACING = 320;
   public static final int ROW_SPACING = 170;
   public static final int MIN_PORT_SPACING = 80;
@@ -31,11 +31,11 @@ public final class AutoLayoutPolicy {
   public static TunnelPlacement tunnelForExternalPin(Location endpoint, PortSide side) {
     return switch (side) {
       case LEFT -> new TunnelPlacement(
-          Location.create(snap(endpoint.getX() - EXTERNAL_PIN_TUNNEL_OFFSET), snap(endpoint.getY()), true),
-          Direction.EAST);
-      case RIGHT -> new TunnelPlacement(
           Location.create(snap(endpoint.getX() + EXTERNAL_PIN_TUNNEL_OFFSET), snap(endpoint.getY()), true),
           Direction.WEST);
+      case RIGHT -> new TunnelPlacement(
+          Location.create(snap(endpoint.getX() - EXTERNAL_PIN_TUNNEL_OFFSET), snap(endpoint.getY()), true),
+          Direction.EAST);
       case TOP -> new TunnelPlacement(
           Location.create(snap(endpoint.getX()), snap(endpoint.getY() - EXTERNAL_PIN_TUNNEL_OFFSET), true),
           Direction.SOUTH);
