@@ -80,11 +80,9 @@
       <a name="type" val="output"/>
     </comp>
     <comp lib="1" loc="(1670,120)" name="Tunnel">
-      <a name="facing" val="east"/>
       <a name="label" val="SUM"/>
     </comp>
     <comp lib="1" loc="(1670,200)" name="Tunnel">
-      <a name="facing" val="east"/>
       <a name="label" val="Cout"/>
     </comp>
     <comp lib="1" loc="(240,100)" name="Tunnel">
@@ -110,12 +108,15 @@
       <a name="label" val="AB"/>
     </comp>
     <comp lib="1" loc="(50,100)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="A"/>
     </comp>
     <comp lib="1" loc="(50,180)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="B"/>
     </comp>
     <comp lib="1" loc="(50,260)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="Cin"/>
     </comp>
     <comp lib="1" loc="(560,100)" name="Tunnel">

@@ -128,7 +128,6 @@
       <a name="type" val="output"/>
     </comp>
     <comp lib="1" loc="(2310,120)" name="Tunnel">
-      <a name="facing" val="east"/>
       <a name="label" val="Y"/>
     </comp>
     <comp lib="1" loc="(270,120)" name="Tunnel">
@@ -146,21 +145,27 @@
       <a name="label" val="nS1"/>
     </comp>
     <comp lib="1" loc="(50,100)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="D0"/>
     </comp>
     <comp lib="1" loc="(50,180)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="S0"/>
     </comp>
     <comp lib="1" loc="(50,270)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="D1"/>
     </comp>
     <comp lib="1" loc="(50,350)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="S1"/>
     </comp>
     <comp lib="1" loc="(50,440)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="D2"/>
     </comp>
     <comp lib="1" loc="(50,610)" name="Tunnel">
+      <a name="facing" val="east"/>
       <a name="label" val="D3"/>
     </comp>
     <comp lib="1" loc="(570,100)" name="Tunnel">

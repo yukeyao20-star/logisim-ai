@@ -32,16 +32,16 @@ public final class AutoLayoutPolicy {
     return switch (side) {
       case LEFT -> new TunnelPlacement(
           Location.create(snap(endpoint.getX() - EXTERNAL_PIN_TUNNEL_OFFSET), snap(endpoint.getY()), true),
-          Direction.WEST);
+          Direction.EAST);
       case RIGHT -> new TunnelPlacement(
           Location.create(snap(endpoint.getX() + EXTERNAL_PIN_TUNNEL_OFFSET), snap(endpoint.getY()), true),
-          Direction.EAST);
+          Direction.WEST);
       case TOP -> new TunnelPlacement(
           Location.create(snap(endpoint.getX()), snap(endpoint.getY() - EXTERNAL_PIN_TUNNEL_OFFSET), true),
-          Direction.NORTH);
+          Direction.SOUTH);
       case BOTTOM -> new TunnelPlacement(
           Location.create(snap(endpoint.getX()), snap(endpoint.getY() + EXTERNAL_PIN_TUNNEL_OFFSET), true),
-          Direction.SOUTH);
+          Direction.NORTH);
     };
   }
 
