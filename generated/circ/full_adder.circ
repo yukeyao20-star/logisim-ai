@@ -55,14 +55,6 @@
     <comp lib="1" loc="(1130,120)" name="Tunnel">
       <a name="label" val="Cout"/>
     </comp>
-    <comp lib="1" loc="(1590,120)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="SUM"/>
-    </comp>
-    <comp lib="1" loc="(1590,200)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="Cout"/>
-    </comp>
     <comp lib="1" loc="(1680,120)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
@@ -74,15 +66,6 @@
       <a name="facing" val="west"/>
       <a name="label" val="Cout"/>
       <a name="type" val="output"/>
-    </comp>
-    <comp lib="1" loc="(170,100)" name="Tunnel">
-      <a name="label" val="A"/>
-    </comp>
-    <comp lib="1" loc="(170,180)" name="Tunnel">
-      <a name="label" val="B"/>
-    </comp>
-    <comp lib="1" loc="(170,260)" name="Tunnel">
-      <a name="label" val="Cin"/>
     </comp>
     <comp lib="1" loc="(260,100)" name="Tunnel">
       <a name="facing" val="east"/>
@@ -154,12 +137,19 @@
     <comp lib="2" loc="(720,120)" name="XOR Gate"/>
     <comp lib="2" loc="(720,290)" name="AND Gate"/>
     <wire from="(1040,120)" to="(1130,120)"/>
-    <wire from="(1590,120)" to="(1680,120)"/>
-    <wire from="(1590,200)" to="(1680,200)"/>
+    <wire from="(1130,120)" to="(1520,120)"/>
+    <wire from="(1520,120)" to="(1520,200)"/>
+    <wire from="(1520,120)" to="(1680,120)"/>
+    <wire from="(1520,200)" to="(1680,200)"/>
+    <wire from="(240,140)" to="(240,180)"/>
+    <wire from="(240,140)" to="(260,140)"/>
+    <wire from="(240,260)" to="(240,310)"/>
+    <wire from="(240,310)" to="(270,310)"/>
     <wire from="(260,100)" to="(340,100)"/>
     <wire from="(260,140)" to="(340,140)"/>
     <wire from="(270,270)" to="(350,270)"/>
     <wire from="(270,310)" to="(350,310)"/>
+    <wire from="(350,310)" to="(590,310)"/>
     <wire from="(400,120)" to="(490,120)"/>
     <wire from="(400,290)" to="(490,290)"/>
     <wire from="(580,100)" to="(660,100)"/>
@@ -168,9 +158,10 @@
     <wire from="(590,310)" to="(670,310)"/>
     <wire from="(720,120)" to="(810,120)"/>
     <wire from="(720,290)" to="(810,290)"/>
-    <wire from="(80,100)" to="(170,100)"/>
-    <wire from="(80,180)" to="(170,180)"/>
-    <wire from="(80,260)" to="(170,260)"/>
+    <wire from="(80,100)" to="(260,100)"/>
+    <wire from="(80,180)" to="(240,180)"/>
+    <wire from="(80,260)" to="(240,260)"/>
+    <wire from="(810,120)" to="(1040,120)"/>
     <wire from="(910,100)" to="(990,100)"/>
     <wire from="(910,140)" to="(990,140)"/>
   </circuit>

@@ -36,6 +36,7 @@ import com.logisim_ai.layout.ReadableChipLayout;
 import com.logisim_ai.validation.CircuitLayoutInspector;
 import com.logisim_ai.validation.CircuitSemanticValidator;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -210,14 +211,14 @@ public final class LogisimCompiler {
    * Wire all endpoints in a net together using Tunnel components.
    *
    * <p>Strategy:
-   * - Create a Tunnel near each endpoint with the net's label
-   * - Draw a short local wire from each endpoint to its Tunnel
+   * - Create Tunnels only beside internal component endpoints
+   * - Draw external Pins directly into the nearest internal Tunnel
    * - All Tunnels with the same label are logically connected by Logisim
-   * - No long physical wires cross the canvas
+   * - Boundary Pins stay visually simple: no duplicate Pin-adjacent Tunnel boxes
    *
-   * <p>Tunnel placement is delegated to {@link AutoLayoutPolicy}. External pin
-   * tunnels live outside the pin row, while component tunnels live beside the
-   * component. This keeps repeated net labels out of the narrow pin-to-gate gap.
+   * <p>Tunnel placement is delegated to {@link AutoLayoutPolicy}. Component
+   * tunnels keep fan-out readable, while boundary Pins remain the only user-facing
+   * controls at the circuit edge.
    */
   private static void wireNetWithTunnels(
       CircuitMutation mutation,
@@ -231,6 +232,7 @@ public final class LogisimCompiler {
     List<EndpointRef> refs = net.endpoints();
     if (refs.size() < 2) return;
 
+    List<NetEndpoint> endpoints = new ArrayList<>();
     for (EndpointRef ref : refs) {
       Component comp = components.get(ref.componentId());
       boolean isPin = false;
@@ -250,36 +252,83 @@ public final class LogisimCompiler {
       }
 
       Location endpointLoc = comp.getEnd(ref.endIndex()).getLocation();
-      AutoLayoutPolicy.TunnelPlacement placement;
+      endpoints.add(new NetEndpoint(ref, isPin, endpointLoc));
+    }
 
-      if (isPin) {
-        ExternalPort ep = findExternalPort(externalPorts, ref.componentId());
-        PortSide side = ep == null ? PortSide.LEFT : ep.side();
-        placement = AutoLayoutPolicy.tunnelForExternalPin(endpointLoc, side);
-      } else {
-        placement = AutoLayoutPolicy.tunnelForComponentEnd(endpointLoc, ref.endIndex());
+    List<TunnelEndpoint> internalTunnels = new ArrayList<>();
+    for (NetEndpoint endpoint : endpoints) {
+      if (endpoint.isPin()) {
+        continue;
       }
 
-      // Create Tunnel
+      AutoLayoutPolicy.TunnelPlacement placement =
+          AutoLayoutPolicy.tunnelForComponentEnd(endpoint.location(), endpoint.ref().endIndex());
       Component tunnel = createTunnel(tunnelFactory, label, placement.location(), placement.facing());
       mutation.add(tunnel);
 
-      // Short local wire from endpoint to tunnel
       Location tunnelPort = tunnel.getEnd(0).getLocation();
-      if (!endpointLoc.equals(tunnelPort)) {
-        // Only horizontal or vertical wires allowed
-        if (endpointLoc.getX() == tunnelPort.getX() || endpointLoc.getY() == tunnelPort.getY()) {
-          mutation.add(Wire.create(endpointLoc, tunnelPort));
-        } else {
-          // Need a short L-shaped wire: endpoint -> intermediate -> tunnel
-          // Use a corner point that avoids crossing other components
-          Location corner = Location.create(
-              AutoLayoutPolicy.snap(endpointLoc.getX()), AutoLayoutPolicy.snap(tunnelPort.getY()), true);
-          mutation.add(Wire.create(endpointLoc, corner));
-          mutation.add(Wire.create(corner, tunnelPort));
-        }
+      internalTunnels.add(new TunnelEndpoint(tunnelPort));
+      connectShortLocal(mutation, endpoint.location(), tunnelPort);
+    }
+
+    if (internalTunnels.isEmpty()) {
+      wirePinOnlyNet(mutation, endpoints);
+      return;
+    }
+
+    for (NetEndpoint endpoint : endpoints) {
+      if (!endpoint.isPin()) {
+        continue;
+      }
+      Location target = nearestTunnelPort(endpoint.location(), internalTunnels);
+      connectOrthogonal(mutation, endpoint.location(), target, routeChannelForPin(endpoint, externalPorts));
+    }
+  }
+
+  private static Location nearestTunnelPort(Location pin, List<TunnelEndpoint> tunnels) {
+    TunnelEndpoint best = null;
+    int bestScore = Integer.MAX_VALUE;
+    for (TunnelEndpoint tunnel : tunnels) {
+      Location port = tunnel.portLocation();
+      int sameRowPenalty = port.getY() == pin.getY() ? 0 : 10_000;
+      int score = sameRowPenalty + Math.abs(port.getX() - pin.getX()) + Math.abs(port.getY() - pin.getY());
+      if (score < bestScore) {
+        best = tunnel;
+        bestScore = score;
       }
     }
+    return best.portLocation();
+  }
+
+  private static void wirePinOnlyNet(CircuitMutation mutation, List<NetEndpoint> endpoints) {
+    Location anchor = endpoints.get(0).location();
+    for (int i = 1; i < endpoints.size(); i++) {
+      connectOrthogonal(mutation, anchor, endpoints.get(i).location(), anchor.getX() + i * 40);
+    }
+  }
+
+  private static int routeChannelForPin(NetEndpoint endpoint, List<ExternalPort> externalPorts) {
+    ExternalPort ep = findExternalPort(externalPorts, endpoint.ref().componentId());
+    PortSide side = ep == null ? PortSide.LEFT : ep.side();
+    return switch (side) {
+      case LEFT -> AutoLayoutPolicy.snap(endpoint.location().getX() + 160);
+      case RIGHT -> AutoLayoutPolicy.snap(endpoint.location().getX() - 160);
+      case TOP, BOTTOM -> AutoLayoutPolicy.snap(endpoint.location().getX());
+    };
+  }
+
+  private static void connectShortLocal(CircuitMutation mutation, Location endpointLoc, Location tunnelPort) {
+    if (endpointLoc.equals(tunnelPort)) {
+      return;
+    }
+    if (endpointLoc.getX() == tunnelPort.getX() || endpointLoc.getY() == tunnelPort.getY()) {
+      mutation.add(Wire.create(endpointLoc, tunnelPort));
+      return;
+    }
+    Location corner = Location.create(
+        AutoLayoutPolicy.snap(endpointLoc.getX()), AutoLayoutPolicy.snap(tunnelPort.getY()), true);
+    mutation.add(Wire.create(endpointLoc, corner));
+    mutation.add(Wire.create(corner, tunnelPort));
   }
 
   private static ExternalPort findExternalPort(List<ExternalPort> externalPorts, String pinId) {
@@ -297,6 +346,10 @@ public final class LogisimCompiler {
     attrs.setValue(StdAttr.FACING, facing);
     return tunnelFactory.createComponent(loc, attrs);
   }
+
+  private record NetEndpoint(EndpointRef ref, boolean isPin, Location location) {}
+
+  private record TunnelEndpoint(Location portLocation) {}
 
   // ---- Shared helpers ----
 

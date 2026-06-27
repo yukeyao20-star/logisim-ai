@@ -4,9 +4,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,19 +15,15 @@ import java.util.regex.Pattern;
  * 1. No unresolved toolbar lib entries.
  * 2. No overlapping components.
  * 3. No diagonal wires.
- * 4. Input Pin must be left of its external Tunnel.
- * 5. Output Pin must be right of its external Tunnel.
- * 6. Pin-to-Tunnel distance must be 40–180 px.
- * 7. Input Pin facing must be east (or default = east).
- * 8. Output Pin facing must be west.
- * 9. External Tunnel facing must face the Pin.
+ * 4. Input Pin facing must be east (or default = east).
+ * 5. Output Pin facing must be west.
+ * 6. No Tunnel should be placed immediately beside an external Pin.
  */
 public final class CircuitLayoutInspector {
   private static final int SMALL_COMPONENT_CLEARANCE_X = 60;
   private static final int SMALL_COMPONENT_CLEARANCE_Y = 40;
 
-  private static final int MIN_PIN_TUNNEL_DIST = 40;
-  private static final int MAX_PIN_TUNNEL_DIST = 180;
+  private static final int NEAR_PIN_TUNNEL_DIST = 150;
 
   // Parse <comp ...> blocks
   private static final Pattern COMPONENT =
@@ -127,97 +121,32 @@ public final class CircuitLayoutInspector {
 
   private static void inspectPinTunnelPositions(String xml, List<String> issues) {
     List<ParsedComp> all = parseComponents(xml);
-
-    // Separate Pins and Tunnels by label
-    Map<String, List<ParsedComp>> pinsByLabel = new HashMap<>();
-    Map<String, List<ParsedComp>> tunnelsByLabel = new HashMap<>();
+    List<ParsedComp> pins = new ArrayList<>();
+    List<ParsedComp> tunnels = new ArrayList<>();
 
     for (ParsedComp c : all) {
       if ("Pin".equals(c.name)) {
-        pinsByLabel.computeIfAbsent(c.label, k -> new ArrayList<>()).add(c);
+        pins.add(c);
       } else if ("Tunnel".equals(c.name)) {
-        tunnelsByLabel.computeIfAbsent(c.label, k -> new ArrayList<>()).add(c);
+        tunnels.add(c);
       }
     }
 
-    // Check each Pin against its matching Tunnel(s)
-    for (Map.Entry<String, List<ParsedComp>> entry : pinsByLabel.entrySet()) {
-      String label = entry.getKey();
-      List<ParsedComp> pins = entry.getValue();
-      List<ParsedComp> tunnels = tunnelsByLabel.getOrDefault(label, List.of());
+    for (ParsedComp pin : pins) {
+      boolean isOutput = "output".equals(pin.type);
+      String expectedFacing = isOutput ? "west" : "east";
+      String actualFacing = pin.facing != null ? pin.facing : expectedFacing;
+      if (!expectedFacing.equals(actualFacing)) {
+        issues.add((isOutput ? "Output" : "Input") + " pin " + pin.label
+            + " facing should be " + expectedFacing + ", got: " + actualFacing);
+      }
 
-      for (ParsedComp pin : pins) {
-        if (tunnels.isEmpty()) continue;
-
-        // Find the closest Tunnel on the same y (or closest y if none match)
-        ParsedComp closestTunnel = null;
-        int bestDist = Integer.MAX_VALUE;
-        for (ParsedComp t : tunnels) {
-          int dist = Math.abs(t.x - pin.x);
-          // Prefer same-y tunnels
-          if (t.y == pin.y && (closestTunnel == null || closestTunnel.y != pin.y)) {
-            closestTunnel = t;
-            bestDist = dist;
-          } else if (t.y == pin.y && dist < bestDist) {
-            closestTunnel = t;
-            bestDist = dist;
-          } else if (closestTunnel == null || (closestTunnel.y != pin.y && dist < bestDist)) {
-            closestTunnel = t;
-            bestDist = dist;
-          }
-        }
-
-        if (closestTunnel == null) continue;
-
-        boolean isOutput = "output".equals(pin.type);
-        int dist = Math.abs(closestTunnel.x - pin.x);
-
-        // A1/A2: Input Pin must be left of its Tunnel
-        if (!isOutput) {
-          if (pin.x >= closestTunnel.x) {
-            issues.add("Input pin " + label + " at (" + pin.x + "," + pin.y
-                + ") should be left of its external tunnel at (" + closestTunnel.x + "," + closestTunnel.y + ")");
-          }
-          // Distance check
-          if (dist < MIN_PIN_TUNNEL_DIST) {
-            issues.add("Pin " + label + " to tunnel distance is too small: " + dist);
-          } else if (dist > MAX_PIN_TUNNEL_DIST) {
-            issues.add("Pin " + label + " to tunnel distance is too large: " + dist);
-          }
-          // Facing check: input Pin should face east (or default = east)
-          String pinFacing = pin.facing != null ? pin.facing : "east";
-          if (!"east".equals(pinFacing)) {
-            issues.add("Input pin " + label + " facing should be east, got: " + pinFacing);
-          }
-          // Tunnel should face the Pin (west)
-          String tunnelFacing = closestTunnel.facing != null ? closestTunnel.facing : "west";
-          if (!"west".equals(tunnelFacing)) {
-            issues.add("External tunnel for " + label + " facing should be west, got: " + tunnelFacing);
-          }
-        }
-
-        // A3: Output Pin must be right of its Tunnel
-        if (isOutput) {
-          if (pin.x <= closestTunnel.x) {
-            issues.add("Output pin " + label + " at (" + pin.x + "," + pin.y
-                + ") should be right of its external tunnel at (" + closestTunnel.x + "," + closestTunnel.y + ")");
-          }
-          // Distance check
-          if (dist < MIN_PIN_TUNNEL_DIST) {
-            issues.add("Pin " + label + " to tunnel distance is too small: " + dist);
-          } else if (dist > MAX_PIN_TUNNEL_DIST) {
-            issues.add("Pin " + label + " to tunnel distance is too large: " + dist);
-          }
-          // Facing check: output Pin should face west
-          String pinFacing = pin.facing != null ? pin.facing : "west";
-          if (!"west".equals(pinFacing)) {
-            issues.add("Output pin " + label + " facing should be west, got: " + pinFacing);
-          }
-          // Tunnel should face the Pin (east)
-          String tunnelFacing = closestTunnel.facing != null ? closestTunnel.facing : "east";
-          if (!"east".equals(tunnelFacing)) {
-            issues.add("External tunnel for " + label + " facing should be east, got: " + tunnelFacing);
-          }
+      for (ParsedComp tunnel : tunnels) {
+        int dx = Math.abs(tunnel.x - pin.x);
+        if (tunnel.y == pin.y && dx > 0 && dx < NEAR_PIN_TUNNEL_DIST) {
+          issues.add("Tunnel " + tunnel.label + " is too close to external pin " + pin.label
+              + " on the same row: (" + tunnel.x + "," + tunnel.y + ") vs ("
+              + pin.x + "," + pin.y + ")");
         }
       }
     }
