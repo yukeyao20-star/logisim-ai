@@ -12,6 +12,7 @@ import com.logisim_ai.ttl.TtlPackageMapper;
 import com.logisim_ai.ttl.TtlPackageSpec;
 import com.logisim_ai.validation.CircuitSemanticValidator;
 import com.logisim_ai.validation.CircuitTruthTableEvaluator;
+import com.logisim_ai.validation.TtlDipPinMapInspector;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,6 +102,7 @@ public final class BooleanSynthesisRegression {
     runTtlStrategyMismatchRejection();
     runMixedTtlPackageSynthesis();
     runMixedTtlFullAdderSynthesis();
+    runTtlDipPinMapInspectorRegression();
     runTtl7400FullAdderSynthesis();
     runGenericTtlPackageMapper();
     runNaturalLanguageImplementationIntent();
@@ -666,6 +668,85 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] " + query + " multi-chip 7400 truth table passed");
+  }
+
+  private static void runTtlDipPinMapInspectorRegression() {
+    String query = "SUM=A xor B xor Cin; Cout=(A and B) or (Cin and (A xor B)) use TTL chips";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+
+    String validJson = syntheticPinMapJson(spec, false);
+    TtlDipPinMapInspector.Report validReport =
+        TtlDipPinMapInspector.inspectJson(spec, "synthetic-valid-pinmap.json", validJson);
+    if (!validReport.clean()) {
+      throw new IllegalStateException("Expected synthetic PinMap to pass: "
+          + validReport.toHumanString());
+    }
+
+    String corruptedJson = syntheticPinMapJson(spec, true);
+    TtlDipPinMapInspector.Report corruptedReport =
+        TtlDipPinMapInspector.inspectJson(spec, "synthetic-corrupt-pinmap.json", corruptedJson);
+    if (corruptedReport.clean()) {
+      throw new IllegalStateException("Expected corrupted PinMap to fail");
+    }
+    String human = corruptedReport.toHumanString();
+    if (!human.contains("netId mismatch")) {
+      throw new IllegalStateException("Corrupted PinMap failed for the wrong reason: " + human);
+    }
+
+    System.out.println("[OK] TTL DIP PinMap inspector positive/negative regression passed");
+  }
+
+  private static String syntheticPinMapJson(CircuitSpec spec, boolean corruptFirstNet) {
+    List<TtlDipWiringReport.Chip> chips = TtlDipWiringReport.chips(spec);
+    int count = 0;
+    for (TtlDipWiringReport.Chip chip : chips) {
+      for (TtlDipWiringReport.Pin pin : chip.pins()) {
+        if (!pin.netId().isBlank()) {
+          count++;
+        }
+      }
+    }
+
+    StringBuilder out = new StringBuilder();
+    out.append("{\n");
+    out.append("  \"boundPinCount\": ").append(count).append(",\n");
+    out.append("  \"bindings\": [\n");
+    int index = 0;
+    boolean corrupted = false;
+    for (TtlDipWiringReport.Chip chip : chips) {
+      for (TtlDipWiringReport.Pin pin : chip.pins()) {
+        if (pin.netId().isBlank()) {
+          continue;
+        }
+        String netId = pin.netId();
+        if (corruptFirstNet && !corrupted) {
+          netId = netId + "_wrong";
+          corrupted = true;
+        }
+        out.append("    {\n");
+        out.append("      \"chipId\": \"").append(chip.chipId()).append("\",\n");
+        out.append("      \"packageType\": \"").append(chip.packageType()).append("\",\n");
+        out.append("      \"pinNumber\": ").append(pin.pinNumber()).append(",\n");
+        out.append("      \"role\": \"").append(pin.role()).append("\",\n");
+        out.append("      \"gateName\": \"").append(pin.gateName()).append("\",\n");
+        out.append("      \"netId\": \"").append(netId).append("\",\n");
+        out.append("      \"endIndex\": ").append(index).append("\n");
+        out.append("    }");
+        index++;
+        if (index < count) {
+          out.append(",");
+        }
+        out.append("\n");
+      }
+    }
+    out.append("  ]\n");
+    out.append("}\n");
+    return out.toString();
   }
 
   private static void runGenericTtlPackageMapper() {

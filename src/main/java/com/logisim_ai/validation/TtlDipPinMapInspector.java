@@ -31,6 +31,11 @@ public final class TtlDipPinMapInspector {
     }
 
     String json = Files.readString(pinMapPath, StandardCharsets.UTF_8);
+    return inspectJson(spec, pinMapPath.toString(), json);
+  }
+
+  public static Report inspectJson(CircuitSpec spec, String reportName, String json) {
+    List<String> issues = new ArrayList<>();
     List<ExpectedPin> expectedPins = expectedPins(spec);
     Map<String, Binding> bindings = parseBindings(json, issues);
 
@@ -58,7 +63,7 @@ public final class TtlDipPinMapInspector {
       }
     }
 
-    return new Report(pinMapPath.toString(), issues);
+    return new Report(reportName, issues);
   }
 
   public static void requireConsistent(CircuitSpec spec, File circFile) throws java.io.IOException {
