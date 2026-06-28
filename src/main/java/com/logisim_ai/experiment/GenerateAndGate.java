@@ -107,6 +107,15 @@ public final class GenerateAndGate {
         System.exit(0);
         return;
       }
+      case "12", "dip-subckt", "ttl-dip-subckt" -> {
+        String nlQuery = (args.length > 1)
+            ? String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length))
+            : "SUM=A xor B xor Cin; Cout=(A and B) or (Cin and (A xor B)) use TTL chips";
+        System.out.println("[dispatch] Running experiment 12: TTL DIP subcircuit view for '" + nlQuery + "'");
+        runTtlDipSubcircuitGeneration(nlQuery);
+        System.exit(0);
+        return;
+      }
       case "0", "and-gate" -> {
         // continue to experiment 0
       }
@@ -371,6 +380,25 @@ public final class GenerateAndGate {
       com.logisim_ai.catalog.TtlCatalogGenerator.main(new String[] {jsonOutputPath, markdownOutputPath});
     } catch (Exception e) {
       throw new RuntimeException("TTL catalog generation failed", e);
+    }
+  }
+
+  private static void runTtlDipSubcircuitGeneration(String query) {
+    try {
+      var report = com.logisim_ai.ai.NaturalLanguageCircuitPlanner.planDetailed(query);
+      var result = report.result();
+      if (result == null) {
+        throw new IllegalArgumentException("Could not generate TTL DIP subcircuit view: "
+            + report.diagnostic());
+      }
+      com.logisim_ai.ir.CircuitSpec spec = result.spec();
+      com.logisim_ai.validation.CircuitSemanticValidator.requireValid(spec);
+      File outputFile = new File("generated/circ/" + spec.name() + "_dip_subckt.circ");
+      com.logisim_ai.compiler.TtlDipSubcircuitCompiler.compile(spec, outputFile);
+      writeTtlReportsIfPresent(spec);
+      System.out.println("[OK] " + outputFile.getPath() + " generated as TTL DIP subcircuit view");
+    } catch (Exception e) {
+      throw new RuntimeException("TTL DIP subcircuit generation failed for: " + query, e);
     }
   }
 
