@@ -5,6 +5,7 @@ import com.logisim_ai.ai.NaturalLanguageCircuitPlanner.ImplementationIntent;
 import com.logisim_ai.ir.CircuitSpec;
 import com.logisim_ai.ir.ComponentSpec;
 import com.logisim_ai.ttl.Ttl7400Mapper;
+import com.logisim_ai.ttl.TtlMultiPackageReport;
 import com.logisim_ai.ttl.TtlPackageMapper;
 import com.logisim_ai.ttl.TtlPackageSpec;
 import com.logisim_ai.validation.CircuitSemanticValidator;
@@ -475,6 +476,15 @@ public final class BooleanSynthesisRegression {
     }
     TtlPackageMapper.requireContiguousAssignments(spec, TtlPackageSpec.ttl7486());
     TtlPackageMapper.requireContiguousAssignments(spec, TtlPackageSpec.ttl7408());
+    List<TtlMultiPackageReport.Item> ttlItems = TtlMultiPackageReport.items(spec);
+    if (ttlItems.size() != 2
+        || !TtlMultiPackageReport.toJson(spec).contains("\"packageFamilyCount\": 2")
+        || !TtlMultiPackageReport.toJson(spec).contains("\"totalChipCount\": 2")
+        || !TtlMultiPackageReport.toJson(spec).contains("\"totalUsedGateCount\": 2")
+        || !TtlMultiPackageReport.toMarkdown(spec).contains("7408 x 1")
+        || !TtlMultiPackageReport.toMarkdown(spec).contains("7486 x 1")) {
+      throw new IllegalStateException("Mixed TTL aggregate BOM mismatch: " + ttlItems);
+    }
 
     var xorBom = TtlPackageMapper.bom(spec, TtlPackageSpec.ttl7486());
     var andBom = TtlPackageMapper.bom(spec, TtlPackageSpec.ttl7408());

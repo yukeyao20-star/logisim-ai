@@ -1,0 +1,28 @@
+{
+  "circuitName": "logic_multi_sum_carry_ab_xor_ttl",
+  "packageFamilyCount": 2,
+  "totalChipCount": 2,
+  "totalUsedGateCount": 2,
+  "totalGateCapacity": 8,
+  "totalUnusedGateCount": 6,
+  "items": [
+    {
+      "packageType": "7408",
+      "gateKind": "AND",
+      "chipCount": 1,
+      "usedGateCount": 1,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 3,
+      "unusedGateLabels": ["U1B", "U1C", "U1D"]
+    },
+    {
+      "packageType": "7486",
+      "gateKind": "XOR",
+      "chipCount": 1,
+      "usedGateCount": 1,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 3,
+      "unusedGateLabels": ["U1B", "U1C", "U1D"]
+    }
+  ]
+}

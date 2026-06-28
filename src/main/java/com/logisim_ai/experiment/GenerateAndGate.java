@@ -268,15 +268,24 @@ public final class GenerateAndGate {
   }
 
   private static void writeTtlReportsIfPresent(com.logisim_ai.ir.CircuitSpec spec) throws Exception {
-    for (com.logisim_ai.ttl.TtlPackageSpec packageSpec : java.util.List.of(
-        com.logisim_ai.ttl.TtlPackageSpec.ttl7400(),
-        com.logisim_ai.ttl.TtlPackageSpec.ttl7402(),
-        com.logisim_ai.ttl.TtlPackageSpec.ttl7404(),
-        com.logisim_ai.ttl.TtlPackageSpec.ttl7408(),
-        com.logisim_ai.ttl.TtlPackageSpec.ttl7432(),
-        com.logisim_ai.ttl.TtlPackageSpec.ttl7486())) {
+    for (com.logisim_ai.ttl.TtlPackageSpec packageSpec :
+        com.logisim_ai.ttl.TtlMultiPackageReport.standardPackages()) {
       writeTtlReportIfPresent(spec, packageSpec);
     }
+    writeMultiPackageTtlBomIfPresent(spec);
+  }
+
+  private static void writeMultiPackageTtlBomIfPresent(com.logisim_ai.ir.CircuitSpec spec) throws Exception {
+    if (!com.logisim_ai.ttl.TtlMultiPackageReport.hasMultiplePackageFamilies(spec)) {
+      return;
+    }
+    Path markdownReport = Path.of("generated/reports/" + spec.name() + "_ttl_bom.md");
+    Path jsonReport = Path.of("generated/reports/" + spec.name() + "_ttl_bom.json");
+    Files.createDirectories(markdownReport.getParent());
+    Files.writeString(markdownReport, com.logisim_ai.ttl.TtlMultiPackageReport.toMarkdown(spec));
+    Files.writeString(jsonReport, com.logisim_ai.ttl.TtlMultiPackageReport.toJson(spec));
+    System.out.println("[OK] " + markdownReport + " generated");
+    System.out.println("[OK] " + jsonReport + " generated");
   }
 
   private static void writeTtlReportIfPresent(
