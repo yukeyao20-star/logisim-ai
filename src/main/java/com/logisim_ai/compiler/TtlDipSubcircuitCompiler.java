@@ -29,6 +29,8 @@ import com.logisim_ai.ttl.TtlDipWiringReport;
 import com.logisim_ai.validation.CircuitLayoutInspector;
 import com.logisim_ai.validation.TtlDipSubcircuitInspector;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -70,7 +72,9 @@ public final class TtlDipSubcircuitCompiler {
         chipCircuits.put(chip.chipId(), chipCircuit);
       }
 
-      createTopLevel(loader, file, top, spec, chips, chipCircuits);
+      List<PinEndBinding> pinMap = new ArrayList<>();
+      createTopLevel(loader, file, top, spec, chips, chipCircuits, pinMap);
+      writePinMapReports(spec, outputFile, pinMap);
       saveAndVerify(loader, file, outputFile);
     } finally {
       file.stopAutosaveThread(false);
@@ -131,7 +135,8 @@ public final class TtlDipSubcircuitCompiler {
       Circuit top,
       CircuitSpec spec,
       List<TtlDipWiringReport.Chip> chips,
-      Map<String, Circuit> chipCircuits) {
+      Map<String, Circuit> chipCircuits,
+      List<PinEndBinding> pinMap) {
     CircuitMutation mutation = new CircuitMutation(top);
     Library wiring = LogisimProjectSetup.addLibrary(loader, file, "Wiring");
     ComponentFactory tunnelFactory = findFactory(wiring, "Tunnel");
@@ -147,18 +152,32 @@ public final class TtlDipSubcircuitCompiler {
       mutation.add(chipComponent);
       addText(mutation, chip.chipId() + " " + chip.packageType(), loc.getX(), loc.getY() - 95);
 
-      List<Integer> usedEnds = new ArrayList<>();
-      for (TtlDipLayoutReport.PinPlacement pin : chipPinsForTop(chip, index)) {
+      List<TtlDipLayoutReport.PinPlacement> topPins = chipPinsForTop(chip, index);
+      Map<Integer, Integer> pinToEnd = physicalPinToEndIndexes(chipComponent, topPins);
+      for (TtlDipLayoutReport.PinPlacement pin : topPins) {
         if (pin.netId().isBlank()) {
           continue;
         }
         String label = netLabels.getOrDefault(pin.netId(), pin.netId());
         Component tunnel = createTunnel(tunnelFactory, label, Location.create(pin.x(), pin.y(), true), tunnelFacing(pin));
         mutation.add(tunnel);
-        int endIndex = nearestUnusedEnd(chipComponent, tunnel.getEnd(0).getLocation(), usedEnds);
-        if (endIndex >= 0) {
-          usedEnds.add(endIndex);
-          connectOrthogonal(mutation, tunnel.getEnd(0).getLocation(), chipComponent.getEnd(endIndex).getLocation());
+        Integer endIndex = pinToEnd.get(pin.pinNumber());
+        if (endIndex != null) {
+          Location endLocation = chipComponent.getEnd(endIndex).getLocation();
+          pinMap.add(new PinEndBinding(
+              chip.chipId(),
+              chip.packageType(),
+              pin.pinNumber(),
+              pin.role(),
+              pin.gateName(),
+              pin.netId(),
+              label,
+              endIndex,
+              endLocation.getX(),
+              endLocation.getY(),
+              tunnel.getEnd(0).getLocation().getX(),
+              tunnel.getEnd(0).getLocation().getY()));
+          connectOrthogonal(mutation, tunnel.getEnd(0).getLocation(), endLocation);
         }
         addText(mutation, pin.pinNumber() + ":" + pin.netId(), pin.x() + labelOffset(pin), pin.y() - 6);
       }
@@ -378,21 +397,32 @@ public final class TtlDipSubcircuitCompiler {
     mutation.add(Wire.create(corner, to));
   }
 
-  private static int nearestUnusedEnd(Component component, Location target, List<Integer> usedEnds) {
-    int bestIndex = -1;
-    int bestScore = Integer.MAX_VALUE;
+  private static Map<Integer, Integer> physicalPinToEndIndexes(
+      Component component,
+      List<TtlDipLayoutReport.PinPlacement> pins) {
+    Map<Integer, Integer> result = new LinkedHashMap<>();
+    List<IndexedEnd> ends = new ArrayList<>();
     for (int i = 0; i < component.getEnds().size(); i++) {
-      if (usedEnds.contains(i)) {
-        continue;
-      }
       Location loc = component.getEnd(i).getLocation();
-      int score = Math.abs(loc.getX() - target.getX()) + Math.abs(loc.getY() - target.getY());
-      if (score < bestScore) {
-        bestScore = score;
-        bestIndex = i;
+      ends.add(new IndexedEnd(i, loc.getX(), loc.getY()));
+    }
+    List<IndexedEnd> unusedEnds = new ArrayList<>(ends);
+    for (TtlDipLayoutReport.PinPlacement pin : pins) {
+      IndexedEnd best = null;
+      int bestScore = Integer.MAX_VALUE;
+      for (IndexedEnd end : unusedEnds) {
+        int score = Math.abs(end.x() - pin.x()) + Math.abs(end.y() - pin.y());
+        if (score < bestScore) {
+          bestScore = score;
+          best = end;
+        }
+      }
+      if (best != null) {
+        result.put(pin.pinNumber(), best.index());
+        unusedEnds.remove(best);
       }
     }
-    return bestIndex;
+    return result;
   }
 
   private static void saveAndVerify(Loader loader, LogisimFile file, File outputFile) throws Exception {
@@ -418,4 +448,99 @@ public final class TtlDipSubcircuitCompiler {
     CircuitLayoutInspector.requireClean(outputFile);
     TtlDipSubcircuitInspector.requireClean(outputFile);
   }
+
+  private static void writePinMapReports(
+      CircuitSpec spec,
+      File outputFile,
+      List<PinEndBinding> pinMap) throws Exception {
+    Path reportDir = Path.of("generated", "reports");
+    Files.createDirectories(reportDir);
+    Path markdown = reportDir.resolve(spec.name() + "_ttl_dip_subckt_pinmap.md");
+    Path json = reportDir.resolve(spec.name() + "_ttl_dip_subckt_pinmap.json");
+    Files.writeString(markdown, pinMapMarkdown(spec, outputFile, pinMap));
+    Files.writeString(json, pinMapJson(spec, outputFile, pinMap));
+  }
+
+  private static String pinMapMarkdown(CircuitSpec spec, File outputFile, List<PinEndBinding> pinMap) {
+    StringBuilder out = new StringBuilder();
+    out.append("# TTL DIP subcircuit pin map for ").append(spec.name()).append("\n\n");
+    out.append("- Circuit file: ").append(outputFile.getPath()).append("\n");
+    out.append("- Bound pins: ").append(pinMap.size()).append("\n\n");
+    out.append("| Chip | Package | Pin | Role | Gate | Net | Tunnel | End | End X | End Y | Tunnel X | Tunnel Y |\n");
+    out.append("| --- | --- | ---: | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |\n");
+    for (PinEndBinding binding : pinMap) {
+      out.append("| ")
+          .append(binding.chipId()).append(" | ")
+          .append(binding.packageType()).append(" | ")
+          .append(binding.pinNumber()).append(" | ")
+          .append(binding.role()).append(" | ")
+          .append(binding.gateName()).append(" | ")
+          .append(binding.netId()).append(" | ")
+          .append(binding.tunnelLabel()).append(" | ")
+          .append(binding.endIndex()).append(" | ")
+          .append(binding.endX()).append(" | ")
+          .append(binding.endY()).append(" | ")
+          .append(binding.tunnelX()).append(" | ")
+          .append(binding.tunnelY()).append(" |\n");
+    }
+    return out.toString();
+  }
+
+  private static String pinMapJson(CircuitSpec spec, File outputFile, List<PinEndBinding> pinMap) {
+    StringBuilder out = new StringBuilder();
+    out.append("{\n");
+    out.append("  \"circuitName\": \"").append(escape(spec.name())).append("\",\n");
+    out.append("  \"circuitFile\": \"").append(escape(outputFile.getPath())).append("\",\n");
+    out.append("  \"boundPinCount\": ").append(pinMap.size()).append(",\n");
+    out.append("  \"bindings\": [\n");
+    for (int i = 0; i < pinMap.size(); i++) {
+      PinEndBinding binding = pinMap.get(i);
+      out.append("    {\n");
+      out.append("      \"chipId\": \"").append(escape(binding.chipId())).append("\",\n");
+      out.append("      \"packageType\": \"").append(escape(binding.packageType())).append("\",\n");
+      out.append("      \"pinNumber\": ").append(binding.pinNumber()).append(",\n");
+      out.append("      \"role\": \"").append(escape(binding.role())).append("\",\n");
+      out.append("      \"gateName\": \"").append(escape(binding.gateName())).append("\",\n");
+      out.append("      \"netId\": \"").append(escape(binding.netId())).append("\",\n");
+      out.append("      \"tunnelLabel\": \"").append(escape(binding.tunnelLabel())).append("\",\n");
+      out.append("      \"endIndex\": ").append(binding.endIndex()).append(",\n");
+      out.append("      \"endX\": ").append(binding.endX()).append(",\n");
+      out.append("      \"endY\": ").append(binding.endY()).append(",\n");
+      out.append("      \"tunnelX\": ").append(binding.tunnelX()).append(",\n");
+      out.append("      \"tunnelY\": ").append(binding.tunnelY()).append("\n");
+      out.append("    }");
+      if (i + 1 < pinMap.size()) {
+        out.append(",");
+      }
+      out.append("\n");
+    }
+    out.append("  ]\n");
+    out.append("}\n");
+    return out.toString();
+  }
+
+  private static String escape(String text) {
+    return text
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t");
+  }
+
+  private record IndexedEnd(int index, int x, int y) {}
+
+  private record PinEndBinding(
+      String chipId,
+      String packageType,
+      int pinNumber,
+      String role,
+      String gateName,
+      String netId,
+      String tunnelLabel,
+      int endIndex,
+      int endX,
+      int endY,
+      int tunnelX,
+      int tunnelY) {}
 }

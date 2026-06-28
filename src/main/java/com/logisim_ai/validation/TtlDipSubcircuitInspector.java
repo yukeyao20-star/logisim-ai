@@ -3,6 +3,7 @@ package com.logisim_ai.validation;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -79,6 +80,7 @@ public final class TtlDipSubcircuitInspector {
         || !mainXml.contains("label\" val=\"Cout\"")) {
       issues.add("Main circuit is missing expected full-adder external ports A/B/Cin/SUM/Cout.");
     }
+    inspectPinMap(circFile, topChips, issues);
 
     return new Report(circFile.getName(), issues);
   }
@@ -149,6 +151,46 @@ public final class TtlDipSubcircuitInspector {
       }
     }
     return false;
+  }
+
+  private static void inspectPinMap(File circFile, List<ParsedComp> topChips, List<String> issues)
+      throws java.io.IOException {
+    Path pinMap = pinMapPath(circFile);
+    if (!Files.exists(pinMap)) {
+      issues.add("Missing TTL DIP subcircuit pin map report: " + pinMap);
+      return;
+    }
+    String json = Files.readString(pinMap, StandardCharsets.UTF_8);
+    if (!json.contains("\"boundPinCount\"")) {
+      issues.add("Pin map report lacks boundPinCount: " + pinMap);
+    }
+    for (ParsedComp chip : topChips) {
+      String chipId = chip.name().substring(0, chip.name().indexOf('_'));
+      if (!json.contains("\"chipId\": \"" + chipId + "\"")) {
+        issues.add("Pin map report lacks bindings for " + chipId);
+      }
+    }
+    for (String required : List.of(
+        "\"chipId\": \"U1\"",
+        "\"pinNumber\": 1",
+        "\"pinNumber\": 14",
+        "\"chipId\": \"U2\"",
+        "\"chipId\": \"U3\"",
+        "\"endIndex\"")) {
+      if (!json.contains(required)) {
+        issues.add("Pin map report lacks required token: " + required);
+      }
+    }
+  }
+
+  private static Path pinMapPath(File circFile) {
+    String name = circFile.getName();
+    String suffix = "_dip_subckt.circ";
+    if (name.endsWith(suffix)) {
+      String specName = name.substring(0, name.length() - suffix.length());
+      return Path.of("generated", "reports", specName + "_ttl_dip_subckt_pinmap.json");
+    }
+    return circFile.toPath().resolveSibling(name.replace(".circ", "_pinmap.json"));
   }
 
   private record ParsedComp(int x, int y, String name) {}
