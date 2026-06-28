@@ -27,6 +27,7 @@ import com.logisim_ai.ir.PortDirection;
 import com.logisim_ai.ttl.TtlDipLayoutReport;
 import com.logisim_ai.ttl.TtlDipWiringReport;
 import com.logisim_ai.validation.CircuitLayoutInspector;
+import com.logisim_ai.validation.TtlDipSubcircuitInspector;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,9 +38,9 @@ import java.util.Map;
 
 /** Compiles TTL-labeled specs into a chip-package-oriented subcircuit view. */
 public final class TtlDipSubcircuitCompiler {
-  private static final int TOP_START_X = 460;
+  private static final int TOP_START_X = 620;
   private static final int TOP_START_Y = 220;
-  private static final int TOP_CHIP_GAP_X = 380;
+  private static final int TOP_CHIP_GAP_X = 420;
   private static final int TOP_PIN_GAP_Y = 60;
 
   private TtlDipSubcircuitCompiler() {}
@@ -120,6 +121,7 @@ public final class TtlDipSubcircuitCompiler {
 
     addText(mutation, chip.chipId() + " " + chip.packageType(), 230, 40);
     mutation.execute();
+    circuit.getAppearance().recomputeDefaultAppearance();
     return circuit;
   }
 
@@ -145,6 +147,7 @@ public final class TtlDipSubcircuitCompiler {
       mutation.add(chipComponent);
       addText(mutation, chip.chipId() + " " + chip.packageType(), loc.getX(), loc.getY() - 95);
 
+      List<Integer> usedEnds = new ArrayList<>();
       for (TtlDipLayoutReport.PinPlacement pin : chipPinsForTop(chip, index)) {
         if (pin.netId().isBlank()) {
           continue;
@@ -152,6 +155,11 @@ public final class TtlDipSubcircuitCompiler {
         String label = netLabels.getOrDefault(pin.netId(), pin.netId());
         Component tunnel = createTunnel(tunnelFactory, label, Location.create(pin.x(), pin.y(), true), tunnelFacing(pin));
         mutation.add(tunnel);
+        int endIndex = nearestUnusedEnd(chipComponent, tunnel.getEnd(0).getLocation(), usedEnds);
+        if (endIndex >= 0) {
+          usedEnds.add(endIndex);
+          connectOrthogonal(mutation, tunnel.getEnd(0).getLocation(), chipComponent.getEnd(endIndex).getLocation());
+        }
         addText(mutation, pin.pinNumber() + ":" + pin.netId(), pin.x() + labelOffset(pin), pin.y() - 6);
       }
       index++;
@@ -201,8 +209,8 @@ public final class TtlDipSubcircuitCompiler {
         mutation.add(Wire.create(pin.getEnd(0).getLocation(), tunnel.getEnd(0).getLocation()));
         inputY += 70;
       } else {
-        Component tunnel = createTunnel(tunnelFactory, label, Location.create(1380, outputY, true), Direction.EAST);
-        Component pin = createTopPortPin(port, Location.create(1550, outputY, true));
+        Component tunnel = createTunnel(tunnelFactory, label, Location.create(1900, outputY, true), Direction.EAST);
+        Component pin = createTopPortPin(port, Location.create(2070, outputY, true));
         mutation.add(tunnel);
         mutation.add(pin);
         mutation.add(Wire.create(tunnel.getEnd(0).getLocation(), pin.getEnd(0).getLocation()));
@@ -370,6 +378,23 @@ public final class TtlDipSubcircuitCompiler {
     mutation.add(Wire.create(corner, to));
   }
 
+  private static int nearestUnusedEnd(Component component, Location target, List<Integer> usedEnds) {
+    int bestIndex = -1;
+    int bestScore = Integer.MAX_VALUE;
+    for (int i = 0; i < component.getEnds().size(); i++) {
+      if (usedEnds.contains(i)) {
+        continue;
+      }
+      Location loc = component.getEnd(i).getLocation();
+      int score = Math.abs(loc.getX() - target.getX()) + Math.abs(loc.getY() - target.getY());
+      if (score < bestScore) {
+        bestScore = score;
+        bestIndex = i;
+      }
+    }
+    return bestIndex;
+  }
+
   private static void saveAndVerify(Loader loader, LogisimFile file, File outputFile) throws Exception {
     File parent = outputFile.getParentFile();
     if (parent != null && !parent.exists()) {
@@ -391,5 +416,6 @@ public final class TtlDipSubcircuitCompiler {
       }
     }
     CircuitLayoutInspector.requireClean(outputFile);
+    TtlDipSubcircuitInspector.requireClean(outputFile);
   }
 }
