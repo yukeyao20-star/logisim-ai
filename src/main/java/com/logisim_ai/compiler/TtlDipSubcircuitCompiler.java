@@ -27,6 +27,7 @@ import com.logisim_ai.ir.PortDirection;
 import com.logisim_ai.ttl.TtlDipLayoutReport;
 import com.logisim_ai.ttl.TtlDipWiringReport;
 import com.logisim_ai.validation.CircuitLayoutInspector;
+import com.logisim_ai.validation.TtlDipPinMapInspector;
 import com.logisim_ai.validation.TtlDipSubcircuitInspector;
 import java.io.File;
 import java.nio.file.Files;
@@ -75,6 +76,7 @@ public final class TtlDipSubcircuitCompiler {
       List<PinEndBinding> pinMap = new ArrayList<>();
       createTopLevel(loader, file, top, spec, chips, chipCircuits, pinMap);
       writePinMapReports(spec, outputFile, pinMap);
+      TtlDipPinMapInspector.requireConsistent(spec, outputFile);
       saveAndVerify(loader, file, outputFile);
     } finally {
       file.stopAutosaveThread(false);
