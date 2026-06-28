@@ -2,7 +2,7 @@
 
 | Component ID | 7408 Gate | Chip | Gate |
 | --- | --- | --- | --- |
-| and2 | U1A | U1 | A |
+| and2 | U2A | U2 | A |
 
 Total AND gates: 1
 

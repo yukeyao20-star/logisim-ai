@@ -1,0 +1,25 @@
+{
+  "circuitName": "logic_multi_sum_cout_abcin_xor_and_xor_or_ttl",
+  "packageType": "7408",
+  "gateKind": "AND",
+  "gateCount": 2,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "and3",
+      "label": "U2A",
+      "chipId": "U2",
+      "gateName": "A",
+      "chipNumber": 2,
+      "gateIndex": 0
+    },
+    {
+      "componentId": "and4",
+      "label": "U2B",
+      "chipId": "U2",
+      "gateName": "B",
+      "chipNumber": 2,
+      "gateIndex": 1
+    }
+  ]
+}

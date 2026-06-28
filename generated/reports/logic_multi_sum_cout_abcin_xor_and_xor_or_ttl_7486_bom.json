@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_multi_sum_cout_abcin_xor_and_xor_or_ttl",
+  "items": [
+    {
+      "packageType": "7486",
+      "gateKind": "XOR",
+      "chipCount": 1,
+      "usedGateCount": 2,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 2,
+      "unusedGateLabels": ["U1C", "U1D"]
+    }
+  ]
+}

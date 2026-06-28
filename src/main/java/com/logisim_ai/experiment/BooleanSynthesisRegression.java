@@ -98,6 +98,7 @@ public final class BooleanSynthesisRegression {
     runDirectGateTtlSynthesis();
     runTtlStrategyMismatchRejection();
     runMixedTtlPackageSynthesis();
+    runMixedTtlFullAdderSynthesis();
     runTtl7400FullAdderSynthesis();
     runGenericTtlPackageMapper();
     runNaturalLanguageImplementationIntent();
@@ -495,7 +496,7 @@ public final class BooleanSynthesisRegression {
     }
     if (andBom.chipCount() != 1
         || andBom.usedGateCount() != 1
-        || !andBom.unusedGateLabels().equals(List.of("U1B", "U1C", "U1D"))) {
+        || !andBom.unusedGateLabels().equals(List.of("U2B", "U2C", "U2D"))) {
       throw new IllegalStateException("Mixed TTL 7408 BOM mismatch: " + andBom);
     }
 
@@ -513,6 +514,62 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] " + query + " mixed TTL truth table passed");
+  }
+
+  private static void runMixedTtlFullAdderSynthesis() {
+    String query = "SUM=A xor B xor Cin; Cout=(A and B) or (Cin and (A xor B)) use TTL chips";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match mixed TTL full-adder query: " + query);
+    }
+    if (result.intent() != ImplementationIntent.CHIP_LEVEL_CIRCUIT_IMPLEMENTATION) {
+      throw new IllegalStateException("Mixed TTL full-adder intent mismatch: " + result.intent());
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+
+    if (countFactory(spec, "XOR Gate") != 2
+        || countFactory(spec, "AND Gate") != 2
+        || countFactory(spec, "OR Gate") != 1) {
+      throw new IllegalStateException("Mixed TTL full-adder gate family count mismatch: "
+          + spec.components());
+    }
+    TtlPackageMapper.requireContiguousAssignments(spec, TtlPackageSpec.ttl7486());
+    TtlPackageMapper.requireContiguousAssignments(spec, TtlPackageSpec.ttl7408());
+    TtlPackageMapper.requireContiguousAssignments(spec, TtlPackageSpec.ttl7432());
+
+    String bomJson = TtlMultiPackageReport.toJson(spec);
+    String bomMarkdown = TtlMultiPackageReport.toMarkdown(spec);
+    if (!bomJson.contains("\"packageFamilyCount\": 3")
+        || !bomJson.contains("\"totalChipCount\": 3")
+        || !bomJson.contains("\"totalUsedGateCount\": 5")
+        || !bomMarkdown.contains("7408 x 1")
+        || !bomMarkdown.contains("7432 x 1")
+        || !bomMarkdown.contains("7486 x 1")
+        || !bomMarkdown.contains("U1C, U1D")
+        || !bomMarkdown.contains("U2C, U2D")
+        || !bomMarkdown.contains("U3B, U3C, U3D")) {
+      throw new IllegalStateException("Mixed TTL full-adder aggregate BOM mismatch: "
+          + bomJson + "\n" + bomMarkdown);
+    }
+
+    List<String> inputs = List.of("a", "b", "cin");
+    for (int mask = 0; mask < (1 << inputs.size()); mask++) {
+      Map<String, Boolean> values = valuesFor(inputs, mask);
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      boolean a = values.get("a");
+      boolean b = values.get("b");
+      boolean cin = values.get("cin");
+      boolean expectedSum = a ^ b ^ cin;
+      boolean expectedCout = (a && b) || (cin && (a ^ b));
+      if (outputs.get("sum") != expectedSum || outputs.get("cout") != expectedCout) {
+        throw new IllegalStateException("Mixed TTL full-adder mismatch inputs=" + values
+            + " outputs=" + outputs
+            + " expected SUM=" + expectedSum
+            + " Cout=" + expectedCout);
+      }
+    }
+    System.out.println("[OK] " + query + " mixed TTL full-adder truth table passed");
   }
 
   private static void runTtl7400FullAdderSynthesis() {
@@ -642,6 +699,22 @@ public final class BooleanSynthesisRegression {
     }
     if (!rejected) {
       throw new IllegalStateException("Generic TTL mapper accepted non-contiguous 7408 labels");
+    }
+
+    CircuitSpec offsetChipSpec = new CircuitSpec(
+        "ttl7408_offset_chip_regression",
+        List.of(
+            new ComponentSpec("and1", "Gates", "AND Gate", 1, "U3A"),
+            new ComponentSpec("and2", "Gates", "AND Gate", 1, "U3B")),
+        List.of());
+    TtlPackageMapper.requireContiguousAssignments(offsetChipSpec, TtlPackageSpec.ttl7408());
+    TtlPackageMapper.Bom offsetBom =
+        TtlPackageMapper.bom(offsetChipSpec, TtlPackageSpec.ttl7408());
+    if (offsetBom.chipCount() != 1
+        || offsetBom.totalGateCapacity() != 4
+        || offsetBom.usedGateCount() != 2
+        || !offsetBom.unusedGateLabels().equals(List.of("U3C", "U3D"))) {
+      throw new IllegalStateException("Offset chip TTL BOM mismatch: " + offsetBom);
     }
 
     for (TtlPackageSpec spec : List.of(

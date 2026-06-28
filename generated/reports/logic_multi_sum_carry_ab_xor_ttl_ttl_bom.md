@@ -10,5 +10,5 @@ Summary: 7408 x 1, 7486 x 1
 
 Unused gates by package:
 
-- 7408: U1B, U1C, U1D
+- 7408: U2B, U2C, U2D
 - 7486: U1B, U1C, U1D

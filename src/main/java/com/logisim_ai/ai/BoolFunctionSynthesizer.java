@@ -412,6 +412,8 @@ public final class BoolFunctionSynthesizer {
     private int orSeq;
     private int notSeq;
     private int norSeq;
+    private int nextMixedChipNumber = 1;
+    private final Map<String, List<Integer>> mixedChipNumbersByFactory = new LinkedHashMap<>();
     private int netSeq;
 
     Builder(String outputLabel, List<String> variables) {
@@ -675,29 +677,41 @@ public final class BoolFunctionSynthesizer {
     private String mixedTtlLabel(String factory) {
       if (factory.equals("NAND Gate")) {
         int index = nandSeq++;
-        return "U" + (index / 4 + 1) + (char) ('A' + (index % 4));
+        return mixedTtlLabel(factory, index, 4);
       }
       if (factory.equals("NOR Gate")) {
         int index = norSeq++;
-        return "U" + (index / 4 + 1) + (char) ('A' + (index % 4));
+        return mixedTtlLabel(factory, index, 4);
       }
       if (factory.equals("NOT Gate")) {
         int index = notSeq++;
-        return "U" + (index / 6 + 1) + (char) ('A' + (index % 6));
+        return mixedTtlLabel(factory, index, 6);
       }
       if (factory.equals("AND Gate")) {
         int index = andSeq++;
-        return "U" + (index / 4 + 1) + (char) ('A' + (index % 4));
+        return mixedTtlLabel(factory, index, 4);
       }
       if (factory.equals("OR Gate")) {
         int index = orSeq++;
-        return "U" + (index / 4 + 1) + (char) ('A' + (index % 4));
+        return mixedTtlLabel(factory, index, 4);
       }
       if (factory.equals("XOR Gate")) {
         int index = xorSeq++;
-        return "U" + (index / 4 + 1) + (char) ('A' + (index % 4));
+        return mixedTtlLabel(factory, index, 4);
       }
       return "";
+    }
+
+    private String mixedTtlLabel(String factory, int index, int gatesPerChip) {
+      int chipIndex = index / gatesPerChip;
+      List<Integer> chipNumbers = mixedChipNumbersByFactory.computeIfAbsent(
+          factory,
+          ignored -> new ArrayList<>());
+      while (chipNumbers.size() <= chipIndex) {
+        chipNumbers.add(nextMixedChipNumber++);
+      }
+      char gate = (char) ('A' + (index % gatesPerChip));
+      return "U" + chipNumbers.get(chipIndex) + gate;
     }
 
     private void connect(Signal signal, EndpointRef sink) {

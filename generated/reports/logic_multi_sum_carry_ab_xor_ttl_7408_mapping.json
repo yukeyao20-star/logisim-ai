@@ -7,10 +7,10 @@
   "assignments": [
     {
       "componentId": "and2",
-      "label": "U1A",
-      "chipId": "U1",
+      "label": "U2A",
+      "chipId": "U2",
       "gateName": "A",
-      "chipNumber": 1,
+      "chipNumber": 2,
       "gateIndex": 0
     }
   ]

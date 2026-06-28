@@ -111,7 +111,9 @@
     <comp lib="2" loc="(720,120)" name="XOR Gate">
       <a name="label" val="U1A"/>
     </comp>
-    <comp lib="2" loc="(720,290)" name="AND Gate"/>
+    <comp lib="2" loc="(720,290)" name="AND Gate">
+      <a name="label" val="U2A"/>
+    </comp>
     <wire from="(1180,120)" to="(1360,120)"/>
     <wire from="(1180,290)" to="(1360,290)"/>
     <wire from="(640,100)" to="(660,100)"/>

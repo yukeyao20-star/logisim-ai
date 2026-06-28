@@ -5,4 +5,4 @@
 | 7408 | 1 | 1 | 4 | 3 |
 
 Summary: 7408 x 1
-Unused gates: U1B, U1C, U1D
+Unused gates: U2B, U2C, U2D
