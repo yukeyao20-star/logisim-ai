@@ -274,6 +274,7 @@ public final class GenerateAndGate {
     }
     writeMultiPackageTtlBomIfPresent(spec);
     writeTtlDipReportIfPresent(spec);
+    writeTtlDipLayoutReportIfPresent(spec);
   }
 
   private static void writeMultiPackageTtlBomIfPresent(com.logisim_ai.ir.CircuitSpec spec) throws Exception {
@@ -298,6 +299,19 @@ public final class GenerateAndGate {
     Files.createDirectories(markdownReport.getParent());
     Files.writeString(markdownReport, com.logisim_ai.ttl.TtlDipWiringReport.toMarkdown(spec));
     Files.writeString(jsonReport, com.logisim_ai.ttl.TtlDipWiringReport.toJson(spec));
+    System.out.println("[OK] " + markdownReport + " generated");
+    System.out.println("[OK] " + jsonReport + " generated");
+  }
+
+  private static void writeTtlDipLayoutReportIfPresent(com.logisim_ai.ir.CircuitSpec spec) throws Exception {
+    if (com.logisim_ai.ttl.TtlDipLayoutReport.blocks(spec).isEmpty()) {
+      return;
+    }
+    Path markdownReport = Path.of("generated/reports/" + spec.name() + "_ttl_dip_layout.md");
+    Path jsonReport = Path.of("generated/reports/" + spec.name() + "_ttl_dip_layout.json");
+    Files.createDirectories(markdownReport.getParent());
+    Files.writeString(markdownReport, com.logisim_ai.ttl.TtlDipLayoutReport.toMarkdown(spec));
+    Files.writeString(jsonReport, com.logisim_ai.ttl.TtlDipLayoutReport.toJson(spec));
     System.out.println("[OK] " + markdownReport + " generated");
     System.out.println("[OK] " + jsonReport + " generated");
   }

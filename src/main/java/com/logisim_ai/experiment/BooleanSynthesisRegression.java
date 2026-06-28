@@ -5,6 +5,7 @@ import com.logisim_ai.ai.NaturalLanguageCircuitPlanner.ImplementationIntent;
 import com.logisim_ai.ir.CircuitSpec;
 import com.logisim_ai.ir.ComponentSpec;
 import com.logisim_ai.ttl.Ttl7400Mapper;
+import com.logisim_ai.ttl.TtlDipLayoutReport;
 import com.logisim_ai.ttl.TtlDipWiringReport;
 import com.logisim_ai.ttl.TtlMultiPackageReport;
 import com.logisim_ai.ttl.TtlPackageMapper;
@@ -567,6 +568,22 @@ public final class BooleanSynthesisRegression {
         || !dipMarkdown.contains("| 3 | output | A | xor1 | 0 |")) {
       throw new IllegalStateException("Mixed TTL full-adder DIP report mismatch: "
           + dipJson + "\n" + dipMarkdown);
+    }
+    List<TtlDipLayoutReport.ChipBlock> dipBlocks = TtlDipLayoutReport.blocks(spec);
+    String dipLayoutJson = TtlDipLayoutReport.toJson(spec);
+    String dipLayoutMarkdown = TtlDipLayoutReport.toMarkdown(spec);
+    if (dipBlocks.size() != 3
+        || dipBlocks.get(0).x() >= dipBlocks.get(1).x()
+        || dipBlocks.get(1).x() >= dipBlocks.get(2).x()
+        || !dipLayoutJson.contains("\"chipCount\": 3")
+        || !dipLayoutJson.contains("\"packageType\": \"7486\"")
+        || !dipLayoutJson.contains("\"pinNumber\": 14")
+        || !dipLayoutJson.contains("\"side\": \"RIGHT\"")
+        || !dipLayoutMarkdown.contains("U1 - 7486 at")
+        || !dipLayoutMarkdown.contains("| 1 | LEFT |")
+        || !dipLayoutMarkdown.contains("| 14 | RIGHT |")) {
+      throw new IllegalStateException("Mixed TTL full-adder DIP layout mismatch: "
+          + dipLayoutJson + "\n" + dipLayoutMarkdown);
     }
 
     List<String> inputs = List.of("a", "b", "cin");
