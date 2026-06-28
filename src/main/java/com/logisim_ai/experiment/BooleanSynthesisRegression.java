@@ -5,6 +5,7 @@ import com.logisim_ai.ai.NaturalLanguageCircuitPlanner.ImplementationIntent;
 import com.logisim_ai.ir.CircuitSpec;
 import com.logisim_ai.ir.ComponentSpec;
 import com.logisim_ai.ttl.Ttl7400Mapper;
+import com.logisim_ai.ttl.TtlDipWiringReport;
 import com.logisim_ai.ttl.TtlMultiPackageReport;
 import com.logisim_ai.ttl.TtlPackageMapper;
 import com.logisim_ai.ttl.TtlPackageSpec;
@@ -551,6 +552,21 @@ public final class BooleanSynthesisRegression {
         || !bomMarkdown.contains("U3B, U3C, U3D")) {
       throw new IllegalStateException("Mixed TTL full-adder aggregate BOM mismatch: "
           + bomJson + "\n" + bomMarkdown);
+    }
+    String dipJson = TtlDipWiringReport.toJson(spec);
+    String dipMarkdown = TtlDipWiringReport.toMarkdown(spec);
+    if (TtlDipWiringReport.chips(spec).size() != 3
+        || !dipJson.contains("\"chipId\": \"U1\"")
+        || !dipJson.contains("\"packageType\": \"7486\"")
+        || !dipJson.contains("\"chipId\": \"U2\"")
+        || !dipJson.contains("\"packageType\": \"7408\"")
+        || !dipJson.contains("\"chipId\": \"U3\"")
+        || !dipJson.contains("\"packageType\": \"7432\"")
+        || !dipMarkdown.contains("| 14 | VCC |")
+        || !dipMarkdown.contains("| 7 | GND |")
+        || !dipMarkdown.contains("| 3 | output | A | xor1 | 0 |")) {
+      throw new IllegalStateException("Mixed TTL full-adder DIP report mismatch: "
+          + dipJson + "\n" + dipMarkdown);
     }
 
     List<String> inputs = List.of("a", "b", "cin");

@@ -1,0 +1,198 @@
+{
+  "circuitName": "logic_multi_sum_cout_abcin_xor_and_xor_or_ttl",
+  "chipCount": 3,
+  "chips": [
+    {
+      "chipId": "U1",
+      "chipNumber": 1,
+      "packageType": "7486",
+      "gateKind": "XOR",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "xor1",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "xor1",
+          "componentEndIndex": 2,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 3,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "xor1",
+          "componentEndIndex": 0,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 4,
+          "role": "input1",
+          "gateName": "B",
+          "componentId": "xor2",
+          "componentEndIndex": 1,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 5,
+          "role": "input2",
+          "gateName": "B",
+          "componentId": "xor2",
+          "componentEndIndex": 2,
+          "netId": "net_cin"
+        },
+        {
+          "pinNumber": 6,
+          "role": "output",
+          "gateName": "B",
+          "componentId": "xor2",
+          "componentEndIndex": 0,
+          "netId": "net_i4"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    },
+    {
+      "chipId": "U2",
+      "chipNumber": 2,
+      "packageType": "7408",
+      "gateKind": "AND",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "and3",
+          "componentEndIndex": 1,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "and3",
+          "componentEndIndex": 2,
+          "netId": "net_cin"
+        },
+        {
+          "pinNumber": 3,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "and3",
+          "componentEndIndex": 0,
+          "netId": "net_i2"
+        },
+        {
+          "pinNumber": 4,
+          "role": "input1",
+          "gateName": "B",
+          "componentId": "and4",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 5,
+          "role": "input2",
+          "gateName": "B",
+          "componentId": "and4",
+          "componentEndIndex": 2,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 6,
+          "role": "output",
+          "gateName": "B",
+          "componentId": "and4",
+          "componentEndIndex": 0,
+          "netId": "net_i3"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    },
+    {
+      "chipId": "U3",
+      "chipNumber": 3,
+      "packageType": "7432",
+      "gateKind": "OR",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "or5",
+          "componentEndIndex": 1,
+          "netId": "net_i2"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "or5",
+          "componentEndIndex": 2,
+          "netId": "net_i3"
+        },
+        {
+          "pinNumber": 3,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "or5",
+          "componentEndIndex": 0,
+          "netId": "net_i5"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    }
+  ]
+}
