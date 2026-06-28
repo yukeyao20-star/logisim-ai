@@ -14,6 +14,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 public final class GenerateAndGate {
   private GenerateAndGate() {}
 
@@ -68,7 +69,9 @@ public final class GenerateAndGate {
       }
       case "8", "nl" -> {
         // Natural language circuit generation
-        String nlQuery = (args.length > 1) ? args[1] : "full adder";
+        String nlQuery = (args.length > 1)
+            ? String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length))
+            : "full adder";
         System.out.println("[dispatch] Running experiment 8: NL generation for '" + nlQuery + "'");
         runNlGeneration(nlQuery);
         System.exit(0);
@@ -86,6 +89,21 @@ public final class GenerateAndGate {
         System.out.println("[dispatch] Running experiment 9: JSON generation from " + jsonFile
             + " to " + outputFile);
         runJsonGeneration(jsonFile, outputFile);
+        System.exit(0);
+        return;
+      }
+      case "10", "catalog", "ttl-catalog" -> {
+        System.out.println("[dispatch] Running experiment 10: TTL catalog generation");
+        String jsonOutput = (args.length > 1) ? args[1] : "generated/catalog/ttl_catalog.json";
+        String markdownOutput = (args.length > 2) ? args[2] : "docs/TTL_FACTORY_CATALOG_029.md";
+        runTtlCatalogGeneration(jsonOutput, markdownOutput);
+        System.exit(0);
+        return;
+      }
+      case "11", "truth-table", "boolean-regression" -> {
+        System.out.println("[dispatch] Running experiment 11: Boolean AST/truth-table regression");
+        BooleanAstRegression.main(new String[]{});
+        BooleanSynthesisRegression.main(new String[]{});
         System.exit(0);
         return;
       }
@@ -213,15 +231,22 @@ public final class GenerateAndGate {
    */
   private static void runNlGeneration(String query) {
     try {
-      var result = com.logisim_ai.ai.NaturalLanguageCircuitPlanner.plan(query);
+      var report = com.logisim_ai.ai.NaturalLanguageCircuitPlanner.planDetailed(query);
+      var result = report.result();
       if (result == null) {
-        System.err.println("[NL] No template matched for: '" + query + "'");
-        System.err.println("[NL] Supported: " + com.logisim_ai.ai.NaturalLanguageCircuitPlanner.supportedCircuits());
+        System.err.println("[NL] Could not generate circuit for: '" + query + "'");
+        System.err.println("[NL] Reason: " + report.diagnostic());
+        if (!report.suggestions().isEmpty()) {
+          System.err.println("[NL] Suggestions: " + report.suggestions());
+        }
         System.exit(1);
         return;
       }
 
       System.out.println("[NL] " + result.description());
+      if (result.sourceJson() != null) {
+        System.out.println("[NL] Source JSON: " + result.sourceJson());
+      }
       com.logisim_ai.ir.CircuitSpec spec = result.spec();
 
       // Validate
@@ -235,10 +260,56 @@ public final class GenerateAndGate {
       } else {
         com.logisim_ai.compiler.LogisimCompiler.compileSingleComponent(spec, outputFile);
       }
+      writeTtlReportsIfPresent(spec);
       System.out.println("[OK] " + spec.name() + ".circ generated via NL path");
     } catch (Exception e) {
       throw new RuntimeException("NL generation failed for: " + query, e);
     }
+  }
+
+  private static void writeTtlReportsIfPresent(com.logisim_ai.ir.CircuitSpec spec) throws Exception {
+    for (com.logisim_ai.ttl.TtlPackageSpec packageSpec : java.util.List.of(
+        com.logisim_ai.ttl.TtlPackageSpec.ttl7400(),
+        com.logisim_ai.ttl.TtlPackageSpec.ttl7402(),
+        com.logisim_ai.ttl.TtlPackageSpec.ttl7404(),
+        com.logisim_ai.ttl.TtlPackageSpec.ttl7408(),
+        com.logisim_ai.ttl.TtlPackageSpec.ttl7432(),
+        com.logisim_ai.ttl.TtlPackageSpec.ttl7486())) {
+      writeTtlReportIfPresent(spec, packageSpec);
+    }
+  }
+
+  private static void writeTtlReportIfPresent(
+      com.logisim_ai.ir.CircuitSpec spec,
+      com.logisim_ai.ttl.TtlPackageSpec packageSpec) throws Exception {
+    var assignments = com.logisim_ai.ttl.TtlPackageMapper.assignments(spec, packageSpec);
+    if (assignments.isEmpty()) {
+      return;
+    }
+    com.logisim_ai.ttl.TtlPackageMapper.requireContiguousAssignments(spec, packageSpec);
+    Path markdownReport = Path.of("generated/reports/" + spec.name()
+        + "_" + packageSpec.packageType() + "_mapping.md");
+    Path jsonReport = Path.of("generated/reports/" + spec.name()
+        + "_" + packageSpec.packageType() + "_mapping.json");
+    Path bomMarkdownReport = Path.of("generated/reports/" + spec.name()
+        + "_" + packageSpec.packageType() + "_bom.md");
+    Path bomJsonReport = Path.of("generated/reports/" + spec.name()
+        + "_" + packageSpec.packageType() + "_bom.json");
+    Files.createDirectories(markdownReport.getParent());
+    Files.writeString(markdownReport, com.logisim_ai.ttl.TtlPackageMapper.toMarkdown(spec, packageSpec));
+    Files.writeString(jsonReport, com.logisim_ai.ttl.TtlPackageMapper.toJson(spec, packageSpec));
+    String bomMarkdown = com.logisim_ai.ttl.TtlPackageMapper.toBomMarkdown(spec, packageSpec);
+    String bomJson = com.logisim_ai.ttl.TtlPackageMapper.toBomJson(spec, packageSpec);
+    Files.writeString(bomMarkdownReport, bomMarkdown);
+    Files.writeString(bomJsonReport, bomJson);
+    if (packageSpec.packageType().equals("7400")) {
+      Files.writeString(Path.of("generated/reports/" + spec.name() + "_bom.md"), bomMarkdown);
+      Files.writeString(Path.of("generated/reports/" + spec.name() + "_bom.json"), bomJson);
+    }
+    System.out.println("[OK] " + markdownReport + " generated");
+    System.out.println("[OK] " + jsonReport + " generated");
+    System.out.println("[OK] " + bomMarkdownReport + " generated");
+    System.out.println("[OK] " + bomJsonReport + " generated");
   }
 
   /**
@@ -255,6 +326,14 @@ public final class GenerateAndGate {
       System.out.println("[OK] " + outputFile.getPath() + " generated via JSON path");
     } catch (Exception e) {
       throw new RuntimeException("JSON generation failed for: " + jsonFilePath, e);
+    }
+  }
+
+  private static void runTtlCatalogGeneration(String jsonOutputPath, String markdownOutputPath) {
+    try {
+      com.logisim_ai.catalog.TtlCatalogGenerator.main(new String[] {jsonOutputPath, markdownOutputPath});
+    } catch (Exception e) {
+      throw new RuntimeException("TTL catalog generation failed", e);
     }
   }
 
