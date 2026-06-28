@@ -29,6 +29,13 @@ public final class TtlDipBehaviorInspector {
 
   public static Report inspect(CircuitSpec spec, File circFile) throws java.io.IOException {
     TtlDipPinMapInspector.Report pinMapReport = TtlDipPinMapInspector.inspect(spec, circFile);
+    return inspect(spec, circFile.getPath(), pinMapReport);
+  }
+
+  public static Report inspect(
+      CircuitSpec spec,
+      String circuitFile,
+      TtlDipPinMapInspector.Report pinMapReport) {
     List<ExternalPort> inputs = spec.externalPorts().stream()
         .filter(port -> port.direction() == PortDirection.INPUT)
         .toList();
@@ -38,7 +45,7 @@ public final class TtlDipBehaviorInspector {
 
     List<Row> rows = new java.util.ArrayList<>();
     if (inputs.size() > 12) {
-      return new Report(spec.name(), circFile.getPath(), false, List.of(),
+      return new Report(spec.name(), circuitFile, pinMapReport.clean(), List.of(),
           List.of("Too many inputs for exhaustive TTL DIP behavior evidence: " + inputs.size()));
     }
     for (int mask = 0; mask < (1 << inputs.size()); mask++) {
@@ -62,7 +69,7 @@ public final class TtlDipBehaviorInspector {
     if (rows.isEmpty()) {
       issues.add("No behavior rows generated.");
     }
-    return new Report(spec.name(), circFile.getPath(), pinMapReport.clean(), rows, List.copyOf(issues));
+    return new Report(spec.name(), circuitFile, pinMapReport.clean(), rows, List.copyOf(issues));
   }
 
   private static String toMarkdown(Report report) {

@@ -4,6 +4,9 @@ import com.logisim_ai.ai.NaturalLanguageCircuitPlanner;
 import com.logisim_ai.ai.NaturalLanguageCircuitPlanner.ImplementationIntent;
 import com.logisim_ai.ir.CircuitSpec;
 import com.logisim_ai.ir.ComponentSpec;
+import com.logisim_ai.ir.ExternalPort;
+import com.logisim_ai.ir.PortDirection;
+import com.logisim_ai.layout.PortSide;
 import com.logisim_ai.ttl.Ttl7400Mapper;
 import com.logisim_ai.ttl.TtlDipLayoutReport;
 import com.logisim_ai.ttl.TtlDipWiringReport;
@@ -12,6 +15,7 @@ import com.logisim_ai.ttl.TtlPackageMapper;
 import com.logisim_ai.ttl.TtlPackageSpec;
 import com.logisim_ai.validation.CircuitSemanticValidator;
 import com.logisim_ai.validation.CircuitTruthTableEvaluator;
+import com.logisim_ai.validation.TtlDipBehaviorInspector;
 import com.logisim_ai.validation.TtlDipPinMapInspector;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -103,6 +107,7 @@ public final class BooleanSynthesisRegression {
     runMixedTtlPackageSynthesis();
     runMixedTtlFullAdderSynthesis();
     runTtlDipPinMapInspectorRegression();
+    runTtlDipBehaviorInspectorRegression();
     runTtl7400FullAdderSynthesis();
     runGenericTtlPackageMapper();
     runNaturalLanguageImplementationIntent();
@@ -747,6 +752,74 @@ public final class BooleanSynthesisRegression {
     out.append("  ]\n");
     out.append("}\n");
     return out.toString();
+  }
+
+  private static void runTtlDipBehaviorInspectorRegression() {
+    String query = "SUM=A xor B xor Cin; Cout=(A and B) or (Cin and (A xor B)) use TTL chips";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+
+    TtlDipPinMapInspector.Report cleanPinMap =
+        TtlDipPinMapInspector.inspectJson(spec, "synthetic-valid-pinmap.json", syntheticPinMapJson(spec, false));
+    TtlDipBehaviorInspector.Report behavior =
+        TtlDipBehaviorInspector.inspect(spec, "synthetic-full-adder-dip.circ", cleanPinMap);
+    if (!behavior.clean() || behavior.rows().size() != 8 || !behavior.pinMapConsistent()) {
+      throw new IllegalStateException("Expected clean full-adder DIP behavior report: "
+          + behavior.toHumanString());
+    }
+
+    TtlDipPinMapInspector.Report badPinMap =
+        new TtlDipPinMapInspector.Report("synthetic-bad-pinmap.json", List.of("forced mismatch"));
+    TtlDipBehaviorInspector.Report badBehavior =
+        TtlDipBehaviorInspector.inspect(spec, "synthetic-full-adder-dip.circ", badPinMap);
+    if (badBehavior.clean() || badBehavior.pinMapConsistent()) {
+      throw new IllegalStateException("Expected PinMap mismatch to fail behavior report");
+    }
+    if (!badBehavior.toHumanString().contains("PinMap mismatch")) {
+      throw new IllegalStateException("Behavior PinMap mismatch failed for wrong reason: "
+          + badBehavior.toHumanString());
+    }
+
+    CircuitSpec oversized = oversizedInputSpec();
+    TtlDipBehaviorInspector.Report oversizedReport =
+        TtlDipBehaviorInspector.inspect(oversized, "synthetic-oversized-dip.circ", cleanPinMap);
+    if (oversizedReport.clean()
+        || !oversizedReport.toHumanString().contains("Too many inputs")) {
+      throw new IllegalStateException("Expected oversized behavior report to fail: "
+          + oversizedReport.toHumanString());
+    }
+
+    System.out.println("[OK] TTL DIP behavior inspector positive/negative regression passed");
+  }
+
+  private static CircuitSpec oversizedInputSpec() {
+    List<ExternalPort> ports = new java.util.ArrayList<>();
+    for (int i = 0; i < 13; i++) {
+      ports.add(new ExternalPort(
+          "i" + i,
+          "I" + i,
+          1,
+          PortDirection.INPUT,
+          PortSide.LEFT,
+          "and1",
+          1));
+    }
+    ports.add(new ExternalPort(
+        "y",
+        "Y",
+        1,
+        PortDirection.OUTPUT,
+        PortSide.RIGHT,
+        "and1",
+        0));
+    return new CircuitSpec(
+        "oversized_input_behavior_regression",
+        List.of(new ComponentSpec("and1", "Gates", "AND Gate", 1, "U1A")),
+        ports);
   }
 
   private static void runGenericTtlPackageMapper() {
