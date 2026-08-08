@@ -73,12 +73,18 @@ public final class GenerateAndGate {
             ? String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length))
             : "full adder";
         System.out.println("[dispatch] Running experiment 8: NL generation for '" + nlQuery + "'");
-        String nativeChip = com.logisim_ai.ai.NaturalLanguageCircuitPlanner.findNativeChip(nlQuery);
-        if (nativeChip != null) {
-          System.out.println("[dispatch] Detected native TTL chip request: " + nativeChip);
-          runTtlNativeChipGeneration(nativeChip);
+        String multiChipTemplate = findMultiChipTemplateByQuery(nlQuery);
+        if (multiChipTemplate != null) {
+          System.out.println("[dispatch] Detected multi-chip template request: " + multiChipTemplate);
+          runMultiChipTemplateGeneration(multiChipTemplate);
         } else {
-          runNlGeneration(nlQuery);
+          String nativeChip = com.logisim_ai.ai.NaturalLanguageCircuitPlanner.findNativeChip(nlQuery);
+          if (nativeChip != null) {
+            System.out.println("[dispatch] Detected native TTL chip request: " + nativeChip);
+            runTtlNativeChipGeneration(nativeChip);
+          } else {
+            runNlGeneration(nlQuery);
+          }
         }
         System.exit(0);
         return;
@@ -132,6 +138,13 @@ public final class GenerateAndGate {
         String factory = (args.length > 1) ? args[1] : "74160";
         System.out.println("[dispatch] Running experiment 14: native TTL chip '" + factory + "'");
         runTtlNativeChipGeneration(factory);
+        System.exit(0);
+        return;
+      }
+      case "15", "multichip", "template-circuit" -> {
+        String templateName = (args.length > 1) ? args[1] : "decoder_4to16";
+        System.out.println("[dispatch] Running experiment 15: multi-chip template '" + templateName + "'");
+        runMultiChipTemplateGeneration(templateName);
         System.exit(0);
         return;
       }
@@ -464,6 +477,57 @@ public final class GenerateAndGate {
     } catch (Exception e) {
       throw new RuntimeException("Native TTL chip generation failed for: " + factory, e);
     }
+  }
+
+  private static void runMultiChipTemplateGeneration(String templateName) {
+    try {
+      com.logisim_ai.compiler.MultiChipCircuitGenerator.Template template =
+          findMultiChipTemplate(templateName);
+      java.io.File outputFile = new java.io.File(
+          "generated/circ/" + template.circuitName() + ".circ");
+      com.logisim_ai.compiler.MultiChipCircuitGenerator.compile(template, outputFile);
+      System.out.println("[OK] " + outputFile.getPath()
+          + " generated as multi-chip template (" + template.label() + ")");
+      printCircuitManifestPath(outputFile);
+      printSummaryPath(com.logisim_ai.validation.GenerationSummary.markdownPath(outputFile));
+      printDeliveryPath(outputFile);
+    } catch (Exception e) {
+      throw new RuntimeException("Multi-chip template generation failed for: " + templateName, e);
+    }
+  }
+
+  private static String findMultiChipTemplateByQuery(String query) {
+    if (query == null || query.isBlank()) {
+      return null;
+    }
+    String q = query.toLowerCase(java.util.Locale.ROOT).replaceAll("\\s+", "");
+    // 4-to-16 decoder: 2x74138 + 4-16 + decoder/译码
+    if (q.contains("4-16") || q.contains("4-16线") || q.contains("416") || q.contains("4到16")
+        || (q.contains("74138") && (q.contains("译码") || q.contains("decoder") || q.contains("16")))) {
+      return com.logisim_ai.compiler.MultiChipCircuitGenerator.Template.DECODER_4TO16.circuitName();
+    }
+    // 16-to-4 priority encoder: 2x74148 + priority + encoder/编码
+    if (q.contains("16-4") || q.contains("16-4线") || q.contains("164")
+        || q.contains("16到4") || (q.contains("74148") && (q.contains("编码") || q.contains("encoder")))) {
+      return com.logisim_ai.compiler.MultiChipCircuitGenerator.Template.ENCODER_16TO4.circuitName();
+    }
+    return null;
+  }
+
+  private static com.logisim_ai.compiler.MultiChipCircuitGenerator.Template findMultiChipTemplate(
+      String name) {
+    for (com.logisim_ai.compiler.MultiChipCircuitGenerator.Template template
+        : com.logisim_ai.compiler.MultiChipCircuitGenerator.Template.values()) {
+      if (template.name().equalsIgnoreCase(name)
+          || template.circuitName().equalsIgnoreCase(name)
+          || template.label().equalsIgnoreCase(name)
+          || name.contains(template.label().toLowerCase().replace(" ", "-"))
+          || name.contains(template.circuitName())) {
+        return template;
+      }
+    }
+    throw new IllegalArgumentException("Unknown multi-chip template: " + name
+        + " (available: decoder_4to16, encoder_16to4)");
   }
 
   /** Minimal spec used for official JAR verification of a standalone native chip. */
