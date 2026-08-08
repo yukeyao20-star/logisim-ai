@@ -14,6 +14,12 @@ temp/
 **/.fuse_hidden*
 **/XX*
 
+# IDE/workspace metadata
+.classpath
+.project
+.settings/
+bin/
+
 # Third-party checkout is kept outside this recovery repository.
 # Intentional Logisim source changes are preserved as patch files under patches/.
 third_party/
