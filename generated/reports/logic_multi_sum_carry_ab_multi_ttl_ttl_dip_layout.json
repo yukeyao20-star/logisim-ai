@@ -1,0 +1,312 @@
+{
+  "circuitName": "logic_multi_sum_carry_ab_multi_ttl",
+  "chipCount": 2,
+  "canvasWidth": 840,
+  "canvasHeight": 600,
+  "chips": [
+    {
+      "chipId": "U1",
+      "chipNumber": 1,
+      "packageType": "7486",
+      "gateKind": "XOR",
+      "x": 160,
+      "y": 120,
+      "width": 220,
+      "height": 360,
+      "pins": [
+        {
+          "pinNumber": 1,
+          "side": "LEFT",
+          "x": 160,
+          "y": 180,
+          "role": "input1",
+          "gateName": "A",
+          "netId": "net_a",
+          "label": "U1.1"
+        },
+        {
+          "pinNumber": 2,
+          "side": "LEFT",
+          "x": 160,
+          "y": 220,
+          "role": "input2",
+          "gateName": "A",
+          "netId": "net_b",
+          "label": "U1.2"
+        },
+        {
+          "pinNumber": 3,
+          "side": "LEFT",
+          "x": 160,
+          "y": 260,
+          "role": "output",
+          "gateName": "A",
+          "netId": "net_i1",
+          "label": "U1.3"
+        },
+        {
+          "pinNumber": 4,
+          "side": "LEFT",
+          "x": 160,
+          "y": 300,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.4"
+        },
+        {
+          "pinNumber": 5,
+          "side": "LEFT",
+          "x": 160,
+          "y": 340,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.5"
+        },
+        {
+          "pinNumber": 6,
+          "side": "LEFT",
+          "x": 160,
+          "y": 380,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.6"
+        },
+        {
+          "pinNumber": 7,
+          "side": "LEFT",
+          "x": 160,
+          "y": 420,
+          "role": "GND",
+          "gateName": "",
+          "netId": "GND",
+          "label": "U1.7"
+        },
+        {
+          "pinNumber": 14,
+          "side": "RIGHT",
+          "x": 380,
+          "y": 180,
+          "role": "VCC",
+          "gateName": "",
+          "netId": "VCC",
+          "label": "U1.14"
+        },
+        {
+          "pinNumber": 13,
+          "side": "RIGHT",
+          "x": 380,
+          "y": 220,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.13"
+        },
+        {
+          "pinNumber": 12,
+          "side": "RIGHT",
+          "x": 380,
+          "y": 260,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.12"
+        },
+        {
+          "pinNumber": 11,
+          "side": "RIGHT",
+          "x": 380,
+          "y": 300,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.11"
+        },
+        {
+          "pinNumber": 10,
+          "side": "RIGHT",
+          "x": 380,
+          "y": 340,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.10"
+        },
+        {
+          "pinNumber": 9,
+          "side": "RIGHT",
+          "x": 380,
+          "y": 380,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.9"
+        },
+        {
+          "pinNumber": 8,
+          "side": "RIGHT",
+          "x": 380,
+          "y": 420,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U1.8"
+        }
+      ]
+    },
+    {
+      "chipId": "U2",
+      "chipNumber": 2,
+      "packageType": "7408",
+      "gateKind": "AND",
+      "x": 460,
+      "y": 120,
+      "width": 220,
+      "height": 360,
+      "pins": [
+        {
+          "pinNumber": 1,
+          "side": "LEFT",
+          "x": 460,
+          "y": 180,
+          "role": "input1",
+          "gateName": "A",
+          "netId": "net_a",
+          "label": "U2.1"
+        },
+        {
+          "pinNumber": 2,
+          "side": "LEFT",
+          "x": 460,
+          "y": 220,
+          "role": "input2",
+          "gateName": "A",
+          "netId": "net_b",
+          "label": "U2.2"
+        },
+        {
+          "pinNumber": 3,
+          "side": "LEFT",
+          "x": 460,
+          "y": 260,
+          "role": "output",
+          "gateName": "A",
+          "netId": "net_i2",
+          "label": "U2.3"
+        },
+        {
+          "pinNumber": 4,
+          "side": "LEFT",
+          "x": 460,
+          "y": 300,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.4"
+        },
+        {
+          "pinNumber": 5,
+          "side": "LEFT",
+          "x": 460,
+          "y": 340,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.5"
+        },
+        {
+          "pinNumber": 6,
+          "side": "LEFT",
+          "x": 460,
+          "y": 380,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.6"
+        },
+        {
+          "pinNumber": 7,
+          "side": "LEFT",
+          "x": 460,
+          "y": 420,
+          "role": "GND",
+          "gateName": "",
+          "netId": "GND",
+          "label": "U2.7"
+        },
+        {
+          "pinNumber": 14,
+          "side": "RIGHT",
+          "x": 680,
+          "y": 180,
+          "role": "VCC",
+          "gateName": "",
+          "netId": "VCC",
+          "label": "U2.14"
+        },
+        {
+          "pinNumber": 13,
+          "side": "RIGHT",
+          "x": 680,
+          "y": 220,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.13"
+        },
+        {
+          "pinNumber": 12,
+          "side": "RIGHT",
+          "x": 680,
+          "y": 260,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.12"
+        },
+        {
+          "pinNumber": 11,
+          "side": "RIGHT",
+          "x": 680,
+          "y": 300,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.11"
+        },
+        {
+          "pinNumber": 10,
+          "side": "RIGHT",
+          "x": 680,
+          "y": 340,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.10"
+        },
+        {
+          "pinNumber": 9,
+          "side": "RIGHT",
+          "x": 680,
+          "y": 380,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.9"
+        },
+        {
+          "pinNumber": 8,
+          "side": "RIGHT",
+          "x": 680,
+          "y": 420,
+          "role": "unused",
+          "gateName": "",
+          "netId": "",
+          "label": "U2.8"
+        }
+      ]
+    }
+  ]
+}

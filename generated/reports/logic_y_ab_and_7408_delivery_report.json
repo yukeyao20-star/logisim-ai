@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "Y=A and B use 7408",
+  "request": "Y=A与B用7408芯片",
   "intent": "CHIP_LEVEL_CIRCUIT_IMPLEMENTATION",
   "implementationProfile": {
     "level": "CHIP_LEVEL",
@@ -37,7 +37,7 @@
   "layoutAutoRepairApplied": false,
   "layoutAutoRepairResults": [],
   "recommendedActions": ["open_circuit", "review_manifest", "review_chip_mapping", "review_ttl_bom"],
-  "artifactCount": 17,
+  "artifactCount": 19,
   "artifacts": [
     {"kind": "circuit", "path": "generated\\circ\\logic_y_ab_and_7408.circ", "exists": true},
     {"kind": "chip_bom", "path": "generated\\reports\\logic_y_ab_and_7408_7408_bom.json", "exists": true},
@@ -52,6 +52,8 @@
     {"kind": "delivery_markdown", "path": "generated\\reports\\logic_y_ab_and_7408_delivery_report.md", "exists": true},
     {"kind": "summary_json", "path": "generated\\reports\\logic_y_ab_and_7408_generation_summary.json", "exists": true},
     {"kind": "summary_markdown", "path": "generated\\reports\\logic_y_ab_and_7408_generation_summary.md", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\logic_y_ab_and_7408_official_simulation.json", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\logic_y_ab_and_7408_official_simulation.md", "exists": true},
     {"kind": "ttl_dip_wiring", "path": "generated\\reports\\logic_y_ab_and_7408_ttl_dip.json", "exists": true},
     {"kind": "ttl_dip_wiring", "path": "generated\\reports\\logic_y_ab_and_7408_ttl_dip.md", "exists": true},
     {"kind": "ttl_dip_layout", "path": "generated\\reports\\logic_y_ab_and_7408_ttl_dip_layout.json", "exists": true},

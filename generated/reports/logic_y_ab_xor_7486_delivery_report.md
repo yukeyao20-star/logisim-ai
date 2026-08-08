@@ -1,7 +1,7 @@
 # Generation delivery report for logic_y_ab_xor_7486
 
 - Request kind: natural_language
-- Request: Y=A xor B use 7486
+- Request: Y=A异或B用7486芯片
 - Intent: CHIP_LEVEL_CIRCUIT_IMPLEMENTATION
 - Implementation level: CHIP_LEVEL
 - Target package: 7486
@@ -29,7 +29,7 @@
 - Layout repair suggestions: 
 - Layout auto repair applied: false
 - Recommended actions: open_circuit, review_manifest, review_chip_mapping, review_ttl_bom
-- Artifact count: 17
+- Artifact count: 19
 
 ## Artifacts
 
@@ -48,6 +48,8 @@
 | delivery_markdown | generated\reports\logic_y_ab_xor_7486_delivery_report.md | true |
 | summary_json | generated\reports\logic_y_ab_xor_7486_generation_summary.json | true |
 | summary_markdown | generated\reports\logic_y_ab_xor_7486_generation_summary.md | true |
+| artifact | generated\reports\logic_y_ab_xor_7486_official_simulation.json | true |
+| artifact | generated\reports\logic_y_ab_xor_7486_official_simulation.md | true |
 | ttl_dip_wiring | generated\reports\logic_y_ab_xor_7486_ttl_dip.json | true |
 | ttl_dip_wiring | generated\reports\logic_y_ab_xor_7486_ttl_dip.md | true |
 | ttl_dip_layout | generated\reports\logic_y_ab_xor_7486_ttl_dip_layout.json | true |

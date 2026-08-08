@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "Y=A xor B use 7486",
+  "request": "Y=A异或B用7486芯片",
   "description": "Synthesized Boolean function into 7486-labeled XOR CircuitSpec",
   "intent": "CHIP_LEVEL_CIRCUIT_IMPLEMENTATION",
   "intentExplanation": "Draw the requested circuit using chip/package-level parts or labeled TTL package gates where possible.",
@@ -19,7 +19,7 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 13,
+  "artifactCount": 17,
   "artifacts": [
     {"path": "generated\\circ\\logic_y_ab_xor_7486.circ", "exists": true},
     {"path": "generated\\reports\\logic_y_ab_xor_7486_7486_bom.json", "exists": true},
@@ -30,6 +30,10 @@
     {"path": "generated\\reports\\logic_y_ab_xor_7486_circuit_manifest.md", "exists": true},
     {"path": "generated\\reports\\logic_y_ab_xor_7486_circuit_truth_table.json", "exists": true},
     {"path": "generated\\reports\\logic_y_ab_xor_7486_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\logic_y_ab_xor_7486_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\logic_y_ab_xor_7486_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\logic_y_ab_xor_7486_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\logic_y_ab_xor_7486_official_simulation.md", "exists": true},
     {"path": "generated\\reports\\logic_y_ab_xor_7486_ttl_dip.json", "exists": true},
     {"path": "generated\\reports\\logic_y_ab_xor_7486_ttl_dip.md", "exists": true},
     {"path": "generated\\reports\\logic_y_ab_xor_7486_ttl_dip_layout.json", "exists": true},

@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_multi_sum_carry_ab_multi_ttl",
+  "items": [
+    {
+      "packageType": "7408",
+      "gateKind": "AND",
+      "chipCount": 1,
+      "usedGateCount": 1,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 3,
+      "unusedGateLabels": ["U2B", "U2C", "U2D"]
+    }
+  ]
+}

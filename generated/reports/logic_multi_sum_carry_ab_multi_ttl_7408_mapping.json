@@ -1,0 +1,17 @@
+{
+  "circuitName": "logic_multi_sum_carry_ab_multi_ttl",
+  "packageType": "7408",
+  "gateKind": "AND",
+  "gateCount": 1,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "and2",
+      "label": "U2A",
+      "chipId": "U2",
+      "gateName": "A",
+      "chipNumber": 2,
+      "gateIndex": 0
+    }
+  ]
+}

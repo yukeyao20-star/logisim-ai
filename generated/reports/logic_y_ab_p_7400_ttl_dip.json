@@ -1,0 +1,126 @@
+{
+  "circuitName": "logic_y_ab_p_7400",
+  "chipCount": 1,
+  "chips": [
+    {
+      "chipId": "U1",
+      "chipNumber": 1,
+      "packageType": "7400",
+      "gateKind": "NAND",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "nand1",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "nand1",
+          "componentEndIndex": 2,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 3,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "nand1",
+          "componentEndIndex": 0,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 4,
+          "role": "input1",
+          "gateName": "B",
+          "componentId": "nand2",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 5,
+          "role": "input2",
+          "gateName": "B",
+          "componentId": "nand2",
+          "componentEndIndex": 2,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 6,
+          "role": "output",
+          "gateName": "B",
+          "componentId": "nand2",
+          "componentEndIndex": 0,
+          "netId": "net_i2"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 8,
+          "role": "output",
+          "gateName": "C",
+          "componentId": "nand3",
+          "componentEndIndex": 0,
+          "netId": "net_i3"
+        },
+        {
+          "pinNumber": 9,
+          "role": "input2",
+          "gateName": "C",
+          "componentId": "nand3",
+          "componentEndIndex": 2,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 10,
+          "role": "input1",
+          "gateName": "C",
+          "componentId": "nand3",
+          "componentEndIndex": 1,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 11,
+          "role": "output",
+          "gateName": "D",
+          "componentId": "nand4",
+          "componentEndIndex": 0,
+          "netId": "net_i4"
+        },
+        {
+          "pinNumber": 12,
+          "role": "input2",
+          "gateName": "D",
+          "componentId": "nand4",
+          "componentEndIndex": 2,
+          "netId": "net_i3"
+        },
+        {
+          "pinNumber": 13,
+          "role": "input1",
+          "gateName": "D",
+          "componentId": "nand4",
+          "componentEndIndex": 1,
+          "netId": "net_i2"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    }
+  ]
+}

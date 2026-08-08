@@ -1,0 +1,102 @@
+{
+  "circuitName": "logic_multi_sum_carry_ab_multi_ttl",
+  "chipCount": 2,
+  "chips": [
+    {
+      "chipId": "U1",
+      "chipNumber": 1,
+      "packageType": "7486",
+      "gateKind": "XOR",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "xor1",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "xor1",
+          "componentEndIndex": 2,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 3,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "xor1",
+          "componentEndIndex": 0,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    },
+    {
+      "chipId": "U2",
+      "chipNumber": 2,
+      "packageType": "7408",
+      "gateKind": "AND",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "and2",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "and2",
+          "componentEndIndex": 2,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 3,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "and2",
+          "componentEndIndex": 0,
+          "netId": "net_i2"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    }
+  ]
+}

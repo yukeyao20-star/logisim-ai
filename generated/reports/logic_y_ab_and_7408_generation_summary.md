@@ -1,7 +1,7 @@
 # Generation summary for logic_y_ab_and_7408
 
 - Request kind: natural_language
-- Request: Y=A and B use 7408
+- Request: Y=A与B用7408芯片
 - Description: Synthesized Boolean function into 7408-labeled AND CircuitSpec
 - Intent: CHIP_LEVEL_CIRCUIT_IMPLEMENTATION
 - Intent explanation: Draw the requested circuit using chip/package-level parts or labeled TTL package gates where possible.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 13
+- Artifact count: 17
 
 ## Artifacts
 
@@ -32,6 +32,10 @@
 | generated\reports\logic_y_ab_and_7408_circuit_manifest.md | true |
 | generated\reports\logic_y_ab_and_7408_circuit_truth_table.json | true |
 | generated\reports\logic_y_ab_and_7408_circuit_truth_table.md | true |
+| generated\reports\logic_y_ab_and_7408_generation_summary.json | true |
+| generated\reports\logic_y_ab_and_7408_generation_summary.md | true |
+| generated\reports\logic_y_ab_and_7408_official_simulation.json | true |
+| generated\reports\logic_y_ab_and_7408_official_simulation.md | true |
 | generated\reports\logic_y_ab_and_7408_ttl_dip.json | true |
 | generated\reports\logic_y_ab_and_7408_ttl_dip.md | true |
 | generated\reports\logic_y_ab_and_7408_ttl_dip_layout.json | true |
