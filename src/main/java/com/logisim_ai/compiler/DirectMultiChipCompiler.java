@@ -84,21 +84,18 @@ public final class DirectMultiChipCompiler {
         col++;
       }
 
-      // Phase 2: create external Pins
+      // Phase 2: create external Pins. Each Pin gets its own x column so its
+      // routing stub never overlaps another Pin's stub.
       Map<String, Component> pinMap = new HashMap<>();
-      List<ExternalPort> inputs = spec.externalPorts().stream()
-          .filter(p -> p.direction() == PortDirection.INPUT)
-          .toList();
-      List<ExternalPort> outputs = spec.externalPorts().stream()
-          .filter(p -> p.direction() == PortDirection.OUTPUT)
-          .toList();
       int leftIndex = 0;
       int rightIndex = 0;
       for (ExternalPort port : spec.externalPorts()) {
         boolean output = port.direction() == PortDirection.OUTPUT;
         Direction facing = output ? Direction.WEST : Direction.EAST;
         int pinY = 100 + (output ? rightIndex : leftIndex) * 50;
-        int pinX = output ? 1100 : 100;
+        // Unique x per pin: inputs spread from x=60 rightward, outputs from x=1180
+        // leftward, so pins never share a column.
+        int pinX = output ? 1180 - rightIndex * 50 : 60 + leftIndex * 50;
         Component pin = createPin(port, output, facing, pinX, pinY);
         pinMap.put(port.id(), pin);
         mutation.add(pin);
