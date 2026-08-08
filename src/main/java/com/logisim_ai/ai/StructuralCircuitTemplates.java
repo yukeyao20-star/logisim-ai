@@ -44,6 +44,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:译码器|解码器|二进制译码器)");
   private static final Pattern DECODER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?(\\d{1,3})\\s*(?:decoder|demultiplexer)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern COUNTER_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:二进制计数器|计数器)");
+  private static final Pattern COUNTER_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:binary\\s+)?counter", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -94,7 +98,76 @@ public final class StructuralCircuitTemplates {
     if (den.find()) {
       return Optional.of(buildDecoder(Integer.parseInt(den.group(1))));
     }
+    Matcher ctrzh = COUNTER_ZH.matcher(t);
+    Matcher ctrEn = COUNTER_EN.matcher(t);
+    if (ctrzh.find()) {
+      Integer bits = chineseToInt(ctrzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildCounter(bits));
+      }
+    }
+    if (ctrEn.find()) {
+      return Optional.of(buildCounter(Integer.parseInt(ctrEn.group(1))));
+    }
     return Optional.empty();
+  }
+
+  /**
+   * N-bit binary up-counter built from 74161 (4-bit) chips cascaded via TC to
+   * ENT. Port map (verified catalog): end0=nCLR, end1=CLK, end2..5=D0..D3,
+   * end6=ENP, end7=nLOAD, end8=ENT, end9=Q3, end10=Q2, end11=Q1, end12=Q0,
+   * end13=TC.
+   */
+  static CircuitSpec buildCounter(int bits) {
+    if (bits < 1 || bits > 16) {
+      throw new IllegalArgumentException("Counter width must be 1..16, got " + bits);
+    }
+    int chips = (bits + 3) / 4;
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int c = 0; c < chips; c++) {
+      components.add(new ComponentSpec("cnt" + c, "TTL", "74161", 1, "U" + (c + 1)));
+      hints.add(new LayoutHint("cnt" + c, c, 0, 0, null));
+    }
+    addInput(ports, "clk", "CLK", "cnt0");
+    addInput(ports, "enp", "ENP", "cnt0");
+    addInput(ports, "ent", "ENT", "cnt0");
+    addInput(ports, "nload", "nLOAD", "cnt0");
+    addInput(ports, "nclr", "nCLR", "cnt0");
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "d" + i, "D" + i, "cnt" + (i / 4));
+      addOutput(ports, "q" + i, "Q" + i, "cnt" + (i / 4));
+    }
+    addOutput(ports, "rc", "RCO", "cnt" + (chips - 1));
+
+    for (int c = 0; c < chips; c++) {
+      int base = c * 4;
+      String g = "cnt" + c;
+      nets.add(net("clk" + c, e("clk", 0), e(g, 1)));
+      nets.add(net("enp" + c, e("enp", 0), e(g, 6)));
+      nets.add(net("load" + c, e("nload", 0), e(g, 7)));
+      nets.add(net("clr" + c, e("nclr", 0), e(g, 0)));
+      if (c == 0) {
+        nets.add(net("ent" + c, e("ent", 0), e(g, 8)));
+      } else {
+        // cascade: lower chip TC drives this chip's ENT
+        nets.add(net("ent" + c, e("cnt" + (c - 1), 13), e(g, 8)));
+      }
+      for (int i = 0; i < 4; i++) {
+        int bit = base + i;
+        if (bit < bits) {
+          nets.add(net("d" + bit, e("d" + bit, 0), e(g, 2 + i)));
+          // Q3..Q0 are ends 9..12 (Q3 = end9 = MSB)
+          nets.add(net("q" + bit, e(g, 12 - i), e("q" + bit, 0)));
+        }
+      }
+    }
+    nets.add(net("rc", e("cnt" + (chips - 1), 13), e("rc", 0)));
+
+    return new CircuitSpec("counter_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**
