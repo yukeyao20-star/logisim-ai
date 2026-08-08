@@ -1,0 +1,32 @@
+{
+  "requestKind": "natural_language",
+  "request": "三输入异或门",
+  "description": "Matched verified JSON template: 三输入异或",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "generated\\examples\\nand_xor3_spec.json",
+  "circuitName": "nand_xor3",
+  "circuitPath": "generated\\circ\\nand_xor3.circ",
+  "manifestPath": "generated\\reports\\nand_xor3_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 7,
+  "artifacts": [
+    {"path": "generated\\circ\\nand_xor3.circ", "exists": true},
+    {"path": "generated\\reports\\nand_xor3_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\nand_xor3_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\nand_xor3_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\nand_xor3_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\nand_xor3_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\nand_xor3_official_simulation.md", "exists": true}
+  ]
+}

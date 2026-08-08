@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=6224 |
+| circuit_non_empty | true | bytes=6221 |
 | round_trip_loadable | true | [OK] full_adder.circ round-trip loaded with main circuit full_adder |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] full_adder.circ structure matches CircuitSpec |

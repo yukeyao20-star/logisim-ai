@@ -1,7 +1,7 @@
 {
   "requestKind": "natural_language",
-  "request": "full adder",
-  "description": "Matched verified JSON template: full adder",
+  "request": "做一个全加器",
+  "description": "Matched verified JSON template: 全加器",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
   "implementationProfile": {
@@ -19,7 +19,7 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 7,
+  "artifactCount": 9,
   "artifacts": [
     {"path": "generated\\circ\\full_adder.circ", "exists": true},
     {"path": "generated\\reports\\full_adder_circuit_manifest.json", "exists": true},
@@ -27,6 +27,8 @@
     {"path": "generated\\reports\\full_adder_circuit_truth_table.json", "exists": true},
     {"path": "generated\\reports\\full_adder_circuit_truth_table.md", "exists": true},
     {"path": "generated\\reports\\full_adder_generation_summary.json", "exists": true},
-    {"path": "generated\\reports\\full_adder_generation_summary.md", "exists": true}
+    {"path": "generated\\reports\\full_adder_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\full_adder_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\full_adder_official_simulation.md", "exists": true}
   ]
 }

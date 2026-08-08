@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "full adder",
+  "request": "做一个全加器",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",
@@ -37,7 +37,7 @@
   "layoutAutoRepairApplied": false,
   "layoutAutoRepairResults": [],
   "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
-  "artifactCount": 9,
+  "artifactCount": 11,
   "artifacts": [
     {"kind": "circuit", "path": "generated\\circ\\full_adder.circ", "exists": true},
     {"kind": "manifest_json", "path": "generated\\reports\\full_adder_circuit_manifest.json", "exists": true},
@@ -47,6 +47,8 @@
     {"kind": "delivery_json", "path": "generated\\reports\\full_adder_delivery_report.json", "exists": true},
     {"kind": "delivery_markdown", "path": "generated\\reports\\full_adder_delivery_report.md", "exists": true},
     {"kind": "summary_json", "path": "generated\\reports\\full_adder_generation_summary.json", "exists": true},
-    {"kind": "summary_markdown", "path": "generated\\reports\\full_adder_generation_summary.md", "exists": true}
+    {"kind": "summary_markdown", "path": "generated\\reports\\full_adder_generation_summary.md", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\full_adder_official_simulation.json", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\full_adder_official_simulation.md", "exists": true}
   ]
 }

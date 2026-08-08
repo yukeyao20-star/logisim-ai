@@ -1,17 +1,21 @@
 {
   "circuitName": "half_adder",
   "complete": true,
-  "artifactCount": 1,
-  "checkCount": 5,
+  "artifactCount": 3,
+  "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=4280"},
-    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] from_json_half_adder.circ round-trip loaded with main circuit half_adder"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=4277"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] half_adder.circ round-trip loaded with main circuit half_adder"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
-    {"name": "layout_clean", "passed": true, "detail": "[OK] from_json_half_adder.circ static layout checks passed"}
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] half_adder.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[OK] half_adder.circ static layout checks passed"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=4"}
   ],
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\from_json_half_adder.circ", "exists": true}
+    {"kind": "circuit", "path": "generated\\circ\\half_adder.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\half_adder_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\half_adder_circuit_truth_table.json", "exists": true}
   ],
   "issues": []
 }

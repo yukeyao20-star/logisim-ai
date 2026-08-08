@@ -1,0 +1,32 @@
+{
+  "requestKind": "natural_language",
+  "request": "生成一个半加器",
+  "description": "Matched verified JSON template: 半加器",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "generated\\examples\\half_adder_spec.json",
+  "circuitName": "half_adder",
+  "circuitPath": "generated\\circ\\half_adder.circ",
+  "manifestPath": "generated\\reports\\half_adder_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 7,
+  "artifacts": [
+    {"path": "generated\\circ\\half_adder.circ", "exists": true},
+    {"path": "generated\\reports\\half_adder_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\half_adder_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\half_adder_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\half_adder_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\half_adder_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\half_adder_official_simulation.md", "exists": true}
+  ]
+}

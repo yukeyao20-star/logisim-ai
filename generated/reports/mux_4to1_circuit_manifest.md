@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=10780 |
+| circuit_non_empty | true | bytes=10777 |
 | round_trip_loadable | true | [OK] mux_4to1.circ round-trip loaded with main circuit mux_4to1 |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] mux_4to1.circ structure matches CircuitSpec |

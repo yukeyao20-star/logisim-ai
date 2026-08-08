@@ -1,7 +1,7 @@
 # Generation delivery report for full_adder
 
 - Request kind: natural_language
-- Request: full adder
+- Request: 做一个全加器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -29,7 +29,7 @@
 - Layout repair suggestions: 
 - Layout auto repair applied: false
 - Recommended actions: open_circuit, review_manifest, review_truth_table
-- Artifact count: 9
+- Artifact count: 11
 
 ## Artifacts
 
@@ -44,3 +44,5 @@
 | delivery_markdown | generated\reports\full_adder_delivery_report.md | true |
 | summary_json | generated\reports\full_adder_generation_summary.json | true |
 | summary_markdown | generated\reports\full_adder_generation_summary.md | true |
+| artifact | generated\reports\full_adder_official_simulation.json | true |
+| artifact | generated\reports\full_adder_official_simulation.md | true |

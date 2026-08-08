@@ -1,0 +1,14 @@
+{
+  "circuitName": "nand_xor3",
+  "rowCount": 8,
+  "rows": [
+    {"inputs": {"a": false, "b": false, "c": false}, "outputs": {"y": false}},
+    {"inputs": {"a": false, "b": false, "c": true}, "outputs": {"y": true}},
+    {"inputs": {"a": false, "b": true, "c": false}, "outputs": {"y": true}},
+    {"inputs": {"a": false, "b": true, "c": true}, "outputs": {"y": false}},
+    {"inputs": {"a": true, "b": false, "c": false}, "outputs": {"y": true}},
+    {"inputs": {"a": true, "b": false, "c": true}, "outputs": {"y": false}},
+    {"inputs": {"a": true, "b": true, "c": false}, "outputs": {"y": false}},
+    {"inputs": {"a": true, "b": true, "c": true}, "outputs": {"y": true}}
+  ]
+}

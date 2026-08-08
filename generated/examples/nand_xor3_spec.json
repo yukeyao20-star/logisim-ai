@@ -17,56 +17,17 @@
     {"id": "y", "label": "Y", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "y_gate", "targetEndIndex": 0}
   ],
   "nets": [
-    {"id": "A", "endpoints": [
-      {"componentId": "a", "endIndex": 0},
-      {"componentId": "n1", "endIndex": 1},
-      {"componentId": "n2", "endIndex": 1}
-    ]},
-    {"id": "B", "endpoints": [
-      {"componentId": "b", "endIndex": 0},
-      {"componentId": "n1", "endIndex": 2},
-      {"componentId": "n3", "endIndex": 1}
-    ]},
-    {"id": "n1_out", "endpoints": [
-      {"componentId": "n1", "endIndex": 0},
-      {"componentId": "n2", "endIndex": 2},
-      {"componentId": "n3", "endIndex": 2}
-    ]},
-    {"id": "n2_out", "endpoints": [
-      {"componentId": "n2", "endIndex": 0},
-      {"componentId": "xab", "endIndex": 1}
-    ]},
-    {"id": "n3_out", "endpoints": [
-      {"componentId": "n3", "endIndex": 0},
-      {"componentId": "xab", "endIndex": 2}
-    ]},
-    {"id": "xab_out", "endpoints": [
-      {"componentId": "xab", "endIndex": 0},
-      {"componentId": "n4", "endIndex": 1},
-      {"componentId": "n5", "endIndex": 1}
-    ]},
-    {"id": "C", "endpoints": [
-      {"componentId": "c", "endIndex": 0},
-      {"componentId": "n4", "endIndex": 2},
-      {"componentId": "n6", "endIndex": 1}
-    ]},
-    {"id": "n4_out", "endpoints": [
-      {"componentId": "n4", "endIndex": 0},
-      {"componentId": "n5", "endIndex": 2},
-      {"componentId": "n6", "endIndex": 2}
-    ]},
-    {"id": "n5_out", "endpoints": [
-      {"componentId": "n5", "endIndex": 0},
-      {"componentId": "y_gate", "endIndex": 1}
-    ]},
-    {"id": "n6_out", "endpoints": [
-      {"componentId": "n6", "endIndex": 0},
-      {"componentId": "y_gate", "endIndex": 2}
-    ]},
-    {"id": "Y", "endpoints": [
-      {"componentId": "y_gate", "endIndex": 0},
-      {"componentId": "y", "endIndex": 0}
-    ]}
+    {"id": "A", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "n1", "endIndex": 1}, {"componentId": "n2", "endIndex": 1}]},
+    {"id": "B", "endpoints": [{"componentId": "b", "endIndex": 0}, {"componentId": "n1", "endIndex": 2}, {"componentId": "n3", "endIndex": 1}]},
+    {"id": "n1_out", "endpoints": [{"componentId": "n1", "endIndex": 0}, {"componentId": "n2", "endIndex": 2}, {"componentId": "n3", "endIndex": 2}]},
+    {"id": "n2_out", "endpoints": [{"componentId": "n2", "endIndex": 0}, {"componentId": "xab", "endIndex": 1}]},
+    {"id": "n3_out", "endpoints": [{"componentId": "n3", "endIndex": 0}, {"componentId": "xab", "endIndex": 2}]},
+    {"id": "xab_out", "endpoints": [{"componentId": "xab", "endIndex": 0}, {"componentId": "n4", "endIndex": 1}, {"componentId": "n5", "endIndex": 1}]},
+    {"id": "C", "endpoints": [{"componentId": "c", "endIndex": 0}, {"componentId": "n4", "endIndex": 2}, {"componentId": "n6", "endIndex": 1}]},
+    {"id": "n4_out", "endpoints": [{"componentId": "n4", "endIndex": 0}, {"componentId": "n5", "endIndex": 2}, {"componentId": "n6", "endIndex": 2}]},
+    {"id": "n5_out", "endpoints": [{"componentId": "n5", "endIndex": 0}, {"componentId": "y_gate", "endIndex": 1}]},
+    {"id": "n6_out", "endpoints": [{"componentId": "n6", "endIndex": 0}, {"componentId": "y_gate", "endIndex": 2}]},
+    {"id": "Y", "endpoints": [{"componentId": "y_gate", "endIndex": 0}, {"componentId": "y", "endIndex": 0}]}
   ],
   "layoutHints": [
     {"componentId": "n1", "rank": 0, "column": 0, "row": 0, "side": null},

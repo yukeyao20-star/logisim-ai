@@ -15,42 +15,14 @@
     {"id": "cout", "label": "Cout", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "or1", "targetEndIndex": 0}
   ],
   "nets": [
-    {"id": "net_a", "endpoints": [
-      {"componentId": "a", "endIndex": 0},
-      {"componentId": "xor1", "endIndex": 1},
-      {"componentId": "and2", "endIndex": 1}
-    ]},
-    {"id": "net_b", "endpoints": [
-      {"componentId": "b", "endIndex": 0},
-      {"componentId": "xor1", "endIndex": 2},
-      {"componentId": "and2", "endIndex": 2}
-    ]},
-    {"id": "net_ab_xor", "endpoints": [
-      {"componentId": "xor1", "endIndex": 0},
-      {"componentId": "xor2", "endIndex": 1},
-      {"componentId": "and1", "endIndex": 1}
-    ]},
-    {"id": "net_cin", "endpoints": [
-      {"componentId": "cin", "endIndex": 0},
-      {"componentId": "xor2", "endIndex": 2},
-      {"componentId": "and1", "endIndex": 2}
-    ]},
-    {"id": "net_sum", "endpoints": [
-      {"componentId": "xor2", "endIndex": 0},
-      {"componentId": "sum", "endIndex": 0}
-    ]},
-    {"id": "net_ab_carry", "endpoints": [
-      {"componentId": "and1", "endIndex": 0},
-      {"componentId": "or1", "endIndex": 1}
-    ]},
-    {"id": "net_a_b_carry", "endpoints": [
-      {"componentId": "and2", "endIndex": 0},
-      {"componentId": "or1", "endIndex": 2}
-    ]},
-    {"id": "net_cout", "endpoints": [
-      {"componentId": "or1", "endIndex": 0},
-      {"componentId": "cout", "endIndex": 0}
-    ]}
+    {"id": "net_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "xor1", "endIndex": 1}, {"componentId": "and2", "endIndex": 1}]},
+    {"id": "net_b", "endpoints": [{"componentId": "b", "endIndex": 0}, {"componentId": "xor1", "endIndex": 2}, {"componentId": "and2", "endIndex": 2}]},
+    {"id": "net_ab_xor", "endpoints": [{"componentId": "xor1", "endIndex": 0}, {"componentId": "xor2", "endIndex": 1}, {"componentId": "and1", "endIndex": 1}]},
+    {"id": "net_cin", "endpoints": [{"componentId": "cin", "endIndex": 0}, {"componentId": "xor2", "endIndex": 2}, {"componentId": "and1", "endIndex": 2}]},
+    {"id": "net_sum", "endpoints": [{"componentId": "xor2", "endIndex": 0}, {"componentId": "sum", "endIndex": 0}]},
+    {"id": "net_ab_carry", "endpoints": [{"componentId": "and1", "endIndex": 0}, {"componentId": "or1", "endIndex": 1}]},
+    {"id": "net_a_b_carry", "endpoints": [{"componentId": "and2", "endIndex": 0}, {"componentId": "or1", "endIndex": 2}]},
+    {"id": "net_cout", "endpoints": [{"componentId": "or1", "endIndex": 0}, {"componentId": "cout", "endIndex": 0}]}
   ],
   "layoutHints": [
     {"componentId": "xor1", "rank": 0, "column": 0, "row": 0, "side": null},

@@ -29,7 +29,7 @@
 - Layout repair suggestions: 
 - Layout auto repair applied: false
 - Recommended actions: open_circuit, review_manifest, review_chip_mapping, review_ttl_bom
-- Artifact count: 19
+- Artifact count: 21
 
 ## Artifacts
 
@@ -50,6 +50,8 @@
 | delivery_markdown | generated\reports\logic_y_ab_xor_7400_delivery_report.md | true |
 | summary_json | generated\reports\logic_y_ab_xor_7400_generation_summary.json | true |
 | summary_markdown | generated\reports\logic_y_ab_xor_7400_generation_summary.md | true |
+| artifact | generated\reports\logic_y_ab_xor_7400_official_simulation.json | true |
+| artifact | generated\reports\logic_y_ab_xor_7400_official_simulation.md | true |
 | ttl_dip_wiring | generated\reports\logic_y_ab_xor_7400_ttl_dip.json | true |
 | ttl_dip_wiring | generated\reports\logic_y_ab_xor_7400_ttl_dip.md | true |
 | ttl_dip_layout | generated\reports\logic_y_ab_xor_7400_ttl_dip_layout.json | true |

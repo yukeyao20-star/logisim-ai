@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 17
+- Artifact count: 19
 
 ## Artifacts
 
@@ -36,6 +36,8 @@
 | generated\reports\logic_y_ab_xor_7400_circuit_truth_table.md | true |
 | generated\reports\logic_y_ab_xor_7400_generation_summary.json | true |
 | generated\reports\logic_y_ab_xor_7400_generation_summary.md | true |
+| generated\reports\logic_y_ab_xor_7400_official_simulation.json | true |
+| generated\reports\logic_y_ab_xor_7400_official_simulation.md | true |
 | generated\reports\logic_y_ab_xor_7400_ttl_dip.json | true |
 | generated\reports\logic_y_ab_xor_7400_ttl_dip.md | true |
 | generated\reports\logic_y_ab_xor_7400_ttl_dip_layout.json | true |

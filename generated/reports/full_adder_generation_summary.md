@@ -1,8 +1,8 @@
 # Generation summary for full_adder
 
 - Request kind: natural_language
-- Request: full adder
-- Description: Matched verified JSON template: full adder
+- Request: 做一个全加器
+- Description: Matched verified JSON template: 全加器
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
 - Implementation level: GATE_LEVEL
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 7
+- Artifact count: 9
 
 ## Artifacts
 
@@ -30,3 +30,5 @@
 | generated\reports\full_adder_circuit_truth_table.md | true |
 | generated\reports\full_adder_generation_summary.json | true |
 | generated\reports\full_adder_generation_summary.md | true |
+| generated\reports\full_adder_official_simulation.json | true |
+| generated\reports\full_adder_official_simulation.md | true |
