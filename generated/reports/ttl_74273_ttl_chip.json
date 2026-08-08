@@ -1,0 +1,24 @@
+{
+  "factory": "74273",
+  "portCount": 18,
+  "ports": [
+    {"endIndex": 0, "label": "nCLR", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "Q1", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 2, "label": "D1", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "D2", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "Q2", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 5, "label": "Q3", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 6, "label": "D3", "direction": "INPUT", "width": 1},
+    {"endIndex": 7, "label": "D4", "direction": "INPUT", "width": 1},
+    {"endIndex": 8, "label": "Q4", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 9, "label": "CLK", "direction": "INPUT", "width": 1},
+    {"endIndex": 10, "label": "Q5", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 11, "label": "D5", "direction": "INPUT", "width": 1},
+    {"endIndex": 12, "label": "D6", "direction": "INPUT", "width": 1},
+    {"endIndex": 13, "label": "Q6", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 14, "label": "Q7", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 15, "label": "D7", "direction": "INPUT", "width": 1},
+    {"endIndex": 16, "label": "D8", "direction": "INPUT", "width": 1},
+    {"endIndex": 17, "label": "Q8", "direction": "OUTPUT", "width": 1}
+  ]
+}

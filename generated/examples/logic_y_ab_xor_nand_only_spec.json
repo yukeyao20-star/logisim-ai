@@ -1,0 +1,28 @@
+{
+  "name": "logic_y_ab_xor_nand_only",
+  "components": [
+    {"id": "nand1", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": ""},
+    {"id": "nand2", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": ""},
+    {"id": "nand3", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": ""},
+    {"id": "nand4", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": ""}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nand1", "targetEndIndex": 1},
+    {"id": "b", "label": "B", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nand1", "targetEndIndex": 2},
+    {"id": "y", "label": "Y", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "nand4", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "net_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "nand1", "endIndex": 1}, {"componentId": "nand2", "endIndex": 1}]},
+    {"id": "net_b", "endpoints": [{"componentId": "b", "endIndex": 0}, {"componentId": "nand1", "endIndex": 2}, {"componentId": "nand3", "endIndex": 1}]},
+    {"id": "net_i1", "endpoints": [{"componentId": "nand1", "endIndex": 0}, {"componentId": "nand2", "endIndex": 2}, {"componentId": "nand3", "endIndex": 2}]},
+    {"id": "net_i2", "endpoints": [{"componentId": "nand2", "endIndex": 0}, {"componentId": "nand4", "endIndex": 1}]},
+    {"id": "net_i3", "endpoints": [{"componentId": "nand3", "endIndex": 0}, {"componentId": "nand4", "endIndex": 2}]},
+    {"id": "net_i4", "endpoints": [{"componentId": "nand4", "endIndex": 0}, {"componentId": "y", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "nand1", "rank": 1, "column": 1, "row": 0, "side": null},
+    {"componentId": "nand2", "rank": 2, "column": 2, "row": 1, "side": null},
+    {"componentId": "nand3", "rank": 2, "column": 2, "row": 2, "side": null},
+    {"componentId": "nand4", "rank": 3, "column": 3, "row": 3, "side": null}
+  ]
+}

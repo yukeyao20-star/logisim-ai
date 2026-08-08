@@ -1,0 +1,24 @@
+{
+  "factory": "74240",
+  "portCount": 18,
+  "ports": [
+    {"endIndex": 0, "label": "n1G", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "1A1", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "n2Y4", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 3, "label": "1A2", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "n2Y3", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 5, "label": "1A3", "direction": "INPUT", "width": 1},
+    {"endIndex": 6, "label": "n2Y2", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 7, "label": "1A4", "direction": "INPUT", "width": 1},
+    {"endIndex": 8, "label": "n2Y1", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 9, "label": "2A1", "direction": "INPUT", "width": 1},
+    {"endIndex": 10, "label": "n1Y4", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 11, "label": "2A2", "direction": "INPUT", "width": 1},
+    {"endIndex": 12, "label": "n1Y3", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 13, "label": "2A3", "direction": "INPUT", "width": 1},
+    {"endIndex": 14, "label": "n1Y2", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 15, "label": "2A4", "direction": "INPUT", "width": 1},
+    {"endIndex": 16, "label": "n1Y1", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 17, "label": "n2G", "direction": "INPUT", "width": 1}
+  ]
+}

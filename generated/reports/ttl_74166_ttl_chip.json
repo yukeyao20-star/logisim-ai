@@ -1,0 +1,20 @@
+{
+  "factory": "74166",
+  "portCount": 14,
+  "ports": [
+    {"endIndex": 0, "label": "Serial_Input", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "P0", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "P1", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "P2", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "P3", "direction": "INPUT", "width": 1},
+    {"endIndex": 5, "label": "Clock_Inhibit", "direction": "INPUT", "width": 1},
+    {"endIndex": 6, "label": "Clock", "direction": "INPUT", "width": 1},
+    {"endIndex": 7, "label": "Clear", "direction": "INPUT", "width": 1},
+    {"endIndex": 8, "label": "P4", "direction": "INPUT", "width": 1},
+    {"endIndex": 9, "label": "P5", "direction": "INPUT", "width": 1},
+    {"endIndex": 10, "label": "P6", "direction": "INPUT", "width": 1},
+    {"endIndex": 11, "label": "Q7", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 12, "label": "P7", "direction": "INPUT", "width": 1},
+    {"endIndex": 13, "label": "Shift/Load", "direction": "INPUT", "width": 1}
+  ]
+}

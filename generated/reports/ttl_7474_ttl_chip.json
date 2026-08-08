@@ -1,0 +1,18 @@
+{
+  "factory": "7474",
+  "portCount": 12,
+  "ports": [
+    {"endIndex": 0, "label": "nCLR1", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "D1", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "CLK1", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "nPRE1", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "Q1", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 5, "label": "nQ1", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 6, "label": "nQ2", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 7, "label": "Q2", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 8, "label": "nPRE2", "direction": "INPUT", "width": 1},
+    {"endIndex": 9, "label": "CLK2", "direction": "INPUT", "width": 1},
+    {"endIndex": 10, "label": "D2", "direction": "INPUT", "width": 1},
+    {"endIndex": 11, "label": "nCLR2", "direction": "INPUT", "width": 1}
+  ]
+}

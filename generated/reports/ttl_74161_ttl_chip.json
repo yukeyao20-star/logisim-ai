@@ -1,0 +1,20 @@
+{
+  "factory": "74161",
+  "portCount": 14,
+  "ports": [
+    {"endIndex": 0, "label": "MR/CLR", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "CP/CLK", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "D0/A", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "D1/B", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "D2/C", "direction": "INPUT", "width": 1},
+    {"endIndex": 5, "label": "D3/D", "direction": "INPUT", "width": 1},
+    {"endIndex": 6, "label": "CE/ENP", "direction": "INPUT", "width": 1},
+    {"endIndex": 7, "label": "PE/LOAD", "direction": "INPUT", "width": 1},
+    {"endIndex": 8, "label": "CET/ENT", "direction": "INPUT", "width": 1},
+    {"endIndex": 9, "label": "Q3/QD", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 10, "label": "Q2/QC", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 11, "label": "A1/QB", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 12, "label": "A0/QA", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 13, "label": "TC/RC0", "direction": "OUTPUT", "width": 1}
+  ]
+}

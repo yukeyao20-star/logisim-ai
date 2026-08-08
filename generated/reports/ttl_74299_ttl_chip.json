@@ -1,0 +1,24 @@
+{
+  "factory": "74299",
+  "portCount": 18,
+  "ports": [
+    {"endIndex": 0, "label": "S0", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "nOE1", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "nOE2", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "IOG", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 4, "label": "IOE", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 5, "label": "IOC", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 6, "label": "IOA", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 7, "label": "QA", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 8, "label": "nCLR", "direction": "INPUT", "width": 1},
+    {"endIndex": 9, "label": "SR", "direction": "INPUT", "width": 1},
+    {"endIndex": 10, "label": "CLK", "direction": "INPUT", "width": 1},
+    {"endIndex": 11, "label": "IOB", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 12, "label": "IOD", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 13, "label": "IOF", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 14, "label": "IOH", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 15, "label": "QH", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 16, "label": "SL", "direction": "INPUT", "width": 1},
+    {"endIndex": 17, "label": "S1", "direction": "INPUT", "width": 1}
+  ]
+}

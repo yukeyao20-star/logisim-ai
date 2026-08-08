@@ -1,0 +1,20 @@
+{
+  "factory": "74139",
+  "portCount": 14,
+  "ports": [
+    {"endIndex": 0, "label": "1nG_Enable", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "1A", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "1B", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "1nY0", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 4, "label": "1nY1", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 5, "label": "1nY2", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 6, "label": "1nY3", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 7, "label": "2nY3", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 8, "label": "2nY2", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 9, "label": "2nY1", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 10, "label": "2nY0", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 11, "label": "2B", "direction": "INPUT", "width": 1},
+    {"endIndex": 12, "label": "2A", "direction": "INPUT", "width": 1},
+    {"endIndex": 13, "label": "2nG_Enable", "direction": "INPUT", "width": 1}
+  ]
+}

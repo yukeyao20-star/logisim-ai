@@ -1,0 +1,20 @@
+{
+  "factory": "74192",
+  "portCount": 14,
+  "ports": [
+    {"endIndex": 0, "label": "Data_Input_B", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "Data_Output_B", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 2, "label": "Data_Output_A", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 3, "label": "Count_Down", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "Count_Up", "direction": "INPUT", "width": 1},
+    {"endIndex": 5, "label": "Data_Output_C", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 6, "label": "Data_Output_D", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 7, "label": "Data_Input_D", "direction": "INPUT", "width": 1},
+    {"endIndex": 8, "label": "Data_Input_C", "direction": "INPUT", "width": 1},
+    {"endIndex": 9, "label": "Load", "direction": "INPUT", "width": 1},
+    {"endIndex": 10, "label": "Carry", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 11, "label": "Borrow", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 12, "label": "Clear", "direction": "INPUT", "width": 1},
+    {"endIndex": 13, "label": "Data_Input_A", "direction": "INPUT", "width": 1}
+  ]
+}

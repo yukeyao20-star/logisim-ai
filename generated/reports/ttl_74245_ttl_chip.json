@@ -1,0 +1,24 @@
+{
+  "factory": "74245",
+  "portCount": 18,
+  "ports": [
+    {"endIndex": 0, "label": "DIR", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "A1", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "A2", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "A3", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "A4", "direction": "INPUT", "width": 1},
+    {"endIndex": 5, "label": "A5", "direction": "INPUT", "width": 1},
+    {"endIndex": 6, "label": "A6", "direction": "INPUT", "width": 1},
+    {"endIndex": 7, "label": "A7", "direction": "INPUT", "width": 1},
+    {"endIndex": 8, "label": "A8", "direction": "INPUT", "width": 1},
+    {"endIndex": 9, "label": "B8", "direction": "INPUT", "width": 1},
+    {"endIndex": 10, "label": "B7", "direction": "INPUT", "width": 1},
+    {"endIndex": 11, "label": "B6", "direction": "INPUT", "width": 1},
+    {"endIndex": 12, "label": "B5", "direction": "INPUT", "width": 1},
+    {"endIndex": 13, "label": "B4", "direction": "INPUT", "width": 1},
+    {"endIndex": 14, "label": "B3", "direction": "INPUT", "width": 1},
+    {"endIndex": 15, "label": "B2", "direction": "INPUT", "width": 1},
+    {"endIndex": 16, "label": "B1", "direction": "INPUT", "width": 1},
+    {"endIndex": 17, "label": "nOE", "direction": "INPUT", "width": 1}
+  ]
+}

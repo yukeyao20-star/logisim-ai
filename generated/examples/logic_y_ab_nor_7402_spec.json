@@ -1,0 +1,19 @@
+{
+  "name": "logic_y_ab_nor_7402",
+  "components": [
+    {"id": "nor1", "library": "Gates", "factory": "NOR Gate", "bitWidth": 1, "label": "U1A"}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nor1", "targetEndIndex": 1},
+    {"id": "b", "label": "B", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nor1", "targetEndIndex": 2},
+    {"id": "y", "label": "Y", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "nor1", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "net_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "nor1", "endIndex": 1}]},
+    {"id": "net_b", "endpoints": [{"componentId": "b", "endIndex": 0}, {"componentId": "nor1", "endIndex": 2}]},
+    {"id": "net_i1", "endpoints": [{"componentId": "nor1", "endIndex": 0}, {"componentId": "y", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "nor1", "rank": 1, "column": 1, "row": 0, "side": null}
+  ]
+}

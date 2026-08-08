@@ -1,0 +1,20 @@
+{
+  "factory": "74182",
+  "portCount": 14,
+  "ports": [
+    {"endIndex": 0, "label": "G1", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "P1", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "G0", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "P0", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "G3", "direction": "INPUT", "width": 1},
+    {"endIndex": 5, "label": "P3", "direction": "INPUT", "width": 1},
+    {"endIndex": 6, "label": "P", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 7, "label": "Cnz", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 8, "label": "G", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 9, "label": "Cny", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 10, "label": "Cnx", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 11, "label": "Cn", "direction": "INPUT", "width": 1},
+    {"endIndex": 12, "label": "G2", "direction": "INPUT", "width": 1},
+    {"endIndex": 13, "label": "P2", "direction": "INPUT", "width": 1}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "factory": "7447",
+  "portCount": 14,
+  "ports": [
+    {"endIndex": 0, "label": "B", "direction": "INPUT", "width": 1},
+    {"endIndex": 1, "label": "C", "direction": "INPUT", "width": 1},
+    {"endIndex": 2, "label": "LT", "direction": "INPUT", "width": 1},
+    {"endIndex": 3, "label": "BI", "direction": "INPUT", "width": 1},
+    {"endIndex": 4, "label": "RBI", "direction": "INPUT", "width": 1},
+    {"endIndex": 5, "label": "D", "direction": "INPUT", "width": 1},
+    {"endIndex": 6, "label": "A", "direction": "INPUT", "width": 1},
+    {"endIndex": 7, "label": "e", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 8, "label": "d", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 9, "label": "c", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 10, "label": "b", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 11, "label": "a", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 12, "label": "g", "direction": "OUTPUT", "width": 1},
+    {"endIndex": 13, "label": "f", "direction": "OUTPUT", "width": 1}
+  ]
+}
