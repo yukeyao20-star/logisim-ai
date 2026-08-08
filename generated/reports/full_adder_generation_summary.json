@@ -1,0 +1,32 @@
+{
+  "requestKind": "natural_language",
+  "request": "full adder",
+  "description": "Matched verified JSON template: full adder",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "generated\\examples\\full_adder_spec.json",
+  "circuitName": "full_adder",
+  "circuitPath": "generated\\circ\\full_adder.circ",
+  "manifestPath": "generated\\reports\\full_adder_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 7,
+  "artifacts": [
+    {"path": "generated\\circ\\full_adder.circ", "exists": true},
+    {"path": "generated\\reports\\full_adder_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\full_adder_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\full_adder_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\full_adder_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\full_adder_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\full_adder_generation_summary.md", "exists": true}
+  ]
+}

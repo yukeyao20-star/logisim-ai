@@ -1,0 +1,16 @@
+<project source="logisim-evolution">
+  <lib desc="#Base" name="0"/>
+  <lib desc="#Wiring" name="1"/>
+  <lib desc="#Gates" name="2"/>
+  <main name="main"/>
+  <toolbar>
+    <tool lib="0" name="Poke Tool"/>
+  </toolbar>
+  <circuit name="main">
+    <comp lib="2" loc="(400,120)" name="AND Gate"/>
+    <wire from="(370,120)" to="(430,120)"/>
+    <wire from="(400,120)" to="(490,120)"/>
+    <wire from="(340,100)" to="(360,100)"/>
+    <wire from="(340,140)" to="(360,140)"/>
+  </circuit>
+</project>

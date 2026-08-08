@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_y_ab_p_7408",
+  "items": [
+    {
+      "packageType": "7408",
+      "gateKind": "AND",
+      "chipCount": 1,
+      "usedGateCount": 1,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 3,
+      "unusedGateLabels": ["U1B", "U1C", "U1D"]
+    }
+  ]
+}

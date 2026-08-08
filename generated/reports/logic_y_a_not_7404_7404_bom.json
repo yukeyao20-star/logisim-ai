@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_y_a_not_7404",
+  "items": [
+    {
+      "packageType": "7404",
+      "gateKind": "NOT",
+      "chipCount": 1,
+      "usedGateCount": 1,
+      "totalGateCapacity": 6,
+      "unusedGateCount": 5,
+      "unusedGateLabels": ["U1B", "U1C", "U1D", "U1E", "U1F"]
+    }
+  ]
+}

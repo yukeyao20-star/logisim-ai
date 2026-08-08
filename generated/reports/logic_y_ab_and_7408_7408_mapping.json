@@ -1,0 +1,17 @@
+{
+  "circuitName": "logic_y_ab_and_7408",
+  "packageType": "7408",
+  "gateKind": "AND",
+  "gateCount": 1,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "and1",
+      "label": "U1A",
+      "chipId": "U1",
+      "gateName": "A",
+      "chipNumber": 1,
+      "gateIndex": 0
+    }
+  ]
+}

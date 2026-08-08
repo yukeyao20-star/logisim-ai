@@ -1,0 +1,10 @@
+{
+  "circuitName": "logic_y_ab_xor_7486",
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"a": false, "b": false}, "outputs": {"y": false}},
+    {"inputs": {"a": false, "b": true}, "outputs": {"y": true}},
+    {"inputs": {"a": true, "b": false}, "outputs": {"y": true}},
+    {"inputs": {"a": true, "b": true}, "outputs": {"y": false}}
+  ]
+}

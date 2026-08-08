@@ -1,0 +1,54 @@
+{
+  "circuitName": "logic_y_ab_nor_7402",
+  "chipCount": 1,
+  "chips": [
+    {
+      "chipId": "U1",
+      "chipNumber": 1,
+      "packageType": "7402",
+      "gateKind": "NOR",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "nor1",
+          "componentEndIndex": 0,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "nor1",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 3,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "nor1",
+          "componentEndIndex": 2,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    }
+  ]
+}

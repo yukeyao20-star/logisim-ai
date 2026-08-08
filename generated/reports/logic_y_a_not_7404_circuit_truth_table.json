@@ -1,0 +1,8 @@
+{
+  "circuitName": "logic_y_a_not_7404",
+  "rowCount": 2,
+  "rows": [
+    {"inputs": {"a": false}, "outputs": {"y": true}},
+    {"inputs": {"a": true}, "outputs": {"y": false}}
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "circuitName": "logic_y_a_not_7404",
+  "chipCount": 1,
+  "chips": [
+    {
+      "chipId": "U1",
+      "chipNumber": 1,
+      "packageType": "7404",
+      "gateKind": "NOT",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input",
+          "gateName": "A",
+          "componentId": "not_a1",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 2,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "not_a1",
+          "componentEndIndex": 0,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    }
+  ]
+}

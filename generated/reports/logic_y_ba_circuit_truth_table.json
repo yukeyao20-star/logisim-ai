@@ -1,0 +1,10 @@
+{
+  "circuitName": "logic_y_ba",
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"b": false, "a": false}, "outputs": {"y": false}},
+    {"inputs": {"b": false, "a": true}, "outputs": {"y": true}},
+    {"inputs": {"b": true, "a": false}, "outputs": {"y": false}},
+    {"inputs": {"b": true, "a": true}, "outputs": {"y": false}}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "circuitName": "layout_reserved_area_router_fixture",
+  "rowCount": 2,
+  "rows": [
+    {"inputs": {"a": false}, "outputs": {"y": true}},
+    {"inputs": {"a": true}, "outputs": {"y": false}}
+  ]
+}

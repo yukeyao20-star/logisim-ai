@@ -1,0 +1,32 @@
+{
+  "requestKind": "json",
+  "request": "generated/examples/half_adder_spec.json",
+  "description": "Parsed CircuitSpec JSON and compiled it",
+  "intent": "STRUCTURED_JSON",
+  "intentExplanation": "Compile the provided structured CircuitSpec JSON exactly through validation, layout, and manifest checks.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "structured_circuit_spec"
+  },
+  "recommendedNextAction": "Compare the source JSON with the generated .circ, then review the manifest and truth-table artifacts.",
+  "recommendedActions": ["compare_source_json", "open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "generated\\examples\\half_adder_spec.json",
+  "circuitName": "half_adder",
+  "circuitPath": "generated\\circ\\from_json_half_adder.circ",
+  "manifestPath": "generated\\reports\\from_json_half_adder_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 7,
+  "artifacts": [
+    {"path": "generated\\circ\\from_json_half_adder.circ", "exists": true},
+    {"path": "generated\\reports\\from_json_half_adder_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\from_json_half_adder_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\from_json_half_adder_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\from_json_half_adder_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\from_json_half_adder_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\from_json_half_adder_generation_summary.md", "exists": true}
+  ]
+}

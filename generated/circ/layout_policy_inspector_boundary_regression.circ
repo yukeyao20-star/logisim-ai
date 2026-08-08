@@ -1,0 +1,12 @@
+<project source="logisim-evolution">
+  <lib desc="#Base" name="0"/>
+  <lib desc="#Wiring" name="1"/>
+  <main name="main"/>
+  <toolbar>
+    <tool lib="0" name="Poke Tool"/>
+  </toolbar>
+  <circuit name="main">
+    <wire from="(100,100)" to="(100,180)"/>
+    <wire from="(100,220)" to="(100,250)"/>
+  </circuit>
+</project>

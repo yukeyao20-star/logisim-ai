@@ -1,0 +1,17 @@
+{
+  "circuitName": "logic_y_ab_p_7432",
+  "packageType": "7432",
+  "gateKind": "OR",
+  "gateCount": 1,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "or1",
+      "label": "U1A",
+      "chipId": "U1",
+      "gateName": "A",
+      "chipNumber": 1,
+      "gateIndex": 0
+    }
+  ]
+}

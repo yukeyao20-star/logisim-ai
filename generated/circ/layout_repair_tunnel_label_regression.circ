@@ -1,0 +1,21 @@
+<project source="logisim-evolution">
+  <lib desc="#Base" name="0"/>
+  <lib desc="#Wiring" name="1"/>
+  <lib desc="#Gates" name="2"/>
+  <main name="main"/>
+  <toolbar>
+    <tool lib="0" name="Poke Tool"/>
+  </toolbar>
+  <circuit name="main">
+    <comp lib="1" loc="(100,100)" name="Tunnel">
+      <a name="label" val="T01"/>
+    </comp>
+    <comp lib="1" loc="(300,100)" name="Tunnel">
+      <a name="label" val="T01"/>
+    </comp>
+    <comp lib="1" loc="(100,180)" name="Tunnel">
+      <a name="label" val="SUM"/>
+    </comp>
+    <wire from="(100,100)" to="(300,100)"/>
+  </circuit>
+</project>

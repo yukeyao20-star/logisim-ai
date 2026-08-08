@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_y_ab_xor_7400",
+  "items": [
+    {
+      "packageType": "7400",
+      "gateKind": "NAND",
+      "chipCount": 1,
+      "usedGateCount": 4,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 0,
+      "unusedGateLabels": []
+    }
+  ]
+}

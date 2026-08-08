@@ -1,0 +1,54 @@
+{
+  "circuitName": "logic_y_ab_and_7408",
+  "chipCount": 1,
+  "chips": [
+    {
+      "chipId": "U1",
+      "chipNumber": 1,
+      "packageType": "7408",
+      "gateKind": "AND",
+      "pins": [
+        {
+          "pinNumber": 1,
+          "role": "input1",
+          "gateName": "A",
+          "componentId": "and1",
+          "componentEndIndex": 1,
+          "netId": "net_a"
+        },
+        {
+          "pinNumber": 2,
+          "role": "input2",
+          "gateName": "A",
+          "componentId": "and1",
+          "componentEndIndex": 2,
+          "netId": "net_b"
+        },
+        {
+          "pinNumber": 3,
+          "role": "output",
+          "gateName": "A",
+          "componentId": "and1",
+          "componentEndIndex": 0,
+          "netId": "net_i1"
+        },
+        {
+          "pinNumber": 7,
+          "role": "GND",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "GND"
+        },
+        {
+          "pinNumber": 14,
+          "role": "VCC",
+          "gateName": "",
+          "componentId": "",
+          "componentEndIndex": -1,
+          "netId": "VCC"
+        }
+      ]
+    }
+  ]
+}

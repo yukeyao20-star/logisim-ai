@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_multi_sum_cout_abcin_xor_and_xor_or_7400",
+  "items": [
+    {
+      "packageType": "7400",
+      "gateKind": "NAND",
+      "chipCount": 4,
+      "usedGateCount": 13,
+      "totalGateCapacity": 16,
+      "unusedGateCount": 3,
+      "unusedGateLabels": ["U4B", "U4C", "U4D"]
+    }
+  ]
+}

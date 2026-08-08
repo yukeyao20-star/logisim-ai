@@ -1,0 +1,17 @@
+{
+  "circuitName": "logic_y_ab_nor_7402",
+  "packageType": "7402",
+  "gateKind": "NOR",
+  "gateCount": 1,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "nor1",
+      "label": "U1A",
+      "chipId": "U1",
+      "gateName": "A",
+      "chipNumber": 1,
+      "gateIndex": 0
+    }
+  ]
+}

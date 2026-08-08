@@ -1,0 +1,114 @@
+{
+  "circuitName": "logic_multi_sum_cout_abcin_xor_and_xor_or_7400",
+  "packageType": "7400",
+  "gateKind": "NAND",
+  "gateCount": 13,
+  "nandGateCount": 13,
+  "chipCount": 4,
+  "assignments": [
+    {
+      "componentId": "nand1",
+      "label": "U1A",
+      "chipId": "U1",
+      "gateName": "A",
+      "chipNumber": 1,
+      "gateIndex": 0
+    },
+    {
+      "componentId": "nand2",
+      "label": "U1B",
+      "chipId": "U1",
+      "gateName": "B",
+      "chipNumber": 1,
+      "gateIndex": 1
+    },
+    {
+      "componentId": "nand3",
+      "label": "U1C",
+      "chipId": "U1",
+      "gateName": "C",
+      "chipNumber": 1,
+      "gateIndex": 2
+    },
+    {
+      "componentId": "nand4",
+      "label": "U1D",
+      "chipId": "U1",
+      "gateName": "D",
+      "chipNumber": 1,
+      "gateIndex": 3
+    },
+    {
+      "componentId": "nand5",
+      "label": "U2A",
+      "chipId": "U2",
+      "gateName": "A",
+      "chipNumber": 2,
+      "gateIndex": 0
+    },
+    {
+      "componentId": "nand6",
+      "label": "U2B",
+      "chipId": "U2",
+      "gateName": "B",
+      "chipNumber": 2,
+      "gateIndex": 1
+    },
+    {
+      "componentId": "nand7",
+      "label": "U2C",
+      "chipId": "U2",
+      "gateName": "C",
+      "chipNumber": 2,
+      "gateIndex": 2
+    },
+    {
+      "componentId": "nand8",
+      "label": "U2D",
+      "chipId": "U2",
+      "gateName": "D",
+      "chipNumber": 2,
+      "gateIndex": 3
+    },
+    {
+      "componentId": "nand9",
+      "label": "U3A",
+      "chipId": "U3",
+      "gateName": "A",
+      "chipNumber": 3,
+      "gateIndex": 0
+    },
+    {
+      "componentId": "nand10",
+      "label": "U3B",
+      "chipId": "U3",
+      "gateName": "B",
+      "chipNumber": 3,
+      "gateIndex": 1
+    },
+    {
+      "componentId": "nand11",
+      "label": "U3C",
+      "chipId": "U3",
+      "gateName": "C",
+      "chipNumber": 3,
+      "gateIndex": 2
+    },
+    {
+      "componentId": "nand12",
+      "label": "U3D",
+      "chipId": "U3",
+      "gateName": "D",
+      "chipNumber": 3,
+      "gateIndex": 3
+    },
+    {
+      "componentId": "nand13",
+      "label": "U4A",
+      "chipId": "U4",
+      "gateName": "A",
+      "chipNumber": 4,
+      "gateIndex": 0
+    }
+  ]
+}

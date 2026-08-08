@@ -1,0 +1,42 @@
+{
+  "circuitName": "logic_y_ab_xor_7400",
+  "packageType": "7400",
+  "gateKind": "NAND",
+  "gateCount": 4,
+  "nandGateCount": 4,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "nand1",
+      "label": "U1A",
+      "chipId": "U1",
+      "gateName": "A",
+      "chipNumber": 1,
+      "gateIndex": 0
+    },
+    {
+      "componentId": "nand2",
+      "label": "U1B",
+      "chipId": "U1",
+      "gateName": "B",
+      "chipNumber": 1,
+      "gateIndex": 1
+    },
+    {
+      "componentId": "nand3",
+      "label": "U1C",
+      "chipId": "U1",
+      "gateName": "C",
+      "chipNumber": 1,
+      "gateIndex": 2
+    },
+    {
+      "componentId": "nand4",
+      "label": "U1D",
+      "chipId": "U1",
+      "gateName": "D",
+      "chipNumber": 1,
+      "gateIndex": 3
+    }
+  ]
+}

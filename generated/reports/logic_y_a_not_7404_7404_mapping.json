@@ -1,0 +1,17 @@
+{
+  "circuitName": "logic_y_a_not_7404",
+  "packageType": "7404",
+  "gateKind": "NOT",
+  "gateCount": 1,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "not_a1",
+      "label": "U1A",
+      "chipId": "U1",
+      "gateName": "A",
+      "chipNumber": 1,
+      "gateIndex": 0
+    }
+  ]
+}
