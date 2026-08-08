@@ -74,6 +74,11 @@ public final class DirectMultiChipCompiler {
         ComponentFactory factory = findFactory(library, cs.factoryName());
         var attrs = factory.createAttributeSet();
         setIfPresent(attrs, StdAttr.WIDTH, BitWidth.create(cs.bitWidth()));
+        // Gates default to multiple inputs; unused inputs float (E) and poison
+        // the output, so pin them to exactly 2 inputs for 2-input gates.
+        if (cs.libraryName().equals("Gates")) {
+          setIfPresent(attrs, com.cburch.logisim.std.gates.GateAttributes.ATTR_INPUTS, 2);
+        }
         if (cs.label() != null && !cs.label().isBlank()) {
           setIfPresent(attrs, StdAttr.LABEL, cs.label());
         }

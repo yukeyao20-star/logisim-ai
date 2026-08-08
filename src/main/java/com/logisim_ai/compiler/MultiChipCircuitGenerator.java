@@ -127,76 +127,136 @@ public final class MultiChipCircuitGenerator {
   }
 
   /**
-   * 16-to-4 priority encoder from two 74148 (8-to-3) chips + gates.
+   * 16-to-4 priority encoder from two 74148 (8-to-3) chips plus gates.
    *
-   * <p>Two 74148 cascaded into a 16-input priority encoder: the MSB chip handles
-   * inputs 8..15, the LSB chip 0..7. The standard cascade uses the chips'
-   * enable-in / enable-out / group-select signals plus external gates for the
-   * final 4-bit binary output and GS (group select).
+   * <p>Runtime port map of Ttl74148 (logisim-evolution, VCC_GND off):
+   * end0 = nEI, end1..8 = I0..I7 (active-low), end9 = nGS, end10 = nEO,
+   * end11 = A0, end12 = A1, end13 = A2 (active-low outputs).
+   *
+   * <p>Cascade: high group (I8..I15) feeds enc1 (I15 wired to enc1.I7, the
+   * highest priority), low group (I0..I7) feeds enc0. enc1.nEI is tied to EN
+   * (user connects 0 to enable), enc0.nEI is daisy-chained from enc1.nEO so the
+   * low group activates only when the high group has no valid input.
+   *
+   * <p>Outputs Y3Y2Y1Y0 are a positive-logic 0..15 value (Y3 is the MSB) and GS
+   * is a positive-logic "any input" flag. Gates implement:
+   * <pre>
+   *   gsh  = not enc1.nGS              (high group active)
+   *   gsl  = not enc0.nGS              (low group active)
+   *   Y3   = gsh
+   *   Y2..0 = (gsh and not enc1.A#) or (enc1.nGS and not enc0.A#)
+   *   GS   = gsh or gsl
+   * </pre>
    */
   private static CircuitSpec buildEncoder16to4() {
     List<ComponentSpec> components = new ArrayList<>();
     components.add(new ComponentSpec("enc0", "TTL", "74148", 1, "U1"));
     components.add(new ComponentSpec("enc1", "TTL", "74148", 1, "U2"));
-    components.add(new ComponentSpec("g1", "Gates", "OR Gate", 1, "U3A"));
-    components.add(new ComponentSpec("g2", "Gates", "OR Gate", 1, "U3B"));
+    components.add(new ComponentSpec("n_gsh", "Gates", "NOT Gate", 1, "U3A"));
+    components.add(new ComponentSpec("gsl", "Gates", "NOT Gate", 1, "U3B"));
+    components.add(new ComponentSpec("nh2", "Gates", "NOT Gate", 1, "U4A"));
+    components.add(new ComponentSpec("nh1", "Gates", "NOT Gate", 1, "U4B"));
+    components.add(new ComponentSpec("nh0", "Gates", "NOT Gate", 1, "U4C"));
+    components.add(new ComponentSpec("nl2", "Gates", "NOT Gate", 1, "U5A"));
+    components.add(new ComponentSpec("nl1", "Gates", "NOT Gate", 1, "U5B"));
+    components.add(new ComponentSpec("nl0", "Gates", "NOT Gate", 1, "U5C"));
+    components.add(new ComponentSpec("t1_2", "Gates", "AND Gate", 1, "U6A"));
+    components.add(new ComponentSpec("t1_1", "Gates", "AND Gate", 1, "U6B"));
+    components.add(new ComponentSpec("t1_0", "Gates", "AND Gate", 1, "U6C"));
+    components.add(new ComponentSpec("t2_2", "Gates", "AND Gate", 1, "U6D"));
+    components.add(new ComponentSpec("t2_1", "Gates", "AND Gate", 1, "U7A"));
+    components.add(new ComponentSpec("t2_0", "Gates", "AND Gate", 1, "U7B"));
+    components.add(new ComponentSpec("z2", "Gates", "OR Gate", 1, "U8A"));
+    components.add(new ComponentSpec("z1", "Gates", "OR Gate", 1, "U8B"));
+    components.add(new ComponentSpec("z0", "Gates", "OR Gate", 1, "U8C"));
+    components.add(new ComponentSpec("gso", "Gates", "OR Gate", 1, "U8D"));
 
     List<ExternalPort> ports = new ArrayList<>();
     List<NetSpec> nets = new ArrayList<>();
 
-    // 16 active-low inputs I0..I15
+    // 16 active-low inputs I0..I15 + global low-active enable EN
     for (int i = 0; i < 16; i++) {
-      addInput(ports, "i" + i, "I" + i);
+      addInput(ports, "i" + i, "I" + i, "enc0");
     }
-    // 4 binary outputs Y0..Y3 + group select GS (all active low per 74148)
-    for (int i = 0; i < 4; i++) {
-      addOutput(ports, "y" + i, "Y" + i);
-    }
-    addOutput(ports, "gs", "GS");
+    addInput(ports, "en", "EN", "enc0");
+    // outputs: Y0..Y3 (positive logic, Y3 = MSB), GS = any-valid
+    addOutput(ports, "y0", "Y0", "enc0");
+    addOutput(ports, "y1", "Y1", "enc0");
+    addOutput(ports, "y2", "Y2", "enc0");
+    addOutput(ports, "y3", "Y3", "enc0");
+    addOutput(ports, "gs", "GS", "enc0");
 
-    // NOTE: 74148 pin mapping is fetched from the runtime catalog by the
-    // compiler; here we encode the standard port indices. Full correctness of
-    // the 16-to-4 priority-encoder cascade (EIO/EOI/GS daisy chain plus the
-    // group-select gating on the MSB) is verified against the official JAR in
-    // the regression suite. The nets below are the complete wiring.
-    // (Port indices for 74148 from TTL_FACTORY_CATALOG_029.md.)
-    // For now we wire inputs 0..7 to enc0 and 8..15 to enc1, then OR the two
-    // binary outputs per bit and OR the GS signals for the final GS.
-    for (int bit = 0; bit < 3; bit++) {
-      int end0 = 1 + bit;  // A0..A2 of 74148 are ends 1..3 (placeholder, verified by catalog)
-      int end1 = 1 + bit;
-      String netId = "nA" + bit;
-      nets.add(net(netId, e("enc0", end0), e("g" + (bit + 1), bit + 1), e("enc1", end1)));
-      nets.add(net(netId + "o", e("g" + (bit + 1), 0), e("y" + bit, 0)));
-    }
-    // Group select: both encoders' GS feed an OR; Y3 = enc1 GS (highest 8 group)
-    nets.add(net("nGS0", e("enc0", 6), e("g2", 2)));
-    nets.add(net("nGS1", e("enc1", 6), e("g2", 1)));
-    nets.add(net("nGS", e("g2", 0), e("gs", 0)));
-    nets.add(net("nY3", e("enc1", 6), e("y3", 0)));
-
-    // Wire all inputs
+    // Inputs: low group I0..I7 -> enc0 ends 0..7; high group I8..I15 -> enc1 ends 0..7
     for (int i = 0; i < 8; i++) {
-      nets.add(net("nI" + i, e("i" + i, 0), e("enc0", 4 + i)));
+      nets.add(net("ni_l" + i, e("i" + i, 0), e("enc0", i)));
+      nets.add(net("ni_h" + i, e("i" + (8 + i), 0), e("enc1", i)));
     }
-    for (int i = 8; i < 16; i++) {
-      nets.add(net("nI" + i, e("i" + i, 0), e("enc1", 4 + (i - 8))));
+    // Enable chain: enc1.nEI(end8) from EN; enc0.nEI(end8) from enc1.nEO(end10)
+    // (only when high group empty)
+    nets.add(net("nen1", e("en", 0), e("enc1", 8)));
+    nets.add(net("nen0", e("enc1", 10), e("enc0", 8)));
+
+    // Group-active flags
+    nets.add(net("nng1", e("enc1", 9), e("n_gsh", 1)));       // enc1.nGS -> NOT
+    nets.add(net("nng0", e("enc0", 9), e("gsl", 1)));          // enc0.nGS -> NOT
+    nets.add(net("ngsh", e("n_gsh", 0), e("y3", 0)));           // Y3 = gsh
+
+    // gsh fans out to the three high-group AND inputs (port 2)
+    nets.add(net("sg", e("n_gsh", 0), e("t1_2", 2), e("t1_1", 2), e("t1_0", 2)));
+    // enc1.nGS (= not gsh) fans out to the three low-group AND inputs (port 2)
+    nets.add(net("sng1", e("enc1", 9), e("t2_2", 2), e("t2_1", 2), e("t2_0", 2)));
+
+    // Per-bit negative-to-positive + group mux:
+    // enc1.A0..A2 are ends 11,12,13 ; enc0 same
+    for (int bit = 0; bit < 3; bit++) {
+      int endA = 11 + bit; // bit0 -> end11(A0), bit1 -> end12(A1), bit2 -> end13(A2)
+      String nh = "nh" + bit;
+      String nl = "nl" + bit;
+      String t1 = "t1_" + bit;
+      String t2 = "t2_" + bit;
+      String z = "z" + bit;
+      nets.add(net("nnh" + bit, e("enc1", endA), e(nh, 1)));
+      nets.add(net("nnl" + bit, e("enc0", endA), e(nl, 1)));
+      nets.add(net("snh" + bit, e(nh, 0), e(t1, 1)));   // not enc1.A# -> high AND input1
+      nets.add(net("snl" + bit, e(nl, 0), e(t2, 1)));   // not enc0.A#  -> low AND input1
+      // Separate nets per OR input: two gate outputs must not share a wire.
+      nets.add(net("nz1_" + bit, e(t1, 0), e(z, 1)));
+      nets.add(net("nz2_" + bit, e(t2, 0), e(z, 2)));
+      nets.add(net("ny" + bit, e(z, 0), e("y" + bit, 0)));
     }
+    // GS = gsh OR gsl (separate nets: two gate outputs must not share a wire)
+    nets.add(net("ngs1", e("n_gsh", 0), e("gso", 1)));
+    nets.add(net("ngs2", e("gsl", 0), e("gso", 2)));
+    nets.add(net("ngso", e("gso", 0), e("gs", 0)));
 
     List<LayoutHint> hints = List.of(
         new LayoutHint("enc0", 0, 0, 0, null),
         new LayoutHint("enc1", 0, 1, 0, null),
-        new LayoutHint("g1", 1, 0, 0, null),
-        new LayoutHint("g2", 1, 0, 1, null));
+        new LayoutHint("n_gsh", 1, 0, 0, null),
+        new LayoutHint("gsl", 1, 0, 1, null),
+        new LayoutHint("nh2", 1, 1, 0, null),
+        new LayoutHint("nl2", 1, 1, 1, null),
+        new LayoutHint("t1_2", 2, 0, 0, null),
+        new LayoutHint("z2", 2, 1, 0, null));
     return new CircuitSpec("encoder_16to4", components, ports, nets, hints);
   }
 
   private static void addInput(List<ExternalPort> ports, String id, String label) {
-    ports.add(new ExternalPort(id, label, 1, PortDirection.INPUT, PortSide.LEFT, "dec1", 0));
+    addInput(ports, id, label, "dec1");
+  }
+
+  private static void addInput(
+      List<ExternalPort> ports, String id, String label, String target) {
+    ports.add(new ExternalPort(id, label, 1, PortDirection.INPUT, PortSide.LEFT, target, 0));
   }
 
   private static void addOutput(List<ExternalPort> ports, String id, String label) {
-    ports.add(new ExternalPort(id, label, 1, PortDirection.OUTPUT, PortSide.RIGHT, "dec1", 0));
+    addOutput(ports, id, label, "dec1");
+  }
+
+  private static void addOutput(
+      List<ExternalPort> ports, String id, String label, String target) {
+    ports.add(new ExternalPort(id, label, 1, PortDirection.OUTPUT, PortSide.RIGHT, target, 0));
   }
 
   private static EndpointRef e(String componentId, int endIndex) {
