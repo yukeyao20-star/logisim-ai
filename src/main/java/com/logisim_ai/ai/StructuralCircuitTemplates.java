@@ -32,6 +32,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:加法器|全加器|二进制加法器)");
   private static final Pattern ADDER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:adder|ripple[- ]carry\\s+adder)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern COMPARATOR_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:比较器|大小比较器|数值比较器)");
+  private static final Pattern COMPARATOR_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:comparator|magnitude\\s+comparator)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -48,6 +52,17 @@ public final class StructuralCircuitTemplates {
     }
     if (en.find()) {
       return Optional.of(buildAdder(Integer.parseInt(en.group(1))));
+    }
+    Matcher czh = COMPARATOR_ZH.matcher(t);
+    Matcher cen = COMPARATOR_EN.matcher(t);
+    if (czh.find()) {
+      Integer bits = chineseToInt(czh.group(1));
+      if (bits != null) {
+        return Optional.of(buildComparator(bits));
+      }
+    }
+    if (cen.find()) {
+      return Optional.of(buildComparator(Integer.parseInt(cen.group(1))));
     }
     return Optional.empty();
   }
@@ -140,6 +155,102 @@ public final class StructuralCircuitTemplates {
     nets.add(net("cout", e(carryIn, 0), e("cout", 0)));
 
     return new CircuitSpec("adder_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit magnitude comparator with outputs GT (A>B), EQ (A==B), LT (A<B).
+   * Bit slice i: e_i = XNOR(A_i,B_i), g_i = A_i and not B_i.
+   * GT ripple: gt = g(N-1) | e(N-1)&g(N-2) | ... ; EQ = AND of all e_i;
+   * LT = not (GT or EQ).
+   */
+  static CircuitSpec buildComparator(int bits) {
+    if (bits < 1 || bits > 16) {
+      throw new IllegalArgumentException("Comparator width must be 1..16, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "cmp" + i + "_xn");
+      addInput(ports, "b" + i, "B" + i, "cmp" + i + "_xn");
+    }
+    addOutput(ports, "gt", "GT", "cmp" + (bits - 1) + "_ga");
+    addOutput(ports, "eq", "EQ", bits == 1 ? "cmp0_xn" : "eqc_" + (bits - 1));
+    addOutput(ports, "lt", "LT", "lt_not");
+
+    for (int i = 0; i < bits; i++) {
+      String g = "cmp" + i + "_";
+      String chip = "CMP" + i;
+      components.add(new ComponentSpec(g + "xn", "Gates", "XNOR Gate", 1, chip + "E"));
+      components.add(new ComponentSpec(g + "nb", "Gates", "NOT Gate", 1, chip + "N"));
+      components.add(new ComponentSpec(g + "ga", "Gates", "AND Gate", 1, chip + "G"));
+      hints.add(new LayoutHint(g + "xn", i, 0, 0, null));
+      hints.add(new LayoutHint(g + "nb", i, 0, 1, null));
+      hints.add(new LayoutHint(g + "ga", i, 0, 2, null));
+    }
+    components.add(new ComponentSpec("lt_or", "Gates", "OR Gate", 1, "CMPO"));
+    components.add(new ComponentSpec("lt_not", "Gates", "NOT Gate", 1, "CMPL"));
+    hints.add(new LayoutHint("lt_or", bits, 0, 0, null));
+    hints.add(new LayoutHint("lt_not", bits, 0, 1, null));
+
+    for (int i = 0; i < bits; i++) {
+      String g = "cmp" + i + "_";
+      nets.add(net("nb" + i, e("b" + i, 0), e(g + "nb", 1)));
+      nets.add(net("g" + i, e(g + "nb", 0), e(g + "ga", 2)));
+      nets.add(net("ag" + i, e("a" + i, 0), e(g + "ga", 1)));
+      nets.add(net("a" + i, e("a" + i, 0), e(g + "xn", 1)));
+      nets.add(net("b" + i, e("b" + i, 0), e(g + "xn", 2)));
+    }
+
+    // GT ripple from MSB down:
+    //   gt_acc = g(N-1); e_acc = e(N-1)
+    //   gt_acc = gt_acc | (e_acc & g(i)); e_acc = e_acc & e(i)
+    // so the highest differing bit decides, high bits are never dropped.
+    for (int i = 0; i < bits - 1; i++) {
+      components.add(new ComponentSpec("gta_" + i, "Gates", "AND Gate", 1, "CMPA" + (i + 1)));
+      components.add(new ComponentSpec("gtc_" + i, "Gates", "OR Gate", 1, "CMPG" + (i + 1)));
+      components.add(new ComponentSpec("gte_" + i, "Gates", "AND Gate", 1, "CMPE" + (i + 1)));
+      hints.add(new LayoutHint("gta_" + i, bits + 1 + i, 0, 0, null));
+      hints.add(new LayoutHint("gtc_" + i, bits + 1 + i, 0, 1, null));
+      hints.add(new LayoutHint("gte_" + i, bits + 1 + i, 0, 2, null));
+    }
+    String gtAcc = "cmp" + (bits - 1) + "_ga";
+    String eAcc = "cmp" + (bits - 1) + "_xn";
+    for (int i = bits - 2; i >= 0; i--) {
+      nets.add(net("gta" + i, e(eAcc, 0), e("gta_" + i, 1)));
+      nets.add(net("gtb" + i, e("cmp" + i + "_ga", 0), e("gta_" + i, 2)));
+      nets.add(net("gtc" + i, e(gtAcc, 0), e("gtc_" + i, 1)));
+      nets.add(net("gtd" + i, e("gta_" + i, 0), e("gtc_" + i, 2)));
+      nets.add(net("gte" + i, e(eAcc, 0), e("gte_" + i, 1)));
+      nets.add(net("gtf" + i, e("cmp" + i + "_xn", 0), e("gte_" + i, 2)));
+      gtAcc = "gtc_" + i;
+      eAcc = "gte_" + i;
+    }
+    nets.add(net("gtout", e(gtAcc, 0), e("gt", 0)));
+
+    // EQ = AND of all e_i (two-input chain, one AND per step)
+    for (int i = 0; i < bits; i++) {
+      components.add(new ComponentSpec("eqc_" + i, "Gates", "AND Gate", 1, "CMPQ" + (i + 1)));
+      hints.add(new LayoutHint("eqc_" + i, bits + 1, 0, 2 + i, null));
+    }
+    String eqAcc = "cmp0_xn";
+    for (int i = 1; i < bits; i++) {
+      nets.add(net("eqa_" + i, e(eqAcc, 0), e("eqc_" + i, 1)));
+      nets.add(net("eqb_" + i, e("cmp" + i + "_xn", 0), e("eqc_" + i, 2)));
+      eqAcc = "eqc_" + i;
+    }
+    nets.add(net("eqout", e(eqAcc, 0), e("eq", 0)));
+
+    // LT = not (GT or EQ); feed gate outputs directly, never route through an
+    // output Pin (an output Pin as a net source is not a supported fan-out).
+    nets.add(net("lta", e(gtAcc, 0), e("lt_or", 1)));
+    nets.add(net("ltb", e(eqAcc, 0), e("lt_or", 2)));
+    nets.add(net("ltc", e("lt_or", 0), e("lt_not", 1)));
+    nets.add(net("ltout", e("lt_not", 0), e("lt", 0)));
+
+    return new CircuitSpec("comparator_" + bits + "bit", components, ports, nets, hints);
   }
 
   private static void addInput(

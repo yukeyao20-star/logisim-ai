@@ -211,10 +211,12 @@ public final class LogisimCompiler {
       // Phase 5: Wire all nets using Tunnels
       int netLabelSeq = 1;
       System.out.println("[netlist] phase5 wiring " + spec.nets().size() + " nets");
+      java.util.Set<Location> usedTunnelLocs = new java.util.HashSet<>();
       for (NetSpec net : spec.nets()) {
         String label = "n" + netLabelSeq++;
         wireNetWithTunnels(
-            mutation, net, positioned, pinMap, spec.externalPorts(), tunnelFactory, label, reservedAreas);
+            mutation, net, positioned, pinMap, spec.externalPorts(), tunnelFactory, label,
+            reservedAreas, usedTunnelLocs);
       }
       System.out.println("[netlist] phase5 done, executing mutation");
       mutation.execute();
@@ -266,7 +268,8 @@ public final class LogisimCompiler {
       List<ExternalPort> externalPorts,
       ComponentFactory tunnelFactory,
       String label,
-      List<FootprintPolicy.ReservedArea> reservedAreas) {
+      List<FootprintPolicy.ReservedArea> reservedAreas,
+      java.util.Set<Location> usedTunnelLocs) {
 
     List<EndpointRef> refs = net.endpoints();
     if (refs.size() < 2) return;
@@ -300,14 +303,20 @@ public final class LogisimCompiler {
               endpoint.location(),
               externalPortSide(endpoint.ref().componentId(), externalPorts))
           : AutoLayoutPolicy.tunnelForComponentEnd(endpoint.location(), endpoint.ref().endIndex());
-      Component tunnel = createTunnel(tunnelFactory, label, placement.location(), placement.facing());
+      // Two Tunnels at the exact same point short their nets together (ends
+      // share the point), so nudge conflicting placements away until free.
+      Location tunnelLoc = placement.location();
+      while (!usedTunnelLocs.add(tunnelLoc)) {
+        tunnelLoc = Location.create(tunnelLoc.getX() + 10, tunnelLoc.getY(), true);
+      }
+      Component tunnel = createTunnel(tunnelFactory, label, tunnelLoc, placement.facing());
       mutation.add(tunnel);
 
       Location tunnelPort = tunnel.getEnd(0).getLocation();
       List<FootprintPolicy.ReservedArea> routeAreas = new ArrayList<>(reservedAreas);
-      addReservedArea(routeAreas, "Tunnel", label, placement.location());
+      addReservedArea(routeAreas, "Tunnel", label, tunnelLoc);
       connectShortLocal(mutation, endpoint.location(), tunnelPort, routeAreas);
-      addReservedArea(reservedAreas, "Tunnel", label, placement.location());
+      addReservedArea(reservedAreas, "Tunnel", label, tunnelLoc);
     }
   }
 
