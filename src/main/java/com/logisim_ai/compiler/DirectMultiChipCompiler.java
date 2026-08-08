@@ -109,31 +109,26 @@ public final class DirectMultiChipCompiler {
         }
       }
 
-      // Phase 3: wire every net using the proven star-convergence pattern:
-      // all wires route through a shared vertical channel (parallel, never
-      // crossing), and Logisim's WireRepair reconciles the junctions on execute.
+      // Phase 3: wire every net through the IsolatedRouter, which guarantees no
+      // two wires share a vertical column or horizontal lane.
+      java.util.List<com.logisim_ai.layout.IsolatedRouter.NetWire> routerNets =
+          new java.util.ArrayList<>();
+      java.util.Map<String, Location> endpointLocs = new java.util.HashMap<>();
       for (NetSpec net : spec.nets()) {
-        List<EndpointRef> refs = net.endpoints();
-        if (refs.size() < 2) {
-          continue;
-        }
-        Location anchor = endpointLocation(refs.get(0), positioned, pinMap);
-        if (anchor == null) {
-          continue;
-        }
-        for (int i = 1; i < refs.size(); i++) {
-          Location target = endpointLocation(refs.get(i), positioned, pinMap);
-          if (target == null) {
-            continue;
+        java.util.List<com.logisim_ai.layout.IsolatedRouter.EndpointRef> refs =
+            new java.util.ArrayList<>();
+        for (EndpointRef ref : net.endpoints()) {
+          String key = ref.componentId() + "#" + ref.endIndex();
+          Location loc = endpointLocation(ref, positioned, pinMap);
+          if (loc != null) {
+            endpointLocs.put(key, loc);
           }
-          for (AutoLayoutPolicy.WireSegment segment
-              : AutoLayoutPolicy.planLocalTunnelWire(anchor, target)) {
-            if (!segment.from().equals(segment.to())) {
-              mutation.add(Wire.create(segment.from(), segment.to()));
-            }
-          }
+          refs.add(new com.logisim_ai.layout.IsolatedRouter.EndpointRef(
+              ref.componentId(), ref.endIndex()));
         }
+        routerNets.add(new com.logisim_ai.layout.IsolatedRouter.NetWire(net.id(), refs));
       }
+      com.logisim_ai.layout.IsolatedRouter.wire(mutation, routerNets, endpointLocs);
       System.out.println("[direct-multichip] executing mutation");
       mutation.execute();
 
