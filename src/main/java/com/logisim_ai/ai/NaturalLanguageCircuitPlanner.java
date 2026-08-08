@@ -141,6 +141,18 @@ public final class NaturalLanguageCircuitPlanner {
       }
     }
 
+    // Parameterized structural circuits (N-bit adder, comparator, ...) build a
+    // CircuitSpec directly and flow through the same compiler + verification.
+    var structural = StructuralCircuitTemplates.tryBuild(normalized);
+    if (structural.isPresent()) {
+      return matched(new PlanResult(
+          structural.get(),
+          "Generated parameterized structural circuit",
+          null,
+          intent,
+          profile));
+    }
+
     BoolFunctionSynthesizer.SynthesisStrategy strategy = use7400
         ? BoolFunctionSynthesizer.SynthesisStrategy.TTL_7400
         : use7486
