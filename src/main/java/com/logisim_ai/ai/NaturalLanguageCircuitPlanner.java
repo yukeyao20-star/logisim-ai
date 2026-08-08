@@ -80,16 +80,18 @@ public final class NaturalLanguageCircuitPlanner {
   private static final List<Template> TEMPLATES = List.of(
       new Template(
           "generated/examples/half_adder_spec.json",
-          List.of("half adder", "half-adder", "halfadder")),
+          List.of("half adder", "half-adder", "halfadder", "半加器")),
       new Template(
           "generated/examples/full_adder_spec.json",
-          List.of("full adder", "full-adder", "fulladder")),
+          List.of("full adder", "full-adder", "fulladder", "全加器")),
       new Template(
           "generated/examples/mux_4to1_spec.json",
-          List.of("mux 4 to 1", "4 to 1 mux", "4-to-1 mux", "4:1 mux")),
+          List.of("mux 4 to 1", "4 to 1 mux", "4-to-1 mux", "4:1 mux",
+              "多路选择器", "多路复用器", "4选1", "4选1多路选择器", "四选一")),
       new Template(
           "generated/examples/nand_xor3_spec.json",
-          List.of("three input xor", "3 input xor", "3-input xor", "xor3", "nand xor"))
+          List.of("three input xor", "3 input xor", "3-input xor", "xor3", "nand xor",
+              "三输入异或", "3输入异或"))
   );
 
   public static PlanResult plan(String query) {
