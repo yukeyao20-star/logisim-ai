@@ -64,11 +64,12 @@ public final class DirectMultiChipCompiler {
     file.setMainCircuit(circuit);
 
     try {
-      // Phase 1: instantiate chips on a grid (200 px apart in x, 0 in y)
+      // Phase 1: instantiate chips on a grid (gates closer together than wide
+      // TTL chips so multi-gate circuits stay compact horizontally)
       Map<String, Component> positioned = new HashMap<>();
       CircuitMutation mutation = new CircuitMutation(circuit);
-      int col = 0;
       int row = 0;
+      int cursor = 500;
       for (ComponentSpec cs : spec.components()) {
         Library library = LogisimProjectSetup.addLibrary(loader, file, cs.libraryName());
         ComponentFactory factory = findFactory(library, cs.factoryName());
@@ -82,15 +83,17 @@ public final class DirectMultiChipCompiler {
         if (cs.label() != null && !cs.label().isBlank()) {
           setIfPresent(attrs, StdAttr.LABEL, cs.label());
         }
-        Location loc = Location.create(500 + col * 260, 250 + row * 200, true);
+        Location loc = Location.create(cursor, 250 + row * 200, true);
         Component comp = factory.createComponent(loc, attrs);
         positioned.put(cs.id(), comp);
         mutation.add(comp);
-        col++;
+        cursor += cs.libraryName().equals("Gates") ? 160 : 260;
       }
+      int componentRightX = cursor + 300;
 
       // Phase 2: create external Pins. Each Pin gets its own x column so its
-      // routing stub never overlaps another Pin's stub.
+      // routing stub never overlaps another Pin's stub. Outputs sit right of
+      // the last component column so wide circuits keep pins outside the logic.
       Map<String, Component> pinMap = new HashMap<>();
       int leftIndex = 0;
       int rightIndex = 0;
@@ -98,9 +101,9 @@ public final class DirectMultiChipCompiler {
         boolean output = port.direction() == PortDirection.OUTPUT;
         Direction facing = output ? Direction.WEST : Direction.EAST;
         int pinY = 100 + (output ? rightIndex : leftIndex) * 50;
-        // Unique x per pin: inputs spread from x=60 rightward, outputs from x=1180
-        // leftward, so pins never share a column.
-        int pinX = output ? 1180 - rightIndex * 50 : 60 + leftIndex * 50;
+        // Unique x per pin: inputs spread from x=60 rightward, outputs from the
+        // right edge of the component area leftward.
+        int pinX = output ? componentRightX - rightIndex * 50 : 60 + leftIndex * 50;
         Component pin = createPin(port, output, facing, pinX, pinY);
         pinMap.put(port.id(), pin);
         mutation.add(pin);

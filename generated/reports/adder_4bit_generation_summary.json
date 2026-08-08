@@ -19,12 +19,13 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 5,
+  "artifactCount": 6,
   "artifacts": [
     {"path": "generated\\circ\\adder_4bit.circ", "exists": true},
     {"path": "generated\\reports\\adder_4bit_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\adder_4bit_circuit_manifest.md", "exists": true},
     {"path": "generated\\reports\\adder_4bit_generation_summary.json", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_generation_summary.md", "exists": true}
+    {"path": "generated\\reports\\adder_4bit_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\adder_4bit_multichip.md", "exists": true}
   ]
 }

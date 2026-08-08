@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 5
+- Artifact count: 6
 
 ## Artifacts
 
@@ -28,3 +28,4 @@
 | generated\reports\adder_4bit_circuit_manifest.md | true |
 | generated\reports\adder_4bit_generation_summary.json | true |
 | generated\reports\adder_4bit_generation_summary.md | true |
+| generated\reports\adder_4bit_multichip.md | true |
