@@ -93,6 +93,7 @@ public final class TtlNativeChipCompiler {
       mutation.add(chip);
       int leftIndex = 0;
       int rightIndex = 0;
+      int wireSeq = 0;
       for (int i = 0; i < specs.size(); i++) {
         CatalogPort port = info.ports().get(i);
         Location chipPort = chip.getEnd(port.endIndex()).getLocation();
@@ -107,13 +108,18 @@ public final class TtlNativeChipCompiler {
         Component pin = createPin(port, output, facing, specs.get(i).label(), pinLocation);
         mutation.add(pin);
         Location pinPort = pin.getEnd(0).getLocation();
-        // Route through the shared safety policy so boundary-lane verticals get doglegs
-        // and all wires stay orthogonal and clear of external-input lanes.
-        List<com.logisim_ai.layout.AutoLayoutPolicy.WireSegment> segments =
-            com.logisim_ai.layout.AutoLayoutPolicy.planLocalTunnelWire(pinPort, chipPort);
-        for (com.logisim_ai.layout.AutoLayoutPolicy.WireSegment segment : segments) {
-          mutation.add(Wire.create(segment.from(), segment.to()));
+        // Route through a per-wire unique channel so no two wires share a column or
+        // a closing row. This avoids the shorts that the shared-dogleg policy
+        // introduces when many pins feed one chip.
+        int chanX = 250 + (wireSeq) * 10;
+        int chanY = 500 + (wireSeq) * 10;
+        for (com.logisim_ai.layout.AutoLayoutPolicy.WireSegment segment
+            : routeIsolated(pinPort, chipPort, chanX, chanY)) {
+          if (!segment.from().equals(segment.to())) {
+            mutation.add(Wire.create(segment.from(), segment.to()));
+          }
         }
+        wireSeq++;
         if (output) {
           rightIndex++;
         } else {
@@ -157,6 +163,28 @@ public final class TtlNativeChipCompiler {
     if (attrs.getAttribute(attribute.getName()) != null) {
       attrs.setValue((com.cburch.logisim.data.Attribute<Object>) attribute, value);
     }
+  }
+
+  /**
+   * Route one wire through a per-wire unique channel corner (chanX, chanY).
+   * The four-segment path (from -> (chanX,fromY) -> (chanX,chanY) ->
+   * (toX,chanY) -> to) ensures different wires use distinct rows/columns, so no
+   * two wires short.
+   */
+  private static List<com.logisim_ai.layout.AutoLayoutPolicy.WireSegment> routeIsolated(
+      Location from, Location to, int chanX, int chanY) {
+    List<com.logisim_ai.layout.AutoLayoutPolicy.WireSegment> segments = new java.util.ArrayList<>();
+    if (from.equals(to)) {
+      return segments;
+    }
+    Location a = Location.create(chanX, from.getY(), true);
+    Location b = Location.create(chanX, chanY, true);
+    Location c = Location.create(to.getX(), chanY, true);
+    segments.add(new com.logisim_ai.layout.AutoLayoutPolicy.WireSegment(from, a));
+    segments.add(new com.logisim_ai.layout.AutoLayoutPolicy.WireSegment(a, b));
+    segments.add(new com.logisim_ai.layout.AutoLayoutPolicy.WireSegment(b, c));
+    segments.add(new com.logisim_ai.layout.AutoLayoutPolicy.WireSegment(c, to));
+    return segments;
   }
 
   private static String labelFor(CatalogPort port, int index, List<String> overrides) {
