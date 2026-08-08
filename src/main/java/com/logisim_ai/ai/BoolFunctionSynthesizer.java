@@ -61,6 +61,12 @@ public final class BoolFunctionSynthesizer {
     }
 
     String cleaned = extractCandidate(query, strategy);
+    // Functional descriptions (e.g. "三人表决器") map to Boolean expressions
+    // first, then flow through the normal synthesis path.
+    Optional<String> functional = tryFunctionalMapping(cleaned);
+    if (functional.isPresent()) {
+      return trySynthesize(functional.get(), strategy);
+    }
     Optional<CircuitSpec> minterm = tryMinterm(cleaned);
     if (minterm.isPresent() && strategy == SynthesisStrategy.DEFAULT) {
       return minterm;
@@ -99,6 +105,39 @@ public final class BoolFunctionSynthesizer {
 
   private static Optional<CircuitSpec> tryMultiOutput(String text) {
     return tryMultiOutput(text, SynthesisStrategy.DEFAULT);
+  }
+
+  /**
+   * Maps natural-language functional descriptions of textbook circuits to
+   * equivalent Boolean expressions. The expression then flows through the
+   * regular synthesis path (parse -> strategy -> CircuitSpec), so a
+   * functional description needs no special compiler support.
+   */
+  private static Optional<String> tryFunctionalMapping(String text) {
+    String t = text.toLowerCase(Locale.ROOT);
+    if (containsAny(t,
+        "三人表决", "多数表决", "表决器", "majority", "voting", "vote of")) {
+      return Optional.of("F=(A and B) or (A and C) or (B and C)");
+    }
+    if (containsAny(t, "不一致", "意见不同", "disagreement", "disagree")) {
+      return Optional.of("F=(A xor B) or (A xor C)");
+    }
+    if (containsAny(t, "偶校验", "奇偶校验", "校验器", "even parity", "parity")) {
+      return Optional.of("F=A xor B xor C");
+    }
+    if (containsAny(t, "相等", "相同", "equal", "equals", "xnor", "同或")) {
+      return Optional.of("F=not (A xor B)");
+    }
+    return Optional.empty();
+  }
+
+  private static boolean containsAny(String text, String... keywords) {
+    for (String keyword : keywords) {
+      if (text.contains(keyword)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static Optional<CircuitSpec> tryMultiOutput(String text, SynthesisStrategy strategy) {
@@ -463,7 +502,7 @@ public final class BoolFunctionSynthesizer {
       List<Signal> products = new ArrayList<>();
       for (int termIndex = 0; termIndex < minterms.size(); termIndex++) {
         int minterm = minterms.get(termIndex);
-        int productRow = termIndex * 2;
+        int productRow = termIndex;
         Signal product = null;
         for (int bit = 0; bit < variables.size(); bit++) {
           String var = variables.get(bit);
@@ -487,7 +526,7 @@ public final class BoolFunctionSynthesizer {
       for (int i = 1; i < products.size(); i++) {
         Signal next = products.get(i);
         int depth = Math.max(result.depth(), next.depth()) + 1;
-        int row = i * 2 - 1;
+        int row = i;
         String id = addGate("OR Gate", "or", depth, row);
         connect(result, new EndpointRef(id, 1));
         connect(next, new EndpointRef(id, 2));

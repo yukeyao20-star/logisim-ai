@@ -1,0 +1,39 @@
+{
+  "name": "logic_y_abcdef",
+  "components": [
+    {"id": "and1", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""},
+    {"id": "and2", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""},
+    {"id": "or3", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": ""},
+    {"id": "and4", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""},
+    {"id": "or5", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": ""}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and1", "targetEndIndex": 1},
+    {"id": "b", "label": "B", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and1", "targetEndIndex": 2},
+    {"id": "c", "label": "C", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and2", "targetEndIndex": 1},
+    {"id": "d", "label": "D", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and2", "targetEndIndex": 2},
+    {"id": "e", "label": "E", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and4", "targetEndIndex": 1},
+    {"id": "f", "label": "F", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "and4", "targetEndIndex": 2},
+    {"id": "y", "label": "Y", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "or5", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "net_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "and1", "endIndex": 1}]},
+    {"id": "net_b", "endpoints": [{"componentId": "b", "endIndex": 0}, {"componentId": "and1", "endIndex": 2}]},
+    {"id": "net_c", "endpoints": [{"componentId": "c", "endIndex": 0}, {"componentId": "and2", "endIndex": 1}]},
+    {"id": "net_d", "endpoints": [{"componentId": "d", "endIndex": 0}, {"componentId": "and2", "endIndex": 2}]},
+    {"id": "net_e", "endpoints": [{"componentId": "e", "endIndex": 0}, {"componentId": "and4", "endIndex": 1}]},
+    {"id": "net_f", "endpoints": [{"componentId": "f", "endIndex": 0}, {"componentId": "and4", "endIndex": 2}]},
+    {"id": "net_i1", "endpoints": [{"componentId": "and1", "endIndex": 0}, {"componentId": "or3", "endIndex": 1}]},
+    {"id": "net_i2", "endpoints": [{"componentId": "and2", "endIndex": 0}, {"componentId": "or3", "endIndex": 2}]},
+    {"id": "net_i3", "endpoints": [{"componentId": "or3", "endIndex": 0}, {"componentId": "or5", "endIndex": 1}]},
+    {"id": "net_i4", "endpoints": [{"componentId": "and4", "endIndex": 0}, {"componentId": "or5", "endIndex": 2}]},
+    {"id": "net_i5", "endpoints": [{"componentId": "or5", "endIndex": 0}, {"componentId": "y", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "and1", "rank": 1, "column": 1, "row": 0, "side": null},
+    {"componentId": "and2", "rank": 1, "column": 1, "row": 1, "side": null},
+    {"componentId": "or3", "rank": 2, "column": 2, "row": 2, "side": null},
+    {"componentId": "and4", "rank": 1, "column": 1, "row": 3, "side": null},
+    {"componentId": "or5", "rank": 3, "column": 3, "row": 4, "side": null}
+  ]
+}

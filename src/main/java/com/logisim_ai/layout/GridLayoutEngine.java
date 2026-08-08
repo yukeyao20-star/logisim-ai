@@ -113,12 +113,15 @@ public final class GridLayoutEngine {
     // Place components at grid positions
     List<PlacedComponent> placed = new ArrayList<>();
     for (int rank = 0; rank <= maxRank; rank++) {
-      List<String> ids = byRank.getOrDefault(rank, List.of());
+      List<String> ids = byRank.getOrDefault(rank, new ArrayList<>());
       int col = INPUT_PIN_X + PIN_TO_COMPONENT_GAP + rank * COLUMN_SPACING;
+      // Same-rank components are stacked continuously (row index within the
+      // group) so a column of gates lines up evenly regardless of the hint
+      // row values handed out during synthesis.
+      ids.sort(Comparator.comparingInt(id -> rowMap.getOrDefault(id, 0)));
       for (int i = 0; i < ids.size(); i++) {
         String id = ids.get(i);
-        int row = rowMap.getOrDefault(id, i);
-        int y = snap(VERTICAL_START + row * ROW_SPACING);
+        int y = snap(VERTICAL_START + i * ROW_SPACING);
         // Use a placeholder component; will be replaced by real positioned component later
         placed.add(new PlacedComponent(id, null, Location.create(col, y, true)));
       }

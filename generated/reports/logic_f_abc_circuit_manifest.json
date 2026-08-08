@@ -1,0 +1,21 @@
+{
+  "circuitName": "logic_f_abc",
+  "complete": true,
+  "artifactCount": 3,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=5832"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] logic_f_abc.circ round-trip loaded with main circuit logic_f_abc"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] logic_f_abc.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[OK] logic_f_abc.circ static layout checks passed"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=8"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\logic_f_abc.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\logic_f_abc_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\logic_f_abc_circuit_truth_table.json", "exists": true}
+  ],
+  "issues": []
+}

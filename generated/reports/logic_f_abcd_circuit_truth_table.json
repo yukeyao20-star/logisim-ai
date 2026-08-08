@@ -1,0 +1,22 @@
+{
+  "circuitName": "logic_f_abcd",
+  "rowCount": 16,
+  "rows": [
+    {"inputs": {"a": false, "b": false, "c": false, "d": false}, "outputs": {"f": true}},
+    {"inputs": {"a": false, "b": false, "c": false, "d": true}, "outputs": {"f": false}},
+    {"inputs": {"a": false, "b": false, "c": true, "d": false}, "outputs": {"f": true}},
+    {"inputs": {"a": false, "b": false, "c": true, "d": true}, "outputs": {"f": false}},
+    {"inputs": {"a": false, "b": true, "c": false, "d": false}, "outputs": {"f": false}},
+    {"inputs": {"a": false, "b": true, "c": false, "d": true}, "outputs": {"f": true}},
+    {"inputs": {"a": false, "b": true, "c": true, "d": false}, "outputs": {"f": false}},
+    {"inputs": {"a": false, "b": true, "c": true, "d": true}, "outputs": {"f": true}},
+    {"inputs": {"a": true, "b": false, "c": false, "d": false}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": false, "c": false, "d": true}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": false, "c": true, "d": false}, "outputs": {"f": true}},
+    {"inputs": {"a": true, "b": false, "c": true, "d": true}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": true, "c": false, "d": false}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": true, "c": false, "d": true}, "outputs": {"f": true}},
+    {"inputs": {"a": true, "b": true, "c": true, "d": false}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": true, "c": true, "d": true}, "outputs": {"f": true}}
+  ]
+}
