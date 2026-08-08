@@ -36,6 +36,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:比较器|大小比较器|数值比较器)");
   private static final Pattern COMPARATOR_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:comparator|magnitude\\s+comparator)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern MUX_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*选1\\s*(?:多路选择器|多路复用器|选择器|多路开关)?");
+  private static final Pattern MUX_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?1\\s*(?:mux|multiplexer)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DECODER_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:译码器|解码器|二进制译码器)");
+  private static final Pattern DECODER_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?(\\d{1,3})\\s*(?:decoder|demultiplexer)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -64,7 +72,153 @@ public final class StructuralCircuitTemplates {
     if (cen.find()) {
       return Optional.of(buildComparator(Integer.parseInt(cen.group(1))));
     }
+    Matcher mzh = MUX_ZH.matcher(t);
+    Matcher men = MUX_EN.matcher(t);
+    if (mzh.find()) {
+      Integer n = chineseToInt(mzh.group(1));
+      if (n != null) {
+        return Optional.of(buildMux(n));
+      }
+    }
+    if (men.find()) {
+      return Optional.of(buildMux(Integer.parseInt(men.group(1))));
+    }
+    Matcher dzh = DECODER_ZH.matcher(t);
+    Matcher den = DECODER_EN.matcher(t);
+    if (dzh.find()) {
+      Integer bits = chineseToInt(dzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildDecoder(bits));
+      }
+    }
+    if (den.find()) {
+      return Optional.of(buildDecoder(Integer.parseInt(den.group(1))));
+    }
     return Optional.empty();
+  }
+
+  /**
+   * N-to-1 multiplexer: select bus S0..S(M-1) (M = log2 N) decodes to one-hot
+   * lines; Y = OR over i of (D_i and sel_i).
+   */
+  static CircuitSpec buildMux(int n) {
+    if (n < 2 || n > 256 || (n & (n - 1)) != 0) {
+      throw new IllegalArgumentException("MUX width must be a power of two in 2..256, got " + n);
+    }
+    int m = Integer.numberOfTrailingZeros(n);
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < n; i++) {
+      addInput(ports, "d" + i, "D" + i, "mux" + i + "_da");
+    }
+    for (int j = 0; j < m; j++) {
+      addInput(ports, "s" + j, "S" + j, "mux0_da");
+    }
+    addOutput(ports, "y", "Y", "mux_or" + (n - 2));
+
+    for (int i = 0; i < n; i++) {
+      String g = "mux" + i + "_";
+      String chip = "MUX" + i;
+      // data gate: D_i and sel_i
+      components.add(new ComponentSpec(g + "da", "Gates", "AND Gate", 1, chip + "D"));
+      hints.add(new LayoutHint(g + "da", 1, 0, i, null));
+      // select decode as a 2-input AND cascade: sel_i = AND over literals
+      String acc = null;
+      for (int j = 0; j < m; j++) {
+        boolean one = ((i >> j) & 1) == 1;
+        String src = one ? "s" + j : "sel_not" + j;
+        if (acc == null) {
+          acc = src;
+        } else {
+          String gateId = g + "se" + j;
+          components.add(new ComponentSpec(gateId, "Gates", "AND Gate", 1, chip + "S" + j));
+          hints.add(new LayoutHint(gateId, 0, 0, i, null));
+          nets.add(net("selx" + i + "_" + j, e(acc, 0), e(gateId, 1)));
+          nets.add(net("sely" + i + "_" + j, e(src, 0), e(gateId, 2)));
+          acc = gateId;
+        }
+      }
+      if (acc != null) {
+        nets.add(net("selo" + i, e(acc, 0), e(g + "da", 2)));
+      }
+    }
+    for (int k = 0; k < n - 1; k++) {
+      components.add(new ComponentSpec("mux_or" + k, "Gates", "OR Gate", 1, "MUXO" + (k + 1)));
+      hints.add(new LayoutHint("mux_or" + k, 2 + k, 0, 0, null));
+    }
+    // not-S inverters shared per select bit (one per select line, fan-out to decoders)
+    for (int j = 0; j < m; j++) {
+      components.add(new ComponentSpec("sel_not" + j, "Gates", "NOT Gate", 1, "MUXN" + (j + 1)));
+      hints.add(new LayoutHint("sel_not" + j, 0, 0, n + j, null));
+      nets.add(net("sn" + j, e("s" + j, 0), e("sel_not" + j, 1)));
+    }
+
+    for (int i = 0; i < n; i++) {
+      String g = "mux" + i + "_";
+      nets.add(net("d" + i, e("d" + i, 0), e(g + "da", 1)));
+      // OR chain: or0 = da0 | da1 ; or_k = or_{k-1} | da_{k+1}
+      nets.add(net("do" + i, e(g + "da", 0),
+          e(i == 0 ? "mux_or0" : "mux_or" + (i - 1), i == 0 ? 1 : 2)));
+    }
+    for (int k = 0; k < n - 1; k++) {
+      nets.add(net("or" + k, e("mux_or" + k, 0),
+          e(k + 1 == n - 1 ? "y" : "mux_or" + (k + 1), k + 1 == n - 1 ? 0 : 1)));
+    }
+
+    return new CircuitSpec("mux_" + n + "to1", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit binary decoder: 2^N one-hot outputs, each Y_i = AND of literals.
+   */
+  static CircuitSpec buildDecoder(int bits) {
+    if (bits < 1 || bits > 8) {
+      throw new IllegalArgumentException("Decoder bits must be 1..8, got " + bits);
+    }
+    int n = 1 << bits;
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int j = 0; j < bits; j++) {
+      addInput(ports, "a" + j, "A" + j, bits == 1 ? "dec_not0" : "dec0_a1");
+      components.add(new ComponentSpec("dec_not" + j, "Gates", "NOT Gate", 1, "DECN" + (j + 1)));
+      hints.add(new LayoutHint("dec_not" + j, 0, 0, j, null));
+      nets.add(net("an" + j, e("a" + j, 0), e("dec_not" + j, 1)));
+    }
+    if (bits == 1) {
+      addOutput(ports, "y0", "Y0", "dec_not0");
+      addOutput(ports, "y1", "Y1", "dec_not0");
+      nets.add(net("y0a", e("a0", 0), e("y0", 0)));
+      nets.add(net("y1a", e("dec_not0", 0), e("y1", 0)));
+      return new CircuitSpec("decoder_1bit", components, ports, nets, hints);
+    }
+    for (int i = 0; i < n; i++) {
+      addOutput(ports, "y" + i, "Y" + i, "dec" + i + "_a" + (bits - 1));
+      // cascade of 2-input AND gates: dec_i = AND(AND(...AND(lit0, lit1), lit2), ...)
+      String acc = null;
+      for (int j = 0; j < bits; j++) {
+        boolean one = ((i >> j) & 1) == 1;
+        String src = one ? "a" + j : "dec_not" + j;
+        if (acc == null) {
+          acc = src;
+        } else {
+          String gateId = "dec" + i + "_a" + j;
+          components.add(new ComponentSpec(gateId, "Gates", "AND Gate", 1, "DEC" + i + "_" + j));
+          hints.add(new LayoutHint(gateId, 1, 0, i, null));
+          nets.add(net("decd" + i + "_" + j + "x", e(acc, 0), e(gateId, 1)));
+          nets.add(net("decd" + i + "_" + j + "y", e(src, 0), e(gateId, 2)));
+          acc = gateId;
+        }
+      }
+      nets.add(net("deco" + i, e(acc, 0), e("y" + i, 0)));
+    }
+
+    return new CircuitSpec("decoder_" + bits + "bit", components, ports, nets, hints);
   }
 
   private static Integer chineseToInt(String s) {

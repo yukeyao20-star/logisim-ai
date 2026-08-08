@@ -101,7 +101,7 @@ public final class IsolatedRouter {
     int trunkSeq = 0;
     int laneSeq = 0;
     List<NetPlan> plans = new ArrayList<>();
-    Map<String, Integer> portMaxTrunk = new HashMap<>();
+    Map<String, int[]> portTrunkRange = new HashMap<>();
     Set<Integer> usedTrunks = new HashSet<>();
     for (NetWire net : nets) {
       List<EndpointRef> refs = net.endpoints();
@@ -115,7 +115,7 @@ public final class IsolatedRouter {
       }
       int laneY = firstLaneY + (laneSeq++) * 10;
       int aTrunk = nextTrunk(endpointLocs, usedTrunks, trunkSeq++);
-      portMaxTrunk.merge(firstKey, aTrunk, Math::max);
+      includeTrunk(portTrunkRange, firstKey, aTrunk, anchor.getX());
       List<int[]> targets = new ArrayList<>();
       for (int i = 1; i < refs.size(); i++) {
         String tKey = key(refs.get(i));
@@ -125,21 +125,22 @@ public final class IsolatedRouter {
         }
         int tStub = stubY.get(tKey);
         int tTrunk = nextTrunk(endpointLocs, usedTrunks, trunkSeq++);
-        portMaxTrunk.merge(tKey, tTrunk, Math::max);
+        includeTrunk(portTrunkRange, tKey, tTrunk, target.getX());
         targets.add(new int[] {tTrunk, tStub, target.getX()});
       }
       plans.add(new NetPlan(firstKey, stubY.get(firstKey), aTrunk, laneY, targets));
     }
 
-    // Pass 2: one merged horizontal per port at its stub row, from the port to
-    // the farthest trunk among all nets that use the port. T-junctions at each
-    // trunk connect the per-net verticals (same signal, benign under WireRepair).
-    for (Map.Entry<String, Integer> entry : portMaxTrunk.entrySet()) {
+    // Pass 2: one merged horizontal per port at its stub row, spanning the
+    // whole trunk range (both sides of the port). Trunk columns are assigned in
+    // net order, so some fan-out targets land left of the driving port; a
+    // one-sided segment would leave them disconnected.
+    for (Map.Entry<String, int[]> entry : portTrunkRange.entrySet()) {
       Location loc = endpointLocs.get(entry.getKey());
-      int sx = loc.getX();
       int sy = stubY.get(entry.getKey());
-      add(mutation, Location.create(sx, sy, true),
-          Location.create(entry.getValue(), sy, true));
+      int[] range = entry.getValue();
+      add(mutation, Location.create(range[0], sy, true),
+          Location.create(range[1], sy, true));
     }
 
     // Pass 3: per-net verticals and lane segments.
@@ -152,6 +153,18 @@ public final class IsolatedRouter {
         add(mutation, Location.create(t[0], plan.laneY, true),
             Location.create(t[0], t[1], true));
       }
+    }
+  }
+
+  /** Grow a port's trunk range to cover a trunk column and the port itself. */
+  private static void includeTrunk(
+      Map<String, int[]> portTrunkRange, String key, int trunk, int portX) {
+    int[] range = portTrunkRange.get(key);
+    if (range == null) {
+      portTrunkRange.put(key, new int[] {Math.min(trunk, portX), Math.max(trunk, portX)});
+    } else {
+      range[0] = Math.min(range[0], Math.min(trunk, portX));
+      range[1] = Math.max(range[1], Math.max(trunk, portX));
     }
   }
 

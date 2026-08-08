@@ -296,7 +296,16 @@ public final class GenerateAndGate {
 
       // Compile
       File outputFile = new File("generated/circ/" + spec.name() + ".circ");
-      if (spec.isNetlist()) {
+      boolean structural = spec.name().startsWith("adder_")
+          || spec.name().startsWith("comparator_")
+          || spec.name().startsWith("mux_")
+          || spec.name().startsWith("decoder_");
+      if (structural) {
+        // Structural templates route directly (no Tunnels): reliable wiring for
+        // dense fan-out circuits like decoders, and every gate sits in its own
+        // slot so the layout stays readable.
+        com.logisim_ai.compiler.DirectMultiChipCompiler.compile(spec, outputFile);
+      } else if (spec.isNetlist()) {
         com.logisim_ai.compiler.LogisimCompiler.compileNetlist(spec, outputFile);
       } else {
         com.logisim_ai.compiler.LogisimCompiler.compileSingleComponent(spec, outputFile);

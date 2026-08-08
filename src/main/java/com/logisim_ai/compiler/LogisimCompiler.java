@@ -307,7 +307,7 @@ public final class LogisimCompiler {
       // share the point), so nudge conflicting placements away until free.
       Location tunnelLoc = placement.location();
       while (!usedTunnelLocs.add(tunnelLoc)) {
-        tunnelLoc = Location.create(tunnelLoc.getX() + 10, tunnelLoc.getY(), true);
+        tunnelLoc = Location.create(tunnelLoc.getX() + 60, tunnelLoc.getY(), true);
       }
       Component tunnel = createTunnel(tunnelFactory, label, tunnelLoc, placement.facing());
       mutation.add(tunnel);

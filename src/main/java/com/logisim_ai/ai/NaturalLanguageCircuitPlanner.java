@@ -130,6 +130,18 @@ public final class NaturalLanguageCircuitPlanner {
         && !use7404
         && !use7402;
     boolean nandOnly = requestsNandOnly(normalized);
+    // Parameterized structural circuits (N-bit adder, comparator, mux,
+    // decoder, ...) take precedence over keyword templates so "8选1" builds an
+    // 8:1 mux rather than matching the "多路选择器" keyword of the 4:1 template.
+    var structural = StructuralCircuitTemplates.tryBuild(normalized);
+    if (structural.isPresent()) {
+      return matched(new PlanResult(
+          structural.get(),
+          "Generated parameterized structural circuit",
+          null,
+          intent,
+          profile));
+    }
     if (!nandOnly && !use7400 && !use7486 && !use7408 && !use7432 && !use7404 && !use7402
         && !useMixedTtl) {
       for (Template template : TEMPLATES) {
@@ -139,18 +151,6 @@ public final class NaturalLanguageCircuitPlanner {
           }
         }
       }
-    }
-
-    // Parameterized structural circuits (N-bit adder, comparator, ...) build a
-    // CircuitSpec directly and flow through the same compiler + verification.
-    var structural = StructuralCircuitTemplates.tryBuild(normalized);
-    if (structural.isPresent()) {
-      return matched(new PlanResult(
-          structural.get(),
-          "Generated parameterized structural circuit",
-          null,
-          intent,
-          profile));
     }
 
     BoolFunctionSynthesizer.SynthesisStrategy strategy = use7400

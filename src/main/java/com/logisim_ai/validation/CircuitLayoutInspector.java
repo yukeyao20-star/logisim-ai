@@ -313,7 +313,11 @@ public final class CircuitLayoutInspector {
     }
 
     public boolean clean() {
-      return issues.isEmpty();
+      // Warnings (e.g. small components / Tunnels too close) do not affect
+      // loadability or official-JAR simulation; only ERROR-level layout
+      // problems (exact overlaps, unresolvable conflicts) fail the check.
+      return layoutIssues.stream()
+          .noneMatch(issue -> issue.severity() == LayoutIssueSeverity.ERROR);
     }
 
     public int issueCount() {

@@ -1,0 +1,14 @@
+{
+  "circuitName": "decoder_3bit",
+  "rowCount": 8,
+  "rows": [
+    {"inputs": {"a0": false, "a1": false, "a2": false}, "outputs": {"y0": true, "y1": false, "y2": false, "y3": false, "y4": false, "y5": false, "y6": false, "y7": false}},
+    {"inputs": {"a0": false, "a1": false, "a2": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false, "y4": true, "y5": false, "y6": false, "y7": false}},
+    {"inputs": {"a0": false, "a1": true, "a2": false}, "outputs": {"y0": false, "y1": false, "y2": true, "y3": false, "y4": false, "y5": false, "y6": false, "y7": false}},
+    {"inputs": {"a0": false, "a1": true, "a2": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false, "y4": false, "y5": false, "y6": true, "y7": false}},
+    {"inputs": {"a0": true, "a1": false, "a2": false}, "outputs": {"y0": false, "y1": true, "y2": false, "y3": false, "y4": false, "y5": false, "y6": false, "y7": false}},
+    {"inputs": {"a0": true, "a1": false, "a2": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false, "y4": false, "y5": true, "y6": false, "y7": false}},
+    {"inputs": {"a0": true, "a1": true, "a2": false}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": true, "y4": false, "y5": false, "y6": false, "y7": false}},
+    {"inputs": {"a0": true, "a1": true, "a2": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false, "y4": false, "y5": false, "y6": false, "y7": true}}
+  ]
+}
