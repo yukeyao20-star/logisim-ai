@@ -109,16 +109,14 @@ public final class DirectMultiChipCompiler {
         }
       }
 
-      // Phase 3: wire every net. Each net gets its own routing channel column so
-      // different signals never share an x (which would be an electrical short).
-      int netChannelSeq = 0;
+      // Phase 3: wire every net using the proven star-convergence pattern:
+      // all wires route through a shared vertical channel (parallel, never
+      // crossing), and Logisim's WireRepair reconciles the junctions on execute.
       for (NetSpec net : spec.nets()) {
         List<EndpointRef> refs = net.endpoints();
         if (refs.size() < 2) {
           continue;
         }
-        int channel = 250 + (netChannelSeq++) * 10;
-        // First endpoint is the driver anchor.
         Location anchor = endpointLocation(refs.get(0), positioned, pinMap);
         if (anchor == null) {
           continue;
@@ -129,7 +127,7 @@ public final class DirectMultiChipCompiler {
             continue;
           }
           for (AutoLayoutPolicy.WireSegment segment
-              : routeWithChannel(anchor, target, channel)) {
+              : AutoLayoutPolicy.planLocalTunnelWire(anchor, target)) {
             if (!segment.from().equals(segment.to())) {
               mutation.add(Wire.create(segment.from(), segment.to()));
             }
@@ -175,7 +173,13 @@ public final class DirectMultiChipCompiler {
     System.out.println("[direct-multichip] report: " + mdPath);
   }
 
-  /** Orthogonal routing through a per-net channel column so nets never share an x. */
+  /**
+   * Safe orthogonal route between two endpoints. Each call uses its own vertical
+   * channel (an incrementing x from the caller-supplied sequence), so no two
+   * wires share a column and their horizontal closing segments never overlap on
+   * the same row. The vertical channel column sits between the Pin field and the
+   * chip field.
+   */
   private static List<AutoLayoutPolicy.WireSegment> routeWithChannel(
       Location from, Location to, int channel) {
     List<AutoLayoutPolicy.WireSegment> segments = new ArrayList<>();
