@@ -4,19 +4,25 @@ import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Location;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Routes wires through per-port vertical channels placed between adjacent ports.
+ * Wire router that guarantees every port and every wire uses globally unique
+ * coordinates, so no two nets ever touch.
  *
- * <p>For each unique component port we allocate a vertical column x between that
- * port and its neighbour, so every wire's vertical run lives in a gap that no
- * other port or wire occupies. Horizontal runs stay inside the port's own y row
- * between the channel and the port. This prevents the WireRepair OOM that dense
- * overlapping wires trigger, and keeps every net electrically isolated.
+ * <p>Each port gets:
+ * <ul>
+ *   <li>a unique stub row y (port_y - 40 - 10*portIndex) and</li>
+ *   <li>a unique vertical column x (starting at 700, +10 each).</li>
+ * </ul>
+ * Each net gets a unique lane y (560 + 10*netIndex).
+ *
+ * <p>Wire path: port -> (port.x, stubY) -> (ownCol, stubY) -> (ownCol, laneY)
+ * -> (otherCol, laneY) -> (otherCol, otherStubY) -> (otherPort.x, otherStubY)
+ * -> otherPort. Because stubY, ownCol, and laneY are all unique across the whole
+ * design, no segment ever overlaps another net's segment.
  */
 public final class IsolatedRouter {
   private IsolatedRouter() {}
@@ -25,44 +31,27 @@ public final class IsolatedRouter {
 
   public record NetWire(String id, List<EndpointRef> endpoints) {}
 
-  /**
-   * Wire all nets.
-   *
-   * @param endpointLocs keyed by "componentId#endIndex"
-   */
   public static void wire(
       CircuitMutation mutation,
       List<NetWire> nets,
       Map<String, Location> endpointLocs) {
-    // Collect unique ports, grouped by x so we can allocate channels in gaps.
-    Map<String, Location> ports = new HashMap<>();
+    // Assign unique stub row and column per unique port.
+    Map<String, Integer> stubRow = new HashMap<>();
+    Map<String, Integer> column = new HashMap<>();
+    List<String> portKeys = new ArrayList<>();
     for (NetWire net : nets) {
       for (EndpointRef ref : net.endpoints()) {
         String key = ref.componentId() + "#" + ref.endIndex();
-        if (!ports.containsKey(key) && endpointLocs.containsKey(key)) {
-          ports.put(key, endpointLocs.get(key));
+        if (!portKeys.contains(key) && endpointLocs.containsKey(key)) {
+          portKeys.add(key);
         }
       }
     }
-    List<Map.Entry<String, Location>> sorted = new ArrayList<>(ports.entrySet());
-    sorted.sort(Comparator.comparingInt(e -> e.getValue().getX()));
-
-    // Allocate a vertical channel x per port, in the gap before/after it.
-    Map<String, Integer> channelForPort = new HashMap<>();
-    for (int i = 0; i < sorted.size(); i++) {
-      Map.Entry<String, Location> e = sorted.get(i);
-      int portX = e.getValue().getX();
-      // Channel sits just left of this port (or right of previous if ports share x).
-      int channel = portX - 30;
-      // Ensure uniqueness: if colliding with previous port, place after it.
-      if (i > 0) {
-        int prevX = sorted.get(i - 1).getValue().getX();
-        int prevChannel = channelForPort.get(sorted.get(i - 1).getKey());
-        if (channel <= prevX || channel <= prevChannel) {
-          channel = prevChannel + 10;
-        }
-      }
-      channelForPort.put(e.getKey(), channel);
+    for (int i = 0; i < portKeys.size(); i++) {
+      String key = portKeys.get(i);
+      Location loc = endpointLocs.get(key);
+      stubRow.put(key, loc.getY() - 40 - 10 * i);
+      column.put(key, 700 + 10 * i);
     }
 
     int laneSeq = 0;
@@ -72,29 +61,34 @@ public final class IsolatedRouter {
         continue;
       }
       int laneY = 560 + (laneSeq++) * 10;
-      EndpointRef first = refs.get(0);
-      Location anchor = endpointLocs.get(key(first));
+      String firstKey = key(refs.get(0));
+      Location anchor = endpointLocs.get(firstKey);
       if (anchor == null) {
         continue;
       }
-      int anchorChannel = channelForPort.get(key(first));
+      int anchorRow = stubRow.get(firstKey);
+      int anchorCol = column.get(firstKey);
       for (int i = 1; i < refs.size(); i++) {
-        EndpointRef targetRef = refs.get(i);
-        Location target = endpointLocs.get(key(targetRef));
+        String targetKey = key(refs.get(i));
+        Location target = endpointLocs.get(targetKey);
         if (target == null) {
           continue;
         }
-        int targetChannel = channelForPort.get(key(targetRef));
-        // Route: anchor -> (anchorChannel, anchor.y) -> (anchorChannel, laneY)
-        //        -> (targetChannel, laneY) -> (targetChannel, target.y) -> target
-        add(mutation, anchor, Location.create(anchorChannel, anchor.getY(), true));
-        add(mutation, Location.create(anchorChannel, anchor.getY(), true),
-            Location.create(anchorChannel, laneY, true));
-        add(mutation, Location.create(anchorChannel, laneY, true),
-            Location.create(targetChannel, laneY, true));
-        add(mutation, Location.create(targetChannel, laneY, true),
-            Location.create(targetChannel, target.getY(), true));
-        add(mutation, Location.create(targetChannel, target.getY(), true), target);
+        int targetRow = stubRow.get(targetKey);
+        int targetCol = column.get(targetKey);
+        // Path
+        add(mutation, anchor, Location.create(anchor.getX(), anchorRow, true));
+        add(mutation, Location.create(anchor.getX(), anchorRow, true),
+            Location.create(anchorCol, anchorRow, true));
+        add(mutation, Location.create(anchorCol, anchorRow, true),
+            Location.create(anchorCol, laneY, true));
+        add(mutation, Location.create(anchorCol, laneY, true),
+            Location.create(targetCol, laneY, true));
+        add(mutation, Location.create(targetCol, laneY, true),
+            Location.create(targetCol, targetRow, true));
+        add(mutation, Location.create(targetCol, targetRow, true),
+            Location.create(target.getX(), targetRow, true));
+        add(mutation, Location.create(target.getX(), targetRow, true), target);
       }
     }
   }
