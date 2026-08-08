@@ -1,0 +1,41 @@
+{
+  "name": "encoder_8to3",
+  "components": [
+    {"id": "enc", "library": "TTL", "factory": "74148", "bitWidth": 1, "label": "U1"}
+  ],
+  "externalPorts": [
+    {"id": "i0", "label": "I0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "i1", "label": "I1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "i2", "label": "I2", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "i3", "label": "I3", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "i4", "label": "I4", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "i5", "label": "I5", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "i6", "label": "I6", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "i7", "label": "I7", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "nei", "label": "nEI", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "a0", "label": "A0", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "a1", "label": "A1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "a2", "label": "A2", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "ngs", "label": "nGS", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "enc", "targetEndIndex": 0},
+    {"id": "neo", "label": "nEO", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "enc", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "i0", "endpoints": [{"componentId": "i0", "endIndex": 0}, {"componentId": "enc", "endIndex": 0}]},
+    {"id": "i1", "endpoints": [{"componentId": "i1", "endIndex": 0}, {"componentId": "enc", "endIndex": 1}]},
+    {"id": "i2", "endpoints": [{"componentId": "i2", "endIndex": 0}, {"componentId": "enc", "endIndex": 2}]},
+    {"id": "i3", "endpoints": [{"componentId": "i3", "endIndex": 0}, {"componentId": "enc", "endIndex": 3}]},
+    {"id": "i4", "endpoints": [{"componentId": "i4", "endIndex": 0}, {"componentId": "enc", "endIndex": 4}]},
+    {"id": "i5", "endpoints": [{"componentId": "i5", "endIndex": 0}, {"componentId": "enc", "endIndex": 5}]},
+    {"id": "i6", "endpoints": [{"componentId": "i6", "endIndex": 0}, {"componentId": "enc", "endIndex": 6}]},
+    {"id": "i7", "endpoints": [{"componentId": "i7", "endIndex": 0}, {"componentId": "enc", "endIndex": 7}]},
+    {"id": "nei", "endpoints": [{"componentId": "nei", "endIndex": 0}, {"componentId": "enc", "endIndex": 8}]},
+    {"id": "a0", "endpoints": [{"componentId": "enc", "endIndex": 11}, {"componentId": "a0", "endIndex": 0}]},
+    {"id": "a1", "endpoints": [{"componentId": "enc", "endIndex": 12}, {"componentId": "a1", "endIndex": 0}]},
+    {"id": "a2", "endpoints": [{"componentId": "enc", "endIndex": 13}, {"componentId": "a2", "endIndex": 0}]},
+    {"id": "ngs", "endpoints": [{"componentId": "enc", "endIndex": 9}, {"componentId": "ngs", "endIndex": 0}]},
+    {"id": "neo", "endpoints": [{"componentId": "enc", "endIndex": 10}, {"componentId": "neo", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "enc", "rank": 0, "column": 0, "row": 0, "side": null}
+  ]
+}

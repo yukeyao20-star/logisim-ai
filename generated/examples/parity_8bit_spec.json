@@ -1,0 +1,49 @@
+{
+  "name": "parity_8bit",
+  "components": [
+    {"id": "par1_x", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "PAR1"},
+    {"id": "par2_x", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "PAR2"},
+    {"id": "par3_x", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "PAR3"},
+    {"id": "par4_x", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "PAR4"},
+    {"id": "par5_x", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "PAR5"},
+    {"id": "par6_x", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "PAR6"},
+    {"id": "par7_x", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "PAR7"}
+  ],
+  "externalPorts": [
+    {"id": "d0", "label": "D0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par1_x", "targetEndIndex": 0},
+    {"id": "d1", "label": "D1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par1_x", "targetEndIndex": 0},
+    {"id": "d2", "label": "D2", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par2_x", "targetEndIndex": 0},
+    {"id": "d3", "label": "D3", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par3_x", "targetEndIndex": 0},
+    {"id": "d4", "label": "D4", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par4_x", "targetEndIndex": 0},
+    {"id": "d5", "label": "D5", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par5_x", "targetEndIndex": 0},
+    {"id": "d6", "label": "D6", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par6_x", "targetEndIndex": 0},
+    {"id": "d7", "label": "D7", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "par7_x", "targetEndIndex": 0},
+    {"id": "p", "label": "P", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "par7_x", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "px1", "endpoints": [{"componentId": "d0", "endIndex": 0}, {"componentId": "par1_x", "endIndex": 1}]},
+    {"id": "py1", "endpoints": [{"componentId": "d1", "endIndex": 0}, {"componentId": "par1_x", "endIndex": 2}]},
+    {"id": "px2", "endpoints": [{"componentId": "par1_x", "endIndex": 0}, {"componentId": "par2_x", "endIndex": 1}]},
+    {"id": "py2", "endpoints": [{"componentId": "d2", "endIndex": 0}, {"componentId": "par2_x", "endIndex": 2}]},
+    {"id": "px3", "endpoints": [{"componentId": "par2_x", "endIndex": 0}, {"componentId": "par3_x", "endIndex": 1}]},
+    {"id": "py3", "endpoints": [{"componentId": "d3", "endIndex": 0}, {"componentId": "par3_x", "endIndex": 2}]},
+    {"id": "px4", "endpoints": [{"componentId": "par3_x", "endIndex": 0}, {"componentId": "par4_x", "endIndex": 1}]},
+    {"id": "py4", "endpoints": [{"componentId": "d4", "endIndex": 0}, {"componentId": "par4_x", "endIndex": 2}]},
+    {"id": "px5", "endpoints": [{"componentId": "par4_x", "endIndex": 0}, {"componentId": "par5_x", "endIndex": 1}]},
+    {"id": "py5", "endpoints": [{"componentId": "d5", "endIndex": 0}, {"componentId": "par5_x", "endIndex": 2}]},
+    {"id": "px6", "endpoints": [{"componentId": "par5_x", "endIndex": 0}, {"componentId": "par6_x", "endIndex": 1}]},
+    {"id": "py6", "endpoints": [{"componentId": "d6", "endIndex": 0}, {"componentId": "par6_x", "endIndex": 2}]},
+    {"id": "px7", "endpoints": [{"componentId": "par6_x", "endIndex": 0}, {"componentId": "par7_x", "endIndex": 1}]},
+    {"id": "py7", "endpoints": [{"componentId": "d7", "endIndex": 0}, {"componentId": "par7_x", "endIndex": 2}]},
+    {"id": "pout", "endpoints": [{"componentId": "par7_x", "endIndex": 0}, {"componentId": "p", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "par1_x", "rank": 0, "column": 0, "row": 1, "side": null},
+    {"componentId": "par2_x", "rank": 0, "column": 0, "row": 2, "side": null},
+    {"componentId": "par3_x", "rank": 0, "column": 0, "row": 3, "side": null},
+    {"componentId": "par4_x", "rank": 0, "column": 0, "row": 4, "side": null},
+    {"componentId": "par5_x", "rank": 0, "column": 0, "row": 5, "side": null},
+    {"componentId": "par6_x", "rank": 0, "column": 0, "row": 6, "side": null},
+    {"componentId": "par7_x", "rank": 0, "column": 0, "row": 7, "side": null}
+  ]
+}

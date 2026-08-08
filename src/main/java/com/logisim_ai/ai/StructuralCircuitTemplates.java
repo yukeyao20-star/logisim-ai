@@ -48,6 +48,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:二进制计数器|计数器)");
   private static final Pattern COUNTER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:binary\\s+)?counter", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PARITY_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:奇偶校验器|奇偶校验|偶校验器|奇校验器)");
+  private static final Pattern PARITY_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:parity|even\\s+parity)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ENCODER8_ZH =
+      Pattern.compile("(?:8[\\s\\-－]*3|83|八三|八选三|八输入三输出|8输入3输出)\\s*(?:优先编码器|编码器)");
+  private static final Pattern ENCODER8_EN =
+      Pattern.compile("8[- ]to[- ]3\\s*(?:priority\\s+)?encoder", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -109,7 +117,84 @@ public final class StructuralCircuitTemplates {
     if (ctrEn.find()) {
       return Optional.of(buildCounter(Integer.parseInt(ctrEn.group(1))));
     }
+    Matcher pzh = PARITY_ZH.matcher(t);
+    Matcher pen = PARITY_EN.matcher(t);
+    if (pzh.find()) {
+      Integer bits = chineseToInt(pzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildParity(bits));
+      }
+    }
+    if (pen.find()) {
+      return Optional.of(buildParity(Integer.parseInt(pen.group(1))));
+    }
+    if (ENCODER8_ZH.matcher(t).find() || ENCODER8_EN.matcher(t).find()) {
+      return Optional.of(buildEncoder8to3());
+    }
     return Optional.empty();
+  }
+
+  /**
+   * N-bit even-parity generator/checker: Y = XOR of all inputs (2-input XOR
+   * cascade), plus the parity of the input bits. Output P = even parity.
+   */
+  static CircuitSpec buildParity(int bits) {
+    if (bits < 2 || bits > 16) {
+      throw new IllegalArgumentException("Parity width must be 2..16, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "d" + i, "D" + i, "par" + Math.max(1, i) + "_x");
+    }
+    addOutput(ports, "p", "P", "par" + (bits - 1) + "_x");
+
+    String acc = "d0";
+    for (int i = 1; i < bits; i++) {
+      String g = "par" + i + "_x";
+      components.add(new ComponentSpec(g, "Gates", "XOR Gate", 1, "PAR" + i));
+      hints.add(new LayoutHint(g, 0, 0, i, null));
+      nets.add(net("px" + i, e(acc, 0), e(g, 1)));
+      nets.add(net("py" + i, e("d" + i, 0), e(g, 2)));
+      acc = g;
+    }
+    nets.add(net("pout", e(acc, 0), e("p", 0)));
+
+    return new CircuitSpec("parity_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * 8-to-3 priority encoder: two 74148? No - single 74148 already is 8-to-3;
+   * this template exposes it with proper input/output pins (ends 0..7 = I0..I7,
+   * end8 = nEI, end9 = nGS, end10 = nEO, end11..13 = A0..A2).
+   */
+  static CircuitSpec buildEncoder8to3() {
+    List<ComponentSpec> components = List.of(new ComponentSpec("enc", "TTL", "74148", 1, "U1"));
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = List.of(new LayoutHint("enc", 0, 0, 0, null));
+
+    for (int i = 0; i < 8; i++) {
+      addInput(ports, "i" + i, "I" + i, "enc");
+      nets.add(net("i" + i, e("i" + i, 0), e("enc", i)));
+    }
+    addInput(ports, "nei", "nEI", "enc");
+    nets.add(net("nei", e("nei", 0), e("enc", 8)));
+    addOutput(ports, "a0", "A0", "enc");
+    addOutput(ports, "a1", "A1", "enc");
+    addOutput(ports, "a2", "A2", "enc");
+    addOutput(ports, "ngs", "nGS", "enc");
+    addOutput(ports, "neo", "nEO", "enc");
+    nets.add(net("a0", e("enc", 11), e("a0", 0)));
+    nets.add(net("a1", e("enc", 12), e("a1", 0)));
+    nets.add(net("a2", e("enc", 13), e("a2", 0)));
+    nets.add(net("ngs", e("enc", 9), e("ngs", 0)));
+    nets.add(net("neo", e("enc", 10), e("neo", 0)));
+
+    return new CircuitSpec("encoder_8to3", components, ports, nets, hints);
   }
 
   /**

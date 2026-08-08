@@ -1,0 +1,31 @@
+{
+  "requestKind": "natural_language",
+  "request": "8-3优先编码器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "encoder_8to3",
+  "circuitPath": "generated\\circ\\encoder_8to3.circ",
+  "manifestPath": "generated\\reports\\encoder_8to3_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 6,
+  "artifacts": [
+    {"path": "generated\\circ\\encoder_8to3.circ", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_multichip.md", "exists": true}
+  ]
+}
