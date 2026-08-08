@@ -109,7 +109,32 @@ public final class BooleanSynthesisRegression {
             "xor3",
             List.of("a", "b", "c"),
             "y",
-            values -> values.get("a") ^ values.get("b") ^ values.get("c")));
+            values -> values.get("a") ^ values.get("b") ^ values.get("c")),
+        new Case(
+            "Y=A与B",
+            List.of("a", "b"),
+            "y",
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "Y=A或非B",
+            List.of("a", "b"),
+            "y",
+            values -> !(values.get("a") || values.get("b"))),
+        new Case(
+            "Y=非A",
+            List.of("a"),
+            "y",
+            values -> !values.get("a")),
+        new Case(
+            "Y=A异或B",
+            List.of("a", "b"),
+            "y",
+            values -> values.get("a") ^ values.get("b")),
+        new Case(
+            "Y=A与非B",
+            List.of("a", "b"),
+            "y",
+            values -> !(values.get("a") && values.get("b"))));
 
     for (Case testCase : cases) {
       runCase(testCase);

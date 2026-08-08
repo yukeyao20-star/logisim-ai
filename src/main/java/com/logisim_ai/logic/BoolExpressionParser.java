@@ -121,12 +121,22 @@ public final class BoolExpressionParser {
         pos++;
         continue;
       }
+      // Chinese Boolean operators. Handle multi-char words before single-char ones
+      // so "与非" (nand) is not split into 与 + 非.
+      ChineseOp chineseOp = chineseOperator(input, pos);
+      if (chineseOp != null) {
+        result.add(new Token(chineseOp.kind(), chineseOp.kind()));
+        pos += chineseOp.length();
+        continue;
+      }
       if (Character.isLetter(ch)) {
         int start = pos;
         pos++;
         while (pos < input.length()) {
           char next = input.charAt(pos);
-          if (!Character.isLetterOrDigit(next) && next != '_') {
+          // ASCII letters/digits/underscore are part of the identifier; Chinese
+          // characters act as separators (they are operators like 与/或/非).
+          if (!isAsciiIdentifierPart(next)) {
             break;
           }
           pos++;
@@ -150,6 +160,38 @@ public final class BoolExpressionParser {
     result.add(new Token("eof", ""));
     return result;
   }
+
+  private static boolean isAsciiIdentifierPart(char c) {
+    return (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z')
+        || (c >= '0' && c <= '9')
+        || c == '_';
+  }
+
+  /** Detect a Chinese Boolean operator at the given position, or return null. */
+  private static ChineseOp chineseOperator(String input, int pos) {
+    if (input.regionMatches(pos, "与非", 0, 2)) {
+      return new ChineseOp("nand", 2);
+    }
+    if (input.regionMatches(pos, "或非", 0, 2)) {
+      return new ChineseOp("nor", 2);
+    }
+    if (input.regionMatches(pos, "异或", 0, 2)) {
+      return new ChineseOp("xor", 2);
+    }
+    if (pos < input.length() && input.charAt(pos) == '与') {
+      return new ChineseOp("and", 1);
+    }
+    if (pos < input.length() && input.charAt(pos) == '或') {
+      return new ChineseOp("or", 1);
+    }
+    if (pos < input.length() && input.charAt(pos) == '非') {
+      return new ChineseOp("not", 1);
+    }
+    return null;
+  }
+
+  private record ChineseOp(String kind, int length) {}
 
   private record Token(String kind, String text) {}
 }
