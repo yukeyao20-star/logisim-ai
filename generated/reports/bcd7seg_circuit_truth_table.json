@@ -1,0 +1,22 @@
+{
+  "circuitName": "bcd7seg",
+  "rowCount": 16,
+  "rows": [
+    {"inputs": {"b0": false, "b1": false, "b2": false, "b3": false}, "outputs": {"seg0": true, "seg1": true, "seg2": true, "seg3": true, "seg4": true, "seg5": true, "seg6": false}},
+    {"inputs": {"b0": false, "b1": false, "b2": false, "b3": true}, "outputs": {"seg0": true, "seg1": true, "seg2": true, "seg3": true, "seg4": true, "seg5": true, "seg6": true}},
+    {"inputs": {"b0": false, "b1": false, "b2": true, "b3": false}, "outputs": {"seg0": false, "seg1": true, "seg2": true, "seg3": false, "seg4": false, "seg5": true, "seg6": true}},
+    {"inputs": {"b0": false, "b1": false, "b2": true, "b3": true}, "outputs": {"seg0": false, "seg1": false, "seg2": false, "seg3": false, "seg4": false, "seg5": false, "seg6": false}},
+    {"inputs": {"b0": false, "b1": true, "b2": false, "b3": false}, "outputs": {"seg0": true, "seg1": true, "seg2": false, "seg3": true, "seg4": true, "seg5": false, "seg6": true}},
+    {"inputs": {"b0": false, "b1": true, "b2": false, "b3": true}, "outputs": {"seg0": false, "seg1": false, "seg2": false, "seg3": false, "seg4": false, "seg5": false, "seg6": false}},
+    {"inputs": {"b0": false, "b1": true, "b2": true, "b3": false}, "outputs": {"seg0": true, "seg1": false, "seg2": true, "seg3": true, "seg4": true, "seg5": true, "seg6": true}},
+    {"inputs": {"b0": false, "b1": true, "b2": true, "b3": true}, "outputs": {"seg0": false, "seg1": false, "seg2": false, "seg3": false, "seg4": false, "seg5": false, "seg6": false}},
+    {"inputs": {"b0": true, "b1": false, "b2": false, "b3": false}, "outputs": {"seg0": false, "seg1": true, "seg2": true, "seg3": false, "seg4": false, "seg5": false, "seg6": false}},
+    {"inputs": {"b0": true, "b1": false, "b2": false, "b3": true}, "outputs": {"seg0": true, "seg1": true, "seg2": true, "seg3": true, "seg4": false, "seg5": true, "seg6": true}},
+    {"inputs": {"b0": true, "b1": false, "b2": true, "b3": false}, "outputs": {"seg0": true, "seg1": false, "seg2": true, "seg3": true, "seg4": false, "seg5": true, "seg6": true}},
+    {"inputs": {"b0": true, "b1": false, "b2": true, "b3": true}, "outputs": {"seg0": false, "seg1": false, "seg2": false, "seg3": false, "seg4": false, "seg5": false, "seg6": false}},
+    {"inputs": {"b0": true, "b1": true, "b2": false, "b3": false}, "outputs": {"seg0": true, "seg1": true, "seg2": true, "seg3": true, "seg4": false, "seg5": false, "seg6": true}},
+    {"inputs": {"b0": true, "b1": true, "b2": false, "b3": true}, "outputs": {"seg0": false, "seg1": false, "seg2": false, "seg3": false, "seg4": false, "seg5": false, "seg6": false}},
+    {"inputs": {"b0": true, "b1": true, "b2": true, "b3": false}, "outputs": {"seg0": true, "seg1": true, "seg2": true, "seg3": false, "seg4": false, "seg5": false, "seg6": false}},
+    {"inputs": {"b0": true, "b1": true, "b2": true, "b3": true}, "outputs": {"seg0": false, "seg1": false, "seg2": false, "seg3": false, "seg4": false, "seg5": false, "seg6": false}}
+  ]
+}

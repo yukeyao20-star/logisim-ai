@@ -56,12 +56,19 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:8[\\s\\-－]*3|83|八三|八选三|八输入三输出|8输入3输出)\\s*(?:优先编码器|编码器)");
   private static final Pattern ENCODER8_EN =
       Pattern.compile("8[- ]to[- ]3\\s*(?:priority\\s+)?encoder", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BCD7_ZH =
+      Pattern.compile("(?:bcd|二十进制|8421码|8421)\\s*(?:转|到|[-])?\\s*(?:7段|七段|七段数码管|七段显示|数码管)\\s*(?:译码器|解码器|驱动器)?");
+  private static final Pattern BCD7_EN =
+      Pattern.compile("(?:bcd|binary\\s+coded\\s+decimal)\\s*(?:to)?\\s*7[- ]seg(?:ment)?\\s*(?:decoder|display|driver)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
       return Optional.empty();
     }
     String t = query.toLowerCase(Locale.ROOT);
+    if (BCD7_ZH.matcher(t).find() || BCD7_EN.matcher(t).find()) {
+      return Optional.of(buildBcd7Seg());
+    }
     Matcher zh = ADDER_ZH.matcher(t);
     Matcher en = ADDER_EN.matcher(t);
     if (zh.find()) {
@@ -563,6 +570,78 @@ public final class StructuralCircuitTemplates {
     nets.add(net("ltout", e("lt_not", 0), e("lt", 0)));
 
     return new CircuitSpec("comparator_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * BCD (0-9) to 7-segment decoder. Segment truth tables (standard a-g):
+   * a=0,2,3,5,6,7,8,9; b=0,1,2,3,4,7,8,9; c=0,1,3,4,5,6,7,8,9;
+   * d=0,2,3,5,6,8,9; e=0,2,6,8; f=0,4,5,6,8,9; g=2,3,4,5,6,8,9.
+   * Each segment = OR of minterm products (2-input AND cascades + OR chain).
+   */
+  static CircuitSpec buildBcd7Seg() {
+    int[][] segs = {
+      {0, 2, 3, 5, 6, 7, 8, 9},
+      {0, 1, 2, 3, 4, 7, 8, 9},
+      {0, 1, 3, 4, 5, 6, 7, 8, 9},
+      {0, 2, 3, 5, 6, 8, 9},
+      {0, 2, 6, 8},
+      {0, 4, 5, 6, 8, 9},
+      {2, 3, 4, 5, 6, 8, 9},
+    };
+    String[] segNames = {"a", "b", "c", "d", "e", "f", "g"};
+
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < 4; i++) {
+      addInput(ports, "b" + i, "B" + i, "seg7_not" + i);
+      components.add(new ComponentSpec("seg7_not" + i, "Gates", "NOT Gate", 1, "B7N" + (i + 1)));
+      hints.add(new LayoutHint("seg7_not" + i, 0, 0, i, null));
+      nets.add(net("seg7_nb" + i, e("b" + i, 0), e("seg7_not" + i, 1)));
+    }
+    for (int s = 0; s < 7; s++) {
+      addOutput(ports, "seg" + s, segNames[s], "seg7_not0");
+    }
+
+    int seq = 0;
+    for (int s = 0; s < 7; s++) {
+      String orAcc = null;
+      for (int m = 0; m < segs[s].length; m++) {
+        int minterm = segs[s][m];
+        String andAcc = null;
+        for (int bit = 0; bit < 4; bit++) {
+          boolean one = ((minterm >> bit) & 1) == 1;
+          String src = one ? "b" + bit : "seg7_not" + bit;
+          if (andAcc == null) {
+            andAcc = src;
+          } else {
+            String gate = "seg7_p" + seq;
+            components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "B7P" + (seq + 1)));
+            hints.add(new LayoutHint(gate, 1 + bit, 0, s, null));
+            nets.add(net("seg7_pa" + seq, e(andAcc, 0), e(gate, 1)));
+            nets.add(net("seg7_pb" + seq, e(src, 0), e(gate, 2)));
+            andAcc = gate;
+            seq++;
+          }
+        }
+        if (orAcc == null) {
+          orAcc = andAcc;
+        } else {
+          String gate = "seg7_o" + seq;
+          components.add(new ComponentSpec(gate, "Gates", "OR Gate", 1, "B7O" + (seq + 1)));
+          hints.add(new LayoutHint(gate, 6, 0, s, null));
+          nets.add(net("seg7_oa" + seq, e(orAcc, 0), e(gate, 1)));
+          nets.add(net("seg7_ob" + seq, e(andAcc, 0), e(gate, 2)));
+          orAcc = gate;
+          seq++;
+        }
+      }
+      nets.add(net("seg7_out" + s, e(orAcc, 0), e("seg" + s, 0)));
+    }
+
+    return new CircuitSpec("bcd7seg", components, ports, nets, hints);
   }
 
   private static void addInput(
