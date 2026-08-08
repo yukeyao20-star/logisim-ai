@@ -35,9 +35,10 @@ public final class IsolatedRouter {
       CircuitMutation mutation,
       List<NetWire> nets,
       Map<String, Location> endpointLocs) {
-    // Assign unique stub row and column per unique port.
+    // Assign unique stub row, vertical column, and entry column per unique port.
     Map<String, Integer> stubRow = new HashMap<>();
     Map<String, Integer> column = new HashMap<>();
+    Map<String, Integer> entryX = new HashMap<>();
     List<String> portKeys = new ArrayList<>();
     for (NetWire net : nets) {
       for (EndpointRef ref : net.endpoints()) {
@@ -49,9 +50,11 @@ public final class IsolatedRouter {
     }
     for (int i = 0; i < portKeys.size(); i++) {
       String key = portKeys.get(i);
-      Location loc = endpointLocs.get(key);
-      stubRow.put(key, loc.getY() - 40 - 10 * i);
+      // Unique stub row from the top of the canvas; guaranteed different from every
+      // port y (ports live at y>=100).
+      stubRow.put(key, 40 + 10 * i);
       column.put(key, 700 + 10 * i);
+      entryX.put(key, 300 + 10 * i);
     }
 
     int laneSeq = 0;
@@ -68,6 +71,7 @@ public final class IsolatedRouter {
       }
       int anchorRow = stubRow.get(firstKey);
       int anchorCol = column.get(firstKey);
+      int anchorEntry = entryX.get(firstKey);
       for (int i = 1; i < refs.size(); i++) {
         String targetKey = key(refs.get(i));
         Location target = endpointLocs.get(targetKey);
@@ -76,9 +80,15 @@ public final class IsolatedRouter {
         }
         int targetRow = stubRow.get(targetKey);
         int targetCol = column.get(targetKey);
-        // Path
-        add(mutation, anchor, Location.create(anchor.getX(), anchorRow, true));
-        add(mutation, Location.create(anchor.getX(), anchorRow, true),
+        int targetEntry = entryX.get(targetKey);
+        // Path (every coordinate unique):
+        // port -> (entryX, port.y) -> (entryX, stubRow) -> (col, stubRow)
+        //   -> (col, laneY) -> (targetCol, laneY) -> (targetCol, targetRow)
+        //   -> (targetEntry, targetRow) -> (targetEntry, target.y) -> port
+        add(mutation, anchor, Location.create(anchorEntry, anchor.getY(), true));
+        add(mutation, Location.create(anchorEntry, anchor.getY(), true),
+            Location.create(anchorEntry, anchorRow, true));
+        add(mutation, Location.create(anchorEntry, anchorRow, true),
             Location.create(anchorCol, anchorRow, true));
         add(mutation, Location.create(anchorCol, anchorRow, true),
             Location.create(anchorCol, laneY, true));
@@ -87,8 +97,10 @@ public final class IsolatedRouter {
         add(mutation, Location.create(targetCol, laneY, true),
             Location.create(targetCol, targetRow, true));
         add(mutation, Location.create(targetCol, targetRow, true),
-            Location.create(target.getX(), targetRow, true));
-        add(mutation, Location.create(target.getX(), targetRow, true), target);
+            Location.create(targetEntry, targetRow, true));
+        add(mutation, Location.create(targetEntry, targetRow, true),
+            Location.create(targetEntry, target.getY(), true));
+        add(mutation, Location.create(targetEntry, target.getY(), true), target);
       }
     }
   }
