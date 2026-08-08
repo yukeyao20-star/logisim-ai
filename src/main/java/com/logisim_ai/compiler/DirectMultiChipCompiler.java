@@ -109,14 +109,15 @@ public final class DirectMultiChipCompiler {
         }
       }
 
-      // Phase 3: wire every net. For each endpoint, connect to the first
-      // endpoint (driver) of the net via planLocalTunnelWire. This keeps wires
-      // orthogonal and boundary-safe.
+      // Phase 3: wire every net. Each net gets its own routing channel column so
+      // different signals never share an x (which would be an electrical short).
+      int netChannelSeq = 0;
       for (NetSpec net : spec.nets()) {
         List<EndpointRef> refs = net.endpoints();
         if (refs.size() < 2) {
           continue;
         }
+        int channel = 250 + (netChannelSeq++) * 10;
         // First endpoint is the driver anchor.
         Location anchor = endpointLocation(refs.get(0), positioned, pinMap);
         if (anchor == null) {
@@ -128,7 +129,7 @@ public final class DirectMultiChipCompiler {
             continue;
           }
           for (AutoLayoutPolicy.WireSegment segment
-              : AutoLayoutPolicy.planLocalTunnelWire(anchor, target)) {
+              : routeWithChannel(anchor, target, channel)) {
             if (!segment.from().equals(segment.to())) {
               mutation.add(Wire.create(segment.from(), segment.to()));
             }
@@ -172,6 +173,25 @@ public final class DirectMultiChipCompiler {
     java.nio.file.Path mdPath = reportDir.resolve(stem + "_multichip.md");
     java.nio.file.Files.writeString(mdPath, md.toString());
     System.out.println("[direct-multichip] report: " + mdPath);
+  }
+
+  /** Orthogonal routing through a per-net channel column so nets never share an x. */
+  private static List<AutoLayoutPolicy.WireSegment> routeWithChannel(
+      Location from, Location to, int channel) {
+    List<AutoLayoutPolicy.WireSegment> segments = new ArrayList<>();
+    if (from.equals(to)) {
+      return segments;
+    }
+    if (from.getX() == to.getX() || from.getY() == to.getY()) {
+      segments.add(new AutoLayoutPolicy.WireSegment(from, to));
+      return segments;
+    }
+    Location corner1 = Location.create(channel, from.getY(), true);
+    Location corner2 = Location.create(channel, to.getY(), true);
+    segments.add(new AutoLayoutPolicy.WireSegment(from, corner1));
+    segments.add(new AutoLayoutPolicy.WireSegment(corner1, corner2));
+    segments.add(new AutoLayoutPolicy.WireSegment(corner2, to));
+    return segments;
   }
 
   private static Location endpointLocation(
