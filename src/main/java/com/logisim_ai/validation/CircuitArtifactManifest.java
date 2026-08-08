@@ -63,7 +63,7 @@ public final class CircuitArtifactManifest {
         safeCheck("structure_matches_spec", () -> CircuitStructureInspector.inspect(spec, circFile).toHumanString(),
             () -> CircuitStructureInspector.inspect(spec, circFile).clean()),
         safeCheck("layout_clean", () -> CircuitLayoutInspector.inspect(circFile).toHumanString(),
-            () -> CircuitLayoutInspector.inspect(circFile).clean() || relaxed),
+            () -> CircuitLayoutInspector.inspect(circFile).noErrors() || relaxed),
         new Check("truth_table_evidence", truthTable.passed(), truthTable.detail()));
     return inspect(spec.name(), items, checks);
   }

@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 6
+- Artifact count: 8
 
 ## Artifacts
 
@@ -28,4 +28,6 @@
 | generated\reports\decoder_3bit_circuit_manifest.md | true |
 | generated\reports\decoder_3bit_circuit_truth_table.json | true |
 | generated\reports\decoder_3bit_circuit_truth_table.md | true |
+| generated\reports\decoder_3bit_generation_summary.json | true |
+| generated\reports\decoder_3bit_generation_summary.md | true |
 | generated\reports\decoder_3bit_multichip.md | true |

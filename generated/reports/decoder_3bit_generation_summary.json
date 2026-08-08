@@ -19,13 +19,15 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 6,
+  "artifactCount": 8,
   "artifacts": [
     {"path": "generated\\circ\\decoder_3bit.circ", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_circuit_manifest.md", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_circuit_truth_table.json", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\decoder_3bit_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\decoder_3bit_generation_summary.md", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_multichip.md", "exists": true}
   ]
 }
