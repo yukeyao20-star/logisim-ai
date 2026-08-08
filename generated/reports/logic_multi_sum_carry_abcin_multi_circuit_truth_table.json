@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_multi_sum_carry_abcin_multi",
+  "rowCount": 8,
+  "rows": [
+    {"inputs": {"a": false, "b": false, "cin": false}, "outputs": {"sum": false, "carry": false}},
+    {"inputs": {"a": false, "b": false, "cin": true}, "outputs": {"sum": true, "carry": false}},
+    {"inputs": {"a": false, "b": true, "cin": false}, "outputs": {"sum": true, "carry": false}},
+    {"inputs": {"a": false, "b": true, "cin": true}, "outputs": {"sum": false, "carry": true}},
+    {"inputs": {"a": true, "b": false, "cin": false}, "outputs": {"sum": true, "carry": false}},
+    {"inputs": {"a": true, "b": false, "cin": true}, "outputs": {"sum": false, "carry": true}},
+    {"inputs": {"a": true, "b": true, "cin": false}, "outputs": {"sum": false, "carry": true}},
+    {"inputs": {"a": true, "b": true, "cin": true}, "outputs": {"sum": true, "carry": true}}
+  ]
+}

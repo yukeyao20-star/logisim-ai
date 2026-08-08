@@ -1,0 +1,10 @@
+{
+  "circuitName": "logic_multi_sum_carry_ab_multi",
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"a": false, "b": false}, "outputs": {"sum": false, "carry": false}},
+    {"inputs": {"a": false, "b": true}, "outputs": {"sum": true, "carry": false}},
+    {"inputs": {"a": true, "b": false}, "outputs": {"sum": true, "carry": false}},
+    {"inputs": {"a": true, "b": true}, "outputs": {"sum": false, "carry": true}}
+  ]
+}
