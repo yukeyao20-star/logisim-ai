@@ -88,12 +88,22 @@ public final class LogisimProjectSetup {
   }
 
   /**
-   * Post-process .circ XML to keep generated files easy to open and edit:
+   * Post-process .circ XML to keep generated files easy to open, edit, and verify:
    * 1) Ensure all builtin libraries appear (XmlWriter only serializes referenced libs)
    * 2) Patch toolbar with explicit library indices
+   * 3) Rewrite the <project source="..."> marker to 4.1.0 so the generated file can be
+   *    loaded by the pinned official Logisim-evolution 4.1.0 JAR (truth tables / test
+   *    vectors) as well as newer GUI builds. The XML dialect for the simple gate/TTL
+   *    constructs this project emits is stable across 4.1.0 and 4.2.0dev.
    */
   public static void patchGeneratedProjectXml(File circFile) throws java.io.IOException {
     String xml = Files.readString(circFile.toPath(), StandardCharsets.UTF_8);
+
+    // Step 0: Normalize the source version marker so runtime verification tools that pin
+    // Logisim-evolution 4.1.0 accept the file.
+    xml = xml.replaceFirst(
+        "source=\"4\\.2\\.0dev\"",
+        "source=\"4.1.0\"");
 
     // Step 1: Find existing <lib> declarations and their name indices
     Map<String, Integer> existingLibs = new LinkedHashMap<>();

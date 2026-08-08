@@ -28,20 +28,20 @@ import com.logisim_ai.ir.NetSpec;
 import com.logisim_ai.ir.PortDirection;
 import com.logisim_ai.layout.AutoLayoutPolicy;
 import com.logisim_ai.layout.ExternalPortSpec;
+import com.logisim_ai.layout.FootprintPolicy;
 import com.logisim_ai.layout.GridLayoutEngine;
 import com.logisim_ai.layout.PlacedComponent;
 import com.logisim_ai.layout.PlacedPort;
 import com.logisim_ai.layout.PortSide;
 import com.logisim_ai.layout.ReadableChipLayout;
+import com.logisim_ai.validation.CircuitArtifactManifest;
 import com.logisim_ai.validation.CircuitLayoutInspector;
 import com.logisim_ai.validation.CircuitSemanticValidator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Compiles the project IR into a Logisim-evolution .circ file.
@@ -107,6 +107,7 @@ public final class LogisimCompiler {
       mutation.execute();
 
       saveAndVerify(loader, file, outputFile);
+      CircuitArtifactManifest.writeReports(spec, outputFile);
     } finally {
       file.stopAutosaveThread(false);
     }
@@ -126,6 +127,20 @@ public final class LogisimCompiler {
    * 7. Runtime validation + save + verify.
    */
   public static void compileNetlist(CircuitSpec spec, File outputFile) throws Exception {
+    compileNetlist(spec, outputFile, List.of());
+  }
+
+  public static void compileNetlistForTesting(
+      CircuitSpec spec,
+      File outputFile,
+      List<FootprintPolicy.ReservedArea> extraReservedAreas) throws Exception {
+    compileNetlist(spec, outputFile, extraReservedAreas);
+  }
+
+  static void compileNetlist(
+      CircuitSpec spec,
+      File outputFile,
+      List<FootprintPolicy.ReservedArea> extraReservedAreas) throws Exception {
     Main.headless = true;
     System.setProperty("java.awt.headless", "true");
 
@@ -148,6 +163,7 @@ public final class LogisimCompiler {
 
       // Phase 2: Instantiate components at their computed positions
       Map<String, Component> positioned = new HashMap<>();
+      List<FootprintPolicy.ReservedArea> reservedAreas = new ArrayList<>(extraReservedAreas);
       for (ComponentSpec cs : spec.components()) {
         Library library = LogisimProjectSetup.addLibrary(loader, file, cs.libraryName());
         ComponentFactory factory = findFactory(library, cs.factoryName());
@@ -162,6 +178,7 @@ public final class LogisimCompiler {
             .findFirst()
             .orElse(Location.create(200, 200, true));
         positioned.put(cs.id(), factory.createComponent(loc, attrs));
+        addReservedArea(reservedAreas, cs.factoryName(), cs.label(), loc);
       }
 
       // Phase 3: Compute port pin positions aligned to component endpoints
@@ -181,27 +198,25 @@ public final class LogisimCompiler {
         Component pin = createPin(ep, pp);
         mutation.add(pin);
         pinMap.put(ep.id(), pin);
+        addReservedArea(reservedAreas, "Pin", ep.label(), pp.pinLocation());
       }
 
       // Runtime validation
       CircuitSemanticValidator.requireValidRuntime(spec, positioned, pinMap);
 
       // Phase 5: Wire all nets using Tunnels
-      Set<String> usedNetLabels = new HashSet<>();
+      int netLabelSeq = 1;
       for (NetSpec net : spec.nets()) {
-        String label = net.id();
-        // Ensure unique labels (add suffix if collision)
-        while (usedNetLabels.contains(label)) {
-          label = label + "_2";
-        }
-        usedNetLabels.add(label);
-        wireNetWithTunnels(mutation, net, positioned, pinMap, spec.externalPorts(), tunnelFactory, label);
+        String label = "n" + netLabelSeq++;
+        wireNetWithTunnels(
+            mutation, net, positioned, pinMap, spec.externalPorts(), tunnelFactory, label, reservedAreas);
       }
 
       mutation.execute();
 
       // Save and verify
       saveAndVerify(loader, file, outputFile);
+      CircuitArtifactManifest.writeReports(spec, outputFile);
     } finally {
       file.stopAutosaveThread(false);
     }
@@ -211,14 +226,15 @@ public final class LogisimCompiler {
    * Wire all endpoints in a net together using Tunnel components.
    *
    * <p>Strategy:
-   * - Create Tunnels only beside internal component endpoints
-   * - Draw external Pins directly into the nearest internal Tunnel
+   * - Create Tunnels beside every endpoint, including external Pins
+   * - Draw only short local wires from each endpoint into its own Tunnel
    * - All Tunnels with the same label are logically connected by Logisim
-   * - Boundary Pins stay visually simple: no duplicate Pin-adjacent Tunnel boxes
+   * - No long boundary-to-internal wires cross unrelated input rows
    *
    * <p>Tunnel placement is delegated to {@link AutoLayoutPolicy}. Component
-   * tunnels keep fan-out readable, while boundary Pins remain the only user-facing
-   * controls at the circuit edge.
+   * tunnels keep fan-out readable, while boundary Pins connect to their net by
+   * a short local segment. This avoids accidental physical shorts at wire
+   * crossings.
    */
   private static void wireNetWithTunnels(
       CircuitMutation mutation,
@@ -227,7 +243,8 @@ public final class LogisimCompiler {
       Map<String, Component> pinMap,
       List<ExternalPort> externalPorts,
       ComponentFactory tunnelFactory,
-      String label) {
+      String label,
+      List<FootprintPolicy.ReservedArea> reservedAreas) {
 
     List<EndpointRef> refs = net.endpoints();
     if (refs.size() < 2) return;
@@ -255,34 +272,26 @@ public final class LogisimCompiler {
       endpoints.add(new NetEndpoint(ref, isPin, endpointLoc));
     }
 
-    List<TunnelEndpoint> internalTunnels = new ArrayList<>();
     for (NetEndpoint endpoint : endpoints) {
-      if (endpoint.isPin()) {
-        continue;
-      }
-
-      AutoLayoutPolicy.TunnelPlacement placement =
-          AutoLayoutPolicy.tunnelForComponentEnd(endpoint.location(), endpoint.ref().endIndex());
+      AutoLayoutPolicy.TunnelPlacement placement = endpoint.isPin()
+          ? AutoLayoutPolicy.tunnelForExternalPin(
+              endpoint.location(),
+              externalPortSide(endpoint.ref().componentId(), externalPorts))
+          : AutoLayoutPolicy.tunnelForComponentEnd(endpoint.location(), endpoint.ref().endIndex());
       Component tunnel = createTunnel(tunnelFactory, label, placement.location(), placement.facing());
       mutation.add(tunnel);
 
       Location tunnelPort = tunnel.getEnd(0).getLocation();
-      internalTunnels.add(new TunnelEndpoint(tunnelPort));
-      connectShortLocal(mutation, endpoint.location(), tunnelPort);
+      List<FootprintPolicy.ReservedArea> routeAreas = new ArrayList<>(reservedAreas);
+      addReservedArea(routeAreas, "Tunnel", label, placement.location());
+      connectShortLocal(mutation, endpoint.location(), tunnelPort, routeAreas);
+      addReservedArea(reservedAreas, "Tunnel", label, placement.location());
     }
+  }
 
-    if (internalTunnels.isEmpty()) {
-      wirePinOnlyNet(mutation, endpoints);
-      return;
-    }
-
-    for (NetEndpoint endpoint : endpoints) {
-      if (!endpoint.isPin()) {
-        continue;
-      }
-      Location target = nearestTunnelPort(endpoint.location(), internalTunnels);
-      connectOrthogonal(mutation, endpoint.location(), target, routeChannelForPin(endpoint, externalPorts));
-    }
+  private static PortSide externalPortSide(String pinId, List<ExternalPort> externalPorts) {
+    ExternalPort ep = findExternalPort(externalPorts, pinId);
+    return ep == null ? PortSide.LEFT : ep.side();
   }
 
   private static Location nearestTunnelPort(Location pin, List<TunnelEndpoint> tunnels) {
@@ -317,18 +326,27 @@ public final class LogisimCompiler {
     };
   }
 
-  private static void connectShortLocal(CircuitMutation mutation, Location endpointLoc, Location tunnelPort) {
-    if (endpointLoc.equals(tunnelPort)) {
-      return;
+  private static void connectShortLocal(
+      CircuitMutation mutation,
+      Location endpointLoc,
+      Location tunnelPort,
+      List<FootprintPolicy.ReservedArea> reservedAreas) {
+    for (AutoLayoutPolicy.WireSegment segment
+        : AutoLayoutPolicy.planLocalTunnelWireAvoidingAreas(endpointLoc, tunnelPort, reservedAreas)) {
+      mutation.add(Wire.create(segment.from(), segment.to()));
     }
-    if (endpointLoc.getX() == tunnelPort.getX() || endpointLoc.getY() == tunnelPort.getY()) {
-      mutation.add(Wire.create(endpointLoc, tunnelPort));
-      return;
+  }
+
+  private static void addReservedArea(
+      List<FootprintPolicy.ReservedArea> reservedAreas,
+      String componentName,
+      String label,
+      Location location) {
+    FootprintPolicy.ReservedArea area =
+        FootprintPolicy.reservedAreaForComponent(componentName, label == null ? "" : label, location);
+    if (area != null) {
+      reservedAreas.add(area);
     }
-    Location corner = Location.create(
-        AutoLayoutPolicy.snap(endpointLoc.getX()), AutoLayoutPolicy.snap(tunnelPort.getY()), true);
-    mutation.add(Wire.create(endpointLoc, corner));
-    mutation.add(Wire.create(corner, tunnelPort));
   }
 
   private static ExternalPort findExternalPort(List<ExternalPort> externalPorts, String pinId) {

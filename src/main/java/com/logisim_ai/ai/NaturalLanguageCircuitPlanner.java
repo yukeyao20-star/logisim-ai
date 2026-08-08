@@ -24,13 +24,45 @@ public final class NaturalLanguageCircuitPlanner {
     CHIP_LEVEL_CIRCUIT_IMPLEMENTATION
   }
 
+  public enum ImplementationLevel {
+    GATE_LEVEL,
+    CHIP_LEVEL,
+    GATE_LEVEL_CHIP
+  }
+
+  public record ImplementationProfile(
+      ImplementationLevel level,
+      String targetPackage,
+      boolean packagePrimitive,
+      String routingPrimitive) {}
+
   public record PlanResult(
       CircuitSpec spec,
       String description,
       Path sourceJson,
-      ImplementationIntent intent) {
+      ImplementationIntent intent,
+      ImplementationProfile implementationProfile,
+      GenerationRequest generationRequest) {
     public PlanResult(CircuitSpec spec, String description, Path sourceJson) {
       this(spec, description, sourceJson, ImplementationIntent.GATE_LEVEL_CIRCUIT);
+    }
+
+    public PlanResult(
+        CircuitSpec spec,
+        String description,
+        Path sourceJson,
+        ImplementationIntent intent) {
+      this(spec, description, sourceJson, intent, implementationProfileForIntent(intent, ""));
+    }
+
+    public PlanResult(
+        CircuitSpec spec,
+        String description,
+        Path sourceJson,
+        ImplementationIntent intent,
+        ImplementationProfile implementationProfile) {
+      this(spec, description, sourceJson, intent, implementationProfile,
+          GenerationRequest.legacyNaturalLanguage(intent, implementationProfile));
     }
   }
 
@@ -74,6 +106,7 @@ public final class NaturalLanguageCircuitPlanner {
 
     String normalized = normalize(query);
     ImplementationIntent intent = inferIntent(normalized);
+    ImplementationProfile profile = inferImplementationProfile(normalized, intent);
     boolean use7400 = requests7400(normalized)
         && intent != ImplementationIntent.GATE_LEVEL_CHIP_IMPLEMENTATION;
     boolean use7486 = requests7486(normalized)
@@ -100,7 +133,7 @@ public final class NaturalLanguageCircuitPlanner {
       for (Template template : TEMPLATES) {
         for (String keyword : template.keywords()) {
           if (normalized.contains(normalize(keyword))) {
-            return matched(loadTemplate(template, keyword, intent));
+            return matched(loadTemplate(template, keyword, query, normalized, intent, profile));
           }
         }
       }
@@ -147,7 +180,14 @@ public final class NaturalLanguageCircuitPlanner {
               ? "Synthesized Boolean function into NAND-only CircuitSpec"
               : "Synthesized Boolean function into CircuitSpec",
           null,
-          intent));
+          intent,
+          profile,
+          GenerationRequest.naturalLanguage(
+              query,
+              normalized,
+              GenerationRequest.RequestInputKind.BOOLEAN_EXPRESSION,
+              intent,
+              profile)));
     }
     if (isDirectTtlStrategy(strategy)) {
       return new PlanningReport(
@@ -185,12 +225,26 @@ public final class NaturalLanguageCircuitPlanner {
   private static PlanResult loadTemplate(
       Template template,
       String keyword,
-      ImplementationIntent intent) {
+      String originalRequest,
+      String normalizedRequest,
+      ImplementationIntent intent,
+      ImplementationProfile implementationProfile) {
     try {
       Path path = Path.of(template.sourceJson());
       String json = Files.readString(path, StandardCharsets.UTF_8);
       CircuitSpec spec = CircuitSpecJsonParser.parse(json);
-      return new PlanResult(spec, "Matched verified JSON template: " + keyword, path, intent);
+      return new PlanResult(
+          spec,
+          "Matched verified JSON template: " + keyword,
+          path,
+          intent,
+          implementationProfile,
+          GenerationRequest.naturalLanguage(
+              originalRequest,
+              normalizedRequest,
+              GenerationRequest.RequestInputKind.VERIFIED_TEMPLATE,
+              intent,
+              implementationProfile));
     } catch (Exception e) {
       throw new IllegalStateException("Failed to load NL template: " + template.sourceJson(), e);
     }
@@ -251,6 +305,52 @@ public final class NaturalLanguageCircuitPlanner {
     return inferIntent(normalize(query));
   }
 
+  /**
+   * Detect a "generate &lt;chip&gt;" native-TTL request (e.g. "生成 74160",
+   * "generate 74138", "画一个 74151"). Returns the chip factory name (e.g. "74160")
+   * or {@code null} when the request is not a native-chip request.
+   */
+  public static String findNativeChip(String query) {
+    if (query == null || query.isBlank()) {
+      return null;
+    }
+    String normalized = normalize(query);
+    // Gate-package requests (use 7400 etc.) are handled by the Boolean/TTL mapper path,
+    // not by standalone native-chip placement.
+    if (requests7400(normalized) || requests7402(normalized) || requests7404(normalized)
+        || requests7408(normalized) || requests7432(normalized) || requests7486(normalized)
+        || requestsNandOnly(normalized)) {
+      return null;
+    }
+    java.util.regex.Matcher matcher = java.util.regex.Pattern
+        .compile("(?:74\\d{2,3})")
+        .matcher(normalized);
+    if (matcher.find()) {
+      String chip = matcher.group();
+      if (isNativeTtlChip(chip)) {
+        return chip;
+      }
+    }
+    return null;
+  }
+
+  /** Chip families available as standalone native components in the TTL library. */
+  private static boolean isNativeTtlChip(String chip) {
+    return List.of(
+        "7400", "7402", "7404", "7408", "7410", "7411", "7413", "7414", "7420", "7427",
+        "7430", "7432", "7442", "7447", "7474", "7485", "7486", "74138", "74139",
+        "74151", "74153", "74157", "74158", "74160", "74161", "74163", "74164",
+        "74165", "74166", "74175", "74181", "74182", "74192", "74193", "74194",
+        "74240", "74244", "74245", "74266", "74273", "74283", "74299", "74377",
+        "74381", "74541", "74670")
+        .contains(chip);
+  }
+
+  public static ImplementationProfile inferImplementationProfileForTesting(String query) {
+    String normalized = normalize(query);
+    return inferImplementationProfile(normalized, inferIntent(normalized));
+  }
+
   private static ImplementationIntent inferIntent(String normalized) {
     if (requestsGateLevelChipImplementation(normalized)) {
       return ImplementationIntent.GATE_LEVEL_CHIP_IMPLEMENTATION;
@@ -259,6 +359,46 @@ public final class NaturalLanguageCircuitPlanner {
       return ImplementationIntent.CHIP_LEVEL_CIRCUIT_IMPLEMENTATION;
     }
     return ImplementationIntent.GATE_LEVEL_CIRCUIT;
+  }
+
+  private static ImplementationProfile inferImplementationProfile(
+      String normalized,
+      ImplementationIntent intent) {
+    return implementationProfileForIntent(intent, targetPackage(normalized));
+  }
+
+  private static ImplementationProfile implementationProfileForIntent(
+      ImplementationIntent intent,
+      String targetPackage) {
+    return switch (intent) {
+      case GATE_LEVEL_CIRCUIT -> new ImplementationProfile(
+          ImplementationLevel.GATE_LEVEL,
+          "",
+          false,
+          "primitive_gates");
+      case CHIP_LEVEL_CIRCUIT_IMPLEMENTATION -> new ImplementationProfile(
+          ImplementationLevel.CHIP_LEVEL,
+          targetPackage,
+          true,
+          "package_or_labeled_ttl_gates");
+      case GATE_LEVEL_CHIP_IMPLEMENTATION -> new ImplementationProfile(
+          ImplementationLevel.GATE_LEVEL_CHIP,
+          targetPackage,
+          false,
+          "chip_internal_gates");
+    };
+  }
+
+  private static String targetPackage(String normalized) {
+    for (String pkg : List.of("7400", "7402", "7404", "7408", "7432", "7486")) {
+      if (normalized.matches(".*\\b" + pkg + "\\b.*")) {
+        return pkg;
+      }
+    }
+    if (requestsGenericTtlChips(normalized)) {
+      return "TTL";
+    }
+    return "";
   }
 
   private static String normalize(String text) {

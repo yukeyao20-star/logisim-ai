@@ -81,6 +81,109 @@ public final class CircuitSpecJsonParser {
     return new CircuitSpec(name, components, ports, nets, hints);
   }
 
+  /**
+   * Serialize a CircuitSpec back to the JSON IR contract accepted by {@link #parse}.
+   *
+   * <p>Used to persist planner-produced specs (e.g. natural-language circuits) so that
+   * downstream verification such as {@code OfficialSimulationVerifier} can reconstruct the
+   * exact same spec without re-planning.
+   */
+  public static String toJson(CircuitSpec spec) {
+    StringBuilder out = new StringBuilder();
+    out.append("{\n");
+    out.append("  \"name\": \"").append(escape(spec.name())).append("\",\n");
+    out.append("  \"components\": [\n");
+    for (int i = 0; i < spec.components().size(); i++) {
+      ComponentSpec c = spec.components().get(i);
+      out.append("    {\"id\": \"").append(escape(c.id()))
+          .append("\", \"library\": \"").append(escape(c.libraryName()))
+          .append("\", \"factory\": \"").append(escape(c.factoryName()))
+          .append("\", \"bitWidth\": ").append(c.bitWidth())
+          .append(", \"label\": \"").append(escape(c.label())).append("\"}");
+      if (i + 1 < spec.components().size()) {
+        out.append(",");
+      }
+      out.append("\n");
+    }
+    out.append("  ],\n");
+    out.append("  \"externalPorts\": [\n");
+    for (int i = 0; i < spec.externalPorts().size(); i++) {
+      ExternalPort p = spec.externalPorts().get(i);
+      out.append("    {\"id\": \"").append(escape(p.id()))
+          .append("\", \"label\": \"").append(escape(p.label()))
+          .append("\", \"bitWidth\": ").append(p.bitWidth())
+          .append(", \"direction\": \"").append(p.direction() == PortDirection.OUTPUT ? "OUTPUT" : "INPUT")
+          .append("\", \"side\": \"").append(sideName(p.side()))
+          .append("\", \"targetComponentId\": \"").append(escape(p.targetComponentId()))
+          .append("\", \"targetEndIndex\": ").append(p.targetEndIndex()).append("}");
+      if (i + 1 < spec.externalPorts().size()) {
+        out.append(",");
+      }
+      out.append("\n");
+    }
+    out.append("  ],\n");
+    out.append("  \"nets\": [\n");
+    for (int i = 0; i < spec.nets().size(); i++) {
+      NetSpec n = spec.nets().get(i);
+      out.append("    {\"id\": \"").append(escape(n.id())).append("\", \"endpoints\": [");
+      for (int j = 0; j < n.endpoints().size(); j++) {
+        EndpointRef e = n.endpoints().get(j);
+        out.append("{\"componentId\": \"").append(escape(e.componentId()))
+            .append("\", \"endIndex\": ").append(e.endIndex()).append("}");
+        if (j + 1 < n.endpoints().size()) {
+          out.append(", ");
+        }
+      }
+      out.append("]}");
+      if (i + 1 < spec.nets().size()) {
+        out.append(",");
+      }
+      out.append("\n");
+    }
+    out.append("  ],\n");
+    out.append("  \"layoutHints\": [\n");
+    for (int i = 0; i < spec.layoutHints().size(); i++) {
+      LayoutHint h = spec.layoutHints().get(i);
+      out.append("    {\"componentId\": \"").append(escape(h.componentId()))
+          .append("\", \"rank\": ").append(h.rank())
+          .append(", \"column\": ").append(h.column())
+          .append(", \"row\": ").append(h.row())
+          .append(", \"side\": ").append(h.side() == null ? "null" : "\"" + sideName(h.side()) + "\"")
+          .append("}");
+      if (i + 1 < spec.layoutHints().size()) {
+        out.append(",");
+      }
+      out.append("\n");
+    }
+    out.append("  ]\n");
+    out.append("}\n");
+    return out.toString();
+  }
+
+  private static String sideName(PortSide side) {
+    if (side == null) {
+      return "LEFT";
+    }
+    return switch (side) {
+      case RIGHT -> "RIGHT";
+      case TOP -> "TOP";
+      case BOTTOM -> "BOTTOM";
+      default -> "LEFT";
+    };
+  }
+
+  private static String escape(String text) {
+    if (text == null) {
+      return "";
+    }
+    return text
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t");
+  }
+
   // ---- Component parsing ----
 
   private static List<ComponentSpec> parseComponents(String json) {

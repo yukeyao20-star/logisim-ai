@@ -1,11 +1,20 @@
 package com.logisim_ai.experiment;
 
+import com.cburch.logisim.data.Location;
+import com.logisim_ai.ai.GenerationRequest;
 import com.logisim_ai.ai.NaturalLanguageCircuitPlanner;
 import com.logisim_ai.ai.NaturalLanguageCircuitPlanner.ImplementationIntent;
+import com.logisim_ai.ai.NaturalLanguageCircuitPlanner.ImplementationLevel;
+import com.logisim_ai.compiler.LogisimCompiler;
 import com.logisim_ai.ir.CircuitSpec;
 import com.logisim_ai.ir.ComponentSpec;
+import com.logisim_ai.ir.EndpointRef;
 import com.logisim_ai.ir.ExternalPort;
+import com.logisim_ai.ir.LayoutHint;
+import com.logisim_ai.ir.NetSpec;
 import com.logisim_ai.ir.PortDirection;
+import com.logisim_ai.layout.AutoLayoutPolicy;
+import com.logisim_ai.layout.FootprintPolicy;
 import com.logisim_ai.layout.PortSide;
 import com.logisim_ai.ttl.Ttl7400Mapper;
 import com.logisim_ai.ttl.TtlDipLayoutReport;
@@ -13,10 +22,19 @@ import com.logisim_ai.ttl.TtlDipWiringReport;
 import com.logisim_ai.ttl.TtlMultiPackageReport;
 import com.logisim_ai.ttl.TtlPackageMapper;
 import com.logisim_ai.ttl.TtlPackageSpec;
+import com.logisim_ai.validation.CircuitArtifactManifest;
+import com.logisim_ai.validation.CircuitLayoutInspector;
 import com.logisim_ai.validation.CircuitSemanticValidator;
+import com.logisim_ai.validation.CircuitStructureInspector;
 import com.logisim_ai.validation.CircuitTruthTableEvaluator;
+import com.logisim_ai.validation.GenerationDeliveryReport;
+import com.logisim_ai.validation.GenerationSummary;
+import com.logisim_ai.validation.LayoutRepairExecutor;
+import com.logisim_ai.validation.TtlDipArtifactManifest;
 import com.logisim_ai.validation.TtlDipBehaviorInspector;
 import com.logisim_ai.validation.TtlDipPinMapInspector;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,10 +126,55 @@ public final class BooleanSynthesisRegression {
     runMixedTtlFullAdderSynthesis();
     runTtlDipPinMapInspectorRegression();
     runTtlDipBehaviorInspectorRegression();
+    runTtlDipArtifactManifestRegression();
+    runCircuitArtifactManifestRegression();
+    runCircuitStructureInspectorRegression();
+    runGenerationSummaryRegression();
+    runLayoutRepairExecutorRegression();
+    runAutoLayoutPolicyRegression();
     runTtl7400FullAdderSynthesis();
     runGenericTtlPackageMapper();
     runNaturalLanguageImplementationIntent();
+    runOfficialSimulationRegression();
     System.out.println("[OK] Boolean synthesis/template truth-table regression passed");
+  }
+
+  /** Official JAR truth-table evidence for the shipped example circuits, when the JAR is present. */
+  private static void runOfficialSimulationRegression() {
+    List<String> circuitNames =
+        List.of("half_adder", "full_adder", "mux_4to1", "nand_xor3");
+    java.io.File jarProbe = new java.io.File(
+        System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
+            com.logisim_ai.validation.OfficialSimulationVerifier.DEFAULT_LOGISIM_JAR));
+    if (!jarProbe.exists()) {
+      System.out.println("[OK] official Logisim JAR simulation regression: SKIP (JAR not present)");
+      return;
+    }
+    int checked = 0;
+    for (String name : circuitNames) {
+      java.io.File circ = new java.io.File("generated/circ/" + name + ".circ");
+      java.io.File specJson = new java.io.File("generated/examples/" + name + "_spec.json");
+      if (!circ.exists() || !specJson.exists()) {
+        System.out.println("[OK] official Logisim JAR simulation regression: SKIP missing " + name);
+        continue;
+      }
+      try {
+        CircuitSpec spec = com.logisim_ai.ai.CircuitSpecJsonParser.parse(
+            java.nio.file.Files.readString(specJson.toPath()));
+        com.logisim_ai.validation.OfficialSimulationVerifier.Report report =
+            com.logisim_ai.validation.OfficialSimulationVerifier.verify(spec, circ);
+        if (!report.passed()) {
+          throw new IllegalStateException("Official JAR simulation failed for " + name + ": "
+              + report.detail());
+        }
+        System.out.println("[OK] " + name + " official Logisim JAR simulation passed: rows="
+            + report.rows().size());
+        checked++;
+      } catch (Exception e) {
+        throw new IllegalStateException("Official JAR simulation regression failed for " + name, e);
+      }
+    }
+    System.out.println("[OK] official Logisim JAR simulation regression passed: circuits=" + checked);
   }
 
   private static void runCase(Case testCase) {
@@ -796,6 +859,1080 @@ public final class BooleanSynthesisRegression {
     System.out.println("[OK] TTL DIP behavior inspector positive/negative regression passed");
   }
 
+  private static void runTtlDipArtifactManifestRegression() {
+    TtlDipArtifactManifest.Report cleanReport = TtlDipArtifactManifest.inspect(
+        "synthetic_manifest_clean",
+        List.of(new TtlDipArtifactManifest.Item(
+            "source_self",
+            "src/main/java/com/logisim_ai/validation/TtlDipArtifactManifest.java")),
+        List.of(new TtlDipArtifactManifest.Check("synthetic_check", true, "ok")));
+    if (!cleanReport.clean()) {
+      throw new IllegalStateException("Expected clean manifest report: "
+          + cleanReport.toHumanString());
+    }
+
+    TtlDipArtifactManifest.Report missingArtifact = TtlDipArtifactManifest.inspect(
+        "synthetic_manifest_missing_artifact",
+        List.of(new TtlDipArtifactManifest.Item(
+            "missing",
+            "generated/reports/__definitely_missing_manifest_regression__.md")),
+        List.of(new TtlDipArtifactManifest.Check("synthetic_check", true, "ok")));
+    if (missingArtifact.clean()
+        || !missingArtifact.toHumanString().contains("Missing artifact")) {
+      throw new IllegalStateException("Expected missing artifact manifest to fail: "
+          + missingArtifact.toHumanString());
+    }
+
+    TtlDipArtifactManifest.Report failedCheck = TtlDipArtifactManifest.inspect(
+        "synthetic_manifest_failed_check",
+        List.of(new TtlDipArtifactManifest.Item(
+            "source_self",
+            "src/main/java/com/logisim_ai/validation/TtlDipArtifactManifest.java")),
+        List.of(new TtlDipArtifactManifest.Check("forced_check", false, "forced failure")));
+    if (failedCheck.clean()
+        || !failedCheck.toHumanString().contains("Check failed: forced_check")) {
+      throw new IllegalStateException("Expected failed check manifest to fail: "
+          + failedCheck.toHumanString());
+    }
+
+    System.out.println("[OK] TTL DIP artifact manifest positive/negative regression passed");
+  }
+
+  private static void runCircuitArtifactManifestRegression() {
+    CircuitArtifactManifest.Report cleanReport = CircuitArtifactManifest.inspect(
+        "synthetic_circuit_manifest_clean",
+        List.of(new CircuitArtifactManifest.Item(
+            "source_self",
+            "src/main/java/com/logisim_ai/validation/CircuitArtifactManifest.java")),
+        List.of(new CircuitArtifactManifest.Check("synthetic_check", true, "ok")));
+    if (!cleanReport.clean()) {
+      throw new IllegalStateException("Expected clean circuit manifest report: "
+          + cleanReport.toHumanString());
+    }
+
+    CircuitArtifactManifest.Report missingArtifact = CircuitArtifactManifest.inspect(
+        "synthetic_circuit_manifest_missing_artifact",
+        List.of(new CircuitArtifactManifest.Item(
+            "missing",
+            "generated/circ/__definitely_missing_circuit_manifest_regression__.circ")),
+        List.of(new CircuitArtifactManifest.Check("synthetic_check", true, "ok")));
+    if (missingArtifact.clean()
+        || !missingArtifact.toHumanString().contains("Missing artifact")) {
+      throw new IllegalStateException("Expected missing circuit artifact manifest to fail: "
+          + missingArtifact.toHumanString());
+    }
+
+    CircuitArtifactManifest.Report failedCheck = CircuitArtifactManifest.inspect(
+        "synthetic_circuit_manifest_failed_check",
+        List.of(new CircuitArtifactManifest.Item(
+            "source_self",
+            "src/main/java/com/logisim_ai/validation/CircuitArtifactManifest.java")),
+        List.of(new CircuitArtifactManifest.Check("forced_check", false, "forced failure")));
+    if (failedCheck.clean()
+        || !failedCheck.toHumanString().contains("Check failed: forced_check")) {
+      throw new IllegalStateException("Expected failed circuit manifest check to fail: "
+          + failedCheck.toHumanString());
+    }
+
+    System.out.println("[OK] circuit artifact manifest positive/negative regression passed");
+  }
+
+  private static void runCircuitStructureInspectorRegression() {
+    CircuitSpec spec = new CircuitSpec(
+        "synthetic_and",
+        List.of(new ComponentSpec("and1", "Gates", "AND Gate", 1, "U1A")),
+        List.of(
+            new ExternalPort("a", "A", 1, PortDirection.INPUT, PortSide.LEFT, "and1", 1),
+            new ExternalPort("b", "B", 1, PortDirection.INPUT, PortSide.LEFT, "and1", 2),
+            new ExternalPort("y", "Y", 1, PortDirection.OUTPUT, PortSide.RIGHT, "and1", 0)));
+
+    String validXml = """
+        <project>
+          <main name="synthetic_and"/>
+          <circuit name="synthetic_and">
+            <comp lib="0" loc="(100,100)" name="Pin"><a name="label" val="A"/></comp>
+            <comp lib="0" loc="(100,140)" name="Pin"><a name="label" val="B"/></comp>
+            <comp lib="0" loc="(300,120)" name="Pin"><a name="label" val="Y"/><a name="type" val="output"/></comp>
+            <comp lib="1" loc="(200,120)" name="AND Gate"><a name="label" val="U1A"/></comp>
+          </circuit>
+        </project>
+        """;
+    CircuitStructureInspector.Report valid =
+        CircuitStructureInspector.inspectXml(spec, "synthetic-valid.circ", validXml);
+    if (!valid.clean()) {
+      throw new IllegalStateException("Expected structure inspector positive case to pass: "
+          + valid.toHumanString());
+    }
+
+    String missingPinXml = """
+        <project>
+          <main name="synthetic_and"/>
+          <circuit name="synthetic_and">
+            <comp lib="0" loc="(100,100)" name="Pin"><a name="label" val="A"/></comp>
+            <comp lib="0" loc="(300,120)" name="Pin"><a name="label" val="Y"/><a name="type" val="output"/></comp>
+            <comp lib="1" loc="(200,120)" name="AND Gate"><a name="label" val="U1A"/></comp>
+          </circuit>
+        </project>
+        """;
+    CircuitStructureInspector.Report missingPin =
+        CircuitStructureInspector.inspectXml(spec, "synthetic-missing-pin.circ", missingPinXml);
+    if (missingPin.clean() || !missingPin.toHumanString().contains("External pin labels mismatch")) {
+      throw new IllegalStateException("Expected missing pin structure report to fail: "
+          + missingPin.toHumanString());
+    }
+
+    String wrongMainXml = validXml.replace("<main name=\"synthetic_and\"/>", "<main name=\"wrong\"/>");
+    CircuitStructureInspector.Report wrongMain =
+        CircuitStructureInspector.inspectXml(spec, "synthetic-wrong-main.circ", wrongMainXml);
+    if (wrongMain.clean() || !wrongMain.toHumanString().contains("Main circuit mismatch")) {
+      throw new IllegalStateException("Expected wrong main structure report to fail: "
+          + wrongMain.toHumanString());
+    }
+
+    System.out.println("[OK] circuit structure inspector positive/negative regression passed");
+  }
+
+  private static void runGenerationSummaryRegression() {
+    try {
+      Path reportDir = Path.of("generated", "reports");
+      Path circDir = Path.of("generated", "circ");
+      Files.createDirectories(reportDir);
+      Files.createDirectories(circDir);
+
+      Path passManifest = reportDir.resolve("summary_regression_pass_manifest.json");
+      Files.writeString(passManifest, """
+          {
+            "complete": true,
+            "checkCount": 3,
+            "issues": []
+          }
+          """);
+      GenerationSummary.ManifestStatus passStatus =
+          GenerationSummary.readManifestStatusForTesting(passManifest);
+      if (!Boolean.TRUE.equals(passStatus.complete())
+          || passStatus.checkCount().isEmpty()
+          || passStatus.checkCount().getAsInt() != 3
+          || passStatus.issueCount().isEmpty()
+          || passStatus.issueCount().getAsInt() != 0) {
+        throw new IllegalStateException("GenerationSummary pass manifest status mismatch: " + passStatus);
+      }
+
+      Path failManifest = reportDir.resolve("summary_regression_fail_manifest.json");
+      Files.writeString(failManifest, """
+          {
+            "complete": false,
+            "checkCount": 2,
+            "issues": ["first", "second"]
+          }
+          """);
+      GenerationSummary.ManifestStatus failStatus =
+          GenerationSummary.readManifestStatusForTesting(failManifest);
+      if (!Boolean.FALSE.equals(failStatus.complete())
+          || failStatus.checkCount().isEmpty()
+          || failStatus.checkCount().getAsInt() != 2
+          || failStatus.issueCount().isEmpty()
+          || failStatus.issueCount().getAsInt() != 2) {
+        throw new IllegalStateException("GenerationSummary fail manifest status mismatch: " + failStatus);
+      }
+
+      GenerationSummary.ManifestStatus missingStatus =
+          GenerationSummary.readManifestStatusForTesting(reportDir.resolve("__missing_summary_manifest__.json"));
+      if (missingStatus.complete() != null
+          || missingStatus.checkCount().isPresent()
+          || missingStatus.issueCount().isPresent()) {
+        throw new IllegalStateException("GenerationSummary missing manifest should be unknown: "
+            + missingStatus);
+      }
+
+      if (!GenerationSummary.describeIntentForTesting("GATE_LEVEL_CIRCUIT")
+          .contains("primitive Logisim gates")) {
+        throw new IllegalStateException("Gate-level intent explanation missing expected wording");
+      }
+      if (!GenerationSummary.describeIntentForTesting("CHIP_LEVEL_CIRCUIT_IMPLEMENTATION")
+          .contains("chip/package-level")) {
+        throw new IllegalStateException("Chip-level intent explanation missing expected wording");
+      }
+      if (!GenerationSummary.describeIntentForTesting("GATE_LEVEL_CHIP_IMPLEMENTATION")
+          .contains("internal gate-level implementation")) {
+        throw new IllegalStateException("Gate-level chip intent explanation missing expected wording");
+      }
+      if (!GenerationSummary.describeIntentForTesting("STRUCTURED_JSON")
+          .contains("structured CircuitSpec JSON")) {
+        throw new IllegalStateException("Structured JSON intent explanation missing expected wording");
+      }
+      if (!GenerationSummary.recommendNextActionForTesting(
+              "natural_language",
+              "GATE_LEVEL_CIRCUIT",
+              passStatus)
+          .contains("Open the .circ in Logisim-evolution")) {
+        throw new IllegalStateException("Gate-level recommended next action mismatch");
+      }
+      if (!GenerationSummary.recommendNextActionForTesting(
+              "json",
+              "STRUCTURED_JSON",
+              passStatus)
+          .contains("Compare the source JSON")) {
+        throw new IllegalStateException("Structured JSON recommended next action mismatch");
+      }
+      if (!GenerationSummary.recommendNextActionForTesting(
+              "natural_language",
+              "CHIP_LEVEL_CIRCUIT_IMPLEMENTATION",
+              passStatus)
+          .contains("chip/package mapping")) {
+        throw new IllegalStateException("Chip-level recommended next action mismatch");
+      }
+      if (!GenerationSummary.recommendNextActionForTesting(
+              "natural_language_ttl_dip",
+              "CHIP_LEVEL_CIRCUIT_IMPLEMENTATION",
+              passStatus)
+          .contains("TTL BOM")) {
+        throw new IllegalStateException("TTL DIP recommended next action mismatch");
+      }
+      if (!GenerationSummary.recommendNextActionForTesting(
+              "natural_language",
+              "GATE_LEVEL_CIRCUIT",
+              failStatus)
+          .contains("Open the manifest first")) {
+        throw new IllegalStateException("Failing manifest recommended next action mismatch");
+      }
+      if (!GenerationSummary.recommendedActionsForTesting(
+              "natural_language",
+              "GATE_LEVEL_CIRCUIT",
+              passStatus)
+          .equals(List.of("open_circuit", "review_manifest", "review_truth_table"))) {
+        throw new IllegalStateException("Gate-level recommended action ids mismatch");
+      }
+      if (!GenerationSummary.recommendedActionsForTesting(
+              "json",
+              "STRUCTURED_JSON",
+              passStatus)
+          .equals(List.of("compare_source_json", "open_circuit", "review_manifest", "review_truth_table"))) {
+        throw new IllegalStateException("Structured JSON recommended action ids mismatch");
+      }
+      if (!GenerationSummary.recommendedActionsForTesting(
+              "natural_language_ttl_dip",
+              "CHIP_LEVEL_CIRCUIT_IMPLEMENTATION",
+              passStatus)
+          .equals(List.of(
+              "open_circuit",
+              "review_manifest",
+              "review_ttl_bom",
+              "review_pinmap",
+              "review_ttl_dip_layout",
+              "review_behavior_report"))) {
+        throw new IllegalStateException("TTL DIP recommended action ids mismatch");
+      }
+      if (!GenerationSummary.recommendedActionsForTesting(
+              "natural_language",
+              "GATE_LEVEL_CIRCUIT",
+              failStatus)
+          .equals(List.of("review_manifest", "fix_manifest_issues", "regenerate_circuit"))) {
+        throw new IllegalStateException("Failing manifest recommended action ids mismatch");
+      }
+
+      CircuitSpec spec = new CircuitSpec(
+          "summary_regression",
+          List.of(new ComponentSpec("and1", "Gates", "AND Gate", 1, "")),
+          List.of(
+              new ExternalPort("a", "A", 1, PortDirection.INPUT, PortSide.LEFT, "and1", 1),
+              new ExternalPort("b", "B", 1, PortDirection.INPUT, PortSide.LEFT, "and1", 2),
+              new ExternalPort("y", "Y", 1, PortDirection.OUTPUT, PortSide.RIGHT, "and1", 0)));
+      Path output = circDir.resolve("custom_summary_regression.circ");
+      Path outputSpecific = reportDir.resolve("custom_summary_regression_circuit_manifest.md");
+      Path outputSpecificJson = reportDir.resolve("custom_summary_regression_circuit_manifest.json");
+      Path oldSpecReport = reportDir.resolve("summary_regression_old_report.md");
+      Path summaryMd = reportDir.resolve("custom_summary_regression_generation_summary.md");
+      Path summaryJson = reportDir.resolve("custom_summary_regression_generation_summary.json");
+      Files.writeString(output, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="toolbar" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main"/>
+          </project>
+          """);
+      Files.writeString(outputSpecific, "manifest");
+      Files.writeString(outputSpecificJson, "{}");
+      Files.writeString(oldSpecReport, "old report");
+
+      List<Path> customArtifacts = GenerationSummary.collectArtifactsForTesting(
+          spec,
+          output.toFile(),
+          outputSpecific,
+          outputSpecificJson,
+          summaryMd,
+          summaryJson,
+          false);
+      if (customArtifacts.contains(oldSpecReport)) {
+        throw new IllegalStateException("GenerationSummary leaked spec-prefixed reports for custom output: "
+            + customArtifacts);
+      }
+      if (!customArtifacts.contains(output) || !customArtifacts.contains(outputSpecific)) {
+        throw new IllegalStateException("GenerationSummary missed output-specific artifacts: "
+            + customArtifacts);
+      }
+
+      List<Path> specArtifacts = GenerationSummary.collectArtifactsForTesting(
+          spec,
+          output.toFile(),
+          outputSpecific,
+          outputSpecificJson,
+          summaryMd,
+          summaryJson,
+          true);
+      if (!specArtifacts.contains(oldSpecReport)) {
+        throw new IllegalStateException("GenerationSummary failed to include spec-prefixed reports: "
+            + specArtifacts);
+      }
+
+      List<GenerationDeliveryReport.Artifact> deliveryArtifacts =
+          GenerationDeliveryReport.artifactsForTesting(
+              output.toFile(),
+              summaryMd,
+              summaryJson,
+              outputSpecific,
+              outputSpecificJson,
+              reportDir.resolve("custom_summary_regression_delivery_report.md"),
+              reportDir.resolve("custom_summary_regression_delivery_report.json"),
+              customArtifacts);
+      if (deliveryArtifacts.stream().noneMatch(artifact ->
+              artifact.kind().equals("delivery_json")
+                  && artifact.path().endsWith("custom_summary_regression_delivery_report.json"))
+          || deliveryArtifacts.stream().noneMatch(artifact ->
+              artifact.kind().equals("summary_markdown")
+                  && artifact.path().endsWith("custom_summary_regression_generation_summary.md"))
+          || deliveryArtifacts.stream().noneMatch(artifact ->
+              artifact.kind().equals("manifest_json")
+                  && artifact.path().endsWith("custom_summary_regression_circuit_manifest.json"))) {
+        throw new IllegalStateException("Delivery report artifact index missing core artifacts: "
+            + deliveryArtifacts);
+      }
+      if (deliveryArtifacts.stream()
+          .filter(artifact -> artifact.kind().startsWith("delivery_"))
+          .anyMatch(artifact -> !artifact.exists())) {
+        throw new IllegalStateException("Delivery report self artifacts should be marked present: "
+            + deliveryArtifacts);
+      }
+      Path deliveryMd = GenerationDeliveryReport.write(
+          "natural_language",
+          "synthetic layout quality regression",
+          "GATE_LEVEL_CIRCUIT",
+          new GenerationSummary.ImplementationProfile(
+              "GATE_LEVEL",
+              "",
+              false,
+              "primitive_gates"),
+          spec,
+          output.toFile(),
+          summaryMd,
+          summaryJson,
+          outputSpecific,
+          outputSpecificJson,
+          passStatus,
+          List.of("open_circuit", "review_manifest"),
+          customArtifacts);
+      String deliveryJson = Files.readString(reportDir.resolve("custom_summary_regression_delivery_report.json"));
+      String deliveryMarkdown = Files.readString(deliveryMd);
+      if (!deliveryJson.contains("\"layoutClean\": true")
+          || !deliveryJson.contains("\"implementationProfile\"")
+          || !deliveryJson.contains("\"level\": \"GATE_LEVEL\"")
+          || !deliveryJson.contains("\"targetPackage\": \"\"")
+          || !deliveryJson.contains("\"packagePrimitive\": false")
+          || !deliveryJson.contains("\"routingPrimitive\": \"primitive_gates\"")
+          || !deliveryMarkdown.contains("- Implementation level: GATE_LEVEL")
+          || !deliveryMarkdown.contains("- Routing primitive: primitive_gates")
+          || !deliveryJson.contains("\"layoutIssueCount\": 0")
+          || !deliveryJson.contains("\"layoutScore\": 100")
+          || !deliveryJson.contains("\"layoutRiskLevel\": \"low\"")
+          || !deliveryJson.contains("\"layoutUnresolvedToolCount\": 0")
+          || !deliveryJson.contains("\"layoutOverlapCount\": 0")
+          || !deliveryJson.contains("\"layoutWireRiskCount\": 0")
+          || !deliveryJson.contains("\"layoutPinFacingIssueCount\": 0")
+          || !deliveryJson.contains("\"layoutPinTunnelProximityCount\": 0")
+          || !deliveryJson.contains("\"layoutLabelRiskCount\": 0")
+          || !deliveryJson.contains("\"layoutReservedAreaIntrusionCount\": 0")
+          || !deliveryJson.contains("\"layoutInspectionFailureCount\": 0")
+          || !deliveryJson.contains("\"layoutOtherIssueCount\": 0")
+          || !deliveryJson.contains("\"layoutIssueDetails\": []")
+          || !deliveryJson.contains("\"layoutRepairSuggestions\": []")
+          || !deliveryJson.contains("\"layoutRepairPlans\": []")
+          || !deliveryJson.contains("\"layoutAutoRepairApplied\": true")
+          || !deliveryJson.contains("\"layoutAutoRepairResults\": [{\"action\": \"regenerate_toolbar\"")
+          || !deliveryJson.contains("\"targetType\": \"UNRESOLVED_TOOL\"")
+          || !deliveryJson.contains("\"applied\": true")
+          || !deliveryJson.contains("\"detail\": \"toolbar regenerated\"")
+          || deliveryJson.contains("\"fix_layout\"")
+          || deliveryJson.contains("\"regenerate_layout\"")
+          || deliveryJson.contains("Toolbar contains unresolved")) {
+        throw new IllegalStateException("Delivery report did not reflect automatic toolbar repair: "
+            + deliveryJson);
+      }
+      if (!deliveryMarkdown.contains("- Layout clean: true")
+          || !deliveryMarkdown.contains("- Layout score: 100")
+          || !deliveryMarkdown.contains("- Layout unresolved tool count: 0")
+          || !deliveryMarkdown.contains("- Layout overlap count: 0")
+          || !deliveryMarkdown.contains("- Layout reserved area intrusion count: 0")
+          || !deliveryMarkdown.contains("- Layout auto repair applied: true")
+          || !deliveryMarkdown.contains("## Layout Repairs Applied")
+          || !deliveryMarkdown.contains("[applied/regenerate_toolbar/UNRESOLVED_TOOL] toolbar regenerated")
+          || deliveryMarkdown.contains("[ERROR/UNRESOLVED_TOOL]")
+          || deliveryMarkdown.contains("## Layout Repair Suggestions")
+          || deliveryMarkdown.contains("fix_layout")
+          || deliveryMarkdown.contains("## Layout Issues")) {
+        throw new IllegalStateException("Delivery report markdown did not reflect automatic toolbar repair: "
+            + deliveryMarkdown);
+      }
+      String repairedOutputXml = Files.readString(output);
+      if (repairedOutputXml.contains("lib=\"toolbar\"")
+          || !repairedOutputXml.contains("<tool lib=\"0\" name=\"Poke Tool\"/>")
+          || !repairedOutputXml.contains("<tool lib=\"1\" name=\"Pin\">")) {
+        throw new IllegalStateException("Delivery report did not repair toolbar XML: "
+            + repairedOutputXml);
+      }
+
+      Path pinTunnelOutput = circDir.resolve("custom_pin_tunnel_regression.circ");
+      Files.writeString(pinTunnelOutput, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(100,100)" name="Pin">
+                <a name="label" val="A"/>
+              </comp>
+              <comp lib="1" loc="(200,100)" name="Tunnel">
+                <a name="label" val="A"/>
+              </comp>
+              <wire from="(100,100)" to="(200,100)"/>
+            </circuit>
+          </project>
+          """);
+      Path pinTunnelDeliveryMd = GenerationDeliveryReport.write(
+          "natural_language",
+          "synthetic pin tunnel clearance regression",
+          "GATE_LEVEL_CIRCUIT",
+          spec,
+          pinTunnelOutput.toFile(),
+          summaryMd,
+          summaryJson,
+          outputSpecific,
+          outputSpecificJson,
+          passStatus,
+          List.of("open_circuit", "review_manifest"),
+          customArtifacts);
+      String pinTunnelDeliveryJson =
+          Files.readString(reportDir.resolve("custom_pin_tunnel_regression_delivery_report.json"));
+      if (!pinTunnelDeliveryJson.contains("\"layoutClean\": true")
+          || !pinTunnelDeliveryJson.contains("\"layoutPinTunnelProximityCount\": 0")
+          || !pinTunnelDeliveryJson.contains("\"layoutAutoRepairApplied\": true")
+          || !pinTunnelDeliveryJson.contains("\"action\": \"increase_pin_tunnel_clearance\"")
+          || !pinTunnelDeliveryJson.contains("\"targetType\": \"PIN_TUNNEL_PROXIMITY\"")
+          || !pinTunnelDeliveryJson.contains("\"detail\": \"moved 1 tunnel(s)\"")
+          || pinTunnelDeliveryJson.contains("\"fix_layout\"")
+          || pinTunnelDeliveryJson.contains("Tunnel A is too close")) {
+        throw new IllegalStateException("Delivery report did not reflect automatic pin/tunnel repair: "
+            + pinTunnelDeliveryJson);
+      }
+      String pinTunnelDeliveryMarkdown = Files.readString(pinTunnelDeliveryMd);
+      if (!pinTunnelDeliveryMarkdown.contains("- Layout auto repair applied: true")
+          || !pinTunnelDeliveryMarkdown.contains(
+              "[applied/increase_pin_tunnel_clearance/PIN_TUNNEL_PROXIMITY] moved 1 tunnel(s)")
+          || pinTunnelDeliveryMarkdown.contains("## Layout Issues")) {
+        throw new IllegalStateException("Delivery markdown did not reflect automatic pin/tunnel repair: "
+            + pinTunnelDeliveryMarkdown);
+      }
+      String pinTunnelRepairedXml = Files.readString(pinTunnelOutput);
+      if (!pinTunnelRepairedXml.contains("loc=\"(250,100)\"")
+          || !pinTunnelRepairedXml.contains("<wire from=\"(100,100)\" to=\"(250,100)\"/>")) {
+        throw new IllegalStateException("Delivery report did not repair pin/tunnel XML: "
+            + pinTunnelRepairedXml);
+      }
+
+      Path pinFacingOutput = circDir.resolve("custom_pin_facing_regression.circ");
+      Files.writeString(pinFacingOutput, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(100,100)" name="Pin">
+                <a name="appearance" val="classic"/>
+                <a name="facing" val="west"/>
+                <a name="label" val="A"/>
+              </comp>
+              <comp lib="1" loc="(300,100)" name="Pin">
+                <a name="appearance" val="classic"/>
+                <a name="facing" val="east"/>
+                <a name="label" val="Y"/>
+                <a name="type" val="output"/>
+              </comp>
+            </circuit>
+          </project>
+          """);
+      Path pinFacingDeliveryMd = GenerationDeliveryReport.write(
+          "natural_language",
+          "synthetic pin facing regression",
+          "GATE_LEVEL_CIRCUIT",
+          spec,
+          pinFacingOutput.toFile(),
+          summaryMd,
+          summaryJson,
+          outputSpecific,
+          outputSpecificJson,
+          passStatus,
+          List.of("open_circuit", "review_manifest"),
+          customArtifacts);
+      String pinFacingDeliveryJson =
+          Files.readString(reportDir.resolve("custom_pin_facing_regression_delivery_report.json"));
+      if (!pinFacingDeliveryJson.contains("\"layoutClean\": true")
+          || !pinFacingDeliveryJson.contains("\"layoutPinFacingIssueCount\": 0")
+          || !pinFacingDeliveryJson.contains("\"layoutAutoRepairApplied\": true")
+          || !pinFacingDeliveryJson.contains("\"action\": \"fix_pin_facing\"")
+          || !pinFacingDeliveryJson.contains("\"targetType\": \"PIN_FACING\"")
+          || !pinFacingDeliveryJson.contains("\"detail\": \"fixed 2 pin facing attribute(s)\"")
+          || pinFacingDeliveryJson.contains("\"fix_layout\"")
+          || pinFacingDeliveryJson.contains("facing should be")) {
+        throw new IllegalStateException("Delivery report did not reflect automatic pin facing repair: "
+            + pinFacingDeliveryJson);
+      }
+      String pinFacingDeliveryMarkdown = Files.readString(pinFacingDeliveryMd);
+      if (!pinFacingDeliveryMarkdown.contains("- Layout auto repair applied: true")
+          || !pinFacingDeliveryMarkdown.contains(
+              "[applied/fix_pin_facing/PIN_FACING] fixed 2 pin facing attribute(s)")
+          || pinFacingDeliveryMarkdown.contains("## Layout Issues")) {
+        throw new IllegalStateException("Delivery markdown did not reflect automatic pin facing repair: "
+            + pinFacingDeliveryMarkdown);
+      }
+      String pinFacingRepairedXml = Files.readString(pinFacingOutput);
+      if (!pinFacingRepairedXml.contains("<a name=\"facing\" val=\"east\"/>")
+          || !pinFacingRepairedXml.contains("<a name=\"facing\" val=\"west\"/>")) {
+        throw new IllegalStateException("Delivery report did not repair pin facing XML: "
+            + pinFacingRepairedXml);
+      }
+
+      Path labelOutput = circDir.resolve("custom_tunnel_label_regression.circ");
+      Files.writeString(labelOutput, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(100,100)" name="Tunnel">
+                <a name="label" val="net_sum"/>
+              </comp>
+              <comp lib="1" loc="(260,100)" name="Tunnel">
+                <a name="label" val="net_sum"/>
+              </comp>
+              <wire from="(100,100)" to="(260,100)"/>
+            </circuit>
+          </project>
+          """);
+      Path labelDeliveryMd = GenerationDeliveryReport.write(
+          "natural_language",
+          "synthetic tunnel label regression",
+          "GATE_LEVEL_CIRCUIT",
+          spec,
+          labelOutput.toFile(),
+          summaryMd,
+          summaryJson,
+          outputSpecific,
+          outputSpecificJson,
+          passStatus,
+          List.of("open_circuit", "review_manifest"),
+          customArtifacts);
+      String labelDeliveryJson =
+          Files.readString(reportDir.resolve("custom_tunnel_label_regression_delivery_report.json"));
+      if (!labelDeliveryJson.contains("\"layoutClean\": true")
+          || !labelDeliveryJson.contains("\"layoutLabelRiskCount\": 0")
+          || !labelDeliveryJson.contains("\"layoutAutoRepairApplied\": true")
+          || !labelDeliveryJson.contains("\"action\": \"shorten_tunnel_labels\"")
+          || !labelDeliveryJson.contains("\"targetType\": \"LABEL_RISK\"")
+          || !labelDeliveryJson.contains("custom_tunnel_label_regression_tunnel_label_map.md")
+          || !labelDeliveryJson.contains("\"kind\": \"tunnel_label_map_markdown\"")
+          || labelDeliveryJson.contains("Tunnel label is too long")
+          || labelDeliveryJson.contains("\"fix_layout\"")) {
+        throw new IllegalStateException("Delivery report did not reflect automatic tunnel label repair: "
+            + labelDeliveryJson);
+      }
+      String labelDeliveryMarkdown = Files.readString(labelDeliveryMd);
+      String labelMapMarkdown =
+          Files.readString(reportDir.resolve("custom_tunnel_label_regression_tunnel_label_map.md"));
+      String labelRepairedXml = Files.readString(labelOutput);
+      if (!labelDeliveryMarkdown.contains("- Layout auto repair applied: true")
+          || !labelDeliveryMarkdown.contains(
+              "[applied/shorten_tunnel_labels/LABEL_RISK] shortened 1 tunnel label group(s)")
+          || !labelMapMarkdown.contains("| main | net_sum | SUM |")
+          || labelRepairedXml.contains("net_sum")
+          || !labelRepairedXml.contains("val=\"SUM\"")
+          || labelDeliveryMarkdown.contains("## Layout Issues")) {
+        throw new IllegalStateException("Delivery markdown did not reflect automatic tunnel label repair: "
+            + labelDeliveryMarkdown + "\n" + labelMapMarkdown + "\n" + labelRepairedXml);
+      }
+
+      Path wireRiskOutput = circDir.resolve("custom_wire_risk_regression.circ");
+      Files.writeString(wireRiskOutput, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <wire from="(100,100)" to="(100,180)"/>
+              <wire from="(300,100)" to="(340,140)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report wireRiskReport = CircuitLayoutInspector.inspect(wireRiskOutput.toFile());
+      String wireRiskDetails = wireRiskReport.layoutIssues().toString();
+      String wireRiskPlans = wireRiskReport.repairPlans().toString();
+      if (wireRiskReport.clean()
+          || wireRiskReport.wireRiskCount() != 2
+          || !wireRiskDetails.contains("kind=boundary_vertical;circuit=main;x1=100;y1=100;x2=100;y2=180")
+          || !wireRiskDetails.contains("kind=diagonal;circuit=main;x1=300;y1=100;x2=340;y2=140")
+          || !wireRiskPlans.contains("kind=boundary_vertical;circuit=main;x1=100;y1=100;x2=100;y2=180")
+          || !wireRiskPlans.contains("kind=diagonal;circuit=main;x1=300;y1=100;x2=340;y2=140")) {
+        throw new IllegalStateException("Wire risk report did not expose structured wire details: "
+            + wireRiskReport.toHumanString() + "\n" + wireRiskDetails + "\n" + wireRiskPlans);
+      }
+
+      Path wireRiskDeliveryMd = GenerationDeliveryReport.write(
+          "natural_language",
+          "synthetic wire risk non-auto-repair regression",
+          "GATE_LEVEL_CIRCUIT",
+          spec,
+          wireRiskOutput.toFile(),
+          summaryMd,
+          summaryJson,
+          outputSpecific,
+          outputSpecificJson,
+          passStatus,
+          List.of("open_circuit", "review_manifest"),
+          customArtifacts);
+      String wireRiskDeliveryJson =
+          Files.readString(reportDir.resolve("custom_wire_risk_regression_delivery_report.json"));
+      String wireRiskDeliveryMarkdown = Files.readString(wireRiskDeliveryMd);
+      String wireRiskXmlAfterDelivery = Files.readString(wireRiskOutput);
+      if (!wireRiskDeliveryJson.contains("\"layoutClean\": false")
+          || !wireRiskDeliveryJson.contains("\"layoutWireRiskCount\": 2")
+          || !wireRiskDeliveryJson.contains("\"layoutReservedAreaIntrusionCount\": 0")
+          || !wireRiskDeliveryJson.contains("\"layoutAutoRepairApplied\": false")
+          || !wireRiskDeliveryJson.contains("\"layoutAutoRepairResults\": []")
+          || !wireRiskDeliveryJson.contains("\"action\": \"reroute_wires\"")
+          || !wireRiskDeliveryJson.contains("\"detail\": \"kind=boundary_vertical")
+          || !wireRiskDeliveryJson.contains("\"detail\": \"kind=diagonal")
+          || wireRiskDeliveryJson.contains("rerouted 1 boundary vertical wire")
+          || !wireRiskDeliveryMarkdown.contains("## Layout Issues")
+          || !wireRiskDeliveryMarkdown.contains("## Layout Repair Suggestions")
+          || !wireRiskXmlAfterDelivery.contains("<wire from=\"(100,100)\" to=\"(100,180)\"/>")
+          || wireRiskXmlAfterDelivery.contains("val=\"R01\"")) {
+        throw new IllegalStateException("Delivery report should not auto-repair reroute_wires yet: "
+            + wireRiskDeliveryJson + "\n" + wireRiskDeliveryMarkdown + "\n" + wireRiskXmlAfterDelivery);
+      }
+
+      Path reservedAreaOutput = circDir.resolve("custom_reserved_area_intrusion_regression.circ");
+      Files.writeString(reservedAreaOutput, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(150,100)" name="Tunnel">
+                <a name="label" val="N1"/>
+              </comp>
+              <wire from="(120,100)" to="(180,100)"/>
+            </circuit>
+          </project>
+          """);
+      Path reservedAreaDeliveryMd = GenerationDeliveryReport.write(
+          "natural_language",
+          "synthetic reserved area intrusion regression",
+          "GATE_LEVEL_CIRCUIT",
+          spec,
+          reservedAreaOutput.toFile(),
+          summaryMd,
+          summaryJson,
+          outputSpecific,
+          outputSpecificJson,
+          passStatus,
+          List.of("open_circuit", "review_manifest"),
+          customArtifacts);
+      String reservedAreaDeliveryJson =
+          Files.readString(reportDir.resolve("custom_reserved_area_intrusion_regression_delivery_report.json"));
+      String reservedAreaDeliveryMarkdown = Files.readString(reservedAreaDeliveryMd);
+      if (!reservedAreaDeliveryJson.contains("\"layoutClean\": false")
+          || !reservedAreaDeliveryJson.contains("\"layoutReservedAreaIntrusionCount\": 1")
+          || !reservedAreaDeliveryJson.contains("\"layoutOtherIssueCount\": 0")
+          || !reservedAreaDeliveryJson.contains("\"layoutAutoRepairApplied\": false")
+          || !reservedAreaDeliveryJson.contains("\"action\": \"avoid_reserved_areas\"")
+          || !reservedAreaDeliveryJson.contains("\"targetType\": \"RESERVED_AREA_INTRUSION\"")
+          || !reservedAreaDeliveryJson.contains("kind=reserved_area_intrusion")
+          || !reservedAreaDeliveryJson.contains("component=Tunnel")
+          || !reservedAreaDeliveryJson.contains("label=N1")
+          || !reservedAreaDeliveryMarkdown.contains("- Layout reserved area intrusion count: 1")
+          || !reservedAreaDeliveryMarkdown.contains("## Layout Issues")
+          || !reservedAreaDeliveryMarkdown.contains("## Layout Repair Suggestions")) {
+        throw new IllegalStateException("Delivery report did not expose reserved-area intrusion: "
+            + reservedAreaDeliveryJson + "\n" + reservedAreaDeliveryMarkdown);
+      }
+
+      Path gateFootprintOutput = circDir.resolve("custom_gate_footprint_intrusion_regression.circ");
+      Files.writeString(gateFootprintOutput, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="2" loc="(400,120)" name="AND Gate"/>
+              <wire from="(370,120)" to="(430,120)"/>
+              <wire from="(400,120)" to="(490,120)"/>
+              <wire from="(340,100)" to="(360,100)"/>
+              <wire from="(340,140)" to="(360,140)"/>
+            </circuit>
+          </project>
+          """);
+      Path gateFootprintDeliveryMd = GenerationDeliveryReport.write(
+          "natural_language",
+          "synthetic gate footprint intrusion regression",
+          "GATE_LEVEL_CIRCUIT",
+          spec,
+          gateFootprintOutput.toFile(),
+          summaryMd,
+          summaryJson,
+          outputSpecific,
+          outputSpecificJson,
+          passStatus,
+          List.of("open_circuit", "review_manifest"),
+          customArtifacts);
+      String gateFootprintDeliveryJson =
+          Files.readString(reportDir.resolve("custom_gate_footprint_intrusion_regression_delivery_report.json"));
+      String gateFootprintDeliveryMarkdown = Files.readString(gateFootprintDeliveryMd);
+      if (!gateFootprintDeliveryJson.contains("\"layoutClean\": false")
+          || !gateFootprintDeliveryJson.contains("\"layoutReservedAreaIntrusionCount\": 1")
+          || !gateFootprintDeliveryJson.contains("\"layoutAutoRepairApplied\": false")
+          || !gateFootprintDeliveryJson.contains("\"layoutAutoRepairResults\": []")
+          || !gateFootprintDeliveryJson.contains("\"action\": \"avoid_reserved_areas\"")
+          || !gateFootprintDeliveryJson.contains("\"targetType\": \"RESERVED_AREA_INTRUSION\"")
+          || !gateFootprintDeliveryJson.contains("component=AND Gate")
+          || !gateFootprintDeliveryJson.contains("connectionPoints=3")
+          || !gateFootprintDeliveryJson.contains("x1=370")
+          || !gateFootprintDeliveryJson.contains("x2=430")
+          || !gateFootprintDeliveryMarkdown.contains("- Layout reserved area intrusion count: 1")
+          || !gateFootprintDeliveryMarkdown.contains("AND Gate")
+          || !gateFootprintDeliveryMarkdown.contains("## Layout Issues")
+          || !gateFootprintDeliveryMarkdown.contains("## Layout Repair Suggestions")) {
+        throw new IllegalStateException("Delivery report did not expose gate footprint intrusion: "
+            + gateFootprintDeliveryJson + "\n" + gateFootprintDeliveryMarkdown);
+      }
+    } catch (Exception e) {
+      throw new IllegalStateException("GenerationSummary regression failed", e);
+    }
+
+    System.out.println("[OK] generation summary positive/negative regression passed");
+  }
+
+  private static void runLayoutRepairExecutorRegression() {
+    try {
+      Path circDir = Path.of("generated", "circ");
+      Files.createDirectories(circDir);
+      Path brokenToolbar = circDir.resolve("layout_repair_toolbar_regression.circ");
+      Files.writeString(brokenToolbar, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="toolbar" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main"/>
+          </project>
+          """);
+      CircuitLayoutInspector.Report before = CircuitLayoutInspector.inspect(brokenToolbar.toFile());
+      if (before.clean()
+          || before.unresolvedToolCount() != 1
+          || before.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("regenerate_toolbar")
+                  && plan.targetType() == CircuitLayoutInspector.LayoutIssueType.UNRESOLVED_TOOL)) {
+        throw new IllegalStateException("Expected toolbar repair plan before execution: "
+            + before.toHumanString());
+      }
+
+      LayoutRepairExecutor.Report repair =
+          LayoutRepairExecutor.execute(brokenToolbar.toFile(), before);
+      if (!repair.anyApplied() || !repair.cleanAfterRepair()) {
+        throw new IllegalStateException("Expected toolbar repair executor to clean file: "
+            + repair);
+      }
+      String repairedXml = Files.readString(brokenToolbar);
+      if (repairedXml.contains("lib=\"toolbar\"")
+          || !repairedXml.contains("<tool lib=\"0\" name=\"Poke Tool\"/>")
+          || !repairedXml.contains("<tool lib=\"1\" name=\"Pin\">")) {
+        throw new IllegalStateException("Toolbar repair did not rewrite expected toolbar XML: "
+            + repairedXml);
+      }
+
+      Path closeTunnel = circDir.resolve("layout_repair_pin_tunnel_regression.circ");
+      Files.writeString(closeTunnel, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(100,100)" name="Pin">
+                <a name="label" val="A"/>
+              </comp>
+              <comp lib="1" loc="(200,100)" name="Tunnel">
+                <a name="label" val="A"/>
+              </comp>
+              <wire from="(100,100)" to="(200,100)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report closeTunnelBefore =
+          CircuitLayoutInspector.inspect(closeTunnel.toFile());
+      if (closeTunnelBefore.clean()
+          || closeTunnelBefore.pinTunnelProximityCount() != 1
+          || closeTunnelBefore.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("increase_pin_tunnel_clearance")
+                  && plan.targetType() == CircuitLayoutInspector.LayoutIssueType.PIN_TUNNEL_PROXIMITY)) {
+        throw new IllegalStateException("Expected pin/tunnel clearance repair plan before execution: "
+            + closeTunnelBefore.toHumanString());
+      }
+
+      LayoutRepairExecutor.Report pinTunnelRepair =
+          LayoutRepairExecutor.execute(closeTunnel.toFile(), closeTunnelBefore);
+      if (!pinTunnelRepair.anyApplied() || !pinTunnelRepair.cleanAfterRepair()) {
+        throw new IllegalStateException("Expected pin/tunnel clearance repair to clean file: "
+            + pinTunnelRepair);
+      }
+      String repairedPinTunnelXml = Files.readString(closeTunnel);
+      if (!repairedPinTunnelXml.contains("loc=\"(250,100)\"")
+          || !repairedPinTunnelXml.contains("<wire from=\"(100,100)\" to=\"(250,100)\"/>")) {
+        throw new IllegalStateException("Pin/tunnel repair did not move tunnel and wire endpoint: "
+            + repairedPinTunnelXml);
+      }
+
+      Path wrongFacing = circDir.resolve("layout_repair_pin_facing_regression.circ");
+      Files.writeString(wrongFacing, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(100,100)" name="Pin">
+                <a name="appearance" val="classic"/>
+                <a name="facing" val="west"/>
+                <a name="label" val="A"/>
+              </comp>
+              <comp lib="1" loc="(300,100)" name="Pin">
+                <a name="appearance" val="classic"/>
+                <a name="facing" val="east"/>
+                <a name="label" val="Y"/>
+                <a name="type" val="output"/>
+              </comp>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report wrongFacingBefore =
+          CircuitLayoutInspector.inspect(wrongFacing.toFile());
+      if (wrongFacingBefore.clean()
+          || wrongFacingBefore.pinFacingIssueCount() != 2
+          || wrongFacingBefore.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("fix_pin_facing")
+                  && plan.targetType() == CircuitLayoutInspector.LayoutIssueType.PIN_FACING)) {
+        throw new IllegalStateException("Expected pin facing repair plan before execution: "
+            + wrongFacingBefore.toHumanString());
+      }
+
+      LayoutRepairExecutor.Report pinFacingRepair =
+          LayoutRepairExecutor.execute(wrongFacing.toFile(), wrongFacingBefore);
+      if (!pinFacingRepair.anyApplied() || !pinFacingRepair.cleanAfterRepair()) {
+        throw new IllegalStateException("Expected pin facing repair to clean file: "
+            + pinFacingRepair);
+      }
+      String repairedPinFacingXml = Files.readString(wrongFacing);
+      if (!repairedPinFacingXml.contains("<a name=\"facing\" val=\"east\"/>")
+          || !repairedPinFacingXml.contains("<a name=\"facing\" val=\"west\"/>")) {
+        throw new IllegalStateException("Pin facing repair did not correct facing attributes: "
+            + repairedPinFacingXml);
+      }
+
+      Path longLabels = circDir.resolve("layout_repair_tunnel_label_regression.circ");
+      Files.writeString(longLabels, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(100,100)" name="Tunnel">
+                <a name="label" val="net_ab_xor"/>
+              </comp>
+              <comp lib="1" loc="(300,100)" name="Tunnel">
+                <a name="label" val="net_ab_xor"/>
+              </comp>
+              <comp lib="1" loc="(100,180)" name="Tunnel">
+                <a name="label" val="net_sum"/>
+              </comp>
+              <wire from="(100,100)" to="(300,100)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report longLabelsBefore =
+          CircuitLayoutInspector.inspect(longLabels.toFile());
+      if (longLabelsBefore.clean()
+          || longLabelsBefore.labelRiskCount() != 3
+          || longLabelsBefore.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("shorten_tunnel_labels")
+                  && plan.targetType() == CircuitLayoutInspector.LayoutIssueType.LABEL_RISK)) {
+        throw new IllegalStateException("Expected tunnel label shortening repair plan before execution: "
+            + longLabelsBefore.toHumanString());
+      }
+
+      LayoutRepairExecutor.Report labelRepair =
+          LayoutRepairExecutor.execute(longLabels.toFile(), longLabelsBefore);
+      if (!labelRepair.anyApplied() || !labelRepair.cleanAfterRepair()) {
+        throw new IllegalStateException("Expected tunnel label repair to clean file: "
+            + labelRepair);
+      }
+      String repairedLabelXml = Files.readString(longLabels);
+      String labelMapMarkdown =
+          Files.readString(Path.of("generated", "reports", "layout_repair_tunnel_label_regression_tunnel_label_map.md"));
+      if (repairedLabelXml.contains("net_ab_xor")
+          || repairedLabelXml.contains("net_sum")
+          || !repairedLabelXml.contains("val=\"T01\"")
+          || !repairedLabelXml.contains("val=\"SUM\"")
+          || !labelMapMarkdown.contains("| main | net_ab_xor | T01 |")
+          || !labelMapMarkdown.contains("| main | net_sum | SUM |")) {
+        throw new IllegalStateException("Tunnel label repair did not shorten labels with mapping: "
+            + repairedLabelXml + "\n" + labelMapMarkdown);
+      }
+
+      Path boundaryWire = circDir.resolve("layout_repair_boundary_wire_regression.circ");
+      Files.writeString(boundaryWire, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <wire from="(100,100)" to="(100,180)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report boundaryWireBefore =
+          CircuitLayoutInspector.inspect(boundaryWire.toFile());
+      if (boundaryWireBefore.clean()
+          || boundaryWireBefore.wireRiskCount() != 1
+          || boundaryWireBefore.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("reroute_wires")
+                  && plan.parameters().contains("kind=boundary_vertical"))) {
+        throw new IllegalStateException("Expected boundary wire reroute plan before execution: "
+            + boundaryWireBefore.toHumanString() + "\n" + boundaryWireBefore.repairPlans());
+      }
+
+      LayoutRepairExecutor.Report boundaryWireRepair =
+          LayoutRepairExecutor.execute(boundaryWire.toFile(), boundaryWireBefore);
+      if (!boundaryWireRepair.anyApplied() || !boundaryWireRepair.cleanAfterRepair()) {
+        throw new IllegalStateException("Expected boundary wire reroute to clean file: "
+            + boundaryWireRepair);
+      }
+      String repairedBoundaryWireXml = Files.readString(boundaryWire);
+      if (repairedBoundaryWireXml.contains("<wire from=\"(100,100)\" to=\"(100,180)\"/>")
+          || !repairedBoundaryWireXml.contains("loc=\"(100,100)\" name=\"Tunnel\"")
+          || !repairedBoundaryWireXml.contains("loc=\"(100,180)\" name=\"Tunnel\"")
+          || !repairedBoundaryWireXml.contains("val=\"R01\"")) {
+        throw new IllegalStateException("Boundary wire reroute did not replace wire with tunnels: "
+            + repairedBoundaryWireXml);
+      }
+
+      Path occupiedBoundaryWire = circDir.resolve("layout_repair_boundary_wire_occupied_regression.circ");
+      Files.writeString(occupiedBoundaryWire, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(100,100)" name="Pin">
+                <a name="label" val="A"/>
+              </comp>
+              <wire from="(100,100)" to="(100,180)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report occupiedBoundaryWireBefore =
+          CircuitLayoutInspector.inspect(occupiedBoundaryWire.toFile());
+      if (occupiedBoundaryWireBefore.clean()
+          || occupiedBoundaryWireBefore.wireRiskCount() != 1
+          || occupiedBoundaryWireBefore.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("reroute_wires")
+                  && plan.parameters().contains("kind=boundary_vertical"))) {
+        throw new IllegalStateException("Expected occupied boundary wire reroute plan before execution: "
+            + occupiedBoundaryWireBefore.toHumanString() + "\n" + occupiedBoundaryWireBefore.repairPlans());
+      }
+
+      LayoutRepairExecutor.Report occupiedBoundaryWireRepair =
+          LayoutRepairExecutor.execute(occupiedBoundaryWire.toFile(), occupiedBoundaryWireBefore);
+      String occupiedBoundaryWireXml = Files.readString(occupiedBoundaryWire);
+      if (occupiedBoundaryWireRepair.anyApplied()
+          || occupiedBoundaryWireRepair.cleanAfterRepair()
+          || !occupiedBoundaryWireXml.contains("<wire from=\"(100,100)\" to=\"(100,180)\"/>")
+          || occupiedBoundaryWireXml.contains("val=\"R01\"")) {
+        throw new IllegalStateException("Boundary wire reroute should skip occupied endpoints: "
+            + occupiedBoundaryWireRepair + "\n" + occupiedBoundaryWireXml);
+      }
+    } catch (Exception e) {
+      throw new IllegalStateException("LayoutRepairExecutor regression failed", e);
+    }
+
+    System.out.println("[OK] layout repair executor toolbar regression passed");
+  }
+
   private static CircuitSpec oversizedInputSpec() {
     List<ExternalPort> ports = new java.util.ArrayList<>();
     for (int i = 0; i < 13; i++) {
@@ -820,6 +1957,209 @@ public final class BooleanSynthesisRegression {
         "oversized_input_behavior_regression",
         List.of(new ComponentSpec("and1", "Gates", "AND Gate", 1, "U1A")),
         ports);
+  }
+
+  private static void runAutoLayoutPolicyRegression() {
+    try {
+      Location from = Location.create(100, 100, true);
+      Location to = Location.create(100, 180, true);
+      List<AutoLayoutPolicy.WireSegment> segments = AutoLayoutPolicy.planLocalTunnelWire(from, to);
+      if (segments.size() != 3) {
+        throw new IllegalStateException("Expected boundary vertical local wire to use a dogleg: " + segments);
+      }
+      for (AutoLayoutPolicy.WireSegment segment : segments) {
+        if (segment.isDiagonal() || segment.isRiskyBoundaryVertical()) {
+          throw new IllegalStateException("Unsafe local wire segment planned: " + segment
+              + " allSegments=" + segments);
+        }
+      }
+      boolean routedOutsideBoundary = segments.stream()
+          .anyMatch(segment -> segment.from().getX() > AutoLayoutPolicy.LEFT_BOUNDARY_WIRE_MAX_X
+              || segment.to().getX() > AutoLayoutPolicy.LEFT_BOUNDARY_WIRE_MAX_X);
+      if (!routedOutsideBoundary) {
+        throw new IllegalStateException("Dogleg did not leave left boundary lane: " + segments);
+      }
+
+      Path circDir = Path.of("generated", "circ");
+      Files.createDirectories(circDir);
+      Path inspectorBoundaryPolicy = circDir.resolve("layout_policy_inspector_boundary_regression.circ");
+      Files.writeString(inspectorBoundaryPolicy, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <wire from="(100,100)" to="(100,180)"/>
+              <wire from="(100,220)" to="(100,250)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report policyReport =
+          CircuitLayoutInspector.inspect(inspectorBoundaryPolicy.toFile());
+      if (policyReport.clean()
+          || policyReport.wireRiskCount() != 1
+          || policyReport.layoutIssues().stream().noneMatch(issue ->
+              issue.detail().contains("kind=boundary_vertical")
+                  && issue.detail().contains("x1=100")
+                  && issue.detail().contains("y1=100")
+                  && issue.detail().contains("y2=180"))) {
+        throw new IllegalStateException("Inspector did not match AutoLayoutPolicy boundary rule: "
+            + policyReport.toHumanString());
+      }
+
+      Path reservedAreaIntrusion = circDir.resolve("layout_reserved_area_intrusion_regression.circ");
+      Files.writeString(reservedAreaIntrusion, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="1" loc="(150,100)" name="Tunnel">
+                <a name="label" val="N1"/>
+              </comp>
+              <wire from="(120,100)" to="(180,100)"/>
+              <wire from="(150,100)" to="(230,100)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report reservedAreaReport =
+          CircuitLayoutInspector.inspect(reservedAreaIntrusion.toFile());
+      if (reservedAreaReport.clean()
+          || reservedAreaReport.reservedAreaIntrusionCount() != 1
+          || reservedAreaReport.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("avoid_reserved_areas")
+                  && plan.parameters().contains("kind=reserved_area_intrusion")
+                  && plan.parameters().contains("component=Tunnel")
+                  && plan.parameters().contains("label=N1")
+                  && plan.parameters().contains("connectionPoints=1"))) {
+        throw new IllegalStateException("Expected one reserved-area intrusion repair plan: "
+            + reservedAreaReport.toHumanString() + "\n" + reservedAreaReport.repairPlans());
+      }
+
+      FootprintPolicy.ReservedArea customArea =
+          FootprintPolicy.reservedAreaForSmallComponent("Tunnel", "N2", Location.create(200, 100, true))
+              .withConnectionPoint(Location.create(200, 90, true));
+      if (customArea.crossesInterior(new AutoLayoutPolicy.WireSegment(
+          Location.create(200, 90, true), Location.create(200, 130, true)))) {
+        throw new IllegalStateException("ReservedArea should allow explicit connection point crossings: "
+            + customArea);
+      }
+      if (!customArea.crossesInterior(new AutoLayoutPolicy.WireSegment(
+          Location.create(190, 90, true), Location.create(190, 130, true)))) {
+        throw new IllegalStateException("ReservedArea should reject non-connection interior crossings: "
+            + customArea);
+      }
+      List<AutoLayoutPolicy.WireSegment> tunnelAvoidance =
+          AutoLayoutPolicy.planLocalTunnelWireAvoidingAreas(
+              Location.create(120, 100, true),
+              Location.create(180, 100, true),
+              List.of(FootprintPolicy.reservedAreaForSmallComponent(
+                  "Tunnel", "N1", Location.create(150, 100, true))));
+      if (tunnelAvoidance.size() <= 1 || routeCrossesReservedArea(tunnelAvoidance, List.of(
+          FootprintPolicy.reservedAreaForSmallComponent("Tunnel", "N1", Location.create(150, 100, true))))) {
+        throw new IllegalStateException("Expected local router to dogleg around tunnel reserved area: "
+            + tunnelAvoidance);
+      }
+
+      FootprintPolicy.ReservedArea andGateArea =
+          FootprintPolicy.reservedAreaForComponent("AND Gate", "", Location.create(400, 120, true));
+      List<AutoLayoutPolicy.WireSegment> gateAvoidance =
+          AutoLayoutPolicy.planLocalTunnelWireAvoidingAreas(
+              Location.create(330, 120, true),
+              Location.create(470, 120, true),
+              List.of(andGateArea));
+      if (gateAvoidance.size() <= 1 || routeCrossesReservedArea(gateAvoidance, List.of(andGateArea))) {
+        throw new IllegalStateException("Expected local router to dogleg around gate reserved area: "
+            + gateAvoidance);
+      }
+
+      Path gateFootprintIntrusion = circDir.resolve("layout_gate_footprint_intrusion_regression.circ");
+      Files.writeString(gateFootprintIntrusion, """
+          <project source="logisim-evolution">
+            <lib desc="#Base" name="0"/>
+            <lib desc="#Wiring" name="1"/>
+            <lib desc="#Gates" name="2"/>
+            <main name="main"/>
+            <toolbar>
+              <tool lib="0" name="Poke Tool"/>
+            </toolbar>
+            <circuit name="main">
+              <comp lib="2" loc="(400,120)" name="AND Gate"/>
+              <wire from="(370,120)" to="(430,120)"/>
+              <wire from="(400,120)" to="(490,120)"/>
+              <wire from="(340,100)" to="(360,100)"/>
+              <wire from="(340,140)" to="(360,140)"/>
+            </circuit>
+          </project>
+          """);
+      CircuitLayoutInspector.Report gateFootprintReport =
+          CircuitLayoutInspector.inspect(gateFootprintIntrusion.toFile());
+      if (gateFootprintReport.clean()
+          || gateFootprintReport.reservedAreaIntrusionCount() != 1
+          || gateFootprintReport.repairPlans().stream().noneMatch(plan ->
+              plan.action().equals("avoid_reserved_areas")
+                  && plan.parameters().contains("component=AND Gate")
+                  && plan.parameters().contains("connectionPoints=3")
+                  && plan.parameters().contains("x1=370")
+                  && plan.parameters().contains("x2=430"))) {
+        throw new IllegalStateException("Expected one AND gate footprint intrusion: "
+            + gateFootprintReport.toHumanString() + "\n" + gateFootprintReport.repairPlans());
+      }
+
+      CircuitSpec routerFixtureSpec = new CircuitSpec(
+          "layout_reserved_area_router_fixture",
+          List.of(new ComponentSpec("not1", "Gates", "NOT Gate", 1, "N1")),
+          List.of(
+              new ExternalPort("a", "A", 1, PortDirection.INPUT, PortSide.LEFT, "not1", 1),
+              new ExternalPort("y", "Y", 1, PortDirection.OUTPUT, PortSide.RIGHT, "not1", 0)),
+          List.of(
+              new NetSpec("in", List.of(new EndpointRef("a", 0), new EndpointRef("not1", 1))),
+              new NetSpec("out", List.of(new EndpointRef("not1", 0), new EndpointRef("y", 0)))),
+          List.of(new LayoutHint("not1", 0, 0, 0, null)));
+      Path routerFixture = circDir.resolve("layout_reserved_area_router_fixture.circ");
+      LogisimCompiler.compileNetlistForTesting(
+          routerFixtureSpec,
+          routerFixture.toFile(),
+          List.of(FootprintPolicy.reservedAreaForSmallComponent(
+              "Tunnel", "BLOCK", Location.create(450, 120, true))));
+      CircuitLayoutInspector.Report routerFixtureReport =
+          CircuitLayoutInspector.inspect(routerFixture.toFile());
+      String routerFixtureXml = Files.readString(routerFixture);
+      boolean hasDoglegEvidence =
+          routerFixtureXml.contains("(400,100)")
+              || routerFixtureXml.contains("(490,100)")
+              || routerFixtureXml.contains("(400,140)")
+              || routerFixtureXml.contains("(490,140)");
+      if (!routerFixtureReport.clean() || !hasDoglegEvidence) {
+        throw new IllegalStateException("Expected compiler to dogleg around injected reserved area: "
+            + routerFixtureReport.toHumanString() + "\n" + routerFixtureXml);
+      }
+    } catch (Exception e) {
+      throw new IllegalStateException("AutoLayoutPolicy regression failed", e);
+    }
+    System.out.println("[OK] auto layout policy local-wire safety regression passed");
+  }
+
+  private static boolean routeCrossesReservedArea(
+      List<AutoLayoutPolicy.WireSegment> segments,
+      List<FootprintPolicy.ReservedArea> areas) {
+    for (AutoLayoutPolicy.WireSegment segment : segments) {
+      if (segment.isDiagonal() || segment.isRiskyBoundaryVertical()) {
+        return true;
+      }
+      for (FootprintPolicy.ReservedArea area : areas) {
+        if (area.crossesInterior(segment)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private static void runGenericTtlPackageMapper() {
@@ -937,12 +2277,50 @@ public final class BooleanSynthesisRegression {
     assertIntent(
         "用逻辑门实现 7400 芯片: Y=A nand B",
         ImplementationIntent.GATE_LEVEL_CHIP_IMPLEMENTATION);
+    assertProfile(
+        "Y=A xor B",
+        ImplementationLevel.GATE_LEVEL,
+        "",
+        false,
+        "primitive_gates");
+    assertProfile(
+        "Y=A xor B use 7400",
+        ImplementationLevel.CHIP_LEVEL,
+        "7400",
+        true,
+        "package_or_labeled_ttl_gates");
+    assertProfile(
+        "用逻辑门实现 7400 芯片: Y=A nand B",
+        ImplementationLevel.GATE_LEVEL_CHIP,
+        "7400",
+        false,
+        "chip_internal_gates");
+    assertProfile(
+        "SUM=A xor B; CARRY=A and B use TTL chips",
+        ImplementationLevel.CHIP_LEVEL,
+        "TTL",
+        true,
+        "package_or_labeled_ttl_gates");
 
     NaturalLanguageCircuitPlanner.PlanResult chipLevel =
         NaturalLanguageCircuitPlanner.plan("Y=A xor B use 7400");
     if (chipLevel == null
         || chipLevel.intent() != ImplementationIntent.CHIP_LEVEL_CIRCUIT_IMPLEMENTATION) {
       throw new IllegalStateException("7400 chip-level intent not preserved in PlanResult");
+    }
+    assertGenerationRequest(
+        chipLevel.generationRequest(),
+        GenerationRequest.RequestKind.NATURAL_LANGUAGE,
+        GenerationRequest.RequestInputKind.BOOLEAN_EXPRESSION,
+        GenerationRequest.DesiredArtifactView.PACKAGE_MAPPED_CIRCUIT,
+        ImplementationLevel.CHIP_LEVEL,
+        "7400",
+        "package_or_labeled_ttl_gates",
+        "Y=A xor B use 7400");
+    if (!"7400".equals(chipLevel.implementationProfile().targetPackage())
+        || chipLevel.implementationProfile().level() != ImplementationLevel.CHIP_LEVEL) {
+      throw new IllegalStateException("7400 chip-level profile not preserved in PlanResult: "
+          + chipLevel.implementationProfile());
     }
 
     NaturalLanguageCircuitPlanner.PlanResult gateLevelChip =
@@ -951,6 +2329,21 @@ public final class BooleanSynthesisRegression {
         || gateLevelChip.intent() != ImplementationIntent.GATE_LEVEL_CHIP_IMPLEMENTATION) {
       throw new IllegalStateException("Gate-level chip intent not preserved in PlanResult");
     }
+    assertGenerationRequest(
+        gateLevelChip.generationRequest(),
+        GenerationRequest.RequestKind.NATURAL_LANGUAGE,
+        GenerationRequest.RequestInputKind.BOOLEAN_EXPRESSION,
+        GenerationRequest.DesiredArtifactView.CHIP_INTERNAL_CIRCUIT,
+        ImplementationLevel.GATE_LEVEL_CHIP,
+        "7400",
+        "chip_internal_gates",
+        "用逻辑门实现 7400 芯片: Y=A nand B");
+    if (!"7400".equals(gateLevelChip.implementationProfile().targetPackage())
+        || gateLevelChip.implementationProfile().level() != ImplementationLevel.GATE_LEVEL_CHIP
+        || gateLevelChip.implementationProfile().packagePrimitive()) {
+      throw new IllegalStateException("Gate-level chip profile not preserved in PlanResult: "
+          + gateLevelChip.implementationProfile());
+    }
     long labeled7400NandCount = gateLevelChip.spec().components().stream()
         .filter(component -> component.factoryName().equals("NAND Gate"))
         .filter(component -> component.label() != null && component.label().matches("U[0-9]+[A-D]"))
@@ -958,6 +2351,31 @@ public final class BooleanSynthesisRegression {
     if (labeled7400NandCount != 0) {
       throw new IllegalStateException("Gate-level chip implementation was mislabeled as 7400 package");
     }
+
+    NaturalLanguageCircuitPlanner.PlanResult template =
+        NaturalLanguageCircuitPlanner.plan("full adder");
+    if (template == null) {
+      throw new IllegalStateException("Template query did not produce a PlanResult");
+    }
+    assertGenerationRequest(
+        template.generationRequest(),
+        GenerationRequest.RequestKind.NATURAL_LANGUAGE,
+        GenerationRequest.RequestInputKind.VERIFIED_TEMPLATE,
+        GenerationRequest.DesiredArtifactView.EDITABLE_CIRCUIT,
+        ImplementationLevel.GATE_LEVEL,
+        "",
+        "primitive_gates",
+        "full adder");
+
+    assertGenerationRequest(
+        GenerationRequest.structuredJson("generated/examples/half_adder_spec.json"),
+        GenerationRequest.RequestKind.STRUCTURED_JSON,
+        GenerationRequest.RequestInputKind.STRUCTURED_CIRCUIT_SPEC,
+        GenerationRequest.DesiredArtifactView.EDITABLE_CIRCUIT,
+        ImplementationLevel.GATE_LEVEL,
+        "",
+        "structured_circuit_spec",
+        "generated/examples/half_adder_spec.json");
     System.out.println("[OK] natural-language implementation intent regression passed");
   }
 
@@ -966,6 +2384,55 @@ public final class BooleanSynthesisRegression {
     if (actual != expected) {
       throw new IllegalStateException("Intent mismatch query=" + query
           + " expected=" + expected + " actual=" + actual);
+    }
+  }
+
+  private static void assertProfile(
+      String query,
+      ImplementationLevel expectedLevel,
+      String expectedTargetPackage,
+      boolean expectedPackagePrimitive,
+      String expectedRoutingPrimitive) {
+    NaturalLanguageCircuitPlanner.ImplementationProfile actual =
+        NaturalLanguageCircuitPlanner.inferImplementationProfileForTesting(query);
+    if (actual.level() != expectedLevel
+        || !actual.targetPackage().equals(expectedTargetPackage)
+        || actual.packagePrimitive() != expectedPackagePrimitive
+        || !actual.routingPrimitive().equals(expectedRoutingPrimitive)) {
+      throw new IllegalStateException("Implementation profile mismatch query=" + query
+          + " expectedLevel=" + expectedLevel
+          + " expectedTargetPackage=" + expectedTargetPackage
+          + " expectedPackagePrimitive=" + expectedPackagePrimitive
+          + " expectedRoutingPrimitive=" + expectedRoutingPrimitive
+          + " actual=" + actual);
+    }
+  }
+
+  private static void assertGenerationRequest(
+      GenerationRequest actual,
+      GenerationRequest.RequestKind expectedRequestKind,
+      GenerationRequest.RequestInputKind expectedInputKind,
+      GenerationRequest.DesiredArtifactView expectedArtifactView,
+      ImplementationLevel expectedLevel,
+      String expectedTargetPackage,
+      String expectedRoutingPrimitive,
+      String expectedOriginalRequest) {
+    if (actual.requestKind() != expectedRequestKind
+        || actual.inputKind() != expectedInputKind
+        || actual.desiredArtifactView() != expectedArtifactView
+        || actual.implementationProfile().level() != expectedLevel
+        || !actual.implementationProfile().targetPackage().equals(expectedTargetPackage)
+        || !actual.implementationProfile().routingPrimitive().equals(expectedRoutingPrimitive)
+        || !actual.originalRequest().equals(expectedOriginalRequest)
+        || actual.normalizedRequest().isBlank()) {
+      throw new IllegalStateException("GenerationRequest mismatch: " + actual
+          + " expectedRequestKind=" + expectedRequestKind
+          + " expectedInputKind=" + expectedInputKind
+          + " expectedArtifactView=" + expectedArtifactView
+          + " expectedLevel=" + expectedLevel
+          + " expectedTargetPackage=" + expectedTargetPackage
+          + " expectedRoutingPrimitive=" + expectedRoutingPrimitive
+          + " expectedOriginalRequest=" + expectedOriginalRequest);
     }
   }
 
