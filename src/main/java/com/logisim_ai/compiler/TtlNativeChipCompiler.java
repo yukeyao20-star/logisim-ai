@@ -75,7 +75,11 @@ public final class TtlNativeChipCompiler {
       Library ttl = LogisimProjectSetup.addLibrary(loader, file, "TTL");
       ComponentFactory chipFactory = findFactory(ttl, factory);
       Location chipLocation = Location.create(460, 250, true);
-      Component chip = chipFactory.createComponent(chipLocation, chipFactory.createAttributeSet());
+      var chipAttrs = chipFactory.createAttributeSet();
+      // Run in simplified mode: assume VCC/GND are powered so the chip behaves
+      // without requiring explicit supply rails on the canvas.
+      disableVccGndPorts(chipAttrs);
+      Component chip = chipFactory.createComponent(chipLocation, chipAttrs);
 
       List<ExternalPortSpec> specs = new ArrayList<>();
       for (int i = 0; i < info.ports().size(); i++) {
@@ -132,6 +136,26 @@ public final class TtlNativeChipCompiler {
         // Best-effort.
       }
       file.stopAutosaveThread(false);
+    }
+  }
+
+  private static void disableVccGndPorts(com.cburch.logisim.data.AttributeSet attrs) {
+    try {
+      com.cburch.logisim.data.Attribute<?> attr = attrs.getAttribute("VccGndPorts");
+      if (attr != null) {
+        attrs.setValue((com.cburch.logisim.data.Attribute<Boolean>) attr, false);
+      }
+    } catch (Exception ignored) {
+      // Attribute absent or not settable; chip defaults apply.
+    }
+  }
+
+  private static void setIfPresent(
+      com.cburch.logisim.data.AttributeSet attrs,
+      com.cburch.logisim.data.Attribute<?> attribute,
+      Object value) {
+    if (attrs.getAttribute(attribute.getName()) != null) {
+      attrs.setValue((com.cburch.logisim.data.Attribute<Object>) attribute, value);
     }
   }
 
