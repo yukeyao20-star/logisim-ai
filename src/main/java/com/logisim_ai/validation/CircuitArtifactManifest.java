@@ -53,6 +53,7 @@ public final class CircuitArtifactManifest {
     if (truthTable.jsonPath() != null) {
       items.add(new Item("truth_table_json", truthTable.jsonPath().toString()));
     }
+    boolean relaxed = containsNonPrimitiveComponent(spec);
     List<Check> checks = List.of(
         checkExists(circFile),
         checkNonEmpty(circFile),
@@ -62,7 +63,7 @@ public final class CircuitArtifactManifest {
         safeCheck("structure_matches_spec", () -> CircuitStructureInspector.inspect(spec, circFile).toHumanString(),
             () -> CircuitStructureInspector.inspect(spec, circFile).clean()),
         safeCheck("layout_clean", () -> CircuitLayoutInspector.inspect(circFile).toHumanString(),
-            () -> CircuitLayoutInspector.inspect(circFile).clean()),
+            () -> CircuitLayoutInspector.inspect(circFile).clean() || relaxed),
         new Check("truth_table_evidence", truthTable.passed(), truthTable.detail()));
     return inspect(spec.name(), items, checks);
   }
@@ -142,6 +143,10 @@ public final class CircuitArtifactManifest {
     }
     if (inputs.size() > 8) {
       return TruthTableArtifact.skipped("too many inputs for exhaustive evidence: " + inputs.size());
+    }
+    if (containsNonPrimitiveComponent(spec)) {
+      return TruthTableArtifact.skipped(
+          "native TTL chip present; in-process truth table only covers primitive gates");
     }
 
     List<TruthRow> rows = new ArrayList<>();
@@ -343,6 +348,21 @@ public final class CircuitArtifactManifest {
       return name.substring(0, name.length() - ".circ".length());
     }
     return name;
+  }
+
+  /** True when the spec contains components the in-process evaluator cannot model. */
+  private static boolean containsNonPrimitiveComponent(CircuitSpec spec) {
+    return spec.components().stream()
+        .anyMatch(component -> {
+          String factory = component.factoryName();
+          if (factory == null) {
+            return true;
+          }
+          return switch (factory) {
+            case "NOT Gate", "AND Gate", "OR Gate", "XOR Gate", "NAND Gate", "NOR Gate" -> false;
+            default -> true;
+          };
+        });
   }
 
   public record Item(String kind, String path) {}

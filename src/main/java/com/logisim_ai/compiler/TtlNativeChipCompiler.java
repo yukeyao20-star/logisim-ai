@@ -124,6 +124,13 @@ public final class TtlNativeChipCompiler {
       saveAndVerify(loader, file, outputFile, info.hasInout());
       writeChipReport(factory, outputFile, info, specs);
     } finally {
+      try {
+        if (project != null && project.getSimulator() != null) {
+          project.getSimulator().shutDown();
+        }
+      } catch (Exception ignored) {
+        // Best-effort.
+      }
       file.stopAutosaveThread(false);
     }
   }

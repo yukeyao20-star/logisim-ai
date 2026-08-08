@@ -83,6 +83,13 @@ public final class TtlDipSubcircuitCompiler {
       saveAndVerify(loader, file, outputFile);
       TtlDipArtifactManifest.writeReports(spec, outputFile);
     } finally {
+      try {
+        if (project != null && project.getSimulator() != null) {
+          project.getSimulator().shutDown();
+        }
+      } catch (Exception ignored) {
+        // Best-effort.
+      }
       file.stopAutosaveThread(false);
     }
   }
