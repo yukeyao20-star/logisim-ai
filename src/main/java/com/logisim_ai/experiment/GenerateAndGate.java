@@ -302,7 +302,8 @@ public final class GenerateAndGate {
           || spec.name().startsWith("decoder_")
           || spec.name().startsWith("parity_")
           || spec.name().startsWith("encoder_8to3")
-          || spec.name().startsWith("bcd7seg");
+          || spec.name().startsWith("bcd7seg")
+          || spec.name().startsWith("multiplier_");
       if (structural) {
         // Structural templates route directly (no Tunnels): reliable wiring for
         // dense fan-out circuits like decoders, and every gate sits in its own

@@ -60,6 +60,12 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:bcd|二十进制|8421码|8421)\\s*(?:转|到|[-])?\\s*(?:7段|七段|七段数码管|七段显示|数码管)\\s*(?:译码器|解码器|驱动器)?");
   private static final Pattern BCD7_EN =
       Pattern.compile("(?:bcd|binary\\s+coded\\s+decimal)\\s*(?:to)?\\s*7[- ]seg(?:ment)?\\s*(?:decoder|display|driver)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern MUL_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*[xX×位]\\s*([0-9一二三四五六七八九十两]{1,3})?\\s*位?\\s*(?:乘法器|二进制乘法器)");
+  private static final Pattern MUL_ZH2 =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:乘法器|二进制乘法器)");
+  private static final Pattern MUL_EN =
+      Pattern.compile("(\\d{1,2})\\s*[xX×]\\s*(\\d{1,2})\\s*(?:multiplier)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -68,6 +74,29 @@ public final class StructuralCircuitTemplates {
     String t = query.toLowerCase(Locale.ROOT);
     if (BCD7_ZH.matcher(t).find() || BCD7_EN.matcher(t).find()) {
       return Optional.of(buildBcd7Seg());
+    }
+    Matcher mul = MUL_ZH.matcher(t);
+    Matcher mul2 = MUL_ZH2.matcher(t);
+    Matcher mulEn = MUL_EN.matcher(t);
+    if (mul.find()) {
+      Integer a = chineseToInt(mul.group(1));
+      Integer b = mul.group(2) != null ? chineseToInt(mul.group(2)) : a;
+      if (a != null && b != null && a.equals(b)) {
+        return Optional.of(buildMultiplier(a));
+      }
+    }
+    if (mul2.find()) {
+      Integer n = chineseToInt(mul2.group(1));
+      if (n != null) {
+        return Optional.of(buildMultiplier(n));
+      }
+    }
+    if (mulEn.find()) {
+      int a = Integer.parseInt(mulEn.group(1));
+      int b = Integer.parseInt(mulEn.group(2));
+      if (a == b) {
+        return Optional.of(buildMultiplier(a));
+      }
     }
     Matcher zh = ADDER_ZH.matcher(t);
     Matcher en = ADDER_EN.matcher(t);
@@ -642,6 +671,118 @@ public final class StructuralCircuitTemplates {
     }
 
     return new CircuitSpec("bcd7seg", components, ports, nets, hints);
+  }
+
+  /**
+   * N x N unsigned array multiplier (shift-add): partial products p[i][j] =
+   * A[j] and B[i], accumulated by N-1 ripple-add stages with the i-th product
+   * shifted left by i. Output width 2N. Missing operand bits and the first
+   * carry-in tie to a shared GND input pin (constant 0).
+   */
+  static CircuitSpec buildMultiplier(int bits) {
+    if (bits < 2 || bits > 8) {
+      throw new IllegalArgumentException("Multiplier width must be 2..8, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+
+    for (int j = 0; j < bits; j++) {
+      addInput(ports, "a" + j, "A" + j, "mul_p0");
+    }
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "b" + i, "B" + i, "mul_p0");
+    }
+    addInput(ports, "gnd", "GND", "mul_p0");
+    for (int k = 0; k < 2 * bits; k++) {
+      addOutput(ports, "p" + k, "P" + k, "mul_p0");
+    }
+
+    // partial products p[i][j] = A[j] and B[i]
+    String[][] pp = new String[bits][bits];
+    for (int i = 0; i < bits; i++) {
+      for (int j = 0; j < bits; j++) {
+        String g = "mul_p" + seq;
+        components.add(new ComponentSpec(g, "Gates", "AND Gate", 1, "MULP" + (seq + 1)));
+        hints.add(new LayoutHint(g, 0, 0, i, null));
+        nets.add(net("mul_pa" + seq, e("a" + j, 0), e(g, 1)));
+        nets.add(net("mul_pb" + seq, e("b" + i, 0), e(g, 2)));
+        pp[i][j] = g;
+        seq++;
+      }
+    }
+
+    // accumulate: acc = pp[0]; stage i adds (pp[i] << i)
+    String[] acc = new String[bits];
+    for (int k = 0; k < bits; k++) {
+      acc[k] = pp[0][k];
+    }
+    for (int i = 1; i < bits; i++) {
+      int accBits = acc.length;
+      int outBits = accBits + 2;
+      String[] nacc = new String[outBits];
+      String cin = null;
+      for (int k = 0; k < outBits; k++) {
+        if (k < i) {
+          nacc[k] = acc[k];
+          continue;
+        }
+        String a = k < accBits ? acc[k] : "gnd";
+        int pj = k - i;
+        String b = (pj >= 0 && pj < bits) ? pp[i][pj] : "gnd";
+        String cinSig = cin == null ? "gnd" : cin;
+        // full adder
+        String x = "mul_x" + seq;
+        components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "MULX" + (seq + 1)));
+        hints.add(new LayoutHint(x, 1 + i, 0, k, null));
+        String s = "mul_s" + seq;
+        components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "MULS" + (seq + 1)));
+        hints.add(new LayoutHint(s, 1 + i, 0, k, null));
+        String fa = "mul_f" + seq;
+        components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "MULA" + (seq + 1)));
+        hints.add(new LayoutHint(fa, 1 + i, 0, k, null));
+        String fb = "mul_b" + seq;
+        components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "MULB" + (seq + 1)));
+        hints.add(new LayoutHint(fb, 1 + i, 0, k, null));
+        String fo = "mul_o" + seq;
+        components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "MULO" + (seq + 1)));
+        hints.add(new LayoutHint(fo, 1 + i, 0, k, null));
+        String fg = "mul_g" + seq;
+        components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "MULG" + (seq + 1)));
+        hints.add(new LayoutHint(fg, 1 + i, 0, k, null));
+        seq++;
+        // x = a xor b ; s = x xor cin
+        nets.add(net("mul_xa" + seq, e(a, 0), e(x, 1)));
+        nets.add(net("mul_xb" + seq, e(b, 0), e(x, 2)));
+        nets.add(net("mul_sa" + seq, e(x, 0), e(s, 1)));
+        nets.add(net("mul_sb" + seq, e(cinSig, 0), e(s, 2)));
+        nacc[k] = s;
+        // carry = (a and b) or (cin and x)
+        nets.add(net("mul_fa" + seq, e(a, 0), e(fa, 1)));
+        nets.add(net("mul_fb" + seq, e(b, 0), e(fa, 2)));
+        nets.add(net("mul_ga" + seq, e(cinSig, 0), e(fb, 1)));
+        nets.add(net("mul_gb" + seq, e(x, 0), e(fb, 2)));
+        nets.add(net("mul_o1" + seq, e(fa, 0), e(fo, 1)));
+        nets.add(net("mul_o2" + seq, e(fb, 0), e(fo, 2)));
+        nets.add(net("mul_g1" + seq, e(fo, 0), e(fg, 1)));
+        cin = fg;
+      }
+      acc = new String[outBits];
+      for (int k = 0; k < outBits; k++) {
+        acc[k] = nacc[k];
+      }
+    }
+
+    for (int k = 0; k < 2 * bits; k++) {
+      nets.add(net("mul_out" + k, e(acc[k], 0), e("p" + k, 0)));
+    }
+
+    return new CircuitSpec("multiplier_" + bits + "x" + bits, components, ports, nets, hints);
+  }
+  private static String srcOr(String id, String fallback) {
+    return id == null ? fallback : id;
   }
 
   private static void addInput(
