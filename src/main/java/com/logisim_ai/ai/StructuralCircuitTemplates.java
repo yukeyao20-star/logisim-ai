@@ -66,6 +66,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:乘法器|二进制乘法器)");
   private static final Pattern MUL_EN =
       Pattern.compile("(\\d{1,2})\\s*[xX×]\\s*(\\d{1,2})\\s*(?:multiplier)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SUB_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*位\\s*(?:减法器|全减器|二进制减法器)");
+  private static final Pattern SUB_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:subtractor|full\\s+subtractor)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -97,6 +101,17 @@ public final class StructuralCircuitTemplates {
       if (a == b) {
         return Optional.of(buildMultiplier(a));
       }
+    }
+    Matcher subzh = SUB_ZH.matcher(t);
+    Matcher suben = SUB_EN.matcher(t);
+    if (subzh.find()) {
+      Integer n = chineseToInt(subzh.group(1));
+      if (n != null) {
+        return Optional.of(buildSubtractor(n));
+      }
+    }
+    if (suben.find()) {
+      return Optional.of(buildSubtractor(Integer.parseInt(suben.group(1))));
     }
     Matcher zh = ADDER_ZH.matcher(t);
     Matcher en = ADDER_EN.matcher(t);
@@ -783,6 +798,71 @@ public final class StructuralCircuitTemplates {
   }
   private static String srcOr(String id, String fallback) {
     return id == null ? fallback : id;
+  }
+
+  /**
+   * N-bit ripple-borrow subtractor: D = A - B - Bin. Bit slice:
+   * x = A xor B ; D = x xor Bin ;
+   * Bout = (not A and (B or Bin)) or (B and Bin).
+   * Inputs A0..A(N-1), B0..B(N-1), Bin; outputs D0..D(N-1), Bout.
+   */
+  static CircuitSpec buildSubtractor(int bits) {
+    if (bits < 1 || bits > 16) {
+      throw new IllegalArgumentException("Subtractor width must be 1..16, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "sub" + i + "_x");
+      addInput(ports, "b" + i, "B" + i, "sub" + i + "_x");
+      addOutput(ports, "d" + i, "D" + i, "sub" + i + "_d");
+    }
+    addInput(ports, "bin", "Bin", "sub0_d");
+    addOutput(ports, "bout", "Bout", "sub" + (bits - 1) + "_bo");
+
+    for (int i = 0; i < bits; i++) {
+      String g = "sub" + i + "_";
+      String chip = "SUB" + i;
+      components.add(new ComponentSpec(g + "x", "Gates", "XOR Gate", 1, chip + "X"));
+      components.add(new ComponentSpec(g + "d", "Gates", "XOR Gate", 1, chip + "D"));
+      components.add(new ComponentSpec(g + "na", "Gates", "NOT Gate", 1, chip + "N"));
+      components.add(new ComponentSpec(g + "bo", "Gates", "OR Gate", 1, chip + "O"));
+      components.add(new ComponentSpec(g + "b1", "Gates", "AND Gate", 1, chip + "A"));
+      components.add(new ComponentSpec(g + "b2", "Gates", "AND Gate", 1, chip + "B"));
+      components.add(new ComponentSpec(g + "b3", "Gates", "OR Gate", 1, chip + "C"));
+      hints.add(new LayoutHint(g + "x", i, 0, 0, null));
+      hints.add(new LayoutHint(g + "d", i, 0, 1, null));
+      hints.add(new LayoutHint(g + "na", i, 0, 2, null));
+      hints.add(new LayoutHint(g + "bo", i, 0, 3, null));
+      hints.add(new LayoutHint(g + "b1", i, 0, 4, null));
+      hints.add(new LayoutHint(g + "b2", i, 0, 5, null));
+      hints.add(new LayoutHint(g + "b3", i, 0, 6, null));
+      nets.add(net("ax" + i, e("a" + i, 0), e(g + "x", 1), e(g + "na", 1)));
+      nets.add(net("bx" + i, e("b" + i, 0), e(g + "x", 2), e(g + "bo", 1), e(g + "b2", 1)));
+    }
+
+    String borrowIn = "bin";
+    for (int i = 0; i < bits; i++) {
+      String g = "sub" + i + "_";
+      // D = x xor Bin ; x = a xor b
+      nets.add(net("dx" + i, e(g + "x", 0), e(g + "d", 1)));
+      nets.add(net("di" + i, e(borrowIn, 0), e(g + "d", 2)));
+      nets.add(net("do" + i, e(g + "d", 0), e("d" + i, 0)));
+      // Bout = (not a and (b or bin)) or (b and bin)
+      nets.add(net("bob" + i, e(borrowIn, 0), e(g + "bo", 2)));
+      nets.add(net("bo1" + i, e(g + "na", 0), e(g + "b1", 1)));
+      nets.add(net("bo2" + i, e(g + "bo", 0), e(g + "b1", 2)));
+      nets.add(net("bo4" + i, e(borrowIn, 0), e(g + "b2", 2)));
+      nets.add(net("bo5" + i, e(g + "b1", 0), e(g + "b3", 1)));
+      nets.add(net("bo6" + i, e(g + "b2", 0), e(g + "b3", 2)));
+      borrowIn = g + "b3";
+    }
+    nets.add(net("bout", e(borrowIn, 0), e("bout", 0)));
+
+    return new CircuitSpec("subtractor_" + bits + "bit", components, ports, nets, hints);
   }
 
   private static void addInput(
