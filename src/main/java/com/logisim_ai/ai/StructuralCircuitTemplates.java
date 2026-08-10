@@ -112,6 +112,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:约翰逊计数器|约翰逊环形计数器|扭环形计数器)");
   private static final Pattern JOHNSON_EN_BARE =
       Pattern.compile("johnson\\s*counter|twisted\\s*ring", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DLATCH_ZH =
+      Pattern.compile("(?:d|D)锁存器|透明锁存器|数据锁存器|电平锁存器");
+  private static final Pattern DLATCH_EN =
+      Pattern.compile("(?:d\\s*latch|transparent\\s*latch|level[- ]sensitive\\s*latch|enable\\s*latch)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -273,6 +277,9 @@ public final class StructuralCircuitTemplates {
     }
     if (t.contains("t触发器") || t.contains("t flip") || t.contains("tff")) {
       return Optional.of(buildTFlipFlop());
+    }
+    if (DLATCH_ZH.matcher(t).find() || DLATCH_EN.matcher(t).find()) {
+      return Optional.of(buildDLatch());
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
     Matcher shren = SHIFTREG_EN.matcher(t);
@@ -641,6 +648,45 @@ public final class StructuralCircuitTemplates {
     nets.add(net("sr_qout", e("sr_q", 0), e("q", 0)));
     nets.add(net("sr_nqout", e("sr_nq", 0), e("nq", 0)));
     return new CircuitSpec("srlatch", components, ports, nets, hints);
+  }
+
+  /**
+   * Transparent (level-sensitive) D latch built from NAND gates: G1 = NAND(EN, D),
+   * G2 = NAND(EN, NOT D), Q = NAND(G1, nQ), nQ = NAND(G2, Q). EN=1 → Q follows D;
+   * EN=0 → cross-coupled NANDs hold state. All Gates library (portable, no Memory).
+   * NAND: end0=out, end1/end2=in; NOT: end0=out, end1=in.
+   */
+  static CircuitSpec buildDLatch() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    components.add(new ComponentSpec("dl_nd", "Gates", "NOT Gate", 1, "DN"));
+    components.add(new ComponentSpec("dl_g1", "Gates", "NAND Gate", 1, "U1"));
+    components.add(new ComponentSpec("dl_g2", "Gates", "NAND Gate", 1, "U2"));
+    components.add(new ComponentSpec("dl_q", "Gates", "NAND Gate", 1, "U3"));
+    components.add(new ComponentSpec("dl_nq", "Gates", "NAND Gate", 1, "U4"));
+    hints.add(new LayoutHint("dl_nd", 0, 0, 0, null));
+    hints.add(new LayoutHint("dl_g1", 0, 0, 1, null));
+    hints.add(new LayoutHint("dl_g2", 0, 0, 2, null));
+    hints.add(new LayoutHint("dl_q", 0, 0, 3, null));
+    hints.add(new LayoutHint("dl_nq", 0, 0, 4, null));
+    addInput(ports, "d", "D", "dl_g1");
+    addInput(ports, "en", "EN", "dl_g1");
+    addOutput(ports, "q", "Q", "dl_q");
+    addOutput(ports, "nq", "nQ", "dl_nq");
+    nets.add(net("dl_nd_in", e("d", 0), e("dl_nd", 1)));
+    nets.add(net("dl_g1_d", e("d", 0), e("dl_g1", 2)));
+    nets.add(net("dl_g1_en", e("en", 0), e("dl_g1", 1)));
+    nets.add(net("dl_nd_out", e("dl_nd", 0), e("dl_g2", 2)));
+    nets.add(net("dl_g2_en", e("en", 0), e("dl_g2", 1)));
+    nets.add(net("dl_g1_out", e("dl_g1", 0), e("dl_q", 1)));
+    nets.add(net("dl_g2_out", e("dl_g2", 0), e("dl_nq", 1)));
+    nets.add(net("dl_q_nq", e("dl_q", 0), e("dl_nq", 2)));
+    nets.add(net("dl_nq_q", e("dl_nq", 0), e("dl_q", 2)));
+    nets.add(net("dl_q_out", e("dl_q", 0), e("q", 0)));
+    nets.add(net("dl_nq_out", e("dl_nq", 0), e("nq", 0)));
+    return new CircuitSpec("dlatch", components, ports, nets, hints);
   }
 
   /**

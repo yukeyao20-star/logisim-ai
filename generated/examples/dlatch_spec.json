@@ -1,0 +1,36 @@
+{
+  "name": "dlatch",
+  "components": [
+    {"id": "dl_nd", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "DN"},
+    {"id": "dl_g1", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": "U1"},
+    {"id": "dl_g2", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": "U2"},
+    {"id": "dl_q", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": "U3"},
+    {"id": "dl_nq", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": "U4"}
+  ],
+  "externalPorts": [
+    {"id": "d", "label": "D", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "dl_g1", "targetEndIndex": 0},
+    {"id": "en", "label": "EN", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "dl_g1", "targetEndIndex": 0},
+    {"id": "q", "label": "Q", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "dl_q", "targetEndIndex": 0},
+    {"id": "nq", "label": "nQ", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "dl_nq", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "dl_nd_in", "endpoints": [{"componentId": "d", "endIndex": 0}, {"componentId": "dl_nd", "endIndex": 1}]},
+    {"id": "dl_g1_d", "endpoints": [{"componentId": "d", "endIndex": 0}, {"componentId": "dl_g1", "endIndex": 2}]},
+    {"id": "dl_g1_en", "endpoints": [{"componentId": "en", "endIndex": 0}, {"componentId": "dl_g1", "endIndex": 1}]},
+    {"id": "dl_nd_out", "endpoints": [{"componentId": "dl_nd", "endIndex": 0}, {"componentId": "dl_g2", "endIndex": 2}]},
+    {"id": "dl_g2_en", "endpoints": [{"componentId": "en", "endIndex": 0}, {"componentId": "dl_g2", "endIndex": 1}]},
+    {"id": "dl_g1_out", "endpoints": [{"componentId": "dl_g1", "endIndex": 0}, {"componentId": "dl_q", "endIndex": 1}]},
+    {"id": "dl_g2_out", "endpoints": [{"componentId": "dl_g2", "endIndex": 0}, {"componentId": "dl_nq", "endIndex": 1}]},
+    {"id": "dl_q_nq", "endpoints": [{"componentId": "dl_q", "endIndex": 0}, {"componentId": "dl_nq", "endIndex": 2}]},
+    {"id": "dl_nq_q", "endpoints": [{"componentId": "dl_nq", "endIndex": 0}, {"componentId": "dl_q", "endIndex": 2}]},
+    {"id": "dl_q_out", "endpoints": [{"componentId": "dl_q", "endIndex": 0}, {"componentId": "q", "endIndex": 0}]},
+    {"id": "dl_nq_out", "endpoints": [{"componentId": "dl_nq", "endIndex": 0}, {"componentId": "nq", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "dl_nd", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "dl_g1", "rank": 0, "column": 0, "row": 1, "side": null},
+    {"componentId": "dl_g2", "rank": 0, "column": 0, "row": 2, "side": null},
+    {"componentId": "dl_q", "rank": 0, "column": 0, "row": 3, "side": null},
+    {"componentId": "dl_nq", "rank": 0, "column": 0, "row": 4, "side": null}
+  ]
+}
