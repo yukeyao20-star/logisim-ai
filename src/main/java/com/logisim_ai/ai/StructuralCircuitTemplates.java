@@ -104,6 +104,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:分频器|分频电路)");
   private static final Pattern DIVIDER_EN_BARE =
       Pattern.compile("(?:divider|frequency\\s+divider)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern JOHNSON_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:约翰逊计数器|约翰逊环形计数器|扭环形计数器)");
+  private static final Pattern JOHNSON_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:johnson\\s*counter|twisted\\s*ring\\s*counter)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern JOHNSON_ZH_BARE =
+      Pattern.compile("(?:约翰逊计数器|约翰逊环形计数器|扭环形计数器)");
+  private static final Pattern JOHNSON_EN_BARE =
+      Pattern.compile("johnson\\s*counter|twisted\\s*ring", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -228,6 +236,20 @@ public final class StructuralCircuitTemplates {
     }
     if (DIVIDER_ZH_BARE.matcher(t).find() || DIVIDER_EN_BARE.matcher(t).find()) {
       return Optional.of(buildDivider(4));
+    }
+    Matcher johnzh = JOHNSON_ZH.matcher(t);
+    Matcher johnen = JOHNSON_EN.matcher(t);
+    if (johnzh.find()) {
+      Integer bits = chineseToInt(johnzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildJohnsonCounter(bits));
+      }
+    }
+    if (johnen.find()) {
+      return Optional.of(buildJohnsonCounter(Integer.parseInt(johnen.group(1))));
+    }
+    if (JOHNSON_ZH_BARE.matcher(t).find() || JOHNSON_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildJohnsonCounter(4));
     }
     Matcher pzh = PARITY_ZH.matcher(t);
     Matcher pen = PARITY_EN.matcher(t);
@@ -492,6 +514,43 @@ public final class StructuralCircuitTemplates {
       nets.add(net("div_q" + i, e(g, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("divider_" + stages + "stage", components, ports, nets, hints);
+  }
+
+  /**
+   * N-stage Johnson (twisted ring) counter: N D flip-flops in a shift chain
+   * (D_i = Q_{i-1}) with the last stage's nQ fed back to D_0 (D_0 = NOT Q_{n-1}),
+   * so a single 1 walks across and back → 2N distinct states. Shared CLK and
+   * RST. Port maps: D-FF end0=D, end1=CLK, end2=Q, end3=nQ, end4=reset; NOT
+   * end0=out, end1=in.
+   */
+  static CircuitSpec buildJohnsonCounter(int stages) {
+    if (stages < 1 || stages > 32) {
+      throw new IllegalArgumentException("Johnson counter stages must be 1..32, got " + stages);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "j0");
+    addInput(ports, "rst", "RST", "j0");
+    components.add(new ComponentSpec("jn", "Gates", "NOT Gate", 1, "JN"));
+    hints.add(new LayoutHint("jn", 0, 0, 0, null));
+    for (int i = 0; i < stages; i++) {
+      String g = "j" + i;
+      components.add(new ComponentSpec(g, "Memory", "D Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint(g, i + 1, 0, 0, null));
+      addOutput(ports, "q" + i, "Q" + i, g);
+      if (i == 0) {
+        nets.add(net("j_nq", e("j" + (stages - 1), 2), e("jn", 1)));
+        nets.add(net("j_d" + i, e("jn", 0), e(g, 0)));
+      } else {
+        nets.add(net("j_d" + i, e("j" + (i - 1), 2), e(g, 0)));
+      }
+      nets.add(net("j_clk" + i, e("clk", 0), e(g, 1)));
+      nets.add(net("j_rst" + i, e("rst", 0), e(g, 4)));
+      nets.add(net("j_q" + i, e(g, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("johnson_" + stages + "stage", components, ports, nets, hints);
   }
 
   /**

@@ -1,0 +1,44 @@
+{
+  "name": "johnson_4stage",
+  "components": [
+    {"id": "jn", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "JN"},
+    {"id": "j0", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U1"},
+    {"id": "j1", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U2"},
+    {"id": "j2", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U3"},
+    {"id": "j3", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U4"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "j0", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "j0", "targetEndIndex": 0},
+    {"id": "q0", "label": "Q0", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "j0", "targetEndIndex": 0},
+    {"id": "q1", "label": "Q1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "j1", "targetEndIndex": 0},
+    {"id": "q2", "label": "Q2", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "j2", "targetEndIndex": 0},
+    {"id": "q3", "label": "Q3", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "j3", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "j_nq", "endpoints": [{"componentId": "j3", "endIndex": 2}, {"componentId": "jn", "endIndex": 1}]},
+    {"id": "j_d0", "endpoints": [{"componentId": "jn", "endIndex": 0}, {"componentId": "j0", "endIndex": 0}]},
+    {"id": "j_clk0", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "j0", "endIndex": 1}]},
+    {"id": "j_rst0", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "j0", "endIndex": 4}]},
+    {"id": "j_q0", "endpoints": [{"componentId": "j0", "endIndex": 2}, {"componentId": "q0", "endIndex": 0}]},
+    {"id": "j_d1", "endpoints": [{"componentId": "j0", "endIndex": 2}, {"componentId": "j1", "endIndex": 0}]},
+    {"id": "j_clk1", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "j1", "endIndex": 1}]},
+    {"id": "j_rst1", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "j1", "endIndex": 4}]},
+    {"id": "j_q1", "endpoints": [{"componentId": "j1", "endIndex": 2}, {"componentId": "q1", "endIndex": 0}]},
+    {"id": "j_d2", "endpoints": [{"componentId": "j1", "endIndex": 2}, {"componentId": "j2", "endIndex": 0}]},
+    {"id": "j_clk2", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "j2", "endIndex": 1}]},
+    {"id": "j_rst2", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "j2", "endIndex": 4}]},
+    {"id": "j_q2", "endpoints": [{"componentId": "j2", "endIndex": 2}, {"componentId": "q2", "endIndex": 0}]},
+    {"id": "j_d3", "endpoints": [{"componentId": "j2", "endIndex": 2}, {"componentId": "j3", "endIndex": 0}]},
+    {"id": "j_clk3", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "j3", "endIndex": 1}]},
+    {"id": "j_rst3", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "j3", "endIndex": 4}]},
+    {"id": "j_q3", "endpoints": [{"componentId": "j3", "endIndex": 2}, {"componentId": "q3", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "jn", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "j0", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "j1", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "j2", "rank": 3, "column": 0, "row": 0, "side": null},
+    {"componentId": "j3", "rank": 4, "column": 0, "row": 0, "side": null}
+  ]
+}
