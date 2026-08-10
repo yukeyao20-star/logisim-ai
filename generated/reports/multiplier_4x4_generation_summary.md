@@ -1,7 +1,7 @@
 # Generation summary for multiplier_4x4
 
 - Request kind: natural_language
-- Request: 4位乘法器
+- Request: 4bitx4bit乘法器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 4
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,4 +26,6 @@
 | generated\circ\multiplier_4x4.circ | true |
 | generated\reports\multiplier_4x4_circuit_manifest.json | true |
 | generated\reports\multiplier_4x4_circuit_manifest.md | true |
+| generated\reports\multiplier_4x4_generation_summary.json | true |
+| generated\reports\multiplier_4x4_generation_summary.md | true |
 | generated\reports\multiplier_4x4_multichip.md | true |

@@ -49,6 +49,13 @@ import java.util.Map;
 public final class DirectMultiChipCompiler {
   private DirectMultiChipCompiler() {}
 
+  /** Components per row before wrapping to the next row. */
+  private static final int MAX_COMPONENTS_PER_ROW = 12;
+  /** Y of the first row's component centers. */
+  private static final int ROW_CENTER_Y = 250;
+  /** Vertical distance between row centers (leaves room for DIP chips + stubs). */
+  private static final int ROW_GAP = 420;
+
   public static void compile(CircuitSpec spec, File outputFile) throws Exception {
     Main.headless = true;
     System.setProperty("java.awt.headless", "true");
@@ -65,12 +72,28 @@ public final class DirectMultiChipCompiler {
 
     try {
       // Phase 1: instantiate chips on a grid (gates closer together than wide
-      // TTL chips so multi-gate circuits stay compact horizontally)
+      // TTL chips so multi-gate circuits stay compact horizontally). Wide
+      // circuits wrap to multiple rows (MAX_COMPONENTS_PER_ROW per row) so a
+      // 100+-gate design stays roughly square instead of a single giant line.
       Map<String, Component> positioned = new HashMap<>();
       CircuitMutation mutation = new CircuitMutation(circuit);
       int row = 0;
       int cursor = 500;
+      int rowCount = 1;
+      int maxRowWidth = 500;
       for (ComponentSpec cs : spec.components()) {
+        if (rowCount > MAX_COMPONENTS_PER_ROW) {
+          maxRowWidth = Math.max(maxRowWidth, cursor);
+          row++;
+          rowCount = 1;
+          // Each row's x range starts 3400 after the previous row's start,
+          // wider than any row can span (12 * 260 chip pitch = 3120), so ports
+          // of different rows never share an x column. Same-x ports would force
+          // the router to keep their stub segments disjoint; a long cross-row
+          // stub could otherwise overlap forever (non-terminating retreat) or
+          // short another net via a WireRepair junction.
+          cursor = 500 + row * 3400;
+        }
         Library library = LogisimProjectSetup.addLibrary(loader, file, cs.libraryName());
         ComponentFactory factory = findFactory(library, cs.factoryName());
         var attrs = factory.createAttributeSet();
@@ -83,14 +106,14 @@ public final class DirectMultiChipCompiler {
         if (cs.label() != null && !cs.label().isBlank()) {
           setIfPresent(attrs, StdAttr.LABEL, cs.label());
         }
-        Location loc = Location.create(cursor, 250 + row * 200, true);
+        Location loc = Location.create(cursor, ROW_CENTER_Y + row * ROW_GAP, true);
         Component comp = factory.createComponent(loc, attrs);
         positioned.put(cs.id(), comp);
         mutation.add(comp);
         cursor += cs.libraryName().equals("Gates") ? 160 : 260;
+        rowCount++;
       }
-      int componentRightX = cursor + 300;
-
+      int componentRightX = Math.max(maxRowWidth, cursor) + 300;
       // Phase 2: create external Pins. Each Pin gets its own x column so its
       // routing stub never overlaps another Pin's stub. Outputs sit right of
       // the last component column so wide circuits keep pins outside the logic.
@@ -213,6 +236,13 @@ public final class DirectMultiChipCompiler {
 
   private static Component createPin(
       ExternalPort port, boolean output, Direction facing, int x, int y) {
+    if (port.clock()) {
+      var attrs = com.cburch.logisim.std.wiring.Clock.FACTORY.createAttributeSet();
+      attrs.setValue(StdAttr.LABEL, port.label());
+      attrs.setValue(StdAttr.FACING, facing);
+      return com.cburch.logisim.std.wiring.Clock.FACTORY.createComponent(
+          Location.create(x, y, true), attrs);
+    }
     var attrs = Pin.FACTORY.createAttributeSet();
     if (output) {
       attrs.setValue(Pin.ATTR_TYPE, Pin.OUTPUT);

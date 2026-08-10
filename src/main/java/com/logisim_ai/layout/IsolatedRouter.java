@@ -39,8 +39,7 @@ public final class IsolatedRouter {
   private IsolatedRouter() {}
 
   private static final int STUB_LENGTH = 40;
-  private static final int FIRST_TRUNK_X = 800;
-  private static final int FIRST_LANE_Y = 900;
+  private static final int ROUTING_MARGIN = 300;
 
   public record EndpointRef(String componentId, int endIndex) {}
 
@@ -50,6 +49,15 @@ public final class IsolatedRouter {
       CircuitMutation mutation,
       List<NetWire> nets,
       Map<String, Location> endpointLocs) {
+    // Compute routing zone from component bounding box
+    int maxX = 0, maxY = 0;
+    for (Location loc : endpointLocs.values()) {
+      maxX = Math.max(maxX, loc.getX());
+      maxY = Math.max(maxY, loc.getY());
+    }
+    int firstTrunkX = maxX + ROUTING_MARGIN;
+    int firstLaneY = maxY + ROUTING_MARGIN;
+
     List<String> portKeys = new ArrayList<>();
     for (NetWire net : nets) {
       for (EndpointRef ref : net.endpoints()) {
@@ -95,7 +103,7 @@ public final class IsolatedRouter {
     for (int row : stubY.values()) {
       maxStub = Math.max(maxStub, row);
     }
-    int firstLaneY = maxStub + 50;
+    int laneStartY = Math.max(firstLaneY, maxStub + 50);
 
     // Pass 1: assign one lane per net and one trunk per (net, port-role).
     int trunkSeq = 0;
@@ -113,8 +121,8 @@ public final class IsolatedRouter {
       if (anchor == null) {
         continue;
       }
-      int laneY = firstLaneY + (laneSeq++) * 10;
-      int aTrunk = nextTrunk(endpointLocs, usedTrunks, trunkSeq++);
+      int laneY = laneStartY + (laneSeq++) * 10;
+      int aTrunk = nextTrunk(endpointLocs, usedTrunks, trunkSeq++, firstTrunkX);
       includeTrunk(portTrunkRange, firstKey, aTrunk, anchor.getX());
       List<int[]> targets = new ArrayList<>();
       for (int i = 1; i < refs.size(); i++) {
@@ -124,7 +132,7 @@ public final class IsolatedRouter {
           continue;
         }
         int tStub = stubY.get(tKey);
-        int tTrunk = nextTrunk(endpointLocs, usedTrunks, trunkSeq++);
+        int tTrunk = nextTrunk(endpointLocs, usedTrunks, trunkSeq++, firstTrunkX);
         includeTrunk(portTrunkRange, tKey, tTrunk, target.getX());
         targets.add(new int[] {tTrunk, tStub, target.getX()});
       }
@@ -172,8 +180,8 @@ public final class IsolatedRouter {
    *  any trunk already handed out (duplicates would put one net's lane segment
    *  endpoint on another net's vertical, which WireRepair turns into a short). */
   private static int nextTrunk(
-      Map<String, Location> locs, Set<Integer> usedTrunks, int seq) {
-    int trunk = FIRST_TRUNK_X + 10 * seq;
+      Map<String, Location> locs, Set<Integer> usedTrunks, int seq, int firstTrunkX) {
+    int trunk = firstTrunkX + 10 * seq;
     while (isPortX(locs, trunk) || usedTrunks.contains(trunk)) {
       trunk += 10;
     }
