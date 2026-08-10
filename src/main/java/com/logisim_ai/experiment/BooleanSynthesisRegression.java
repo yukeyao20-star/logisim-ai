@@ -161,6 +161,7 @@ public final class BooleanSynthesisRegression {
     runGenericTtlPackageMapper();
     runNaturalLanguageImplementationIntent();
     runOfficialSimulationRegression();
+    runClockSequenceRegression();
     System.out.println("[OK] Boolean synthesis/template truth-table regression passed");
   }
 
@@ -200,6 +201,47 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] official Logisim JAR simulation regression passed: circuits=" + checked);
+  }
+
+  /** Clock-pulse sequence evidence for sequential circuits (real Clock + <SET>/<SEQ> vectors). */
+  private static void runClockSequenceRegression() {
+    String[][] cases = {
+        {"counter_4bit", "cnt4c.vec", "11", "0"},
+        {"counter_8bit", "cnt8c.vec", "34", "0"},
+    };
+    java.io.File jarProbe = new java.io.File(
+        System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
+            com.logisim_ai.validation.OfficialSimulationVerifier.DEFAULT_LOGISIM_JAR));
+    if (!jarProbe.exists()
+        && !new java.io.File("third_party", "logisim-evolution/build/libs/logisim-evolution-4.2.0dev-all.jar")
+            .exists()) {
+      System.out.println("[OK] clock-sequence regression: SKIP (JAR not present)");
+      return;
+    }
+    int checked = 0;
+    for (String[] c : cases) {
+      String name = c[0];
+      java.io.File circ = new java.io.File("generated/circ/" + name + ".circ");
+      java.io.File vec = new java.io.File("generated/" + c[1]);
+      if (!circ.exists() || !vec.exists()) {
+        System.out.println("[OK] clock-sequence regression: SKIP missing " + name);
+        continue;
+      }
+      try {
+        com.logisim_ai.validation.TestVectorRunner.Result result =
+            com.logisim_ai.validation.TestVectorRunner.runVectors(circ, name, vec);
+        if (result.passCount() != Integer.parseInt(c[2])
+            || result.failCount() != Integer.parseInt(c[3])) {
+          throw new IllegalStateException("unexpected pass/fail counts for " + name + ": "
+              + result.passCount() + "/" + result.failCount());
+        }
+        System.out.println("[OK] " + name + " clock sequence passed: " + result.passCount() + " rows");
+        checked++;
+      } catch (Exception e) {
+        throw new IllegalStateException("clock-sequence regression failed for " + name, e);
+      }
+    }
+    System.out.println("[OK] clock-sequence regression passed: circuits=" + checked);
   }
 
   private static void runCase(Case testCase) {

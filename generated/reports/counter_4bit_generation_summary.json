@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "四位计数器",
+  "request": "4bit二进制计数器",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,10 +19,13 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 3,
+  "artifactCount": 6,
   "artifacts": [
     {"path": "generated\\circ\\counter_4bit.circ", "exists": true},
     {"path": "generated\\reports\\counter_4bit_circuit_manifest.json", "exists": true},
-    {"path": "generated\\reports\\counter_4bit_circuit_manifest.md", "exists": true}
+    {"path": "generated\\reports\\counter_4bit_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\counter_4bit_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\counter_4bit_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\counter_4bit_multichip.md", "exists": true}
   ]
 }

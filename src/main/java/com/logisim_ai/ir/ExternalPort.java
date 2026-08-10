@@ -10,7 +10,18 @@ public record ExternalPort(
     PortDirection direction,
     PortSide side,
     String targetComponentId,
-    int targetEndIndex) {
+    int targetEndIndex,
+    boolean clock) {
+  public ExternalPort(
+      String id,
+      String label,
+      int bitWidth,
+      PortDirection direction,
+      PortSide side,
+      String targetComponentId,
+      int targetEndIndex) {
+    this(id, label, bitWidth, direction, side, targetComponentId, targetEndIndex, false);
+  }
   public ExternalPort {
     if (id == null || id.isBlank()) {
       throw new IllegalArgumentException("Port id must not be blank");

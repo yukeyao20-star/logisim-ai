@@ -1,0 +1,10 @@
+{
+  "circuitName": "logic_multi_f_gt_f_eq_f_lt_ba_not_xor",
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"b": false, "a": false}, "outputs": {"f_gt": false, "f_eq": true, "f_lt": false}},
+    {"inputs": {"b": false, "a": true}, "outputs": {"f_gt": true, "f_eq": false, "f_lt": false}},
+    {"inputs": {"b": true, "a": false}, "outputs": {"f_gt": false, "f_eq": false, "f_lt": true}},
+    {"inputs": {"b": true, "a": true}, "outputs": {"f_gt": false, "f_eq": true, "f_lt": false}}
+  ]
+}

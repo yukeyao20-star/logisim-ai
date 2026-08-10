@@ -128,6 +128,19 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "相等", "相同", "equal", "equals", "xnor", "同或")) {
       return Optional.of("F=not (A xor B)");
     }
+    if (containsAny(t, "互斥", "只能一个", "exclusive", "mutually")) {
+      return Optional.of("F=A xor B");
+    }
+    // 1-bit magnitude comparator (three outputs)
+    if (containsAny(t, "谁大", "谁小", "哪个大", "compare two", "comparison", "比较两个")) {
+      return Optional.of(
+          "F_GT=A and not B; F_EQ=not (A xor B); F_LT=not A and B");
+    }
+    // 4-bit password/keypad lock: all four key bits must match the code
+    if (containsAny(t, "密码", "开锁", "password", "keypad", "combination lock")) {
+      return Optional.of(
+          "F=not (A0 xor B0) and not (A1 xor B1) and not (A2 xor B2) and not (A3 xor B3)");
+    }
     return Optional.empty();
   }
 

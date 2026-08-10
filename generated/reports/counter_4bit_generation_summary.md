@@ -1,7 +1,7 @@
 # Generation summary for counter_4bit
 
 - Request kind: natural_language
-- Request: 四位计数器
+- Request: 4bit二进制计数器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 3
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,3 +26,6 @@
 | generated\circ\counter_4bit.circ | true |
 | generated\reports\counter_4bit_circuit_manifest.json | true |
 | generated\reports\counter_4bit_circuit_manifest.md | true |
+| generated\reports\counter_4bit_generation_summary.json | true |
+| generated\reports\counter_4bit_generation_summary.md | true |
+| generated\reports\counter_4bit_multichip.md | true |

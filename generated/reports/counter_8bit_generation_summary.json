@@ -1,0 +1,27 @@
+{
+  "requestKind": "natural_language",
+  "request": "8bit二进制计数器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the manifest first and fix its issues before trusting the circuit artifact.",
+  "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit"],
+  "sourceJson": "",
+  "circuitName": "counter_8bit",
+  "circuitPath": "generated\\circ\\counter_8bit.circ",
+  "manifestPath": "generated\\reports\\counter_8bit_circuit_manifest.md",
+  "manifestComplete": null,
+  "manifestCheckCount": null,
+  "manifestIssueCount": null,
+  "artifactCount": 2,
+  "artifacts": [
+    {"path": "generated\\circ\\counter_8bit.circ", "exists": true},
+    {"path": "generated\\reports\\counter_8bit_multichip.md", "exists": true}
+  ]
+}
