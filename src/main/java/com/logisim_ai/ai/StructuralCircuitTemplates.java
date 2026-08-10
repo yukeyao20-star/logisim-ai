@@ -176,6 +176,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("双向移位寄存器|左右移位寄存器|双向移位");
   private static final Pattern BSREG_EN_BARE =
       Pattern.compile("bidirectional\\s*shift|left[- ]right\\s*shift", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LFSR_ZH =
+      Pattern.compile("伪随机数发生器|伪随机序列|线性反馈移位寄存器|随机数发生器|m序列|线性反馈");
+  private static final Pattern LFSR_EN =
+      Pattern.compile("lfsr|linear\\s*feedback\\s*shift\\s*register|pseudo[ -]random", Pattern.CASE_INSENSITIVE);
 
   /** Human-readable names of the parameterized structural templates, for NL help. */
   public static List<String> supportedStructuralNames() {
@@ -474,6 +478,11 @@ public final class StructuralCircuitTemplates {
     }
     if (BSREG_ZH_BARE.matcher(t).find() || BSREG_EN_BARE.matcher(t).find()) {
       return Optional.of(buildBidirectionalShiftRegister(4));
+    }
+    // LFSR (伪随机/m序列). Must precede SHIFTREG/REGISTER (线性反馈移位寄存器
+    // contains 移位寄存器 / 寄存器 substrings).
+    if (LFSR_ZH.matcher(t).find() || LFSR_EN.matcher(t).find()) {
+      return Optional.of(buildLfsr4());
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
     Matcher shren = SHIFTREG_EN.matcher(t);
@@ -1030,6 +1039,56 @@ public final class StructuralCircuitTemplates {
       nets.add(net("ud_q" + i, e("ud" + i, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("updown_counter_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * 4-bit maximal-length LFSR (linear feedback shift register, 伪随机数/m序列),
+   * polynomial x⁴+x³+1 → feedback = Q3⊕Q2. Shift: Q0←D0, Q_{i+1}←Q_i, with
+   * D0 = SEED ∨ feedback so an all-zero dead-lock can be broken (drive SEED=1
+   * for one clock). Produces a 15-state pseudo-random sequence. Shared CLK/RST.
+   * Port maps: D-FF end0=D, end1=CLK, end2=Q, end4=reset; XOR/OR end0=out,
+   * end1/end2=in.
+   */
+  static CircuitSpec buildLfsr4() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "l0");
+    addInput(ports, "seed", "SEED", "l0");
+    addInput(ports, "rst", "RST", "l0");
+    for (int i = 0; i < 4; i++) {
+      addOutput(ports, "q" + i, "Q" + i, "l" + i);
+    }
+    components.add(new ComponentSpec("l0", "Memory", "D Flip-Flop", 1, "U1"));
+    components.add(new ComponentSpec("l1", "Memory", "D Flip-Flop", 1, "U2"));
+    components.add(new ComponentSpec("l2", "Memory", "D Flip-Flop", 1, "U3"));
+    components.add(new ComponentSpec("l3", "Memory", "D Flip-Flop", 1, "U4"));
+    components.add(new ComponentSpec("l_fx", "Gates", "XOR Gate", 1, "X1"));
+    components.add(new ComponentSpec("l_or", "Gates", "OR Gate", 1, "O1"));
+    hints.add(new LayoutHint("l0", 0, 0, 0, null));
+    hints.add(new LayoutHint("l1", 1, 0, 0, null));
+    hints.add(new LayoutHint("l2", 2, 0, 0, null));
+    hints.add(new LayoutHint("l3", 3, 0, 0, null));
+    hints.add(new LayoutHint("l_fx", 0, 0, 1, null));
+    hints.add(new LayoutHint("l_or", 0, 0, 2, null));
+    // feedback = Q3⊕Q2
+    nets.add(net("l_fx_q3", e("l3", 2), e("l_fx", 1)));
+    nets.add(net("l_fx_q2", e("l2", 2), e("l_fx", 2)));
+    // D0 = SEED ∨ feedback
+    nets.add(net("l_or_seed", e("seed", 0), e("l_or", 1)));
+    nets.add(net("l_or_fx", e("l_fx", 0), e("l_or", 2)));
+    nets.add(net("l_d0", e("l_or", 0), e("l0", 0)));
+    // shift chain: D1=Q0, D2=Q1, D3=Q2
+    nets.add(net("l_d1", e("l0", 2), e("l1", 0)));
+    nets.add(net("l_d2", e("l1", 2), e("l2", 0)));
+    nets.add(net("l_d3", e("l2", 2), e("l3", 0)));
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("l_clk" + i, e("clk", 0), e("l" + i, 1)));
+      nets.add(net("l_rst" + i, e("rst", 0), e("l" + i, 4)));
+      nets.add(net("l_q" + i, e("l" + i, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("lfsr_4bit", components, ports, nets, hints);
   }
 
   /**
