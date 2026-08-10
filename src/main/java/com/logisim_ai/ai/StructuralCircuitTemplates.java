@@ -165,6 +165,37 @@ public final class StructuralCircuitTemplates {
   private static final Pattern BSREG_EN_BARE =
       Pattern.compile("bidirectional\\s*shift|left[- ]right\\s*shift", Pattern.CASE_INSENSITIVE);
 
+  /** Human-readable names of the parameterized structural templates, for NL help. */
+  public static List<String> supportedStructuralNames() {
+    return List.of(
+        "Adder 加法器 (N-bit)",
+        "Subtractor 减法器 (N-bit)",
+        "Multiplier 乘法器 (N×N)",
+        "Comparator 比较器 (N-bit)",
+        "MUX 多路选择器 (N-to-1)",
+        "Decoder 译码器 (N-to-2^N)",
+        "Priority encoder 优先编码器 (8-to-3)",
+        "Parity 奇偶校验器 (N-bit)",
+        "BCD 7-segment 七段显示",
+        "BCD adder 8421加法器",
+        "D flip-flop D触发器",
+        "JK flip-flop JK触发器",
+        "T flip-flop T触发器",
+        "D latch 透明锁存器",
+        "Register 寄存器 (N-bit)",
+        "Shift register 移位寄存器 (N-bit)",
+        "Bidirectional shift register 双向移位寄存器",
+        "Frequency divider 分频器 (N-stage)",
+        "BCD counter 十进制计数器",
+        "Johnson counter 约翰逊计数器",
+        "Gray code 格雷码转换器 (binary→gray)",
+        "Gray→binary 格雷码转二进制",
+        "Excess-3 余三码 (BCD→excess-3)",
+        "Two's complement 补码器 (N-bit)",
+        "Traffic light 交通灯控制器",
+        "101 sequence detector 序列检测器");
+  }
+
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
       return Optional.empty();

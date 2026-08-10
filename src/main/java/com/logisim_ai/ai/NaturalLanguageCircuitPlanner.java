@@ -221,7 +221,9 @@ public final class NaturalLanguageCircuitPlanner {
         .map(template -> template.keywords().get(0))
         .toList();
     return java.util.stream.Stream.concat(
-            templateNames.stream(),
+            java.util.stream.Stream.concat(
+                templateNames.stream(),
+                StructuralCircuitTemplates.supportedStructuralNames().stream()),
             java.util.stream.Stream.of(
                 "Boolean expressions: F=A and not B",
                 "Boolean expressions: Y=A xor B nand C",
