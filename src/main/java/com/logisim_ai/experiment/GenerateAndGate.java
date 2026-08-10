@@ -318,7 +318,8 @@ public final class GenerateAndGate {
           || spec.name().startsWith("gray_")
           || spec.name().startsWith("gray2bin_")
           || spec.name().startsWith("excess3")
-          || spec.name().startsWith("twoscomp_");
+          || spec.name().startsWith("twoscomp_")
+          || spec.name().equals("traffic_light");
       if (structural) {
         // Structural templates route directly (no Tunnels): reliable wiring for
         // dense fan-out circuits like decoders, and every gate sits in its own

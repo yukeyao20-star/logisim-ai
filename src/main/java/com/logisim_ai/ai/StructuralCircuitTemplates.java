@@ -144,6 +144,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("补码器|求补|二进制补码");
   private static final Pattern TWOS_EN_BARE =
       Pattern.compile("two.?s?\\s*complement|2s\\s*complement", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TRAFFIC_ZH =
+      Pattern.compile("交通灯|红绿灯|交通信号|交通灯控制");
+  private static final Pattern TRAFFIC_EN =
+      Pattern.compile("traffic light|traffic signal|stop light", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -365,6 +369,9 @@ public final class StructuralCircuitTemplates {
     }
     if (TWOS_ZH_BARE.matcher(t).find() || TWOS_EN_BARE.matcher(t).find()) {
       return Optional.of(buildTwosComplement(4));
+    }
+    if (TRAFFIC_ZH.matcher(t).find() || TRAFFIC_EN.matcher(t).find()) {
+      return Optional.of(buildTrafficLight());
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
     Matcher shren = SHIFTREG_EN.matcher(t);
@@ -931,6 +938,56 @@ public final class StructuralCircuitTemplates {
       carry = and;
     }
     return new CircuitSpec("twoscomp_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * Simplified traffic light controller: a 2-bit binary counter (T-FF chain,
+   * T0=EN, T1=Q0) decodes to RED/YELLOW/GREEN. GREEN = ¬Q1 (2 states),
+   * YELLOW = Q1∧¬Q0 (1 state), RED = Q1∧Q0 (1 state) → a 4-state cycle.
+   * Drive EN=1 to count. Port maps: T-FF end0=T, end1=CLK, end2=Q, end4=reset;
+   * NOT end0=out/end1=in; AND end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildTrafficLight() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "tl0");
+    addInput(ports, "en", "EN", "tl0");
+    addInput(ports, "rst", "RST", "tl0");
+    addOutput(ports, "red", "RED", "tl_red");
+    addOutput(ports, "yellow", "YELLOW", "tl_yel");
+    addOutput(ports, "green", "GREEN", "tl_grn");
+    components.add(new ComponentSpec("tl0", "Memory", "T Flip-Flop", 1, "U1"));
+    components.add(new ComponentSpec("tl1", "Memory", "T Flip-Flop", 1, "U2"));
+    components.add(new ComponentSpec("tl_grn", "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec("tl_nq0", "Gates", "NOT Gate", 1, "N2"));
+    components.add(new ComponentSpec("tl_red", "Gates", "AND Gate", 1, "R1"));
+    components.add(new ComponentSpec("tl_yel", "Gates", "AND Gate", 1, "Y1"));
+    hints.add(new LayoutHint("tl0", 0, 0, 0, null));
+    hints.add(new LayoutHint("tl1", 1, 0, 0, null));
+    hints.add(new LayoutHint("tl_grn", 2, 0, 0, null));
+    hints.add(new LayoutHint("tl_nq0", 3, 0, 0, null));
+    hints.add(new LayoutHint("tl_red", 4, 0, 0, null));
+    hints.add(new LayoutHint("tl_yel", 5, 0, 0, null));
+    // 2-bit binary counter: T0 = EN, T1 = Q0; shared CLK and RST
+    nets.add(net("tl_en", e("en", 0), e("tl0", 0)));
+    nets.add(net("tl_t1", e("tl0", 2), e("tl1", 0)));
+    nets.add(net("tl_clk0", e("clk", 0), e("tl0", 1)));
+    nets.add(net("tl_clk1", e("clk", 0), e("tl1", 1)));
+    nets.add(net("tl_rst0", e("rst", 0), e("tl0", 4)));
+    nets.add(net("tl_rst1", e("rst", 0), e("tl1", 4)));
+    // GREEN = ¬Q1; ¬Q0; RED = Q1∧Q0; YELLOW = Q1∧¬Q0
+    nets.add(net("tl_grn_in", e("tl1", 2), e("tl_grn", 1)));
+    nets.add(net("tl_grn_out", e("tl_grn", 0), e("green", 0)));
+    nets.add(net("tl_nq0_in", e("tl0", 2), e("tl_nq0", 1)));
+    nets.add(net("tl_red_q1", e("tl1", 2), e("tl_red", 1)));
+    nets.add(net("tl_red_q0", e("tl0", 2), e("tl_red", 2)));
+    nets.add(net("tl_red_out", e("tl_red", 0), e("red", 0)));
+    nets.add(net("tl_yel_q1", e("tl1", 2), e("tl_yel", 1)));
+    nets.add(net("tl_yel_nq0", e("tl_nq0", 0), e("tl_yel", 2)));
+    nets.add(net("tl_yel_out", e("tl_yel", 0), e("yellow", 0)));
+    return new CircuitSpec("traffic_light", components, ports, nets, hints);
   }
 
   /**
