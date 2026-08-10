@@ -54,6 +54,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("bcd计数器|十进制计数器|模10计数器|模十计数器|8421计数器");
   private static final Pattern BCDCNT_EN_BARE =
       Pattern.compile("bcd\\s*counter|decade\\s*counter|mod[- ]?10\\s*counter", Pattern.CASE_INSENSITIVE);
+  private static final Pattern UDCNT_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:可逆计数器|加减计数器|加減计数器)");
+  private static final Pattern UDCNT_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:up[- ]?down\\s*counter|bidirectional\\s*counter)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern UDCNT_ZH_BARE =
+      Pattern.compile("可逆计数器|加减计数器|加減计数器");
+  private static final Pattern UDCNT_EN_BARE =
+      Pattern.compile("up[- ]?down\\s*counter|bidirectional\\s*counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern PARITY_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:奇偶校验器|奇偶校验|偶校验器|奇校验器)");
   private static final Pattern PARITY_EN =
@@ -303,6 +311,21 @@ public final class StructuralCircuitTemplates {
     // and its bare "计数器" fallback below.
     if (BCDCNT_ZH_BARE.matcher(t).find() || BCDCNT_EN_BARE.matcher(t).find()) {
       return Optional.of(buildBcdCounter());
+    }
+    // Up/down (可逆) counter. Also must precede the bare 计数器 fallback.
+    Matcher udzh = UDCNT_ZH.matcher(t);
+    Matcher uden = UDCNT_EN.matcher(t);
+    if (udzh.find()) {
+      Integer bits = chineseToInt(udzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildUpDownCounter(bits));
+      }
+    }
+    if (uden.find()) {
+      return Optional.of(buildUpDownCounter(Integer.parseInt(uden.group(1))));
+    }
+    if (UDCNT_ZH_BARE.matcher(t).find() || UDCNT_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildUpDownCounter(4));
     }
     Matcher ctrzh = COUNTER_ZH.matcher(t);
     Matcher ctrEn = COUNTER_EN.matcher(t);
@@ -920,6 +943,93 @@ public final class StructuralCircuitTemplates {
       nets.add(net("bc_q" + i, e("bc" + i, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("bcd_counter", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit synchronous up/down counter: UD=0 counts up, UD=1 counts down.
+   * T0=EN; T1=Q0⊕UD; for i≥2, T_i = ¬UD·AND(Q0..Q_{i-1}) + UD·AND(¬Q0..¬Q_{i-1})
+   * (a stage toggles when all lower bits match the direction's active level).
+   * Shared CLK/RST. Port maps: T-FF end0=T, end1=CLK, end2=Q, end4=reset;
+   * NOT end0=out/end1=in; XOR/AND/OR end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildUpDownCounter(int bits) {
+    if (bits < 2 || bits > 16) {
+      throw new IllegalArgumentException("Up/down counter width must be 2..16, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "ud0");
+    addInput(ports, "ud", "UD", "ud0");
+    addInput(ports, "en", "EN", "ud0");
+    addInput(ports, "rst", "RST", "ud0");
+    for (int i = 0; i < bits; i++) {
+      addOutput(ports, "q" + i, "Q" + i, "ud" + i);
+    }
+    components.add(new ComponentSpec("ud_nd", "Gates", "NOT Gate", 1, "N1"));
+    hints.add(new LayoutHint("ud_nd", 0, 0, 0, null));
+    nets.add(net("ud_nd_in", e("ud", 0), e("ud_nd", 1)));
+    for (int i = 0; i < bits; i++) {
+      components.add(new ComponentSpec("ud" + i, "Memory", "T Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint("ud" + i, i, 0, 0, null));
+      if (i < bits - 1) {
+        String nq = "ud_nq" + i;
+        components.add(new ComponentSpec(nq, "Gates", "NOT Gate", 1, "N" + (i + 2)));
+        hints.add(new LayoutHint(nq, i, 0, 6, null));
+        nets.add(net("ud_nq" + i + "_in", e("ud" + i, 2), e(nq, 1)));
+      }
+    }
+    // T0 = EN
+    nets.add(net("ud_t0", e("en", 0), e("ud0", 0)));
+    // T1 = Q0 XOR UD
+    components.add(new ComponentSpec("ud_t1", "Gates", "XOR Gate", 1, "X1"));
+    hints.add(new LayoutHint("ud_t1", 1, 0, 1, null));
+    nets.add(net("ud_t1_q0", e("ud0", 2), e("ud_t1", 1)));
+    nets.add(net("ud_t1_ud", e("ud", 0), e("ud_t1", 2)));
+    nets.add(net("ud_t1_out", e("ud_t1", 0), e("ud1", 0)));
+    String upSrc = "ud0";
+    int upEnd = 2;
+    String dnSrc = "ud_nq0";
+    int dnEnd = 0;
+    for (int i = 2; i < bits; i++) {
+      String aUp = "ud_a" + i + "u";
+      String aDn = "ud_a" + i + "d";
+      components.add(new ComponentSpec(aUp, "Gates", "AND Gate", 1, "AU" + i));
+      components.add(new ComponentSpec(aDn, "Gates", "AND Gate", 1, "AD" + i));
+      hints.add(new LayoutHint(aUp, i, 0, 1, null));
+      hints.add(new LayoutHint(aDn, i, 0, 2, null));
+      nets.add(net("ud_au" + i + "_a", e(upSrc, upEnd), e(aUp, 1)));
+      nets.add(net("ud_au" + i + "_b", e("ud" + (i - 1), 2), e(aUp, 2)));
+      nets.add(net("ud_ad" + i + "_a", e(dnSrc, dnEnd), e(aDn, 1)));
+      nets.add(net("ud_ad" + i + "_b", e("ud_nq" + (i - 1), 0), e(aDn, 2)));
+      upSrc = aUp;
+      upEnd = 0;
+      dnSrc = aDn;
+      dnEnd = 0;
+      String tU = "ud_t" + i + "u";
+      String tD = "ud_t" + i + "d";
+      String or = "ud_t" + i;
+      components.add(new ComponentSpec(tU, "Gates", "AND Gate", 1, "TU" + i));
+      components.add(new ComponentSpec(tD, "Gates", "AND Gate", 1, "TD" + i));
+      components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "TO" + i));
+      hints.add(new LayoutHint(tU, i, 0, 3, null));
+      hints.add(new LayoutHint(tD, i, 0, 4, null));
+      hints.add(new LayoutHint(or, i, 0, 5, null));
+      nets.add(net("ud_tu" + i + "_nd", e("ud_nd", 0), e(tU, 1)));
+      nets.add(net("ud_tu" + i + "_acc", e(upSrc, upEnd), e(tU, 2)));
+      nets.add(net("ud_td" + i + "_ud", e("ud", 0), e(tD, 1)));
+      nets.add(net("ud_td" + i + "_acc", e(dnSrc, dnEnd), e(tD, 2)));
+      nets.add(net("ud_t" + i + "_u", e(tU, 0), e(or, 1)));
+      nets.add(net("ud_t" + i + "_d", e(tD, 0), e(or, 2)));
+      nets.add(net("ud_t" + i + "_out", e(or, 0), e("ud" + i, 0)));
+    }
+    for (int i = 0; i < bits; i++) {
+      nets.add(net("ud_clk" + i, e("clk", 0), e("ud" + i, 1)));
+      nets.add(net("ud_rst" + i, e("rst", 0), e("ud" + i, 4)));
+      nets.add(net("ud_q" + i, e("ud" + i, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("updown_counter_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**
