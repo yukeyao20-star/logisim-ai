@@ -136,6 +136,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("余三码|余3码|8421码转余3|8421转余3");
   private static final Pattern E3_EN =
       Pattern.compile("excess[- ]?3|bcd[- ]to[- ]excess", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TWOS_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:补码器|补码|求补|二进制补码)");
+  private static final Pattern TWOS_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:two.?s?\\s*complement|2s\\s*complement)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TWOS_ZH_BARE =
+      Pattern.compile("补码器|求补|二进制补码");
+  private static final Pattern TWOS_EN_BARE =
+      Pattern.compile("two.?s?\\s*complement|2s\\s*complement", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -343,6 +351,20 @@ public final class StructuralCircuitTemplates {
       if (E3_ZH.matcher(t).find() || E3_EN.matcher(t).find()) {
         return Optional.of(buildExcess3());
       }
+    }
+    Matcher twzh = TWOS_ZH.matcher(t);
+    Matcher twen = TWOS_EN.matcher(t);
+    if (twzh.find()) {
+      Integer bits = chineseToInt(twzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildTwosComplement(bits));
+      }
+    }
+    if (twen.find()) {
+      return Optional.of(buildTwosComplement(Integer.parseInt(twen.group(1))));
+    }
+    if (TWOS_ZH_BARE.matcher(t).find() || TWOS_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildTwosComplement(4));
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
     Matcher shren = SHIFTREG_EN.matcher(t);
@@ -866,6 +888,49 @@ public final class StructuralCircuitTemplates {
     nets.add(net("e3_x8_a", e("e3_a", 0), e("e3_x8", 2)));
     nets.add(net("e3_e8", e("e3_x8", 0), e("e8", 0)));
     return new CircuitSpec("excess3_bcd", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit two's complement (补码) converter: B = NOT A + 1. b0 = A0;
+   * a'i = NOT Ai; c0 = a'0; for i=1..n-1: b_i = a'i XOR c_{i-1} and
+   * c_i = a'i AND c_{i-1} (ripple carry). Purely combinational.
+   * 2-input gates end0=out, end1/end2=in; NOT end0=out, end1=in.
+   */
+  static CircuitSpec buildTwosComplement(int bits) {
+    if (bits < 1 || bits > 32) {
+      throw new IllegalArgumentException("Two's complement width must be 1..32, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, i == 0 ? "tc_n0" : "tc_x" + i);
+      addOutput(ports, "b" + i, "B" + i, i == 0 ? "tc_n0" : "tc_x" + i);
+    }
+    for (int i = 0; i < bits; i++) {
+      String n = "tc_n" + i;
+      components.add(new ComponentSpec(n, "Gates", "NOT Gate", 1, "N" + (i + 1)));
+      hints.add(new LayoutHint(n, i, 0, 0, null));
+      nets.add(net("tc_not" + i, e("a" + i, 0), e(n, 1)));
+    }
+    nets.add(net("tc_b0", e("a0", 0), e("b0", 0)));
+    String carry = "tc_n0"; // c0 = a'0 (NOT gate output)
+    for (int i = 1; i < bits; i++) {
+      String and = "tc_a" + i;
+      String xr = "tc_x" + i;
+      components.add(new ComponentSpec(and, "Gates", "AND Gate", 1, "CA" + i));
+      components.add(new ComponentSpec(xr, "Gates", "XOR Gate", 1, "XB" + i));
+      hints.add(new LayoutHint(and, i, 0, 1, null));
+      hints.add(new LayoutHint(xr, i, 0, 2, null));
+      nets.add(net("tc_ci" + i + "_a", e("tc_n" + i, 0), e(and, 1)));
+      nets.add(net("tc_ci" + i + "_c", e(carry, 0), e(and, 2)));
+      nets.add(net("tc_bi" + i + "_a", e("tc_n" + i, 0), e(xr, 1)));
+      nets.add(net("tc_bi" + i + "_c", e(carry, 0), e(xr, 2)));
+      nets.add(net("tc_b" + i, e(xr, 0), e("b" + i, 0)));
+      carry = and;
+    }
+    return new CircuitSpec("twoscomp_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**

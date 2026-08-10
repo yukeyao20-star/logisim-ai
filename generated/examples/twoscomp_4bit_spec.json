@@ -1,0 +1,59 @@
+{
+  "name": "twoscomp_4bit",
+  "components": [
+    {"id": "tc_n0", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N1"},
+    {"id": "tc_n1", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N2"},
+    {"id": "tc_n2", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N3"},
+    {"id": "tc_n3", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N4"},
+    {"id": "tc_a1", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "CA1"},
+    {"id": "tc_x1", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "XB1"},
+    {"id": "tc_a2", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "CA2"},
+    {"id": "tc_x2", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "XB2"},
+    {"id": "tc_a3", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "CA3"},
+    {"id": "tc_x3", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "XB3"}
+  ],
+  "externalPorts": [
+    {"id": "a0", "label": "A0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "tc_n0", "targetEndIndex": 0},
+    {"id": "b0", "label": "B0", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "tc_n0", "targetEndIndex": 0},
+    {"id": "a1", "label": "A1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "tc_x1", "targetEndIndex": 0},
+    {"id": "b1", "label": "B1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "tc_x1", "targetEndIndex": 0},
+    {"id": "a2", "label": "A2", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "tc_x2", "targetEndIndex": 0},
+    {"id": "b2", "label": "B2", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "tc_x2", "targetEndIndex": 0},
+    {"id": "a3", "label": "A3", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "tc_x3", "targetEndIndex": 0},
+    {"id": "b3", "label": "B3", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "tc_x3", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "tc_not0", "endpoints": [{"componentId": "a0", "endIndex": 0}, {"componentId": "tc_n0", "endIndex": 1}]},
+    {"id": "tc_not1", "endpoints": [{"componentId": "a1", "endIndex": 0}, {"componentId": "tc_n1", "endIndex": 1}]},
+    {"id": "tc_not2", "endpoints": [{"componentId": "a2", "endIndex": 0}, {"componentId": "tc_n2", "endIndex": 1}]},
+    {"id": "tc_not3", "endpoints": [{"componentId": "a3", "endIndex": 0}, {"componentId": "tc_n3", "endIndex": 1}]},
+    {"id": "tc_b0", "endpoints": [{"componentId": "a0", "endIndex": 0}, {"componentId": "b0", "endIndex": 0}]},
+    {"id": "tc_ci1_a", "endpoints": [{"componentId": "tc_n1", "endIndex": 0}, {"componentId": "tc_a1", "endIndex": 1}]},
+    {"id": "tc_ci1_c", "endpoints": [{"componentId": "tc_n0", "endIndex": 0}, {"componentId": "tc_a1", "endIndex": 2}]},
+    {"id": "tc_bi1_a", "endpoints": [{"componentId": "tc_n1", "endIndex": 0}, {"componentId": "tc_x1", "endIndex": 1}]},
+    {"id": "tc_bi1_c", "endpoints": [{"componentId": "tc_n0", "endIndex": 0}, {"componentId": "tc_x1", "endIndex": 2}]},
+    {"id": "tc_b1", "endpoints": [{"componentId": "tc_x1", "endIndex": 0}, {"componentId": "b1", "endIndex": 0}]},
+    {"id": "tc_ci2_a", "endpoints": [{"componentId": "tc_n2", "endIndex": 0}, {"componentId": "tc_a2", "endIndex": 1}]},
+    {"id": "tc_ci2_c", "endpoints": [{"componentId": "tc_a1", "endIndex": 0}, {"componentId": "tc_a2", "endIndex": 2}]},
+    {"id": "tc_bi2_a", "endpoints": [{"componentId": "tc_n2", "endIndex": 0}, {"componentId": "tc_x2", "endIndex": 1}]},
+    {"id": "tc_bi2_c", "endpoints": [{"componentId": "tc_a1", "endIndex": 0}, {"componentId": "tc_x2", "endIndex": 2}]},
+    {"id": "tc_b2", "endpoints": [{"componentId": "tc_x2", "endIndex": 0}, {"componentId": "b2", "endIndex": 0}]},
+    {"id": "tc_ci3_a", "endpoints": [{"componentId": "tc_n3", "endIndex": 0}, {"componentId": "tc_a3", "endIndex": 1}]},
+    {"id": "tc_ci3_c", "endpoints": [{"componentId": "tc_a2", "endIndex": 0}, {"componentId": "tc_a3", "endIndex": 2}]},
+    {"id": "tc_bi3_a", "endpoints": [{"componentId": "tc_n3", "endIndex": 0}, {"componentId": "tc_x3", "endIndex": 1}]},
+    {"id": "tc_bi3_c", "endpoints": [{"componentId": "tc_a2", "endIndex": 0}, {"componentId": "tc_x3", "endIndex": 2}]},
+    {"id": "tc_b3", "endpoints": [{"componentId": "tc_x3", "endIndex": 0}, {"componentId": "b3", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "tc_n0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "tc_n1", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "tc_n2", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "tc_n3", "rank": 3, "column": 0, "row": 0, "side": null},
+    {"componentId": "tc_a1", "rank": 1, "column": 0, "row": 1, "side": null},
+    {"componentId": "tc_x1", "rank": 1, "column": 0, "row": 2, "side": null},
+    {"componentId": "tc_a2", "rank": 2, "column": 0, "row": 1, "side": null},
+    {"componentId": "tc_x2", "rank": 2, "column": 0, "row": 2, "side": null},
+    {"componentId": "tc_a3", "rank": 3, "column": 0, "row": 1, "side": null},
+    {"componentId": "tc_x3", "rank": 3, "column": 0, "row": 2, "side": null}
+  ]
+}
