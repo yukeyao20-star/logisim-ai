@@ -1,0 +1,39 @@
+{
+  "name": "jkff",
+  "components": [
+    {"id": "jk_dff", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U1"},
+    {"id": "jk_nk", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "U2"},
+    {"id": "jk_jq", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "U3"},
+    {"id": "jk_kq", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "U4"},
+    {"id": "jk_or", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "U5"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "jk_dff", "targetEndIndex": 0},
+    {"id": "j", "label": "J", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "jk_jq", "targetEndIndex": 0},
+    {"id": "k", "label": "K", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "jk_nk", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "jk_dff", "targetEndIndex": 0},
+    {"id": "q", "label": "Q", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "jk_dff", "targetEndIndex": 0},
+    {"id": "nq", "label": "nQ", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "jk_dff", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "jk_nk1", "endpoints": [{"componentId": "k", "endIndex": 0}, {"componentId": "jk_nk", "endIndex": 1}]},
+    {"id": "jk_jq1", "endpoints": [{"componentId": "j", "endIndex": 0}, {"componentId": "jk_jq", "endIndex": 1}]},
+    {"id": "jk_jq2", "endpoints": [{"componentId": "jk_dff", "endIndex": 3}, {"componentId": "jk_jq", "endIndex": 2}]},
+    {"id": "jk_kq1", "endpoints": [{"componentId": "jk_nk", "endIndex": 0}, {"componentId": "jk_kq", "endIndex": 1}]},
+    {"id": "jk_kq2", "endpoints": [{"componentId": "jk_dff", "endIndex": 2}, {"componentId": "jk_kq", "endIndex": 2}]},
+    {"id": "jk_or1", "endpoints": [{"componentId": "jk_jq", "endIndex": 0}, {"componentId": "jk_or", "endIndex": 1}]},
+    {"id": "jk_or2", "endpoints": [{"componentId": "jk_kq", "endIndex": 0}, {"componentId": "jk_or", "endIndex": 2}]},
+    {"id": "jk_d", "endpoints": [{"componentId": "jk_or", "endIndex": 0}, {"componentId": "jk_dff", "endIndex": 0}]},
+    {"id": "jk_clk", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "jk_dff", "endIndex": 1}]},
+    {"id": "jk_rst", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "jk_dff", "endIndex": 4}]},
+    {"id": "jk_q", "endpoints": [{"componentId": "jk_dff", "endIndex": 2}, {"componentId": "q", "endIndex": 0}]},
+    {"id": "jk_nq", "endpoints": [{"componentId": "jk_dff", "endIndex": 3}, {"componentId": "nq", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "jk_dff", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "jk_nk", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "jk_jq", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "jk_kq", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "jk_or", "rank": 1, "column": 0, "row": 0, "side": null}
+  ]
+}

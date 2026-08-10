@@ -1,0 +1,29 @@
+{
+  "requestKind": "natural_language",
+  "request": "JK触发器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the manifest first and fix its issues before trusting the circuit artifact.",
+  "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit"],
+  "sourceJson": "",
+  "circuitName": "jkff",
+  "circuitPath": "generated\\circ\\jkff.circ",
+  "manifestPath": "generated\\reports\\jkff_circuit_manifest.md",
+  "manifestComplete": null,
+  "manifestCheckCount": null,
+  "manifestIssueCount": null,
+  "artifactCount": 4,
+  "artifacts": [
+    {"path": "generated\\circ\\jkff.circ", "exists": true},
+    {"path": "generated\\reports\\jkff_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\jkff_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\jkff_multichip.md", "exists": true}
+  ]
+}

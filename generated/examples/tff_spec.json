@@ -1,0 +1,23 @@
+{
+  "name": "tff",
+  "components": [
+    {"id": "t0", "library": "Memory", "factory": "T Flip-Flop", "bitWidth": 1, "label": "U1"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "t0", "targetEndIndex": 0},
+    {"id": "t", "label": "T", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "t0", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "t0", "targetEndIndex": 0},
+    {"id": "q", "label": "Q", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "t0", "targetEndIndex": 0},
+    {"id": "nq", "label": "nQ", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "t0", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "t_in", "endpoints": [{"componentId": "t", "endIndex": 0}, {"componentId": "t0", "endIndex": 0}]},
+    {"id": "t_clk", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "t0", "endIndex": 1}]},
+    {"id": "t_rst", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "t0", "endIndex": 4}]},
+    {"id": "t_q", "endpoints": [{"componentId": "t0", "endIndex": 2}, {"componentId": "q", "endIndex": 0}]},
+    {"id": "t_nq", "endpoints": [{"componentId": "t0", "endIndex": 3}, {"componentId": "nq", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "t0", "rank": 0, "column": 0, "row": 0, "side": null}
+  ]
+}

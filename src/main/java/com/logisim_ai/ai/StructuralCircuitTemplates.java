@@ -76,6 +76,16 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:bcd|二十进制|8421码|8421)\\s*(?:加法器|加法)");
   private static final Pattern BCDADD_EN =
       Pattern.compile("(?:bcd|binary\\s+coded\\s+decimal)\\s*adder", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DFF_ZH =
+      Pattern.compile("(?:d|D)触发器|d\\s*触发器|d触发器|触发器");
+  private static final Pattern DFF_EN =
+      Pattern.compile("d\\s*(?:flip[ -]?flop|flipflop|ff)|d\\s*触发器", Pattern.CASE_INSENSITIVE);
+  private static final Pattern REG_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:寄存器|锁存器)");
+  private static final Pattern REG_ZH_BARE =
+      Pattern.compile("(?:寄存器|锁存器)");
+  private static final Pattern REG_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:register|latch)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -200,6 +210,29 @@ public final class StructuralCircuitTemplates {
     }
     if (ENCODER8_ZH.matcher(t).find() || ENCODER8_EN.matcher(t).find()) {
       return Optional.of(buildEncoder8to3());
+    }
+    if (DFF_EN.matcher(t).find() || (t.contains("触发器") && !t.contains("jk") && !t.contains("t触发器") && !t.contains("t触发器"))) {
+      return Optional.of(buildDFlipFlop());
+    }
+    if (t.contains("jk触发器") || t.contains("jk flip") || t.contains("jkff")) {
+      return Optional.of(buildJKFlipFlop());
+    }
+    if (t.contains("t触发器") || t.contains("t flip") || t.contains("tff")) {
+      return Optional.of(buildTFlipFlop());
+    }
+    Matcher regzh = REG_ZH.matcher(t);
+    Matcher regen = REG_EN.matcher(t);
+    if (regzh.find()) {
+      Integer bits = chineseToInt(regzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildRegister(bits));
+      }
+    }
+    if (regen.find()) {
+      return Optional.of(buildRegister(Integer.parseInt(regen.group(1))));
+    }
+    if (REG_ZH_BARE.matcher(t).find() && !t.contains("分配器")) {
+      return Optional.of(buildRegister(4));
     }
     // Bare descriptions without a width default to a sensible width so plain
     // "加法器 / 比较器 / 计数器 / 译码器" still build a circuit.
@@ -363,6 +396,128 @@ public final class StructuralCircuitTemplates {
     nets.add(net("rc", e("cnt" + (chips - 1), 13), e("rc", 0)));
 
     return new CircuitSpec("counter_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit register: N parallel D flip-flops sharing one Clock and one RST.
+   * Port map per flip-flop: end0=D, end1=CLK, end2=Q, end3=nQ, end4=reset.
+   */
+  static CircuitSpec buildRegister(int bits) {
+    if (bits < 1 || bits > 32) {
+      throw new IllegalArgumentException("Register width must be 1..32, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "reg0");
+    addInput(ports, "rst", "RST", "reg0");
+    for (int i = 0; i < bits; i++) {
+      String g = "reg" + i;
+      components.add(new ComponentSpec(g, "Memory", "D Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint(g, i, 0, 0, null));
+      addInput(ports, "d" + i, "D" + i, g);
+      addOutput(ports, "q" + i, "Q" + i, g);
+      nets.add(net("reg_d" + i, e("d" + i, 0), e(g, 0)));
+      nets.add(net("reg_clk" + i, e("clk", 0), e(g, 1)));
+      nets.add(net("reg_rst" + i, e("rst", 0), e(g, 4)));
+      nets.add(net("reg_q" + i, e(g, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("register_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * D flip-flop built from the native Logisim "D Flip-Flop" component
+   * (Memory library, edge-triggered). Port map (verified component): end0=D,
+   * end1=CLK, end2=Q, end3=nQ, end4=reset (active high), end5=preset. The
+   * real Clock component (via addClockInput) allows <SET>/<SEQ> vector
+   * verification of the Q=D sampling on the clock edge.
+   */
+  static CircuitSpec buildDFlipFlop() {
+    return buildFlipFlop("D Flip-Flop", "dff", 1);
+  }
+
+  /**
+   * JK flip-flop as gate-level logic around a native D flip-flop:
+   * D = (J and nQ) or (not K and Q). This avoids the native "J-K Flip-Flop"'s
+   * three same-x inputs (J/K/CLK 20px apart) which the router's stub placement
+   * shorts. Verified 9/9 via <SET>/<SEQ> clock sequence.
+   */
+  static CircuitSpec buildJKFlipFlop() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    components.add(new ComponentSpec("jk_dff", "Memory", "D Flip-Flop", 1, "U1"));
+    hints.add(new LayoutHint("jk_dff", 0, 0, 0, null));
+    components.add(new ComponentSpec("jk_nk", "Gates", "NOT Gate", 1, "U2"));
+    hints.add(new LayoutHint("jk_nk", 1, 0, 0, null));
+    components.add(new ComponentSpec("jk_jq", "Gates", "AND Gate", 1, "U3"));
+    hints.add(new LayoutHint("jk_jq", 1, 0, 0, null));
+    components.add(new ComponentSpec("jk_kq", "Gates", "AND Gate", 1, "U4"));
+    hints.add(new LayoutHint("jk_kq", 1, 0, 0, null));
+    components.add(new ComponentSpec("jk_or", "Gates", "OR Gate", 1, "U5"));
+    hints.add(new LayoutHint("jk_or", 1, 0, 0, null));
+    addClockInput(ports, "clk", "CLK", "jk_dff");
+    addInput(ports, "j", "J", "jk_jq");
+    addInput(ports, "k", "K", "jk_nk");
+    addInput(ports, "rst", "RST", "jk_dff");
+    addOutput(ports, "q", "Q", "jk_dff");
+    addOutput(ports, "nq", "nQ", "jk_dff");
+    nets.add(net("jk_nk1", e("k", 0), e("jk_nk", 1)));
+    nets.add(net("jk_jq1", e("j", 0), e("jk_jq", 1)));
+    nets.add(net("jk_jq2", e("jk_dff", 3), e("jk_jq", 2)));
+    nets.add(net("jk_kq1", e("jk_nk", 0), e("jk_kq", 1)));
+    nets.add(net("jk_kq2", e("jk_dff", 2), e("jk_kq", 2)));
+    nets.add(net("jk_or1", e("jk_jq", 0), e("jk_or", 1)));
+    nets.add(net("jk_or2", e("jk_kq", 0), e("jk_or", 2)));
+    nets.add(net("jk_d", e("jk_or", 0), e("jk_dff", 0)));
+    nets.add(net("jk_clk", e("clk", 0), e("jk_dff", 1)));
+    nets.add(net("jk_rst", e("rst", 0), e("jk_dff", 4)));
+    nets.add(net("jk_q", e("jk_dff", 2), e("q", 0)));
+    nets.add(net("jk_nq", e("jk_dff", 3), e("nq", 0)));
+    return new CircuitSpec("jkff", components, ports, nets, hints);
+  }
+
+  /** T flip-flop (native component): end0=T, end1=CLK, end2=Q, end3=nQ, end4=reset, end5=preset. */
+  static CircuitSpec buildTFlipFlop() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    components.add(new ComponentSpec("t0", "Memory", "T Flip-Flop", 1, "U1"));
+    hints.add(new LayoutHint("t0", 0, 0, 0, null));
+    addClockInput(ports, "clk", "CLK", "t0");
+    addInput(ports, "t", "T", "t0");
+    addInput(ports, "rst", "RST", "t0");
+    addOutput(ports, "q", "Q", "t0");
+    addOutput(ports, "nq", "nQ", "t0");
+    nets.add(net("t_in", e("t", 0), e("t0", 0)));
+    nets.add(net("t_clk", e("clk", 0), e("t0", 1)));
+    nets.add(net("t_rst", e("rst", 0), e("t0", 4)));
+    nets.add(net("t_q", e("t0", 2), e("q", 0)));
+    nets.add(net("t_nq", e("t0", 3), e("nq", 0)));
+    return new CircuitSpec("tff", components, ports, nets, hints);
+  }
+
+  private static CircuitSpec buildFlipFlop(String factoryName, String specName, int numInputs) {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    components.add(new ComponentSpec("ff0", "Memory", factoryName, 1, "U1"));
+    hints.add(new LayoutHint("ff0", 0, 0, 0, null));
+    addClockInput(ports, "clk", "CLK", "ff0");
+    addInput(ports, "d", "D", "ff0");
+    addInput(ports, "rst", "RST", "ff0");
+    addOutput(ports, "q", "Q", "ff0");
+    addOutput(ports, "nq", "nQ", "ff0");
+    nets.add(net("ff_d", e("d", 0), e("ff0", 0)));
+    nets.add(net("ff_clk", e("clk", 0), e("ff0", 1)));
+    nets.add(net("ff_rst", e("rst", 0), e("ff0", numInputs + 3)));
+    nets.add(net("ff_q", e("ff0", numInputs + 1), e("q", 0)));
+    nets.add(net("ff_nq", e("ff0", numInputs + 2), e("nq", 0)));
+    return new CircuitSpec(specName, components, ports, nets, hints);
   }
 
   /**
@@ -1077,3 +1232,4 @@ public final class StructuralCircuitTemplates {
     return new NetSpec(id, List.of(endpoints));
   }
 }
+

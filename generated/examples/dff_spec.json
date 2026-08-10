@@ -1,0 +1,23 @@
+{
+  "name": "dff",
+  "components": [
+    {"id": "dff0", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U1"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "dff0", "targetEndIndex": 0},
+    {"id": "d", "label": "D", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "dff0", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "dff0", "targetEndIndex": 0},
+    {"id": "q", "label": "Q", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "dff0", "targetEndIndex": 0},
+    {"id": "nq", "label": "nQ", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "dff0", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "dff_d", "endpoints": [{"componentId": "d", "endIndex": 0}, {"componentId": "dff0", "endIndex": 0}]},
+    {"id": "dff_clk", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "dff0", "endIndex": 1}]},
+    {"id": "dff_rst", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "dff0", "endIndex": 4}]},
+    {"id": "dff_q", "endpoints": [{"componentId": "dff0", "endIndex": 2}, {"componentId": "q", "endIndex": 0}]},
+    {"id": "dff_nq", "endpoints": [{"componentId": "dff0", "endIndex": 3}, {"componentId": "nq", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "dff0", "rank": 0, "column": 0, "row": 0, "side": null}
+  ]
+}

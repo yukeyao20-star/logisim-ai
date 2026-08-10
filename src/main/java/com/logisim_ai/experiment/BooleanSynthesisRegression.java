@@ -208,6 +208,10 @@ public final class BooleanSynthesisRegression {
     String[][] cases = {
         {"counter_4bit", "cnt4c.vec", "11", "0"},
         {"counter_8bit", "cnt8c.vec", "34", "0"},
+        {"dff", "dff.vec", "7", "0"},
+        {"jkff", "jkff.vec", "9", "0"},
+        {"tff", "tff.vec", "9", "0"},
+        {"register_4bit", "reg4.vec", "7", "0"},
     };
     java.io.File jarProbe = new java.io.File(
         System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
