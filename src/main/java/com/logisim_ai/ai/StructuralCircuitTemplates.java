@@ -152,6 +152,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
       Pattern.compile("sequence detector|101 detector|101\\s*sequence", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BSREG_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:双向移位寄存器|左右移位寄存器|双向移位)");
+  private static final Pattern BSREG_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:bidirectional\\s*shift\\s*register|left[- ]right\\s*shift\\s*register)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BSREG_ZH_BARE =
+      Pattern.compile("双向移位寄存器|左右移位寄存器|双向移位");
+  private static final Pattern BSREG_EN_BARE =
+      Pattern.compile("bidirectional\\s*shift|left[- ]right\\s*shift", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -379,6 +387,22 @@ public final class StructuralCircuitTemplates {
     }
     if (SEQDET_ZH.matcher(t).find() || SEQDET_EN.matcher(t).find()) {
       return Optional.of(buildSequenceDetector101());
+    }
+    // Bidirectional shift register. Must precede SHIFTREG (双向移位寄存器
+    // contains 移位寄存器, which the uni-directional pattern would grab).
+    Matcher bsregzh = BSREG_ZH.matcher(t);
+    Matcher bsregen = BSREG_EN.matcher(t);
+    if (bsregzh.find()) {
+      Integer bits = chineseToInt(bsregzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildBidirectionalShiftRegister(bits));
+      }
+    }
+    if (bsregen.find()) {
+      return Optional.of(buildBidirectionalShiftRegister(Integer.parseInt(bsregen.group(1))));
+    }
+    if (BSREG_ZH_BARE.matcher(t).find() || BSREG_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildBidirectionalShiftRegister(4));
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
     Matcher shren = SHIFTREG_EN.matcher(t);
@@ -719,6 +743,64 @@ public final class StructuralCircuitTemplates {
       nets.add(net("sr_q" + i, e(g, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("shiftreg_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit bidirectional shift register: DIR=0 shifts right (D0=SIN,
+   * D_i=Q_{i-1}), DIR=1 shifts left (D_{n-1}=SINL, D_i=Q_{i+1}). Each stage's
+   * D is a 2:1 mux D_i = (¬DIR·right_src) ∨ (DIR·left_src). Shared CLK/RST.
+   * Port maps: D-FF end0=D, end1=CLK, end2=Q, end4=reset; NOT end0=out/end1=in;
+   * AND/OR end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildBidirectionalShiftRegister(int bits) {
+    if (bits < 2 || bits > 32) {
+      throw new IllegalArgumentException("Bidirectional shift register width must be 2..32, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "bs0");
+    addInput(ports, "dir", "DIR", "bs0");
+    addInput(ports, "sin", "SIN", "bs0");
+    addInput(ports, "sinl", "SINL", "bs" + (bits - 1));
+    addInput(ports, "rst", "RST", "bs0");
+    components.add(new ComponentSpec("bsn", "Gates", "NOT Gate", 1, "N1"));
+    hints.add(new LayoutHint("bsn", 0, 0, 0, null));
+    for (int i = 0; i < bits; i++) {
+      String g = "bs" + i;
+      components.add(new ComponentSpec(g, "Memory", "D Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint(g, i + 1, 0, 0, null));
+      addOutput(ports, "q" + i, "Q" + i, g);
+    }
+    nets.add(net("bs_n_dir", e("dir", 0), e("bsn", 1)));
+    for (int i = 0; i < bits; i++) {
+      String g = "bs" + i;
+      String ar = "ba" + i + "_r";
+      String al = "ba" + i + "_l";
+      String or = "bo" + i;
+      components.add(new ComponentSpec(ar, "Gates", "AND Gate", 1, "AR" + (i + 1)));
+      components.add(new ComponentSpec(al, "Gates", "AND Gate", 1, "AL" + (i + 1)));
+      components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "OR" + (i + 1)));
+      hints.add(new LayoutHint(ar, i + 1, 0, 1, null));
+      hints.add(new LayoutHint(al, i + 1, 0, 2, null));
+      hints.add(new LayoutHint(or, i + 1, 0, 3, null));
+      String rightSrc = i == 0 ? "sin" : "bs" + (i - 1);
+      int rightEnd = i == 0 ? 0 : 2;
+      String leftSrc = i == bits - 1 ? "sinl" : "bs" + (i + 1);
+      int leftEnd = i == bits - 1 ? 0 : 2;
+      nets.add(net("bs_ar" + i + "_nd", e("bsn", 0), e(ar, 1)));
+      nets.add(net("bs_ar" + i + "_src", e(rightSrc, rightEnd), e(ar, 2)));
+      nets.add(net("bs_al" + i + "_d", e("dir", 0), e(al, 1)));
+      nets.add(net("bs_al" + i + "_src", e(leftSrc, leftEnd), e(al, 2)));
+      nets.add(net("bs_bo" + i + "_r", e(ar, 0), e(or, 1)));
+      nets.add(net("bs_bo" + i + "_l", e(al, 0), e(or, 2)));
+      nets.add(net("bs_d" + i, e(or, 0), e(g, 0)));
+      nets.add(net("bs_clk" + i, e("clk", 0), e(g, 1)));
+      nets.add(net("bs_rst" + i, e("rst", 0), e(g, 4)));
+      nets.add(net("bs_q" + i, e(g, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("bidirsreg_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**
