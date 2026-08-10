@@ -1,0 +1,14 @@
+{
+  "circuitName": "logic_f_abc_xor",
+  "rowCount": 8,
+  "rows": [
+    {"inputs": {"a": false, "b": false, "c": false}, "outputs": {"f": false}},
+    {"inputs": {"a": false, "b": false, "c": true}, "outputs": {"f": true}},
+    {"inputs": {"a": false, "b": true, "c": false}, "outputs": {"f": true}},
+    {"inputs": {"a": false, "b": true, "c": true}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": false, "c": false}, "outputs": {"f": true}},
+    {"inputs": {"a": true, "b": false, "c": true}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": true, "c": false}, "outputs": {"f": false}},
+    {"inputs": {"a": true, "b": true, "c": true}, "outputs": {"f": true}}
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "楼梯灯",
+  "request": "两个数不相等",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

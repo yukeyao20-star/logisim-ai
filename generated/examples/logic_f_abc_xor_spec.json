@@ -1,0 +1,24 @@
+{
+  "name": "logic_f_abc_xor",
+  "components": [
+    {"id": "xor1", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": ""},
+    {"id": "xor2", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": ""}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "xor1", "targetEndIndex": 1},
+    {"id": "b", "label": "B", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "xor1", "targetEndIndex": 2},
+    {"id": "c", "label": "C", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "xor2", "targetEndIndex": 2},
+    {"id": "f", "label": "F", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "xor2", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "net_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "xor1", "endIndex": 1}]},
+    {"id": "net_b", "endpoints": [{"componentId": "b", "endIndex": 0}, {"componentId": "xor1", "endIndex": 2}]},
+    {"id": "net_c", "endpoints": [{"componentId": "c", "endIndex": 0}, {"componentId": "xor2", "endIndex": 2}]},
+    {"id": "net_i1", "endpoints": [{"componentId": "xor1", "endIndex": 0}, {"componentId": "xor2", "endIndex": 1}]},
+    {"id": "net_i2", "endpoints": [{"componentId": "xor2", "endIndex": 0}, {"componentId": "f", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "xor1", "rank": 1, "column": 1, "row": 0, "side": null},
+    {"componentId": "xor2", "rank": 2, "column": 2, "row": 1, "side": null}
+  ]
+}
