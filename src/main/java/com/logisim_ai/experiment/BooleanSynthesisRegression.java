@@ -229,6 +229,7 @@ public final class BooleanSynthesisRegression {
         {"updown_counter_4bit", "updown.vec", "17", "0"},
         {"lfsr_4bit", "lfsr.vec", "33", "0"},
         {"demux_4to1", "demux.vec", "8", "0"},
+        {"mod7_counter", "mod7.vec", "17", "0"},
     };
     java.io.File jarProbe = new java.io.File(
         System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",

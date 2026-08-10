@@ -325,7 +325,8 @@ public final class GenerateAndGate {
           || spec.name().equals("bcd_counter")
           || spec.name().startsWith("updown_counter_")
           || spec.name().startsWith("lfsr_")
-          || spec.name().startsWith("demux_");
+          || spec.name().startsWith("demux_")
+          || spec.name().matches("mod\\d+_counter");
       if (structural) {
         // Structural templates route directly (no Tunnels): reliable wiring for
         // dense fan-out circuits like decoders, and every gate sits in its own

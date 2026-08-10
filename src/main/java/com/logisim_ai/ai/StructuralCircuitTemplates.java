@@ -66,6 +66,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("可逆计数器|加减计数器|加減计数器");
   private static final Pattern UDCNT_EN_BARE =
       Pattern.compile("up[- ]?down\\s*counter|bidirectional\\s*counter", Pattern.CASE_INSENSITIVE);
+  private static final Pattern MODCNT_ZH =
+      Pattern.compile("模([0-9一二三四五六七八九十两]{1,2})计数器|([0-9一二三四五六七八九十两]{1,2})进制计数器");
+  private static final Pattern MODCNT_EN =
+      Pattern.compile("mod[- ]?(\\d{1,2})\\s*counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern PARITY_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:奇偶校验器|奇偶校验|偶校验器|奇校验器)");
   private static final Pattern PARITY_EN =
@@ -346,6 +350,22 @@ public final class StructuralCircuitTemplates {
     }
     if (UDCNT_ZH_BARE.matcher(t).find() || UDCNT_EN_BARE.matcher(t).find()) {
       return Optional.of(buildUpDownCounter(4));
+    }
+    // Generic mod-N counter. Exclude N=2/10 (binary counter / BCD counter handle
+    // 二进制计数器 and 十进制计数器 before reaching here).
+    Matcher modzh = MODCNT_ZH.matcher(t);
+    Matcher moden = MODCNT_EN.matcher(t);
+    if (modzh.find()) {
+      Integer n = modzh.group(1) != null ? chineseToInt(modzh.group(1)) : chineseToInt(modzh.group(2));
+      if (n != null && n != 2 && n != 10) {
+        return Optional.of(buildModCounter(n));
+      }
+    }
+    if (moden.find()) {
+      int n = Integer.parseInt(moden.group(1));
+      if (n != 2 && n != 10) {
+        return Optional.of(buildModCounter(n));
+      }
     }
     Matcher ctrzh = COUNTER_ZH.matcher(t);
     Matcher ctrEn = COUNTER_EN.matcher(t);
@@ -1060,6 +1080,115 @@ public final class StructuralCircuitTemplates {
       nets.add(net("ud_q" + i, e("ud" + i, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("updown_counter_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * Generic N-bit... mod-N counter (模N计数器, N in 2..16): counts 0..N-1 then
+   * wraps to 0. Synchronous T-FF: atN is the minterm detecting state N-1;
+   * T_i = (normal_i·¬atN) ∨ (atN·bit_i(N-1)) where normal_i = AND(Q0..Q_{i-1})
+   * (normal_0 = 1). Constant-1 (T_0 when bit0 of N-1 is 1) is synthesized as
+   * ¬atN ∨ atN since the IR has no internal constant. Shared CLK/RST.
+   * Port maps: T-FF end0=T, end1=CLK, end2=Q, end4=reset; NOT end0=out/end1=in;
+   * AND/OR end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildModCounter(int n) {
+    if (n < 2 || n > 16) {
+      throw new IllegalArgumentException("Mod-N counter N must be 2..16, got " + n);
+    }
+    int nMinus1 = n - 1;
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "mc0");
+    addInput(ports, "rst", "RST", "mc0");
+    for (int i = 0; i < 4; i++) {
+      addOutput(ports, "q" + i, "Q" + i, "mc" + i);
+      components.add(new ComponentSpec("mc" + i, "Memory", "T Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint("mc" + i, i, 0, 0, null));
+    }
+    // atN = minterm detecting N-1 over Q3..Q0
+    String atN = null;
+    int atNEnd = 0;
+    for (int j = 0; j < 4; j++) {
+      boolean one = ((nMinus1 >> j) & 1) == 1;
+      String lit;
+      int litEnd;
+      if (one) {
+        lit = "mc" + j; // T-FF, Q output is end2
+        litEnd = 2;
+      } else {
+        lit = "mcn" + j; // NOT gate output is end0
+        litEnd = 0;
+        components.add(new ComponentSpec(lit, "Gates", "NOT Gate", 1, "N" + (j + 1)));
+        hints.add(new LayoutHint(lit, 4, 0, j, null));
+        nets.add(net("mcn" + j + "_in", e("mc" + j, 2), e(lit, 1)));
+      }
+      if (atN == null) {
+        atN = lit;
+        atNEnd = litEnd;
+      } else {
+        String gate = "mc_at" + j;
+        components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "AT" + (j + 1)));
+        hints.add(new LayoutHint(gate, 4, 0, 4 + j, null));
+        nets.add(net("mc_at" + j + "_a", e(atN, atNEnd), e(gate, 1)));
+        nets.add(net("mc_at" + j + "_b", e(lit, litEnd), e(gate, 2)));
+        atN = gate;
+        atNEnd = 0;
+      }
+    }
+    String notAt = "mc_notat";
+    components.add(new ComponentSpec(notAt, "Gates", "NOT Gate", 1, "NA"));
+    hints.add(new LayoutHint(notAt, 4, 0, 8, null));
+    nets.add(net("mc_notat_in", e(atN, 0), e(notAt, 1)));
+    String normSrc = "mc0";
+    int normEnd = 2;
+    for (int i = 0; i < 4; i++) {
+      boolean bitOne = ((nMinus1 >> i) & 1) == 1;
+      if (i == 0) {
+        if (bitOne) {
+          String or = "mc_t0";
+          components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "T0"));
+          hints.add(new LayoutHint(or, 0, 0, 1, null));
+          nets.add(net("mc_t0_a", e(notAt, 0), e(or, 1)));
+          nets.add(net("mc_t0_b", e(atN, 0), e(or, 2)));
+          nets.add(net("mc_t0_out", e(or, 0), e("mc0", 0)));
+        } else {
+          nets.add(net("mc_t0", e(notAt, 0), e("mc0", 0)));
+        }
+      } else {
+        if (i >= 2) {
+          String ng = "mc_norm" + i;
+          components.add(new ComponentSpec(ng, "Gates", "AND Gate", 1, "NR" + i));
+          hints.add(new LayoutHint(ng, i, 0, 1, null));
+          nets.add(net("mc_norm" + i + "_a", e(normSrc, normEnd), e(ng, 1)));
+          nets.add(net("mc_norm" + i + "_b", e("mc" + (i - 1), 2), e(ng, 2)));
+          normSrc = ng;
+          normEnd = 0;
+        }
+        String main = "mc_t" + i + "m";
+        components.add(new ComponentSpec(main, "Gates", "AND Gate", 1, "TM" + i));
+        hints.add(new LayoutHint(main, i, 0, 2, null));
+        nets.add(net("mc_t" + i + "m_n", e(normSrc, normEnd), e(main, 1)));
+        nets.add(net("mc_t" + i + "m_na", e(notAt, 0), e(main, 2)));
+        if (bitOne) {
+          String or = "mc_t" + i;
+          components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "TO" + i));
+          hints.add(new LayoutHint(or, i, 0, 3, null));
+          nets.add(net("mc_t" + i + "_m", e(main, 0), e(or, 1)));
+          nets.add(net("mc_t" + i + "_at", e(atN, 0), e(or, 2)));
+          nets.add(net("mc_t" + i + "_out", e(or, 0), e("mc" + i, 0)));
+        } else {
+          nets.add(net("mc_t" + i, e(main, 0), e("mc" + i, 0)));
+        }
+      }
+    }
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("mc_clk" + i, e("clk", 0), e("mc" + i, 1)));
+      nets.add(net("mc_rst" + i, e("rst", 0), e("mc" + i, 4)));
+      nets.add(net("mc_q" + i, e("mc" + i, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("mod" + n + "_counter", components, ports, nets, hints);
   }
 
   /**
