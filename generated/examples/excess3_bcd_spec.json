@@ -1,0 +1,49 @@
+{
+  "name": "excess3_bcd",
+  "components": [
+    {"id": "e3_x1", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "U1"},
+    {"id": "e3_n2", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "U2"},
+    {"id": "e3_n1", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "U3"},
+    {"id": "e3_o", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "U4"},
+    {"id": "e3_x4", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "U5"},
+    {"id": "e3_a", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "U6"},
+    {"id": "e3_x8", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "U7"}
+  ],
+  "externalPorts": [
+    {"id": "z", "label": "D1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "e3_x1", "targetEndIndex": 0},
+    {"id": "y", "label": "D2", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "e3_x1", "targetEndIndex": 0},
+    {"id": "x", "label": "D4", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "e3_x4", "targetEndIndex": 0},
+    {"id": "w", "label": "D8", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "e3_x8", "targetEndIndex": 0},
+    {"id": "e1", "label": "E1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "e3_n1", "targetEndIndex": 0},
+    {"id": "e2", "label": "E2", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "e3_n2", "targetEndIndex": 0},
+    {"id": "e4", "label": "E4", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "e3_x4", "targetEndIndex": 0},
+    {"id": "e8", "label": "E8", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "e3_x8", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "e3_x1_y", "endpoints": [{"componentId": "y", "endIndex": 0}, {"componentId": "e3_x1", "endIndex": 1}]},
+    {"id": "e3_x1_z", "endpoints": [{"componentId": "z", "endIndex": 0}, {"componentId": "e3_x1", "endIndex": 2}]},
+    {"id": "e3_n2_in", "endpoints": [{"componentId": "e3_x1", "endIndex": 0}, {"componentId": "e3_n2", "endIndex": 1}]},
+    {"id": "e3_e2", "endpoints": [{"componentId": "e3_n2", "endIndex": 0}, {"componentId": "e2", "endIndex": 0}]},
+    {"id": "e3_n1_in", "endpoints": [{"componentId": "z", "endIndex": 0}, {"componentId": "e3_n1", "endIndex": 1}]},
+    {"id": "e3_e1", "endpoints": [{"componentId": "e3_n1", "endIndex": 0}, {"componentId": "e1", "endIndex": 0}]},
+    {"id": "e3_o_y", "endpoints": [{"componentId": "y", "endIndex": 0}, {"componentId": "e3_o", "endIndex": 1}]},
+    {"id": "e3_o_z", "endpoints": [{"componentId": "z", "endIndex": 0}, {"componentId": "e3_o", "endIndex": 2}]},
+    {"id": "e3_x4_x", "endpoints": [{"componentId": "x", "endIndex": 0}, {"componentId": "e3_x4", "endIndex": 1}]},
+    {"id": "e3_x4_o", "endpoints": [{"componentId": "e3_o", "endIndex": 0}, {"componentId": "e3_x4", "endIndex": 2}]},
+    {"id": "e3_e4", "endpoints": [{"componentId": "e3_x4", "endIndex": 0}, {"componentId": "e4", "endIndex": 0}]},
+    {"id": "e3_a_x", "endpoints": [{"componentId": "x", "endIndex": 0}, {"componentId": "e3_a", "endIndex": 1}]},
+    {"id": "e3_a_o", "endpoints": [{"componentId": "e3_o", "endIndex": 0}, {"componentId": "e3_a", "endIndex": 2}]},
+    {"id": "e3_x8_w", "endpoints": [{"componentId": "w", "endIndex": 0}, {"componentId": "e3_x8", "endIndex": 1}]},
+    {"id": "e3_x8_a", "endpoints": [{"componentId": "e3_a", "endIndex": 0}, {"componentId": "e3_x8", "endIndex": 2}]},
+    {"id": "e3_e8", "endpoints": [{"componentId": "e3_x8", "endIndex": 0}, {"componentId": "e8", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "e3_x1", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "e3_n2", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "e3_n1", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "e3_o", "rank": 3, "column": 0, "row": 0, "side": null},
+    {"componentId": "e3_x4", "rank": 4, "column": 0, "row": 0, "side": null},
+    {"componentId": "e3_a", "rank": 5, "column": 0, "row": 0, "side": null},
+    {"componentId": "e3_x8", "rank": 6, "column": 0, "row": 0, "side": null}
+  ]
+}

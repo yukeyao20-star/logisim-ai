@@ -132,6 +132,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("格雷码转二进制|格雷转二进制");
   private static final Pattern G2B_EN_BARE =
       Pattern.compile("gray[- ]to[- ]binary|gray\\s*cod[ed]?\\s*to\\s*binary", Pattern.CASE_INSENSITIVE);
+  private static final Pattern E3_ZH =
+      Pattern.compile("余三码|余3码|8421码转余3|8421转余3");
+  private static final Pattern E3_EN =
+      Pattern.compile("excess[- ]?3|bcd[- ]to[- ]excess", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -285,6 +289,10 @@ public final class StructuralCircuitTemplates {
     if (ENCODER8_ZH.matcher(t).find() || ENCODER8_EN.matcher(t).find()) {
       return Optional.of(buildEncoder8to3());
     }
+    // Bare "优先编码器" without an 8-3 spec defaults to the 8-to-3 encoder.
+    if (t.contains("优先编码器") || t.contains("priority encoder")) {
+      return Optional.of(buildEncoder8to3());
+    }
     if (DFF_EN.matcher(t).find() || (t.contains("触发器") && !t.contains("jk") && !t.contains("t触发器") && !t.contains("t触发器"))) {
       return Optional.of(buildDFlipFlop());
     }
@@ -328,6 +336,12 @@ public final class StructuralCircuitTemplates {
       }
       if (GRAY_ZH_BARE.matcher(t).find() || GRAY_EN_BARE.matcher(t).find()) {
         return Optional.of(buildGrayCode(4));
+      }
+    }
+    // BCD → excess-3 (余3码). Guard the inverse "余3码转8421 / to bcd".
+    if (!t.contains("转8421") && !t.contains("to bcd")) {
+      if (E3_ZH.matcher(t).find() || E3_EN.matcher(t).find()) {
+        return Optional.of(buildExcess3());
       }
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
@@ -797,6 +811,61 @@ public final class StructuralCircuitTemplates {
     }
     nets.add(net("g2b_msb", e("g" + (bits - 1), 0), e("b" + (bits - 1), 0)));
     return new CircuitSpec("gray2bin_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * 4-bit BCD → excess-3 (余3码) converter: E3 = BCD + 3. With BCD bits
+   * (w,x,y,z) = (D8,D4,D2,D1): E1=¬z, E2=¬(y⊕z), E4=x⊕(y∨z), E8=w⊕(x∧(y∨z)).
+   * Combinational; 3 XOR + 2 NOT + 1 OR + 1 AND. 2-input gates end0=out,
+   * end1/end2=in; NOT end0=out, end1=in.
+   */
+  static CircuitSpec buildExcess3() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addInput(ports, "z", "D1", "e3_x1");
+    addInput(ports, "y", "D2", "e3_x1");
+    addInput(ports, "x", "D4", "e3_x4");
+    addInput(ports, "w", "D8", "e3_x8");
+    addOutput(ports, "e1", "E1", "e3_n1");
+    addOutput(ports, "e2", "E2", "e3_n2");
+    addOutput(ports, "e4", "E4", "e3_x4");
+    addOutput(ports, "e8", "E8", "e3_x8");
+    components.add(new ComponentSpec("e3_x1", "Gates", "XOR Gate", 1, "U1"));
+    components.add(new ComponentSpec("e3_n2", "Gates", "NOT Gate", 1, "U2"));
+    components.add(new ComponentSpec("e3_n1", "Gates", "NOT Gate", 1, "U3"));
+    components.add(new ComponentSpec("e3_o", "Gates", "OR Gate", 1, "U4"));
+    components.add(new ComponentSpec("e3_x4", "Gates", "XOR Gate", 1, "U5"));
+    components.add(new ComponentSpec("e3_a", "Gates", "AND Gate", 1, "U6"));
+    components.add(new ComponentSpec("e3_x8", "Gates", "XOR Gate", 1, "U7"));
+    hints.add(new LayoutHint("e3_x1", 0, 0, 0, null));
+    hints.add(new LayoutHint("e3_n2", 1, 0, 0, null));
+    hints.add(new LayoutHint("e3_n1", 2, 0, 0, null));
+    hints.add(new LayoutHint("e3_o", 3, 0, 0, null));
+    hints.add(new LayoutHint("e3_x4", 4, 0, 0, null));
+    hints.add(new LayoutHint("e3_a", 5, 0, 0, null));
+    hints.add(new LayoutHint("e3_x8", 6, 0, 0, null));
+    // E2 = ¬(y⊕z)
+    nets.add(net("e3_x1_y", e("y", 0), e("e3_x1", 1)));
+    nets.add(net("e3_x1_z", e("z", 0), e("e3_x1", 2)));
+    nets.add(net("e3_n2_in", e("e3_x1", 0), e("e3_n2", 1)));
+    nets.add(net("e3_e2", e("e3_n2", 0), e("e2", 0)));
+    // E1 = ¬z
+    nets.add(net("e3_n1_in", e("z", 0), e("e3_n1", 1)));
+    nets.add(net("e3_e1", e("e3_n1", 0), e("e1", 0)));
+    // OR1 = y∨z; E4 = x⊕OR1; carry3 = x∧OR1; E8 = w⊕carry3
+    nets.add(net("e3_o_y", e("y", 0), e("e3_o", 1)));
+    nets.add(net("e3_o_z", e("z", 0), e("e3_o", 2)));
+    nets.add(net("e3_x4_x", e("x", 0), e("e3_x4", 1)));
+    nets.add(net("e3_x4_o", e("e3_o", 0), e("e3_x4", 2)));
+    nets.add(net("e3_e4", e("e3_x4", 0), e("e4", 0)));
+    nets.add(net("e3_a_x", e("x", 0), e("e3_a", 1)));
+    nets.add(net("e3_a_o", e("e3_o", 0), e("e3_a", 2)));
+    nets.add(net("e3_x8_w", e("w", 0), e("e3_x8", 1)));
+    nets.add(net("e3_x8_a", e("e3_a", 0), e("e3_x8", 2)));
+    nets.add(net("e3_e8", e("e3_x8", 0), e("e8", 0)));
+    return new CircuitSpec("excess3_bcd", components, ports, nets, hints);
   }
 
   /**
