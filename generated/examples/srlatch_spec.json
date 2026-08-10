@@ -1,0 +1,25 @@
+{
+  "name": "srlatch",
+  "components": [
+    {"id": "sr_q", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": "U1"},
+    {"id": "sr_nq", "library": "Gates", "factory": "NAND Gate", "bitWidth": 1, "label": "U2"}
+  ],
+  "externalPorts": [
+    {"id": "s", "label": "S", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "sr_nq", "targetEndIndex": 0},
+    {"id": "r", "label": "R", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "sr_q", "targetEndIndex": 0},
+    {"id": "q", "label": "Q", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "sr_q", "targetEndIndex": 0},
+    {"id": "nq", "label": "nQ", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "sr_nq", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "sr_q1", "endpoints": [{"componentId": "s", "endIndex": 0}, {"componentId": "sr_q", "endIndex": 1}]},
+    {"id": "sr_nq_fb", "endpoints": [{"componentId": "sr_nq", "endIndex": 0}, {"componentId": "sr_q", "endIndex": 2}]},
+    {"id": "sr_nq1", "endpoints": [{"componentId": "r", "endIndex": 0}, {"componentId": "sr_nq", "endIndex": 1}]},
+    {"id": "sr_q_fb", "endpoints": [{"componentId": "sr_q", "endIndex": 0}, {"componentId": "sr_nq", "endIndex": 2}]},
+    {"id": "sr_qout", "endpoints": [{"componentId": "sr_q", "endIndex": 0}, {"componentId": "q", "endIndex": 0}]},
+    {"id": "sr_nqout", "endpoints": [{"componentId": "sr_nq", "endIndex": 0}, {"componentId": "nq", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "sr_q", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "sr_nq", "rank": 0, "column": 0, "row": 0, "side": null}
+  ]
+}

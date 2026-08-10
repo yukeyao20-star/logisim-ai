@@ -86,6 +86,16 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:寄存器|锁存器)");
   private static final Pattern REG_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:register|latch)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SHIFTREG_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:移位寄存器|移位寄存器|串行寄存器|shift寄存器)");
+  private static final Pattern SHIFTREG_ZH_BARE =
+      Pattern.compile("(?:移位寄存器|移位寄存器)");
+  private static final Pattern SHIFTREG_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:shift\\s*register|sipo|piso)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SR_ZH =
+      Pattern.compile("(?:sr|s-r|rs|r-s)\\s*(?:触发器|锁存器)|(?:sr|s-r|rs|r-s)\\s*latch", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BUZZER_ZH =
+      Pattern.compile("抢答器|优先抢答|抢答电路");
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -220,6 +230,20 @@ public final class StructuralCircuitTemplates {
     if (t.contains("t触发器") || t.contains("t flip") || t.contains("tff")) {
       return Optional.of(buildTFlipFlop());
     }
+    Matcher shrzh = SHIFTREG_ZH.matcher(t);
+    Matcher shren = SHIFTREG_EN.matcher(t);
+    if (shrzh.find()) {
+      Integer bits = chineseToInt(shrzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildShiftRegister(bits));
+      }
+    }
+    if (shren.find()) {
+      return Optional.of(buildShiftRegister(Integer.parseInt(shren.group(1))));
+    }
+    if (SHIFTREG_ZH_BARE.matcher(t).find()) {
+      return Optional.of(buildShiftRegister(4));
+    }
     Matcher regzh = REG_ZH.matcher(t);
     Matcher regen = REG_EN.matcher(t);
     if (regzh.find()) {
@@ -233,6 +257,9 @@ public final class StructuralCircuitTemplates {
     }
     if (REG_ZH_BARE.matcher(t).find() && !t.contains("分配器")) {
       return Optional.of(buildRegister(4));
+    }
+    if (BUZZER_ZH.matcher(t).find() || SR_ZH.matcher(t).find()) {
+      return Optional.of(buildSRLatch());
     }
     // Bare descriptions without a width default to a sensible width so plain
     // "加法器 / 比较器 / 计数器 / 译码器" still build a circuit.
@@ -424,6 +451,68 @@ public final class StructuralCircuitTemplates {
       nets.add(net("reg_q" + i, e(g, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("register_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit serial-in shift register: N D flip-flops chained Q[i-1] -> D[i];
+   * serial input DIN feeds D[0]. Shared CLK and RST. Port map per flip-flop:
+   * end0=D, end1=CLK, end2=Q, end3=nQ, end4=reset.
+   */
+  static CircuitSpec buildShiftRegister(int bits) {
+    if (bits < 1 || bits > 32) {
+      throw new IllegalArgumentException("Shift register width must be 1..32, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "sreg0");
+    addInput(ports, "din", "DIN", "sreg0");
+    addInput(ports, "rst", "RST", "sreg0");
+    for (int i = 0; i < bits; i++) {
+      String g = "sreg" + i;
+      components.add(new ComponentSpec(g, "Memory", "D Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint(g, i, 0, 0, null));
+      addOutput(ports, "q" + i, "Q" + i, g);
+      if (i == 0) {
+        nets.add(net("sr_d" + i, e("din", 0), e(g, 0)));
+      } else {
+        // chain: previous flip-flop's Q output (end2) drives this D input (end0)
+        nets.add(net("sr_d" + i, e("sreg" + (i - 1), 2), e(g, 0)));
+      }
+      nets.add(net("sr_clk" + i, e("clk", 0), e(g, 1)));
+      nets.add(net("sr_rst" + i, e("rst", 0), e(g, 4)));
+      nets.add(net("sr_q" + i, e(g, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("shiftreg_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * Gate-level S-R latch (two NANDs): nQ = NAND(S, Q), Q = NAND(R, nQ).
+   * Async set/reset — the core of a "抢答器" (buzzer) where the first press
+   * latches. Verified via direct S/R drive.
+   */
+  static CircuitSpec buildSRLatch() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    components.add(new ComponentSpec("sr_q", "Gates", "NAND Gate", 1, "U1"));
+    hints.add(new LayoutHint("sr_q", 0, 0, 0, null));
+    components.add(new ComponentSpec("sr_nq", "Gates", "NAND Gate", 1, "U2"));
+    hints.add(new LayoutHint("sr_nq", 0, 0, 0, null));
+    addInput(ports, "s", "S", "sr_nq");
+    addInput(ports, "r", "R", "sr_q");
+    addOutput(ports, "q", "Q", "sr_q");
+    addOutput(ports, "nq", "nQ", "sr_nq");
+    // Standard NAND S-R latch (active-low): Q = NAND(S, nQ); nQ = NAND(R, Q)
+    nets.add(net("sr_q1", e("s", 0), e("sr_q", 1)));
+    nets.add(net("sr_nq_fb", e("sr_nq", 0), e("sr_q", 2)));
+    nets.add(net("sr_nq1", e("r", 0), e("sr_nq", 1)));
+    nets.add(net("sr_q_fb", e("sr_q", 0), e("sr_nq", 2)));
+    nets.add(net("sr_qout", e("sr_q", 0), e("q", 0)));
+    nets.add(net("sr_nqout", e("sr_nq", 0), e("nq", 0)));
+    return new CircuitSpec("srlatch", components, ports, nets, hints);
   }
 
   /**
