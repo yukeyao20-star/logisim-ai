@@ -124,6 +124,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("格雷码|格雷码转换器|二进制转格雷");
   private static final Pattern GRAY_EN_BARE =
       Pattern.compile("binary[- ]to[- ]gray|gray[- ]code|gray\\s*(?:converter|encoder)?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern G2B_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:格雷码转二进制|格雷转二进制|二进制输出)");
+  private static final Pattern G2B_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:gray[- ]to[- ]binary|gray\\s*cod[ed]?\\s*to\\s*binary)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern G2B_ZH_BARE =
+      Pattern.compile("格雷码转二进制|格雷转二进制");
+  private static final Pattern G2B_EN_BARE =
+      Pattern.compile("gray[- ]to[- ]binary|gray\\s*cod[ed]?\\s*to\\s*binary", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -289,8 +297,23 @@ public final class StructuralCircuitTemplates {
     if (DLATCH_ZH.matcher(t).find() || DLATCH_EN.matcher(t).find()) {
       return Optional.of(buildDLatch());
     }
-    // Binary → Gray. Guard the inverse ("格雷码转二进制"/"gray to binary") —
-    // that converter is not built here, so don't silently return the wrong one.
+    // Gray → Binary reverse converter (格雷码转二进制 / gray to binary).
+    Matcher g2bzh = G2B_ZH.matcher(t);
+    Matcher g2ben = G2B_EN.matcher(t);
+    if (g2bzh.find()) {
+      Integer bits = chineseToInt(g2bzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildGrayToBinary(bits));
+      }
+    }
+    if (g2ben.find()) {
+      return Optional.of(buildGrayToBinary(Integer.parseInt(g2ben.group(1))));
+    }
+    if (G2B_ZH_BARE.matcher(t).find() || G2B_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildGrayToBinary(4));
+    }
+    // Binary → Gray forward converter. Guard the inverse query text so a
+    // "转二进制 / to binary" request routes to the reverse converter above.
     Matcher gzh = GRAY_ZH.matcher(t);
     Matcher gen = GRAY_EN.matcher(t);
     if (!t.contains("转二进制") && !t.contains("to binary")) {
@@ -743,6 +766,37 @@ public final class StructuralCircuitTemplates {
     }
     nets.add(net("gx_msb", e("b" + (bits - 1), 0), e("g" + (bits - 1), 0)));
     return new CircuitSpec("gray_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit Gray → binary converter: B_{n-1} = G_{n-1} (MSB direct),
+   * B_i = G_i XOR B_{i+1} (ripple cascade, MSB→LSB). n-1 XOR gates,
+   * purely combinational. XOR: end0=out, end1/end2=in.
+   */
+  static CircuitSpec buildGrayToBinary(int bits) {
+    if (bits < 1 || bits > 32) {
+      throw new IllegalArgumentException("Gray-to-binary width must be 1..32, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    String lastXor = bits >= 2 ? "g2b" + (bits - 2) : "g2b0";
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "g" + i, "G" + i, i == bits - 1 ? lastXor : "g2b" + i);
+      addOutput(ports, "b" + i, "B" + i, i == bits - 1 ? lastXor : "g2b" + i);
+    }
+    for (int i = bits - 2; i >= 0; i--) {
+      String gate = "g2b" + i;
+      components.add(new ComponentSpec(gate, "Gates", "XOR Gate", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint(gate, i, 0, 0, null));
+      nets.add(net("g2b" + i + "_g", e("g" + i, 0), e(gate, 1)));
+      String bSrc = (i == bits - 2) ? "g" + (bits - 1) : "g2b" + (i + 1);
+      nets.add(net("g2b" + i + "_b", e(bSrc, 0), e(gate, 2)));
+      nets.add(net("g2b" + i + "_o", e(gate, 0), e("b" + i, 0)));
+    }
+    nets.add(net("g2b_msb", e("g" + (bits - 1), 0), e("b" + (bits - 1), 0)));
+    return new CircuitSpec("gray2bin_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**
