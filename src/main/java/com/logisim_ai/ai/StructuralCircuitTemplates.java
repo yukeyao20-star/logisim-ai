@@ -50,6 +50,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:二进制计数器|计数器|加法计数器|up计数器|向上计数器)");
   private static final Pattern COUNTER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:binary\\s+)?counter", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BCDCNT_ZH_BARE =
+      Pattern.compile("bcd计数器|十进制计数器|模10计数器|模十计数器|8421计数器");
+  private static final Pattern BCDCNT_EN_BARE =
+      Pattern.compile("bcd\\s*counter|decade\\s*counter|mod[- ]?10\\s*counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern PARITY_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:奇偶校验器|奇偶校验|偶校验器|奇校验器)");
   private static final Pattern PARITY_EN =
@@ -259,6 +263,11 @@ public final class StructuralCircuitTemplates {
         bits++;
       }
       return Optional.of(buildDecoder(bits));
+    }
+    // BCD / decade counter (mod-10). Must precede the 74161 binary counter
+    // and its bare "计数器" fallback below.
+    if (BCDCNT_ZH_BARE.matcher(t).find() || BCDCNT_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildBcdCounter());
     }
     Matcher ctrzh = COUNTER_ZH.matcher(t);
     Matcher ctrEn = COUNTER_EN.matcher(t);
@@ -801,6 +810,77 @@ public final class StructuralCircuitTemplates {
       nets.add(net("bs_q" + i, e(g, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("bidirsreg_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * Synchronous BCD (mod-10) counter from T flip-flops. Equations (verified by
+   * hand, no async-clear transient): T0=EN, T1=Q0·¬Q3, T2=Q0·Q1·¬Q3,
+   * T3=Q0·Q1·Q2 + Q0·Q3 → counts 0..9 then wraps 9→0. Shared CLK/RST.
+   * Port maps: T-FF end0=T, end1=CLK, end2=Q, end4=reset; NOT end0=out/end1=in;
+   * AND/OR end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildBcdCounter() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "bc0");
+    addInput(ports, "en", "EN", "bc0");
+    addInput(ports, "rst", "RST", "bc0");
+    for (int i = 0; i < 4; i++) {
+      addOutput(ports, "q" + i, "Q" + i, "bc" + i);
+    }
+    components.add(new ComponentSpec("bc0", "Memory", "T Flip-Flop", 1, "U1"));
+    components.add(new ComponentSpec("bc1", "Memory", "T Flip-Flop", 1, "U2"));
+    components.add(new ComponentSpec("bc2", "Memory", "T Flip-Flop", 1, "U3"));
+    components.add(new ComponentSpec("bc3", "Memory", "T Flip-Flop", 1, "U4"));
+    components.add(new ComponentSpec("bc_n3", "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec("bc_t1", "Gates", "AND Gate", 1, "A1"));
+    components.add(new ComponentSpec("bc_a01", "Gates", "AND Gate", 1, "A2"));
+    components.add(new ComponentSpec("bc_t2", "Gates", "AND Gate", 1, "A3"));
+    components.add(new ComponentSpec("bc_t3b", "Gates", "AND Gate", 1, "A4"));
+    components.add(new ComponentSpec("bc_t3c", "Gates", "AND Gate", 1, "A5"));
+    components.add(new ComponentSpec("bc_t3", "Gates", "OR Gate", 1, "O1"));
+    for (int i = 0; i < 4; i++) {
+      hints.add(new LayoutHint("bc" + i, i, 0, 0, null));
+    }
+    hints.add(new LayoutHint("bc_n3", 0, 0, 1, null));
+    hints.add(new LayoutHint("bc_t1", 0, 0, 2, null));
+    hints.add(new LayoutHint("bc_a01", 1, 0, 1, null));
+    hints.add(new LayoutHint("bc_t2", 1, 0, 2, null));
+    hints.add(new LayoutHint("bc_t3b", 2, 0, 1, null));
+    hints.add(new LayoutHint("bc_t3c", 2, 0, 2, null));
+    hints.add(new LayoutHint("bc_t3", 3, 0, 1, null));
+    // T0 = EN
+    nets.add(net("bc_t0", e("en", 0), e("bc0", 0)));
+    // ¬Q3
+    nets.add(net("bc_n3_in", e("bc3", 2), e("bc_n3", 1)));
+    // T1 = Q0·¬Q3
+    nets.add(net("bc_t1_q0", e("bc0", 2), e("bc_t1", 1)));
+    nets.add(net("bc_t1_n3", e("bc_n3", 0), e("bc_t1", 2)));
+    nets.add(net("bc_t1_out", e("bc_t1", 0), e("bc1", 0)));
+    // a01 = Q0·Q1
+    nets.add(net("bc_a01_q0", e("bc0", 2), e("bc_a01", 1)));
+    nets.add(net("bc_a01_q1", e("bc1", 2), e("bc_a01", 2)));
+    // T2 = a01·¬Q3
+    nets.add(net("bc_t2_a01", e("bc_a01", 0), e("bc_t2", 1)));
+    nets.add(net("bc_t2_n3", e("bc_n3", 0), e("bc_t2", 2)));
+    nets.add(net("bc_t2_out", e("bc_t2", 0), e("bc2", 0)));
+    // T3 = (a01·Q2) + (Q0·Q3)
+    nets.add(net("bc_t3b_a01", e("bc_a01", 0), e("bc_t3b", 1)));
+    nets.add(net("bc_t3b_q2", e("bc2", 2), e("bc_t3b", 2)));
+    nets.add(net("bc_t3c_q0", e("bc0", 2), e("bc_t3c", 1)));
+    nets.add(net("bc_t3c_q3", e("bc3", 2), e("bc_t3c", 2)));
+    nets.add(net("bc_t3_b", e("bc_t3b", 0), e("bc_t3", 1)));
+    nets.add(net("bc_t3_c", e("bc_t3c", 0), e("bc_t3", 2)));
+    nets.add(net("bc_t3_out", e("bc_t3", 0), e("bc3", 0)));
+    // shared CLK and RST
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("bc_clk" + i, e("clk", 0), e("bc" + i, 1)));
+      nets.add(net("bc_rst" + i, e("rst", 0), e("bc" + i, 4)));
+      nets.add(net("bc_q" + i, e("bc" + i, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("bcd_counter", components, ports, nets, hints);
   }
 
   /**
