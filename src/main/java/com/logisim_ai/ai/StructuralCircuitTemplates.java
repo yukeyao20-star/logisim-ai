@@ -140,6 +140,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("余三码|余3码|8421码转余3|8421转余3");
   private static final Pattern E3_EN =
       Pattern.compile("excess[- ]?3|bcd[- ]to[- ]excess", Pattern.CASE_INSENSITIVE);
+  private static final Pattern E3B_ZH =
+      Pattern.compile("余3码转8421|余三码转8421|余3转8421|余三转8421");
+  private static final Pattern E3B_EN =
+      Pattern.compile("excess[- ]?3\\s*to\\s*bcd|excess[- ]?3\\s*to\\s*binary", Pattern.CASE_INSENSITIVE);
   private static final Pattern TWOS_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:补码器|补码|求补|二进制补码)");
   private static final Pattern TWOS_EN =
@@ -407,6 +411,10 @@ public final class StructuralCircuitTemplates {
       if (E3_ZH.matcher(t).find() || E3_EN.matcher(t).find()) {
         return Optional.of(buildExcess3());
       }
+    }
+    // Excess-3 → BCD (inverse converter; the forward block above skips it).
+    if (E3B_ZH.matcher(t).find() || E3B_EN.matcher(t).find()) {
+      return Optional.of(buildExcess3ToBcd());
     }
     Matcher twzh = TWOS_ZH.matcher(t);
     Matcher twen = TWOS_EN.matcher(t);
@@ -1095,6 +1103,66 @@ public final class StructuralCircuitTemplates {
     nets.add(net("e3_x8_a", e("e3_a", 0), e("e3_x8", 2)));
     nets.add(net("e3_e8", e("e3_x8", 0), e("e8", 0)));
     return new CircuitSpec("excess3_bcd", components, ports, nets, hints);
+  }
+
+  /**
+   * 4-bit excess-3 → BCD converter (inverse of {@link #buildExcess3()}):
+   * BCD = E3 − 3. With E3 bits (w,x,y,z)=(E8,E4,E2,E1): b0=¬z, borrow1=¬z;
+   * b1=y⊕z, borrow2=¬(y·z); b2=x⊕borrow2, borrow3=¬x·borrow2; b3=w⊕borrow3.
+   * Combinational; 3 XOR + 3 NOT + 2 AND. 2-input gates end0=out, end1/end2=in;
+   * NOT end0=out, end1=in.
+   */
+  static CircuitSpec buildExcess3ToBcd() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addInput(ports, "z", "E1", "e3b_x1");
+    addInput(ports, "y", "E2", "e3b_x1");
+    addInput(ports, "x", "E4", "e3b_x2");
+    addInput(ports, "w", "E8", "e3b_x3");
+    addOutput(ports, "b0", "D1", "e3b_n1");
+    addOutput(ports, "b1", "D2", "e3b_x1");
+    addOutput(ports, "b2", "D4", "e3b_x2");
+    addOutput(ports, "b3", "D8", "e3b_x3");
+    components.add(new ComponentSpec("e3b_n1", "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec("e3b_x1", "Gates", "XOR Gate", 1, "X1"));
+    components.add(new ComponentSpec("e3b_a1", "Gates", "AND Gate", 1, "A1"));
+    components.add(new ComponentSpec("e3b_n2", "Gates", "NOT Gate", 1, "N2"));
+    components.add(new ComponentSpec("e3b_n3", "Gates", "NOT Gate", 1, "N3"));
+    components.add(new ComponentSpec("e3b_x2", "Gates", "XOR Gate", 1, "X2"));
+    components.add(new ComponentSpec("e3b_a2", "Gates", "AND Gate", 1, "A2"));
+    components.add(new ComponentSpec("e3b_x3", "Gates", "XOR Gate", 1, "X3"));
+    hints.add(new LayoutHint("e3b_n1", 0, 0, 0, null));
+    hints.add(new LayoutHint("e3b_x1", 1, 0, 0, null));
+    hints.add(new LayoutHint("e3b_a1", 2, 0, 0, null));
+    hints.add(new LayoutHint("e3b_n2", 3, 0, 0, null));
+    hints.add(new LayoutHint("e3b_n3", 4, 0, 0, null));
+    hints.add(new LayoutHint("e3b_x2", 5, 0, 0, null));
+    hints.add(new LayoutHint("e3b_a2", 6, 0, 0, null));
+    hints.add(new LayoutHint("e3b_x3", 7, 0, 0, null));
+    // b0 = ¬z, borrow1 = ¬z
+    nets.add(net("e3b_n1_in", e("z", 0), e("e3b_n1", 1)));
+    nets.add(net("e3b_b0", e("e3b_n1", 0), e("b0", 0)));
+    // b1 = y⊕z, borrow2 = ¬(y·z)
+    nets.add(net("e3b_x1_y", e("y", 0), e("e3b_x1", 1)));
+    nets.add(net("e3b_x1_z", e("z", 0), e("e3b_x1", 2)));
+    nets.add(net("e3b_b1", e("e3b_x1", 0), e("b1", 0)));
+    nets.add(net("e3b_a1_y", e("y", 0), e("e3b_a1", 1)));
+    nets.add(net("e3b_a1_z", e("z", 0), e("e3b_a1", 2)));
+    nets.add(net("e3b_n2_in", e("e3b_a1", 0), e("e3b_n2", 1)));
+    // b2 = x⊕borrow2, borrow3 = ¬x·borrow2
+    nets.add(net("e3b_n3_in", e("x", 0), e("e3b_n3", 1)));
+    nets.add(net("e3b_x2_x", e("x", 0), e("e3b_x2", 1)));
+    nets.add(net("e3b_x2_br", e("e3b_n2", 0), e("e3b_x2", 2)));
+    nets.add(net("e3b_b2", e("e3b_x2", 0), e("b2", 0)));
+    nets.add(net("e3b_a2_nx", e("e3b_n3", 0), e("e3b_a2", 1)));
+    nets.add(net("e3b_a2_br", e("e3b_n2", 0), e("e3b_a2", 2)));
+    // b3 = w⊕borrow3
+    nets.add(net("e3b_x3_w", e("w", 0), e("e3b_x3", 1)));
+    nets.add(net("e3b_x3_br", e("e3b_a2", 0), e("e3b_x3", 2)));
+    nets.add(net("e3b_b3", e("e3b_x3", 0), e("b3", 0)));
+    return new CircuitSpec("excess3tobcd", components, ports, nets, hints);
   }
 
   /**
