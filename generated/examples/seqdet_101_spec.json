@@ -1,0 +1,52 @@
+{
+  "name": "seqdet_101",
+  "components": [
+    {"id": "sd0", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U1"},
+    {"id": "sd1", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U2"},
+    {"id": "sd_nx", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N1"},
+    {"id": "sd_nq0", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N2"},
+    {"id": "sd_a1", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A1"},
+    {"id": "sd_a2a", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A2"},
+    {"id": "sd_a2", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A3"},
+    {"id": "sd_or", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "O1"},
+    {"id": "sd_af", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A4"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "sd0", "targetEndIndex": 0},
+    {"id": "x", "label": "X", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "sd0", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "sd0", "targetEndIndex": 0},
+    {"id": "f", "label": "F", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "sd_af", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "sd_d0", "endpoints": [{"componentId": "x", "endIndex": 0}, {"componentId": "sd0", "endIndex": 0}]},
+    {"id": "sd_nx_in", "endpoints": [{"componentId": "x", "endIndex": 0}, {"componentId": "sd_nx", "endIndex": 1}]},
+    {"id": "sd_nq0_in", "endpoints": [{"componentId": "sd0", "endIndex": 2}, {"componentId": "sd_nq0", "endIndex": 1}]},
+    {"id": "sd_a1_q0", "endpoints": [{"componentId": "sd0", "endIndex": 2}, {"componentId": "sd_a1", "endIndex": 1}]},
+    {"id": "sd_a1_nx", "endpoints": [{"componentId": "sd_nx", "endIndex": 0}, {"componentId": "sd_a1", "endIndex": 2}]},
+    {"id": "sd_a2a_nq0", "endpoints": [{"componentId": "sd_nq0", "endIndex": 0}, {"componentId": "sd_a2a", "endIndex": 1}]},
+    {"id": "sd_a2a_x", "endpoints": [{"componentId": "x", "endIndex": 0}, {"componentId": "sd_a2a", "endIndex": 2}]},
+    {"id": "sd_a2_q1", "endpoints": [{"componentId": "sd1", "endIndex": 2}, {"componentId": "sd_a2", "endIndex": 1}]},
+    {"id": "sd_a2_a2a", "endpoints": [{"componentId": "sd_a2a", "endIndex": 0}, {"componentId": "sd_a2", "endIndex": 2}]},
+    {"id": "sd_or_a1", "endpoints": [{"componentId": "sd_a1", "endIndex": 0}, {"componentId": "sd_or", "endIndex": 1}]},
+    {"id": "sd_or_a2", "endpoints": [{"componentId": "sd_a2", "endIndex": 0}, {"componentId": "sd_or", "endIndex": 2}]},
+    {"id": "sd_d1", "endpoints": [{"componentId": "sd_or", "endIndex": 0}, {"componentId": "sd1", "endIndex": 0}]},
+    {"id": "sd_af_q1", "endpoints": [{"componentId": "sd1", "endIndex": 2}, {"componentId": "sd_af", "endIndex": 1}]},
+    {"id": "sd_af_q0", "endpoints": [{"componentId": "sd0", "endIndex": 2}, {"componentId": "sd_af", "endIndex": 2}]},
+    {"id": "sd_af_out", "endpoints": [{"componentId": "sd_af", "endIndex": 0}, {"componentId": "f", "endIndex": 0}]},
+    {"id": "sd_clk0", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "sd0", "endIndex": 1}]},
+    {"id": "sd_clk1", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "sd1", "endIndex": 1}]},
+    {"id": "sd_rst0", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "sd0", "endIndex": 4}]},
+    {"id": "sd_rst1", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "sd1", "endIndex": 4}]}
+  ],
+  "layoutHints": [
+    {"componentId": "sd0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd1", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd_nx", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd_nq0", "rank": 3, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd_a1", "rank": 4, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd_a2a", "rank": 5, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd_a2", "rank": 6, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd_or", "rank": 7, "column": 0, "row": 0, "side": null},
+    {"componentId": "sd_af", "rank": 8, "column": 0, "row": 0, "side": null}
+  ]
+}

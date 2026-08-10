@@ -148,6 +148,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("交通灯|红绿灯|交通信号|交通灯控制");
   private static final Pattern TRAFFIC_EN =
       Pattern.compile("traffic light|traffic signal|stop light", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SEQDET_ZH =
+      Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
+  private static final Pattern SEQDET_EN =
+      Pattern.compile("sequence detector|101 detector|101\\s*sequence", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -372,6 +376,9 @@ public final class StructuralCircuitTemplates {
     }
     if (TRAFFIC_ZH.matcher(t).find() || TRAFFIC_EN.matcher(t).find()) {
       return Optional.of(buildTrafficLight());
+    }
+    if (SEQDET_ZH.matcher(t).find() || SEQDET_EN.matcher(t).find()) {
+      return Optional.of(buildSequenceDetector101());
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
     Matcher shren = SHIFTREG_EN.matcher(t);
@@ -988,6 +995,69 @@ public final class StructuralCircuitTemplates {
     nets.add(net("tl_yel_nq0", e("tl_nq0", 0), e("tl_yel", 2)));
     nets.add(net("tl_yel_out", e("tl_yel", 0), e("yellow", 0)));
     return new CircuitSpec("traffic_light", components, ports, nets, hints);
+  }
+
+  /**
+   * Moore 101 sequence detector: 4 states S0=00 (idle), S1=01 (saw 1),
+   * S2=10 (saw 10), S3=11 (saw 101 → F=1). D0 = X; D1 = Q0·¬X + Q1·¬Q0·X;
+   * F = Q1·Q0. Shared CLK/RST. Port maps: D-FF end0=D, end1=CLK, end2=Q,
+   * end4=reset; NOT end0=out/end1=in; 2-input AND/OR end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildSequenceDetector101() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "sd0");
+    addInput(ports, "x", "X", "sd0");
+    addInput(ports, "rst", "RST", "sd0");
+    addOutput(ports, "f", "F", "sd_af");
+    components.add(new ComponentSpec("sd0", "Memory", "D Flip-Flop", 1, "U1"));
+    components.add(new ComponentSpec("sd1", "Memory", "D Flip-Flop", 1, "U2"));
+    components.add(new ComponentSpec("sd_nx", "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec("sd_nq0", "Gates", "NOT Gate", 1, "N2"));
+    components.add(new ComponentSpec("sd_a1", "Gates", "AND Gate", 1, "A1"));
+    components.add(new ComponentSpec("sd_a2a", "Gates", "AND Gate", 1, "A2"));
+    components.add(new ComponentSpec("sd_a2", "Gates", "AND Gate", 1, "A3"));
+    components.add(new ComponentSpec("sd_or", "Gates", "OR Gate", 1, "O1"));
+    components.add(new ComponentSpec("sd_af", "Gates", "AND Gate", 1, "A4"));
+    hints.add(new LayoutHint("sd0", 0, 0, 0, null));
+    hints.add(new LayoutHint("sd1", 1, 0, 0, null));
+    hints.add(new LayoutHint("sd_nx", 2, 0, 0, null));
+    hints.add(new LayoutHint("sd_nq0", 3, 0, 0, null));
+    hints.add(new LayoutHint("sd_a1", 4, 0, 0, null));
+    hints.add(new LayoutHint("sd_a2a", 5, 0, 0, null));
+    hints.add(new LayoutHint("sd_a2", 6, 0, 0, null));
+    hints.add(new LayoutHint("sd_or", 7, 0, 0, null));
+    hints.add(new LayoutHint("sd_af", 8, 0, 0, null));
+    // D0 = X
+    nets.add(net("sd_d0", e("x", 0), e("sd0", 0)));
+    // ¬X, ¬Q0
+    nets.add(net("sd_nx_in", e("x", 0), e("sd_nx", 1)));
+    nets.add(net("sd_nq0_in", e("sd0", 2), e("sd_nq0", 1)));
+    // A1 = Q0∧¬X
+    nets.add(net("sd_a1_q0", e("sd0", 2), e("sd_a1", 1)));
+    nets.add(net("sd_a1_nx", e("sd_nx", 0), e("sd_a1", 2)));
+    // A2a = ¬Q0∧X
+    nets.add(net("sd_a2a_nq0", e("sd_nq0", 0), e("sd_a2a", 1)));
+    nets.add(net("sd_a2a_x", e("x", 0), e("sd_a2a", 2)));
+    // A2 = Q1∧A2a
+    nets.add(net("sd_a2_q1", e("sd1", 2), e("sd_a2", 1)));
+    nets.add(net("sd_a2_a2a", e("sd_a2a", 0), e("sd_a2", 2)));
+    // D1 = A1 ∨ A2
+    nets.add(net("sd_or_a1", e("sd_a1", 0), e("sd_or", 1)));
+    nets.add(net("sd_or_a2", e("sd_a2", 0), e("sd_or", 2)));
+    nets.add(net("sd_d1", e("sd_or", 0), e("sd1", 0)));
+    // F = Q1∧Q0
+    nets.add(net("sd_af_q1", e("sd1", 2), e("sd_af", 1)));
+    nets.add(net("sd_af_q0", e("sd0", 2), e("sd_af", 2)));
+    nets.add(net("sd_af_out", e("sd_af", 0), e("f", 0)));
+    // shared CLK and RST
+    nets.add(net("sd_clk0", e("clk", 0), e("sd0", 1)));
+    nets.add(net("sd_clk1", e("clk", 0), e("sd1", 1)));
+    nets.add(net("sd_rst0", e("rst", 0), e("sd0", 4)));
+    nets.add(net("sd_rst1", e("rst", 0), e("sd1", 4)));
+    return new CircuitSpec("seqdet_101", components, ports, nets, hints);
   }
 
   /**
