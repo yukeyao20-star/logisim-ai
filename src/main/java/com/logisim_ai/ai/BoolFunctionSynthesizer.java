@@ -166,12 +166,16 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "楼梯灯", "两个开关", "双控", "开关控制", "双联")) {
       return Optional.of("F=A xor B");
     }
-    // Bare single gates (order matters: 与非门/或非门 before 非门)
+    // Bare single gates (order matters: 三输入与非 before 与非门; 三输入或非
+    // before 或非门; 与非门/或非门 before 非门)
+    if (containsAny(t, "三输入与非", "三与非", "3输入与非")) {
+      return Optional.of("F=not (A and B and C)");
+    }
     if (containsAny(t, "与非门", "nand gate")) {
       return Optional.of("F=not (A and B)");
     }
-    if (containsAny(t, "三输入与非", "三与非", "3输入与非")) {
-      return Optional.of("F=not (A and B and C)");
+    if (containsAny(t, "三输入或非", "三或非", "3输入或非")) {
+      return Optional.of("F=not (A or B or C)");
     }
     if (containsAny(t, "或非门", "nor gate")) {
       return Optional.of("F=not (A or B)");
