@@ -46,6 +46,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?(\\d{1,3})\\s*(?:decoder|demultiplexer)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DECODER_ZH_NN =
       Pattern.compile("(\\d{1,2})\\s*(?:[-－ ])\\s*(\\d{1,3})\\s*(?:译码器|解码器|分配器)");
+  private static final Pattern DEMUX_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*路\\s*(?:分配器|多路分配器|选择分配器)");
+  private static final Pattern DEMUX_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?way\\s*(?:demultiplexer|demux|de[- ]?multiplexer)", Pattern.CASE_INSENSITIVE);
   private static final Pattern COUNTER_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:二进制计数器|计数器|加法计数器|up计数器|向上计数器)");
   private static final Pattern COUNTER_EN =
@@ -311,6 +315,18 @@ public final class StructuralCircuitTemplates {
       }
       return Optional.of(buildDecoder(bits));
     }
+    // 1-to-N demultiplexer "N路分配器" (has a DATA input, unlike a decoder).
+    Matcher dmzh = DEMUX_ZH.matcher(t);
+    Matcher dmen = DEMUX_EN.matcher(t);
+    if (dmzh.find()) {
+      Integer n = chineseToInt(dmzh.group(1));
+      if (n != null) {
+        return Optional.of(buildDemux(n));
+      }
+    }
+    if (dmen.find()) {
+      return Optional.of(buildDemux(Integer.parseInt(dmen.group(1))));
+    }
     // BCD / decade counter (mod-10). Must precede the 74161 binary counter
     // and its bare "计数器" fallback below.
     if (BCDCNT_ZH_BARE.matcher(t).find() || BCDCNT_EN_BARE.matcher(t).find()) {
@@ -461,7 +477,12 @@ public final class StructuralCircuitTemplates {
       return Optional.of(buildTrafficLight());
     }
     if (SEQDET_ZH.matcher(t).find() || SEQDET_EN.matcher(t).find()) {
-      return Optional.of(buildSequenceDetector101());
+      // Only the 101 pattern is implemented; reject explicit different
+      // sequences like "1101序列检测器" (which would otherwise grab the 101
+      // detector via the 序列检测器 substring).
+      if (!t.contains("1101") && !t.contains("110") && !t.contains("1010")) {
+        return Optional.of(buildSequenceDetector101());
+      }
     }
     // Bidirectional shift register. Must precede SHIFTREG (双向移位寄存器
     // contains 移位寄存器, which the uni-directional pattern would grab).
@@ -1656,6 +1677,57 @@ public final class StructuralCircuitTemplates {
     }
 
     return new CircuitSpec("mux_" + n + "to1", components, ports, nets, hints);
+  }
+
+  /**
+   * 1-to-N demultiplexer (多路分配器): a shared DATA input is routed to
+   * exactly the output selected by the log2(N) select bits. Each Y_i =
+   * DATA AND sel_i, where sel_i is the one-hot decode of the select. Same
+   * decode cascade as {@link #buildDecoder}. Combinational. 2-input gates
+   * end0=out, end1/end2=in; NOT end0=out, end1=in.
+   */
+  static CircuitSpec buildDemux(int n) {
+    if (n < 2 || n > 256 || (n & (n - 1)) != 0) {
+      throw new IllegalArgumentException("Demultiplexer width must be a power of two in 2..256, got " + n);
+    }
+    int m = Integer.numberOfTrailingZeros(n);
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addInput(ports, "data", "DATA", "dm_g0");
+    for (int j = 0; j < m; j++) {
+      addInput(ports, "s" + j, "S" + j, "dm_n" + j);
+      String not = "dm_n" + j;
+      components.add(new ComponentSpec(not, "Gates", "NOT Gate", 1, "DN" + (j + 1)));
+      hints.add(new LayoutHint(not, 0, 0, j, null));
+      nets.add(net("dm_n" + j + "_in", e("s" + j, 0), e(not, 1)));
+    }
+    for (int i = 0; i < n; i++) {
+      addOutput(ports, "y" + i, "Y" + i, "dm_g" + i);
+      String acc = null;
+      for (int j = 0; j < m; j++) {
+        boolean one = ((i >> j) & 1) == 1;
+        String src = one ? "s" + j : "dm_n" + j;
+        if (acc == null) {
+          acc = src;
+        } else {
+          String gateId = "dm_" + i + "_" + j;
+          components.add(new ComponentSpec(gateId, "Gates", "AND Gate", 1, "D" + i + "_" + j));
+          hints.add(new LayoutHint(gateId, 1, 0, i, null));
+          nets.add(net("dmd" + i + "_" + j + "x", e(acc, 0), e(gateId, 1)));
+          nets.add(net("dmd" + i + "_" + j + "y", e(src, 0), e(gateId, 2)));
+          acc = gateId;
+        }
+      }
+      String g = "dm_g" + i;
+      components.add(new ComponentSpec(g, "Gates", "AND Gate", 1, "G" + (i + 1)));
+      hints.add(new LayoutHint(g, 2, 0, i, null));
+      nets.add(net("dm_g" + i + "_data", e("data", 0), e(g, 1)));
+      nets.add(net("dm_g" + i + "_sel", e(acc, 0), e(g, 2)));
+      nets.add(net("dm_y" + i, e(g, 0), e("y" + i, 0)));
+    }
+    return new CircuitSpec("demux_" + n + "to1", components, ports, nets, hints);
   }
 
   /**
