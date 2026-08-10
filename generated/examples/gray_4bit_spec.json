@@ -1,0 +1,35 @@
+{
+  "name": "gray_4bit",
+  "components": [
+    {"id": "gx0", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "U1"},
+    {"id": "gx1", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "U2"},
+    {"id": "gx2", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "U3"}
+  ],
+  "externalPorts": [
+    {"id": "b0", "label": "B0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "gx0", "targetEndIndex": 0},
+    {"id": "g0", "label": "G0", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "gx0", "targetEndIndex": 0},
+    {"id": "b1", "label": "B1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "gx1", "targetEndIndex": 0},
+    {"id": "g1", "label": "G1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "gx1", "targetEndIndex": 0},
+    {"id": "b2", "label": "B2", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "gx2", "targetEndIndex": 0},
+    {"id": "g2", "label": "G2", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "gx2", "targetEndIndex": 0},
+    {"id": "b3", "label": "B3", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "gx2", "targetEndIndex": 0},
+    {"id": "g3", "label": "G3", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "gx2", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "gx0_a", "endpoints": [{"componentId": "b0", "endIndex": 0}, {"componentId": "gx0", "endIndex": 1}]},
+    {"id": "gx0_b", "endpoints": [{"componentId": "b1", "endIndex": 0}, {"componentId": "gx0", "endIndex": 2}]},
+    {"id": "gx0_o", "endpoints": [{"componentId": "gx0", "endIndex": 0}, {"componentId": "g0", "endIndex": 0}]},
+    {"id": "gx1_a", "endpoints": [{"componentId": "b1", "endIndex": 0}, {"componentId": "gx1", "endIndex": 1}]},
+    {"id": "gx1_b", "endpoints": [{"componentId": "b2", "endIndex": 0}, {"componentId": "gx1", "endIndex": 2}]},
+    {"id": "gx1_o", "endpoints": [{"componentId": "gx1", "endIndex": 0}, {"componentId": "g1", "endIndex": 0}]},
+    {"id": "gx2_a", "endpoints": [{"componentId": "b2", "endIndex": 0}, {"componentId": "gx2", "endIndex": 1}]},
+    {"id": "gx2_b", "endpoints": [{"componentId": "b3", "endIndex": 0}, {"componentId": "gx2", "endIndex": 2}]},
+    {"id": "gx2_o", "endpoints": [{"componentId": "gx2", "endIndex": 0}, {"componentId": "g2", "endIndex": 0}]},
+    {"id": "gx_msb", "endpoints": [{"componentId": "b3", "endIndex": 0}, {"componentId": "g3", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "gx0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "gx1", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "gx2", "rank": 2, "column": 0, "row": 0, "side": null}
+  ]
+}

@@ -116,6 +116,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:d|D)锁存器|透明锁存器|数据锁存器|电平锁存器");
   private static final Pattern DLATCH_EN =
       Pattern.compile("(?:d\\s*latch|transparent\\s*latch|level[- ]sensitive\\s*latch|enable\\s*latch)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern GRAY_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:格雷码|格雷码转换器|二进制转格雷码)");
+  private static final Pattern GRAY_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:binary[- ]to[- ]gray|gray[- ]code|gray)\\s*(?:converter|encoder)?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern GRAY_ZH_BARE =
+      Pattern.compile("格雷码|格雷码转换器|二进制转格雷");
+  private static final Pattern GRAY_EN_BARE =
+      Pattern.compile("binary[- ]to[- ]gray|gray[- ]code|gray\\s*(?:converter|encoder)?", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -280,6 +288,24 @@ public final class StructuralCircuitTemplates {
     }
     if (DLATCH_ZH.matcher(t).find() || DLATCH_EN.matcher(t).find()) {
       return Optional.of(buildDLatch());
+    }
+    // Binary → Gray. Guard the inverse ("格雷码转二进制"/"gray to binary") —
+    // that converter is not built here, so don't silently return the wrong one.
+    Matcher gzh = GRAY_ZH.matcher(t);
+    Matcher gen = GRAY_EN.matcher(t);
+    if (!t.contains("转二进制") && !t.contains("to binary")) {
+      if (gzh.find()) {
+        Integer bits = chineseToInt(gzh.group(1));
+        if (bits != null) {
+          return Optional.of(buildGrayCode(bits));
+        }
+      }
+      if (gen.find()) {
+        return Optional.of(buildGrayCode(Integer.parseInt(gen.group(1))));
+      }
+      if (GRAY_ZH_BARE.matcher(t).find() || GRAY_EN_BARE.matcher(t).find()) {
+        return Optional.of(buildGrayCode(4));
+      }
     }
     Matcher shrzh = SHIFTREG_ZH.matcher(t);
     Matcher shren = SHIFTREG_EN.matcher(t);
@@ -687,6 +713,36 @@ public final class StructuralCircuitTemplates {
     nets.add(net("dl_q_out", e("dl_q", 0), e("q", 0)));
     nets.add(net("dl_nq_out", e("dl_nq", 0), e("nq", 0)));
     return new CircuitSpec("dlatch", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit binary → Gray code converter: G_{n-1} = B_{n-1} (MSB passes through),
+   * G_i = B_i XOR B_{i+1} for i &lt; n-1. n-1 XOR gates, purely combinational.
+   * XOR: end0=out, end1/end2=in.
+   */
+  static CircuitSpec buildGrayCode(int bits) {
+    if (bits < 1 || bits > 32) {
+      throw new IllegalArgumentException("Gray code width must be 1..32, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    String lastXor = bits >= 2 ? "gx" + (bits - 2) : "gx0";
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "b" + i, "B" + i, i == bits - 1 ? lastXor : "gx" + i);
+      addOutput(ports, "g" + i, "G" + i, i == bits - 1 ? lastXor : "gx" + i);
+    }
+    for (int i = 0; i < bits - 1; i++) {
+      String g = "gx" + i;
+      components.add(new ComponentSpec(g, "Gates", "XOR Gate", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint(g, i, 0, 0, null));
+      nets.add(net("gx" + i + "_a", e("b" + i, 0), e(g, 1)));
+      nets.add(net("gx" + i + "_b", e("b" + (i + 1), 0), e(g, 2)));
+      nets.add(net("gx" + i + "_o", e(g, 0), e("g" + i, 0)));
+    }
+    nets.add(net("gx_msb", e("b" + (bits - 1), 0), e("g" + (bits - 1), 0)));
+    return new CircuitSpec("gray_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**

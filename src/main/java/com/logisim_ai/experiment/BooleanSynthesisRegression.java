@@ -217,6 +217,7 @@ public final class BooleanSynthesisRegression {
         {"divider_4stage", "div4.vec", "33", "0"},
         {"johnson_4stage", "john4.vec", "17", "0"},
         {"dlatch", "dlatch.vec", "5", "0"},
+        {"gray_4bit", "gray4.vec", "16", "0"},
     };
     java.io.File jarProbe = new java.io.File(
         System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
