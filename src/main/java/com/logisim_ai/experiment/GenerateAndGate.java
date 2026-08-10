@@ -311,7 +311,8 @@ public final class GenerateAndGate {
           || spec.name().startsWith("tff")
           || spec.name().startsWith("register_")
           || spec.name().startsWith("shiftreg_")
-          || spec.name().startsWith("srlatch");
+          || spec.name().startsWith("srlatch")
+          || spec.name().startsWith("divider_");
       if (structural) {
         // Structural templates route directly (no Tunnels): reliable wiring for
         // dense fan-out circuits like decoders, and every gate sits in its own

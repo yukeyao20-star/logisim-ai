@@ -96,6 +96,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:sr|s-r|rs|r-s)\\s*(?:触发器|锁存器)|(?:sr|s-r|rs|r-s)\\s*latch", Pattern.CASE_INSENSITIVE);
   private static final Pattern BUZZER_ZH =
       Pattern.compile("抢答器|优先抢答|抢答电路");
+  private static final Pattern DIVIDER_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:分频器|分频电路|频率分频器)");
+  private static final Pattern DIVIDER_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:divider|frequency\\s+divider)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DIVIDER_ZH_BARE =
+      Pattern.compile("(?:分频器|分频电路)");
+  private static final Pattern DIVIDER_EN_BARE =
+      Pattern.compile("(?:divider|frequency\\s+divider)", Pattern.CASE_INSENSITIVE);
 
   public static Optional<CircuitSpec> tryBuild(String query) {
     if (query == null || query.isBlank()) {
@@ -206,6 +214,20 @@ public final class StructuralCircuitTemplates {
     }
     if (ctrEn.find()) {
       return Optional.of(buildCounter(Integer.parseInt(ctrEn.group(1))));
+    }
+    Matcher divzh = DIVIDER_ZH.matcher(t);
+    Matcher diven = DIVIDER_EN.matcher(t);
+    if (divzh.find()) {
+      Integer bits = chineseToInt(divzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildDivider(bits));
+      }
+    }
+    if (diven.find()) {
+      return Optional.of(buildDivider(Integer.parseInt(diven.group(1))));
+    }
+    if (DIVIDER_ZH_BARE.matcher(t).find() || DIVIDER_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildDivider(4));
     }
     Matcher pzh = PARITY_ZH.matcher(t);
     Matcher pen = PARITY_EN.matcher(t);
@@ -423,6 +445,53 @@ public final class StructuralCircuitTemplates {
     nets.add(net("rc", e("cnt" + (chips - 1), 13), e("rc", 0)));
 
     return new CircuitSpec("counter_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-stage synchronous frequency divider built as a proper binary counter:
+   * T_0 = external enable; T_i = AND(Q_0, ..., Q_{i-1}) so stage i toggles
+   * only when every lower stage is high → Q_{n-1} toggles every 2^(n-1) clock
+   * edges, a 2^n divider. Shared CLK and RST. Port maps: T-FF end0=T,
+   * end1=CLK, end2=Q, end3=nQ, end4=reset; 2-input AND end0=out, end1/end2=in.
+   */
+  static CircuitSpec buildDivider(int stages) {
+    if (stages < 1 || stages > 16) {
+      throw new IllegalArgumentException("Divider stages must be 1..16, got " + stages);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "div0");
+    addInput(ports, "t", "T", "div0");
+    addInput(ports, "rst", "RST", "div0");
+    for (int i = 0; i < stages; i++) {
+      String g = "div" + i;
+      components.add(new ComponentSpec(g, "Memory", "T Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint(g, i, 0, 0, null));
+      addOutput(ports, "q" + i, "Q" + i, g);
+      if (i == 0) {
+        nets.add(net("div_t" + i, e("t", 0), e(g, 0)));
+      } else {
+        // T_i = AND(Q_0, ..., Q_{i-1}) via a 2-input AND cascade.
+        String accId = "div0";
+        int accEnd = 2; // flip-flop Q output
+        for (int j = 1; j < i; j++) {
+          String gateId = "divta" + i + "_" + j;
+          components.add(new ComponentSpec(gateId, "Gates", "AND Gate", 1, "TA" + i + "_" + j));
+          hints.add(new LayoutHint(gateId, i, 0, j, null));
+          nets.add(net("divta" + i + "_" + j + "x", e(accId, accEnd), e(gateId, 1)));
+          nets.add(net("divta" + i + "_" + j + "y", e("div" + j, 2), e(gateId, 2)));
+          accId = gateId;
+          accEnd = 0; // gate output
+        }
+        nets.add(net("div_t" + i, e(accId, accEnd), e(g, 0)));
+      }
+      nets.add(net("div_clk" + i, e("clk", 0), e(g, 1)));
+      nets.add(net("div_rst" + i, e("rst", 0), e(g, 4)));
+      nets.add(net("div_q" + i, e(g, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("divider_" + stages + "stage", components, ports, nets, hints);
   }
 
   /**
