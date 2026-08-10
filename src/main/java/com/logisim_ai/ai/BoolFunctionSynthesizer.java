@@ -154,6 +154,14 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "三个开关", "三开关", "奇数个开关")) {
       return Optional.of("F=A xor B xor C");
     }
+    // Series switches = AND, parallel switches = OR. Must precede 开关控制
+    // (staircase XOR) so "两个开关串联/并联" routes here, not to XOR.
+    if (containsAny(t, "串联", "in series", "series switches")) {
+      return Optional.of("F=A and B");
+    }
+    if (containsAny(t, "并联", "in parallel", "parallel switches")) {
+      return Optional.of("F=A or B");
+    }
     // Staircase / two-way light switch: F = A xor B
     if (containsAny(t, "楼梯灯", "两个开关", "双控", "开关控制", "双联")) {
       return Optional.of("F=A xor B");
