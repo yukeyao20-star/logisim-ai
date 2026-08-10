@@ -55,6 +55,8 @@ public final class DirectMultiChipCompiler {
   private static final int ROW_CENTER_Y = 250;
   /** Vertical distance between row centers (leaves room for DIP chips + stubs). */
   private static final int ROW_GAP = 420;
+  /** Horizontal gap between consecutive rows (keeps cross-row port x disjoint). */
+  private static final int ROW_GAP_X = 200;
 
   public static void compile(CircuitSpec spec, File outputFile) throws Exception {
     Main.headless = true;
@@ -80,19 +82,20 @@ public final class DirectMultiChipCompiler {
       int row = 0;
       int cursor = 500;
       int rowCount = 1;
+      int prevRowMaxX = 500;
       int maxRowWidth = 500;
       for (ComponentSpec cs : spec.components()) {
         if (rowCount > MAX_COMPONENTS_PER_ROW) {
           maxRowWidth = Math.max(maxRowWidth, cursor);
           row++;
           rowCount = 1;
-          // Each row's x range starts 3400 after the previous row's start,
-          // wider than any row can span (12 * 260 chip pitch = 3120), so ports
-          // of different rows never share an x column. Same-x ports would force
-          // the router to keep their stub segments disjoint; a long cross-row
-          // stub could otherwise overlap forever (non-terminating retreat) or
+          // Each row starts just past the previous row's widest component x
+          // (ROW_GAP_X gap). Since a row's x range is always above the next
+          // row's start, ports of different rows never share an x column.
+          // Same-x ports would force the router to keep their stub segments
+          // disjoint; a long cross-row stub could otherwise overlap forever or
           // short another net via a WireRepair junction.
-          cursor = 500 + row * 3400;
+          cursor = prevRowMaxX + ROW_GAP_X;
         }
         Library library = LogisimProjectSetup.addLibrary(loader, file, cs.libraryName());
         ComponentFactory factory = findFactory(library, cs.factoryName());
@@ -112,6 +115,7 @@ public final class DirectMultiChipCompiler {
         mutation.add(comp);
         cursor += cs.libraryName().equals("Gates") ? 160 : 260;
         rowCount++;
+        prevRowMaxX = Math.max(prevRowMaxX, cursor);
       }
       int componentRightX = Math.max(maxRowWidth, cursor) + 300;
       // Phase 2: create external Pins. Each Pin gets its own x column so its
