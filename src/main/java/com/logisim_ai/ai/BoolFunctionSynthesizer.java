@@ -141,6 +141,48 @@ public final class BoolFunctionSynthesizer {
       return Optional.of(
           "F=not (A0 xor B0) and not (A1 xor B1) and not (A2 xor B2) and not (A3 xor B3)");
     }
+    // One-bit full adder described functionally
+    if (containsAny(t, "两个数相加", "求和电路", "加法运算", "相加", "进位加法")) {
+      return Optional.of(
+          "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
+    }
+    // Staircase / two-way light switch: F = A xor B
+    if (containsAny(t, "楼梯灯", "两个开关", "双控", "开关控制", "双联")) {
+      return Optional.of("F=A xor B");
+    }
+    // Bare single gates (order matters: 与非门/或非门 before 非门)
+    if (containsAny(t, "与非门", "nand gate")) {
+      return Optional.of("F=not (A and B)");
+    }
+    if (containsAny(t, "三输入与非", "三与非", "3输入与非")) {
+      return Optional.of("F=not (A and B and C)");
+    }
+    if (containsAny(t, "或非门", "nor gate")) {
+      return Optional.of("F=not (A or B)");
+    }
+    if (containsAny(t, "与门", "and gate")) {
+      return Optional.of("F=A and B");
+    }
+    if (containsAny(t, "或门", "or gate")) {
+      return Optional.of("F=A or B");
+    }
+    if (containsAny(t, "非门", "反相器", "not gate", "inverter")) {
+      return Optional.of("F=not A");
+    }
+    // 4-to-1 data selector described functionally
+    if (containsAny(t, "从四个输入选一个", "从四个输入中选一个", "四选一", "数据选择", "数据选择器", "四路选一")) {
+      return Optional.of(
+          "F=(D0 and not S1 and not S0) or (D1 and not S1 and S0) or (D2 and S1 and not S0) or (D3 and S1 and S0)");
+    }
+    // Magnitude comparison
+    if (containsAny(t, "比较大小", "两个数比较", "谁大谁小", "比较两个数")) {
+      return Optional.of("F_GT=A and not B; F_EQ=not (A xor B); F_LT=not A and B");
+    }
+    // Carry-in addition described as a full adder
+    if (containsAny(t, "加法进位", "带进位加法")) {
+      return Optional.of(
+          "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
+    }
     return Optional.empty();
   }
 

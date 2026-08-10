@@ -44,6 +44,8 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:译码器|解码器|二进制译码器)");
   private static final Pattern DECODER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?(\\d{1,3})\\s*(?:decoder|demultiplexer)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DECODER_ZH_NN =
+      Pattern.compile("(\\d{1,2})\\s*(?:[-－ ])\\s*(\\d{1,3})\\s*(?:译码器|解码器|分配器)");
   private static final Pattern COUNTER_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:二进制计数器|计数器|加法计数器|up计数器|向上计数器)");
   private static final Pattern COUNTER_EN =
@@ -164,6 +166,16 @@ public final class StructuralCircuitTemplates {
     if (den.find()) {
       return Optional.of(buildDecoder(Integer.parseInt(den.group(1))));
     }
+    Matcher dnn = DECODER_ZH_NN.matcher(t);
+    if (dnn.find()) {
+      // "3-8译码器" -> 3 input bits -> 8 outputs
+      int n = Integer.parseInt(dnn.group(2));
+      int bits = 0;
+      while ((1 << bits) < n) {
+        bits++;
+      }
+      return Optional.of(buildDecoder(bits));
+    }
     Matcher ctrzh = COUNTER_ZH.matcher(t);
     Matcher ctrEn = COUNTER_EN.matcher(t);
     if (ctrzh.find()) {
@@ -189,7 +201,47 @@ public final class StructuralCircuitTemplates {
     if (ENCODER8_ZH.matcher(t).find() || ENCODER8_EN.matcher(t).find()) {
       return Optional.of(buildEncoder8to3());
     }
+    // Bare descriptions without a width default to a sensible width so plain
+    // "加法器 / 比较器 / 计数器 / 译码器" still build a circuit.
+    if (isBare(t, "加法器", "二进制加法器")) {
+      return Optional.of(buildAdder(4));
+    }
+    if (isBare(t, "比较器", "大小比较器", "数值比较器")) {
+      return Optional.of(buildComparator(1));
+    }
+    if (isBare(t, "计数器", "数数电路", "二进制计数")) {
+      return Optional.of(buildCounter(4));
+    }
+    if (isBare(t, "译码器", "解码器", "地址译码", "多路分配器", "分配器")) {
+      return Optional.of(buildDecoder(2));
+    }
     return Optional.empty();
+  }
+
+  /** True when the query mentions one of the words but no width prefix (e.g. "计数器" not "4位计数器"). */
+  private static boolean isBare(String t, String... words) {
+    boolean anyWord = false;
+    for (String w : words) {
+      if (t.contains(w)) {
+        anyWord = true;
+        break;
+      }
+    }
+    if (!anyWord) {
+      return false;
+    }
+    // Reject if a digit / Chinese numeral appears before any word (that path is
+    // handled by the width-specific patterns above).
+    for (String w : words) {
+      int idx = t.indexOf(w);
+      if (idx > 0) {
+        String prefix = t.substring(0, idx);
+        if (prefix.matches(".*[0-9一二三四五六七八九十两].*")) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   /**
