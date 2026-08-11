@@ -589,6 +589,18 @@ public final class StructuralCircuitTemplates {
     if (isBare(t, "译码器", "解码器", "地址译码", "多路分配器", "分配器")) {
       return Optional.of(buildDecoder(2));
     }
+    if (isBare(t, "乘法器", "二进制乘法器")) {
+      return Optional.of(buildMultiplier(4));
+    }
+    if (isBare(t, "减法器", "全减器", "二进制减法器")) {
+      return Optional.of(buildSubtractor(4));
+    }
+    if (isBare(t, "编码器", "二进制编码器")) {
+      return Optional.of(buildEncoder8to3());
+    }
+    if (isBare(t, "奇偶校验器", "偶校验器", "奇校验器")) {
+      return Optional.of(buildParity(4));
+    }
     return Optional.empty();
   }
 
