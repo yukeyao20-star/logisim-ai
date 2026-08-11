@@ -156,6 +156,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("bcd转二进制|8421码转二进制|bcd码转二进制");
   private static final Pattern B2B_EN_BARE =
       Pattern.compile("bcd[- ]to[- ]binary|8421[- ]to[- ]binary", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BINBCD_ZH_BARE =
+      Pattern.compile("二进制转bcd|二进制转8421|二进制转二十进制|bin转bcd|二进制转bcd码");
+  private static final Pattern BINBCD_EN_BARE =
+      Pattern.compile("binary[- ]to[- ]bcd|bin[- ]to[- ]bcd|binary[- ]to[- ]8421", Pattern.CASE_INSENSITIVE);
   private static final Pattern E3_ZH =
       Pattern.compile("余三码|余3码|8421码转余3|8421转余3");
   private static final Pattern E3_EN =
@@ -460,6 +464,11 @@ public final class StructuralCircuitTemplates {
       if (B2B_ZH_BARE.matcher(t).find() || B2B_EN_BARE.matcher(t).find()) {
         return Optional.of(buildBcdToBinary());
       }
+    }
+    // Binary → BCD (4-bit; double-dabble beyond 4 bits not built). This is the
+    // reverse of bcd2bin; the guard above (转bcd/to bcd) skips these queries.
+    if (BINBCD_ZH_BARE.matcher(t).find() || BINBCD_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildBinToBcd4());
     }
     // Binary → Gray forward converter. Guard the inverse query text so a
     // "转二进制 / to binary" request routes to the reverse converter above.
@@ -1359,6 +1368,104 @@ public final class StructuralCircuitTemplates {
     nets.add(net("b2b_b6x_c", e("b2b_b5a", 0), e("b2b_b6x", 2)));
     nets.add(net("b2b_b6", e("b2b_b6x", 0), e("b6", 0)));
     return new CircuitSpec("bcd2bin_2digit", components, ports, nets, hints);
+  }
+
+  /**
+   * 4-bit binary (0..15) → BCD: tens T1 (1 bit) and units U (4 bits).
+   * T1 = b3·(b2∨b1) [B≥10]; units = B for B≤9 else B−10 (= B+6 mod 16).
+   * (B+6): s0=b0, c1=b1, s1=¬b1, s2=¬b2⊕c1, c2=b2∨(c1·¬b2), s3=b3⊕c2.
+   * U0=b0, U1=b1⊕T1, U2=(¬T1·b2)∨(T1·s2), U3=(¬T1·b3)∨(T1·s3). ~16 gates.
+   * Verified: 13→13, 9→09, 14→14. Combinational. 2-input gates end0=out,
+   * end1/end2=in; NOT end0=out, end1=in.
+   */
+  static CircuitSpec buildBinToBcd4() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addInput(ports, "b0", "B0", "bb_or");
+    addInput(ports, "b1", "B1", "bb_or");
+    addInput(ports, "b2", "B2", "bb_or");
+    addInput(ports, "b3", "B3", "bb_and");
+    addOutput(ports, "t", "T1", "bb_and");
+    addOutput(ports, "u0", "U0", "bb_or");
+    addOutput(ports, "u1", "U1", "bb_xu1");
+    addOutput(ports, "u2", "U2", "bb_or2");
+    addOutput(ports, "u3", "U3", "bb_or3");
+    // T1 = b3·(b2∨b1)
+    components.add(new ComponentSpec("bb_or", "Gates", "OR Gate", 1, "O1"));
+    components.add(new ComponentSpec("bb_and", "Gates", "AND Gate", 1, "A1"));
+    hints.add(new LayoutHint("bb_or", 0, 0, 0, null));
+    hints.add(new LayoutHint("bb_and", 0, 0, 1, null));
+    nets.add(net("bb_or_b2", e("b2", 0), e("bb_or", 1)));
+    nets.add(net("bb_or_b1", e("b1", 0), e("bb_or", 2)));
+    nets.add(net("bb_and_b3", e("b3", 0), e("bb_and", 1)));
+    nets.add(net("bb_and_o", e("bb_or", 0), e("bb_and", 2)));
+    nets.add(net("bb_t", e("bb_and", 0), e("t", 0)));
+    // ¬T1
+    components.add(new ComponentSpec("bb_nt", "Gates", "NOT Gate", 1, "N1"));
+    hints.add(new LayoutHint("bb_nt", 1, 0, 0, null));
+    nets.add(net("bb_nt_in", e("bb_and", 0), e("bb_nt", 1)));
+    // U0 = B0
+    nets.add(net("bb_u0", e("b0", 0), e("u0", 0)));
+    // U1 = B1⊕T1
+    components.add(new ComponentSpec("bb_xu1", "Gates", "XOR Gate", 1, "X1"));
+    hints.add(new LayoutHint("bb_xu1", 1, 0, 1, null));
+    nets.add(net("bb_xu1_b1", e("b1", 0), e("bb_xu1", 1)));
+    nets.add(net("bb_xu1_t", e("bb_and", 0), e("bb_xu1", 2)));
+    nets.add(net("bb_u1", e("bb_xu1", 0), e("u1", 0)));
+    // (B+6): ¬B1 (s1), ¬B2, s2=¬B2⊕c1(B1), c2=B2∨(B1·¬B2), s3=B3⊕c2
+    components.add(new ComponentSpec("bb_nb1", "Gates", "NOT Gate", 1, "N2"));
+    components.add(new ComponentSpec("bb_nb2", "Gates", "NOT Gate", 1, "N3"));
+    components.add(new ComponentSpec("bb_xs2", "Gates", "XOR Gate", 1, "X2"));
+    components.add(new ComponentSpec("bb_ac2", "Gates", "AND Gate", 1, "A2"));
+    components.add(new ComponentSpec("bb_oc2", "Gates", "OR Gate", 1, "O2"));
+    components.add(new ComponentSpec("bb_xs3", "Gates", "XOR Gate", 1, "X3"));
+    hints.add(new LayoutHint("bb_nb1", 2, 0, 0, null));
+    hints.add(new LayoutHint("bb_nb2", 2, 0, 1, null));
+    hints.add(new LayoutHint("bb_xs2", 2, 0, 2, null));
+    hints.add(new LayoutHint("bb_ac2", 2, 0, 3, null));
+    hints.add(new LayoutHint("bb_oc2", 2, 0, 4, null));
+    hints.add(new LayoutHint("bb_xs3", 2, 0, 5, null));
+    nets.add(net("bb_nb1_in", e("b1", 0), e("bb_nb1", 1)));
+    nets.add(net("bb_nb2_in", e("b2", 0), e("bb_nb2", 1)));
+    nets.add(net("bb_xs2_a", e("bb_nb2", 0), e("bb_xs2", 1)));
+    nets.add(net("bb_xs2_c", e("b1", 0), e("bb_xs2", 2)));
+    nets.add(net("bb_ac2_c", e("b1", 0), e("bb_ac2", 1)));
+    nets.add(net("bb_ac2_n", e("bb_nb2", 0), e("bb_ac2", 2)));
+    nets.add(net("bb_oc2_b2", e("b2", 0), e("bb_oc2", 1)));
+    nets.add(net("bb_oc2_a", e("bb_ac2", 0), e("bb_oc2", 2)));
+    nets.add(net("bb_xs3_b3", e("b3", 0), e("bb_xs3", 1)));
+    nets.add(net("bb_xs3_c", e("bb_oc2", 0), e("bb_xs3", 2)));
+    // U2 = (¬T1·B2) ∨ (T1·s2)
+    components.add(new ComponentSpec("bb_u2a", "Gates", "AND Gate", 1, "A3"));
+    components.add(new ComponentSpec("bb_u2b", "Gates", "AND Gate", 1, "A4"));
+    components.add(new ComponentSpec("bb_or2", "Gates", "OR Gate", 1, "O3"));
+    hints.add(new LayoutHint("bb_u2a", 3, 0, 0, null));
+    hints.add(new LayoutHint("bb_u2b", 3, 0, 1, null));
+    hints.add(new LayoutHint("bb_or2", 3, 0, 2, null));
+    nets.add(net("bb_u2a_nt", e("bb_nt", 0), e("bb_u2a", 1)));
+    nets.add(net("bb_u2a_b2", e("b2", 0), e("bb_u2a", 2)));
+    nets.add(net("bb_u2b_t", e("bb_and", 0), e("bb_u2b", 1)));
+    nets.add(net("bb_u2b_s2", e("bb_xs2", 0), e("bb_u2b", 2)));
+    nets.add(net("bb_or2_a", e("bb_u2a", 0), e("bb_or2", 1)));
+    nets.add(net("bb_or2_b", e("bb_u2b", 0), e("bb_or2", 2)));
+    nets.add(net("bb_u2", e("bb_or2", 0), e("u2", 0)));
+    // U3 = (¬T1·B3) ∨ (T1·s3)
+    components.add(new ComponentSpec("bb_u3a", "Gates", "AND Gate", 1, "A5"));
+    components.add(new ComponentSpec("bb_u3b", "Gates", "AND Gate", 1, "A6"));
+    components.add(new ComponentSpec("bb_or3", "Gates", "OR Gate", 1, "O4"));
+    hints.add(new LayoutHint("bb_u3a", 4, 0, 0, null));
+    hints.add(new LayoutHint("bb_u3b", 4, 0, 1, null));
+    hints.add(new LayoutHint("bb_or3", 4, 0, 2, null));
+    nets.add(net("bb_u3a_nt", e("bb_nt", 0), e("bb_u3a", 1)));
+    nets.add(net("bb_u3a_b3", e("b3", 0), e("bb_u3a", 2)));
+    nets.add(net("bb_u3b_t", e("bb_and", 0), e("bb_u3b", 1)));
+    nets.add(net("bb_u3b_s3", e("bb_xs3", 0), e("bb_u3b", 2)));
+    nets.add(net("bb_or3_a", e("bb_u3a", 0), e("bb_or3", 1)));
+    nets.add(net("bb_or3_b", e("bb_u3b", 0), e("bb_or3", 2)));
+    nets.add(net("bb_u3", e("bb_or3", 0), e("u3", 0)));
+    return new CircuitSpec("bin2bcd_4bit", components, ports, nets, hints);
   }
 
   /**

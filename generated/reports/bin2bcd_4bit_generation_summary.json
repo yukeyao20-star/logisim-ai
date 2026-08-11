@@ -1,0 +1,27 @@
+{
+  "requestKind": "natural_language",
+  "request": "二进制转BCD",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the manifest first and fix its issues before trusting the circuit artifact.",
+  "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit"],
+  "sourceJson": "",
+  "circuitName": "bin2bcd_4bit",
+  "circuitPath": "generated\\circ\\bin2bcd_4bit.circ",
+  "manifestPath": "generated\\reports\\bin2bcd_4bit_circuit_manifest.md",
+  "manifestComplete": null,
+  "manifestCheckCount": null,
+  "manifestIssueCount": null,
+  "artifactCount": 2,
+  "artifacts": [
+    {"path": "generated\\circ\\bin2bcd_4bit.circ", "exists": true},
+    {"path": "generated\\reports\\bin2bcd_4bit_multichip.md", "exists": true}
+  ]
+}
