@@ -152,6 +152,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("格雷码转二进制|格雷转二进制");
   private static final Pattern G2B_EN_BARE =
       Pattern.compile("gray[- ]to[- ]binary|gray\\s*cod[ed]?\\s*to\\s*binary", Pattern.CASE_INSENSITIVE);
+  private static final Pattern B2B_ZH_BARE =
+      Pattern.compile("bcd转二进制|8421码转二进制|bcd码转二进制");
+  private static final Pattern B2B_EN_BARE =
+      Pattern.compile("bcd[- ]to[- ]binary|8421[- ]to[- ]binary", Pattern.CASE_INSENSITIVE);
   private static final Pattern E3_ZH =
       Pattern.compile("余三码|余3码|8421码转余3|8421转余3");
   private static final Pattern E3_EN =
@@ -450,6 +454,12 @@ public final class StructuralCircuitTemplates {
     }
     if (G2B_ZH_BARE.matcher(t).find() || G2B_EN_BARE.matcher(t).find()) {
       return Optional.of(buildGrayToBinary(4));
+    }
+    // BCD → binary (2-digit). Guard the reverse "二进制转BCD / to bcd".
+    if (!t.contains("转bcd") && !t.contains("to bcd")) {
+      if (B2B_ZH_BARE.matcher(t).find() || B2B_EN_BARE.matcher(t).find()) {
+        return Optional.of(buildBcdToBinary());
+      }
     }
     // Binary → Gray forward converter. Guard the inverse query text so a
     // "转二进制 / to binary" request routes to the reverse converter above.
@@ -1189,6 +1199,166 @@ public final class StructuralCircuitTemplates {
       nets.add(net("mc_q" + i, e("mc" + i, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("mod" + n + "_counter", components, ports, nets, hints);
+  }
+
+  /**
+   * 2-digit BCD → binary converter: B = 10·T + U where T (tens) and U (units)
+   * are BCD digits. Two ripple adders: S = 8·T + 2·T, then B = S + U.
+   * 8·T = {t3t2t1t0,000}, 2·T = {t3t2t1t0,0} so S1=t0, S2=t1, S3=t0+t2,
+   * S4=t1+t3+cA, S5=t2+cB, S6=t3+cC. Then B0=U0, B1=t0+U1, B2=t1+U2+c1,
+   * B3=S3+U3+c2, B4=S4+c3, B5=S5+c4, B6=S6+c5 (~23 gates). Verified T=5,U=9→59.
+   * Combinational. 2-input gates end0=out, end1/end2=in.
+   */
+  static CircuitSpec buildBcdToBinary() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addInput(ports, "t0", "T0", "b2b_s3x");
+    addInput(ports, "t1", "T1", "b2b_s4a");
+    addInput(ports, "t2", "T2", "b2b_s3x");
+    addInput(ports, "t3", "T3", "b2b_s4a");
+    addInput(ports, "u0", "U0", "b2b_b1x");
+    addInput(ports, "u1", "U1", "b2b_b1x");
+    addInput(ports, "u2", "U2", "b2b_b2a");
+    addInput(ports, "u3", "U3", "b2b_b3a");
+    addOutput(ports, "b0", "B0", "b2b_b1x");
+    addOutput(ports, "b1", "B1", "b2b_b1x");
+    addOutput(ports, "b2", "B2", "b2b_b2b");
+    addOutput(ports, "b3", "B3", "b2b_b3b");
+    addOutput(ports, "b4", "B4", "b2b_b4x");
+    addOutput(ports, "b5", "B5", "b2b_b5x");
+    addOutput(ports, "b6", "B6", "b2b_b6x");
+    // Add1: S = 8T + 2T. S1=t0, S2=t1 (wires). S3=HA(t0,t2), S4=FA(t1,t3,cA),
+    // S5=HA(t2,cB), S6=HA(t3,cC).
+    // S3 = t0⊕t2, cA = t0·t2
+    components.add(new ComponentSpec("b2b_s3x", "Gates", "XOR Gate", 1, "S3X"));
+    components.add(new ComponentSpec("b2b_s3a", "Gates", "AND Gate", 1, "S3A"));
+    hints.add(new LayoutHint("b2b_s3x", 0, 0, 0, null));
+    hints.add(new LayoutHint("b2b_s3a", 0, 0, 1, null));
+    nets.add(net("b2b_s3x_t0", e("t0", 0), e("b2b_s3x", 1)));
+    nets.add(net("b2b_s3x_t2", e("t2", 0), e("b2b_s3x", 2)));
+    nets.add(net("b2b_s3a_t0", e("t0", 0), e("b2b_s3a", 1)));
+    nets.add(net("b2b_s3a_t2", e("t2", 0), e("b2b_s3a", 2)));
+    // S4 = t1⊕t3⊕cA, cB = majority(t1,t3,cA)
+    components.add(new ComponentSpec("b2b_s4a", "Gates", "XOR Gate", 1, "S4A"));
+    components.add(new ComponentSpec("b2b_s4b", "Gates", "XOR Gate", 1, "S4B"));
+    components.add(new ComponentSpec("b2b_s4c", "Gates", "AND Gate", 1, "S4C"));
+    components.add(new ComponentSpec("b2b_s4d", "Gates", "AND Gate", 1, "S4D"));
+    components.add(new ComponentSpec("b2b_s4o", "Gates", "OR Gate", 1, "S4O"));
+    hints.add(new LayoutHint("b2b_s4a", 1, 0, 0, null));
+    hints.add(new LayoutHint("b2b_s4b", 1, 0, 1, null));
+    hints.add(new LayoutHint("b2b_s4c", 1, 0, 2, null));
+    hints.add(new LayoutHint("b2b_s4d", 1, 0, 3, null));
+    hints.add(new LayoutHint("b2b_s4o", 1, 0, 4, null));
+    nets.add(net("b2b_s4a_t1", e("t1", 0), e("b2b_s4a", 1)));
+    nets.add(net("b2b_s4a_t3", e("t3", 0), e("b2b_s4a", 2)));
+    nets.add(net("b2b_s4b_x", e("b2b_s4a", 0), e("b2b_s4b", 1)));
+    nets.add(net("b2b_s4b_c", e("b2b_s3a", 0), e("b2b_s4b", 2)));
+    nets.add(net("b2b_s4c_t1", e("t1", 0), e("b2b_s4c", 1)));
+    nets.add(net("b2b_s4c_t3", e("t3", 0), e("b2b_s4c", 2)));
+    nets.add(net("b2b_s4d_c", e("b2b_s3a", 0), e("b2b_s4d", 1)));
+    nets.add(net("b2b_s4d_x", e("b2b_s4a", 0), e("b2b_s4d", 2)));
+    nets.add(net("b2b_s4o_a", e("b2b_s4c", 0), e("b2b_s4o", 1)));
+    nets.add(net("b2b_s4o_b", e("b2b_s4d", 0), e("b2b_s4o", 2)));
+    // S5 = t2⊕cB, cC = t2·cB
+    components.add(new ComponentSpec("b2b_s5x", "Gates", "XOR Gate", 1, "S5X"));
+    components.add(new ComponentSpec("b2b_s5a", "Gates", "AND Gate", 1, "S5A"));
+    hints.add(new LayoutHint("b2b_s5x", 2, 0, 0, null));
+    hints.add(new LayoutHint("b2b_s5a", 2, 0, 1, null));
+    nets.add(net("b2b_s5x_t2", e("t2", 0), e("b2b_s5x", 1)));
+    nets.add(net("b2b_s5x_c", e("b2b_s4o", 0), e("b2b_s5x", 2)));
+    nets.add(net("b2b_s5a_t2", e("t2", 0), e("b2b_s5a", 1)));
+    nets.add(net("b2b_s5a_c", e("b2b_s4o", 0), e("b2b_s5a", 2)));
+    // S6 = t3⊕cC
+    components.add(new ComponentSpec("b2b_s6x", "Gates", "XOR Gate", 1, "S6X"));
+    hints.add(new LayoutHint("b2b_s6x", 3, 0, 0, null));
+    nets.add(net("b2b_s6x_t3", e("t3", 0), e("b2b_s6x", 1)));
+    nets.add(net("b2b_s6x_c", e("b2b_s5a", 0), e("b2b_s6x", 2)));
+    // Add2: B = S + U.
+    // B0 = U0
+    nets.add(net("b2b_b0", e("u0", 0), e("b0", 0)));
+    // B1 = t0⊕U1, c1 = t0·U1
+    components.add(new ComponentSpec("b2b_b1x", "Gates", "XOR Gate", 1, "B1X"));
+    components.add(new ComponentSpec("b2b_b1a", "Gates", "AND Gate", 1, "B1A"));
+    hints.add(new LayoutHint("b2b_b1x", 4, 0, 0, null));
+    hints.add(new LayoutHint("b2b_b1a", 4, 0, 1, null));
+    nets.add(net("b2b_b1x_t", e("t0", 0), e("b2b_b1x", 1)));
+    nets.add(net("b2b_b1x_u", e("u1", 0), e("b2b_b1x", 2)));
+    nets.add(net("b2b_b1a_t", e("t0", 0), e("b2b_b1a", 1)));
+    nets.add(net("b2b_b1a_u", e("u1", 0), e("b2b_b1a", 2)));
+    nets.add(net("b2b_b1", e("b2b_b1x", 0), e("b1", 0)));
+    // B2 = t1⊕U2⊕c1, c2 = majority
+    components.add(new ComponentSpec("b2b_b2a", "Gates", "XOR Gate", 1, "B2A"));
+    components.add(new ComponentSpec("b2b_b2b", "Gates", "XOR Gate", 1, "B2B"));
+    components.add(new ComponentSpec("b2b_b2c", "Gates", "AND Gate", 1, "B2C"));
+    components.add(new ComponentSpec("b2b_b2d", "Gates", "AND Gate", 1, "B2D"));
+    components.add(new ComponentSpec("b2b_b2o", "Gates", "OR Gate", 1, "B2O"));
+    hints.add(new LayoutHint("b2b_b2a", 5, 0, 0, null));
+    hints.add(new LayoutHint("b2b_b2b", 5, 0, 1, null));
+    hints.add(new LayoutHint("b2b_b2c", 5, 0, 2, null));
+    hints.add(new LayoutHint("b2b_b2d", 5, 0, 3, null));
+    hints.add(new LayoutHint("b2b_b2o", 5, 0, 4, null));
+    nets.add(net("b2b_b2a_t", e("t1", 0), e("b2b_b2a", 1)));
+    nets.add(net("b2b_b2a_u", e("u2", 0), e("b2b_b2a", 2)));
+    nets.add(net("b2b_b2b_x", e("b2b_b2a", 0), e("b2b_b2b", 1)));
+    nets.add(net("b2b_b2b_c", e("b2b_b1a", 0), e("b2b_b2b", 2)));
+    nets.add(net("b2b_b2c_t", e("t1", 0), e("b2b_b2c", 1)));
+    nets.add(net("b2b_b2c_u", e("u2", 0), e("b2b_b2c", 2)));
+    nets.add(net("b2b_b2d_c", e("b2b_b1a", 0), e("b2b_b2d", 1)));
+    nets.add(net("b2b_b2d_x", e("b2b_b2a", 0), e("b2b_b2d", 2)));
+    nets.add(net("b2b_b2o_a", e("b2b_b2c", 0), e("b2b_b2o", 1)));
+    nets.add(net("b2b_b2o_b", e("b2b_b2d", 0), e("b2b_b2o", 2)));
+    nets.add(net("b2b_b2", e("b2b_b2b", 0), e("b2", 0)));
+    // B3 = S3⊕U3⊕c2, c3 = majority
+    components.add(new ComponentSpec("b2b_b3a", "Gates", "XOR Gate", 1, "B3A"));
+    components.add(new ComponentSpec("b2b_b3b", "Gates", "XOR Gate", 1, "B3B"));
+    components.add(new ComponentSpec("b2b_b3c", "Gates", "AND Gate", 1, "B3C"));
+    components.add(new ComponentSpec("b2b_b3d", "Gates", "AND Gate", 1, "B3D"));
+    components.add(new ComponentSpec("b2b_b3o", "Gates", "OR Gate", 1, "B3O"));
+    hints.add(new LayoutHint("b2b_b3a", 6, 0, 0, null));
+    hints.add(new LayoutHint("b2b_b3b", 6, 0, 1, null));
+    hints.add(new LayoutHint("b2b_b3c", 6, 0, 2, null));
+    hints.add(new LayoutHint("b2b_b3d", 6, 0, 3, null));
+    hints.add(new LayoutHint("b2b_b3o", 6, 0, 4, null));
+    nets.add(net("b2b_b3a_s", e("b2b_s3x", 0), e("b2b_b3a", 1)));
+    nets.add(net("b2b_b3a_u", e("u3", 0), e("b2b_b3a", 2)));
+    nets.add(net("b2b_b3b_x", e("b2b_b3a", 0), e("b2b_b3b", 1)));
+    nets.add(net("b2b_b3b_c", e("b2b_b2o", 0), e("b2b_b3b", 2)));
+    nets.add(net("b2b_b3c_s", e("b2b_s3x", 0), e("b2b_b3c", 1)));
+    nets.add(net("b2b_b3c_u", e("u3", 0), e("b2b_b3c", 2)));
+    nets.add(net("b2b_b3d_c", e("b2b_b2o", 0), e("b2b_b3d", 1)));
+    nets.add(net("b2b_b3d_x", e("b2b_b3a", 0), e("b2b_b3d", 2)));
+    nets.add(net("b2b_b3o_a", e("b2b_b3c", 0), e("b2b_b3o", 1)));
+    nets.add(net("b2b_b3o_b", e("b2b_b3d", 0), e("b2b_b3o", 2)));
+    nets.add(net("b2b_b3", e("b2b_b3b", 0), e("b3", 0)));
+    // B4 = S4⊕c3, c4 = S4·c3
+    components.add(new ComponentSpec("b2b_b4x", "Gates", "XOR Gate", 1, "B4X"));
+    components.add(new ComponentSpec("b2b_b4a", "Gates", "AND Gate", 1, "B4A"));
+    hints.add(new LayoutHint("b2b_b4x", 7, 0, 0, null));
+    hints.add(new LayoutHint("b2b_b4a", 7, 0, 1, null));
+    nets.add(net("b2b_b4x_s", e("b2b_s4b", 0), e("b2b_b4x", 1)));
+    nets.add(net("b2b_b4x_c", e("b2b_b3o", 0), e("b2b_b4x", 2)));
+    nets.add(net("b2b_b4a_s", e("b2b_s4b", 0), e("b2b_b4a", 1)));
+    nets.add(net("b2b_b4a_c", e("b2b_b3o", 0), e("b2b_b4a", 2)));
+    nets.add(net("b2b_b4", e("b2b_b4x", 0), e("b4", 0)));
+    // B5 = S5⊕c4, c5 = S5·c4
+    components.add(new ComponentSpec("b2b_b5x", "Gates", "XOR Gate", 1, "B5X"));
+    components.add(new ComponentSpec("b2b_b5a", "Gates", "AND Gate", 1, "B5A"));
+    hints.add(new LayoutHint("b2b_b5x", 8, 0, 0, null));
+    hints.add(new LayoutHint("b2b_b5a", 8, 0, 1, null));
+    nets.add(net("b2b_b5x_s", e("b2b_s5x", 0), e("b2b_b5x", 1)));
+    nets.add(net("b2b_b5x_c", e("b2b_b4a", 0), e("b2b_b5x", 2)));
+    nets.add(net("b2b_b5a_s", e("b2b_s5x", 0), e("b2b_b5a", 1)));
+    nets.add(net("b2b_b5a_c", e("b2b_b4a", 0), e("b2b_b5a", 2)));
+    nets.add(net("b2b_b5", e("b2b_b5x", 0), e("b5", 0)));
+    // B6 = S6⊕c5
+    components.add(new ComponentSpec("b2b_b6x", "Gates", "XOR Gate", 1, "B6X"));
+    hints.add(new LayoutHint("b2b_b6x", 9, 0, 0, null));
+    nets.add(net("b2b_b6x_s", e("b2b_s6x", 0), e("b2b_b6x", 1)));
+    nets.add(net("b2b_b6x_c", e("b2b_b5a", 0), e("b2b_b6x", 2)));
+    nets.add(net("b2b_b6", e("b2b_b6x", 0), e("b6", 0)));
+    return new CircuitSpec("bcd2bin_2digit", components, ports, nets, hints);
   }
 
   /**
