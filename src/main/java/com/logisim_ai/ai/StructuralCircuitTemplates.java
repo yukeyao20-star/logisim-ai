@@ -433,7 +433,7 @@ public final class StructuralCircuitTemplates {
       return Optional.of(buildEncoder8to3());
     }
     // Bare "优先编码器" without an 8-3 spec defaults to the 8-to-3 encoder.
-    if (t.contains("优先编码器") || t.contains("priority encoder")) {
+    if (t.contains("优先编码") || t.contains("priority encoder")) {
       return Optional.of(buildEncoder8to3());
     }
     if (DFF_EN.matcher(t).find() || (t.contains("触发器") && !t.contains("jk") && !t.contains("t触发器") && !t.contains("t触发器"))) {
