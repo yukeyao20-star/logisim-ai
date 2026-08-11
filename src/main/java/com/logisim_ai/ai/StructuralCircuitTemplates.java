@@ -38,6 +38,8 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:comparator|magnitude\\s+comparator)", Pattern.CASE_INSENSITIVE);
   private static final Pattern MUX_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*选[1一]\\s*(?:多路选择器|多路复用器|选择器|多路开关)?");
+  private static final Pattern MUX_LU =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*路\\s*(?:选择器|多路选择器|多路复用器)");
   private static final Pattern MUX_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?1\\s*(?:mux|multiplexer)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DECODER_ZH =
@@ -121,7 +123,7 @@ public final class StructuralCircuitTemplates {
   private static final Pattern DIVIDER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:divider|frequency\\s+divider)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DIVIDER_ZH_BARE =
-      Pattern.compile("(?:分频器|分频电路)");
+      Pattern.compile("(?:分频器|分频电路|分频|频率分频)");
   private static final Pattern DIVIDER_EN_BARE =
       Pattern.compile("(?:divider|frequency\\s+divider)", Pattern.CASE_INSENSITIVE);
   private static final Pattern JOHNSON_ZH =
@@ -133,7 +135,7 @@ public final class StructuralCircuitTemplates {
   private static final Pattern JOHNSON_EN_BARE =
       Pattern.compile("johnson\\s*counter|twisted\\s*ring", Pattern.CASE_INSENSITIVE);
   private static final Pattern DLATCH_ZH =
-      Pattern.compile("(?:d|D)锁存器|透明锁存器|数据锁存器|电平锁存器");
+      Pattern.compile("(?:d|D)锁存器|透明锁存器|数据锁存|数据锁存器|电平锁存器");
   private static final Pattern DLATCH_EN =
       Pattern.compile("(?:d\\s*latch|transparent\\s*latch|level[- ]sensitive\\s*latch|enable\\s*latch)", Pattern.CASE_INSENSITIVE);
   private static final Pattern GRAY_ZH =
@@ -313,6 +315,13 @@ public final class StructuralCircuitTemplates {
     }
     if (men.find()) {
       return Optional.of(buildMux(Integer.parseInt(men.group(1))));
+    }
+    Matcher mlu = MUX_LU.matcher(t);
+    if (mlu.find()) {
+      Integer n = chineseToInt(mlu.group(1));
+      if (n != null) {
+        return Optional.of(buildMux(n));
+      }
     }
     Matcher dzh = DECODER_ZH.matcher(t);
     Matcher den = DECODER_EN.matcher(t);
