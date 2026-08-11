@@ -180,8 +180,14 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "或非门", "nor gate")) {
       return Optional.of("F=not (A or B)");
     }
+    if (containsAny(t, "三输入与", "三与", "3输入与")) {
+      return Optional.of("F=A and B and C");
+    }
     if (containsAny(t, "与门", "and gate")) {
       return Optional.of("F=A and B");
+    }
+    if (containsAny(t, "三输入或", "三或", "3输入或")) {
+      return Optional.of("F=A or B or C");
     }
     if (containsAny(t, "或门", "or gate")) {
       return Optional.of("F=A or B");

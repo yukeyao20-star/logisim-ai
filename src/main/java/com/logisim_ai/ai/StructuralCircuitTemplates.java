@@ -573,11 +573,13 @@ public final class StructuralCircuitTemplates {
     if (regen.find()) {
       return Optional.of(buildRegister(Integer.parseInt(regen.group(1))));
     }
-    if (REG_ZH_BARE.matcher(t).find() && !t.contains("分配器")) {
-      return Optional.of(buildRegister(4));
-    }
+    // SR latch must precede the bare 锁存器 register fallback so "SR锁存器"
+    // does not route to a register.
     if (BUZZER_ZH.matcher(t).find() || SR_ZH.matcher(t).find()) {
       return Optional.of(buildSRLatch());
+    }
+    if (REG_ZH_BARE.matcher(t).find() && !t.contains("分配器")) {
+      return Optional.of(buildRegister(4));
     }
     // Bare descriptions without a width default to a sensible width so plain
     // "加法器 / 比较器 / 计数器 / 译码器" still build a circuit.
