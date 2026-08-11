@@ -240,6 +240,10 @@ public final class StructuralCircuitTemplates {
     if (BCD7_ZH.matcher(t).find() || BCD7_EN.matcher(t).find()) {
       return Optional.of(buildBcd7Seg());
     }
+    // Bare 七段/数码管 without the bcd/8421 prefix (e.g. "七段译码器").
+    if (t.contains("七段译码器") || t.contains("七段显示") || t.contains("数码管") || t.contains("七段数码管")) {
+      return Optional.of(buildBcd7Seg());
+    }
     Matcher mul = MUL_ZH.matcher(t);
     Matcher mul2 = MUL_ZH2.matcher(t);
     Matcher mulEn = MUL_EN.matcher(t);
@@ -379,6 +383,11 @@ public final class StructuralCircuitTemplates {
         return Optional.of(buildModCounter(n));
       }
     }
+    // Bare binary counter (二进制计数器): the mod-N guard rejects N=2 and isBare
+    // treats 二进制's 二 as a width prefix, so catch it explicitly.
+    if (t.contains("二进制计数器") || t.contains("binary counter")) {
+      return Optional.of(buildCounter(4));
+    }
     Matcher ctrzh = COUNTER_ZH.matcher(t);
     Matcher ctrEn = COUNTER_EN.matcher(t);
     if (ctrzh.find()) {
@@ -417,6 +426,11 @@ public final class StructuralCircuitTemplates {
     }
     if (JOHNSON_ZH_BARE.matcher(t).find() || JOHNSON_EN_BARE.matcher(t).find()) {
       return Optional.of(buildJohnsonCounter(4));
+    }
+    // Ring counter (环形计数器): a true ring counter (single 1 circulating),
+    // seeded via SEED (D-FF has no preset; all-zero would dead-lock).
+    if (t.contains("环形计数器") || t.contains("ring counter")) {
+      return Optional.of(buildRingCounter());
     }
     Matcher pzh = PARITY_ZH.matcher(t);
     Matcher pen = PARITY_EN.matcher(t);
@@ -1560,6 +1574,50 @@ public final class StructuralCircuitTemplates {
       nets.add(net("l_q" + i, e("l" + i, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("lfsr_4bit", components, ports, nets, hints);
+  }
+
+  /**
+   * 4-bit ring counter (环形计数器): a single 1 circulates around a D-FF
+   * shift ring. D0 = SEED ∨ Q3, D_i = Q_{i-1}; drive SEED=1 for one clock to
+   * seed a single 1 (otherwise the all-zero state dead-locks). Sequence:
+   * 1000 → 0100 → 0010 → 0001 → 1000 (mod-4). Shared CLK/RST. Port maps:
+   * D-FF end0=D, end1=CLK, end2=Q, end4=reset; OR end0=out, end1/end2=in.
+   */
+  static CircuitSpec buildRingCounter() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "rc0");
+    addInput(ports, "seed", "SEED", "rc0");
+    addInput(ports, "rst", "RST", "rc0");
+    for (int i = 0; i < 4; i++) {
+      addOutput(ports, "q" + i, "Q" + i, "rc" + i);
+    }
+    components.add(new ComponentSpec("rc0", "Memory", "D Flip-Flop", 1, "U1"));
+    components.add(new ComponentSpec("rc1", "Memory", "D Flip-Flop", 1, "U2"));
+    components.add(new ComponentSpec("rc2", "Memory", "D Flip-Flop", 1, "U3"));
+    components.add(new ComponentSpec("rc3", "Memory", "D Flip-Flop", 1, "U4"));
+    components.add(new ComponentSpec("rc_or", "Gates", "OR Gate", 1, "O1"));
+    hints.add(new LayoutHint("rc0", 0, 0, 0, null));
+    hints.add(new LayoutHint("rc1", 1, 0, 0, null));
+    hints.add(new LayoutHint("rc2", 2, 0, 0, null));
+    hints.add(new LayoutHint("rc3", 3, 0, 0, null));
+    hints.add(new LayoutHint("rc_or", 0, 0, 1, null));
+    // D0 = SEED ∨ Q3
+    nets.add(net("rc_or_seed", e("seed", 0), e("rc_or", 1)));
+    nets.add(net("rc_or_q3", e("rc3", 2), e("rc_or", 2)));
+    nets.add(net("rc_d0", e("rc_or", 0), e("rc0", 0)));
+    // shift ring: D1=Q0, D2=Q1, D3=Q2
+    nets.add(net("rc_d1", e("rc0", 2), e("rc1", 0)));
+    nets.add(net("rc_d2", e("rc1", 2), e("rc2", 0)));
+    nets.add(net("rc_d3", e("rc2", 2), e("rc3", 0)));
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("rc_clk" + i, e("clk", 0), e("rc" + i, 1)));
+      nets.add(net("rc_rst" + i, e("rst", 0), e("rc" + i, 4)));
+      nets.add(net("rc_q" + i, e("rc" + i, 2), e("q" + i, 0)));
+    }
+    return new CircuitSpec("ring_counter", components, ports, nets, hints);
   }
 
   /**
