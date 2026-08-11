@@ -242,8 +242,19 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "或门", "or gate")) {
       return Optional.of("F=A or B");
     }
-    if (containsAny(t, "非门", "反相器", "not gate", "inverter")) {
+    if (containsAny(t, "非门", "反相器", "not gate", "inverter", "取反")) {
       return Optional.of("F=not A");
+    }
+    // Max/min of two 1-bit numbers: max = OR, min = AND.
+    if (containsAny(t, "求最大", "最大值", "取大", "max of")) {
+      return Optional.of("F=A or B");
+    }
+    if (containsAny(t, "求最小", "最小值", "取小", "min of")) {
+      return Optional.of("F=A and B");
+    }
+    // A single light switch: the switch directly drives the lamp.
+    if (containsAny(t, "灯的开关", "开关灯", "灯开关")) {
+      return Optional.of("F=A");
     }
     // 4-to-1 data selector described functionally
     if (containsAny(t, "从四个输入选一个", "从四个输入中选一个", "四选一", "数据选择", "数据选择器", "四路选一")) {
