@@ -168,11 +168,20 @@ public final class BoolFunctionSynthesizer {
     }
     // Bare single gates (order matters: 三输入与非 before 与非门; 三输入或非
     // before 或非门; 与非门/或非门 before 非门)
+    if (containsAny(t, "四输入异或", "四异或", "4输入异或")) {
+      return Optional.of("F=A xor B xor C xor D");
+    }
+    if (containsAny(t, "四输入与非", "四与非", "4输入与非")) {
+      return Optional.of("F=not (A and B and C and D)");
+    }
     if (containsAny(t, "三输入与非", "三与非", "3输入与非")) {
       return Optional.of("F=not (A and B and C)");
     }
     if (containsAny(t, "与非门", "nand gate")) {
       return Optional.of("F=not (A and B)");
+    }
+    if (containsAny(t, "四输入或非", "四或非", "4输入或非")) {
+      return Optional.of("F=not (A or B or C or D)");
     }
     if (containsAny(t, "三输入或非", "三或非", "3输入或非")) {
       return Optional.of("F=not (A or B or C)");
@@ -180,11 +189,17 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "或非门", "nor gate")) {
       return Optional.of("F=not (A or B)");
     }
+    if (containsAny(t, "四输入与", "四与", "4输入与")) {
+      return Optional.of("F=A and B and C and D");
+    }
     if (containsAny(t, "三输入与", "三与", "3输入与")) {
       return Optional.of("F=A and B and C");
     }
     if (containsAny(t, "与门", "and gate")) {
       return Optional.of("F=A and B");
+    }
+    if (containsAny(t, "四输入或", "四或", "4输入或")) {
+      return Optional.of("F=A or B or C or D");
     }
     if (containsAny(t, "三输入或", "三或", "3输入或")) {
       return Optional.of("F=A or B or C");
