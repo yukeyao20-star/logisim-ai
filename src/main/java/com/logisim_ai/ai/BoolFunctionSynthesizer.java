@@ -168,6 +168,41 @@ public final class BoolFunctionSynthesizer {
     }
     // Bare single gates (order matters: 三输入与非 before 与非门; 三输入或非
     // before 或非门; 与非门/或非门 before 非门)
+    // Generic "N输入X门": build the N-variable expression (N in 2..8), covering
+    // 与/或/异或/与非/或非 for any input count before the 2-input gate fallbacks.
+    java.util.regex.Matcher ninGate = java.util.regex.Pattern
+        .compile("([0-9一二三四五六七八九十两]{1,2})输入(与非|或非|异或|与|或)")
+        .matcher(t);
+    if (ninGate.find()) {
+      Integer n = chineseNumToInt(ninGate.group(1));
+      String op = ninGate.group(2);
+      if (n != null && n >= 2 && n <= 8) {
+        // Skip F: it is the output label, an input variable named F would collide.
+        String[] vars = {"A", "B", "C", "D", "E", "G", "H", "I"};
+        StringBuilder expr = new StringBuilder();
+        if (op.equals("与非") || op.equals("或非")) {
+          expr.append("F=not (");
+          String joiner = op.equals("与非") ? " and " : " or ";
+          for (int i = 0; i < n; i++) {
+            if (i > 0) expr.append(joiner);
+            expr.append(vars[i]);
+          }
+          expr.append(")");
+        } else {
+          expr.append("F=");
+          String joiner = switch (op) {
+            case "与" -> " and ";
+            case "或" -> " or ";
+            default -> " xor ";
+          };
+          for (int i = 0; i < n; i++) {
+            if (i > 0) expr.append(joiner);
+            expr.append(vars[i]);
+          }
+        }
+        return Optional.of(expr.toString());
+      }
+    }
     if (containsAny(t, "四输入异或", "四异或", "4输入异或")) {
       return Optional.of("F=A xor B xor C xor D");
     }
@@ -227,8 +262,29 @@ public final class BoolFunctionSynthesizer {
     return Optional.empty();
   }
 
-  private static boolean containsAny(String text, String... keywords) {
-    for (String keyword : keywords) {
+  private static Integer chineseNumToInt(String s) {
+    if (s == null || s.isBlank()) {
+      return null;
+    }
+    if (s.matches("\\d+")) {
+      return Integer.parseInt(s);
+    }
+    return switch (s) {
+      case "一", "两" -> 1;
+      case "二" -> 2;
+      case "三" -> 3;
+      case "四" -> 4;
+      case "五" -> 5;
+      case "六" -> 6;
+      case "七" -> 7;
+      case "八" -> 8;
+      case "九" -> 9;
+      case "十" -> 10;
+      default -> null;
+    };
+  }
+
+  private static boolean containsAny(String text, String... keywords) {    for (String keyword : keywords) {
       if (text.contains(keyword)) {
         return true;
       }
