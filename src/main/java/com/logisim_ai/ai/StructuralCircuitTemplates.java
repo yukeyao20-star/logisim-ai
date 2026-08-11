@@ -160,6 +160,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("二进制转bcd|二进制转8421|二进制转二十进制|bin转bcd|二进制转bcd码");
   private static final Pattern BINBCD_EN_BARE =
       Pattern.compile("binary[- ]to[- ]bcd|bin[- ]to[- ]bcd|binary[- ]to[- ]8421", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TSB_ZH =
+      Pattern.compile("三态缓冲器|三态输出缓冲|三态门|三态缓冲门");
+  private static final Pattern TSB_EN =
+      Pattern.compile("tri[- ]?state\\s*buffer|tristate\\s*buffer|tri[- ]?state\\s*gate", Pattern.CASE_INSENSITIVE);
   private static final Pattern E3_ZH =
       Pattern.compile("余三码|余3码|8421码转余3|8421转余3");
   private static final Pattern E3_EN =
@@ -600,6 +604,10 @@ public final class StructuralCircuitTemplates {
     }
     if (isBare(t, "奇偶校验器", "偶校验器", "奇校验器")) {
       return Optional.of(buildParity(4));
+    }
+    // Tri-state buffer (native TTL 74125 gate 1)
+    if (TSB_ZH.matcher(t).find() || TSB_EN.matcher(t).find()) {
+      return Optional.of(buildTriStateBuffer());
     }
     return Optional.empty();
   }
@@ -1478,6 +1486,28 @@ public final class StructuralCircuitTemplates {
     nets.add(net("bb_or3_b", e("bb_u3b", 0), e("bb_or3", 2)));
     nets.add(net("bb_u3", e("bb_or3", 0), e("u3", 0)));
     return new CircuitSpec("bin2bcd_4bit", components, ports, nets, hints);
+  }
+
+  /**
+   * Tri-state buffer (三态缓冲器) using the native TTL 74125 quad buffer, gate 1:
+   * A (end1) → Y (end2) when the active-low enable nG (end0) is 0; when nG=1 the
+   * output is high-impedance (floating). Port map verified from Ttl74125 source:
+   * gate1 enable=end0, data=end1, out=end2.
+   */
+  static CircuitSpec buildTriStateBuffer() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    components.add(new ComponentSpec("tsb", "TTL", "74125", 1, "U1"));
+    hints.add(new LayoutHint("tsb", 0, 0, 0, null));
+    addInput(ports, "a", "A", "tsb");
+    addInput(ports, "ng", "nG", "tsb");
+    addOutput(ports, "y", "Y", "tsb");
+    nets.add(net("tsb_ng", e("ng", 0), e("tsb", 0)));
+    nets.add(net("tsb_a", e("a", 0), e("tsb", 1)));
+    nets.add(net("tsb_y", e("tsb", 2), e("y", 0)));
+    return new CircuitSpec("tristate_buffer", components, ports, nets, hints);
   }
 
   /**

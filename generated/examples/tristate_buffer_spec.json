@@ -1,0 +1,19 @@
+{
+  "name": "tristate_buffer",
+  "components": [
+    {"id": "tsb", "library": "TTL", "factory": "74125", "bitWidth": 1, "label": "U1"}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "tsb", "targetEndIndex": 0},
+    {"id": "ng", "label": "nG", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "tsb", "targetEndIndex": 0},
+    {"id": "y", "label": "Y", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "tsb", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "tsb_ng", "endpoints": [{"componentId": "ng", "endIndex": 0}, {"componentId": "tsb", "endIndex": 0}]},
+    {"id": "tsb_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "tsb", "endIndex": 1}]},
+    {"id": "tsb_y", "endpoints": [{"componentId": "tsb", "endIndex": 2}, {"componentId": "y", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "tsb", "rank": 0, "column": 0, "row": 0, "side": null}
+  ]
+}
