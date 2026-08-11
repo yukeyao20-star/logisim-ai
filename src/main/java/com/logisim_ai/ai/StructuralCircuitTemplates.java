@@ -39,7 +39,7 @@ public final class StructuralCircuitTemplates {
   private static final Pattern MUX_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*选[1一]\\s*(?:多路选择器|多路复用器|选择器|多路开关)?");
   private static final Pattern MUX_LU =
-      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*路\\s*(?:选择器|多路选择器|多路复用器)");
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:路|位)\\s*(?:选择器|多路选择器|多路复用器)");
   private static final Pattern MUX_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?1\\s*(?:mux|multiplexer)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DECODER_ZH =
@@ -48,6 +48,8 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?(\\d{1,3})\\s*(?:decoder|demultiplexer)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DECODER_ZH_NN =
       Pattern.compile("(\\d{1,2})\\s*(?:[-－ ])\\s*(\\d{1,3})\\s*(?:译码器|解码器|分配器)");
+  private static final Pattern DECODER_ZH_LINE =
+      Pattern.compile("(\\d{1,2})\\s*线\\s*(\\d{1,3})\\s*线\\s*(?:译码器|解码器)");
   private static final Pattern DEMUX_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*路\\s*(?:分配器|多路分配器|选择分配器)");
   private static final Pattern DEMUX_EN =
@@ -155,11 +157,11 @@ public final class StructuralCircuitTemplates {
   private static final Pattern G2B_EN_BARE =
       Pattern.compile("gray[- ]to[- ]binary|gray\\s*cod[ed]?\\s*to\\s*binary", Pattern.CASE_INSENSITIVE);
   private static final Pattern B2B_ZH_BARE =
-      Pattern.compile("bcd转二进制|8421码转二进制|bcd码转二进制");
+      Pattern.compile("bcd转二进制|8421码转二进制|bcd码转二进制|十进制转二进制");
   private static final Pattern B2B_EN_BARE =
       Pattern.compile("bcd[- ]to[- ]binary|8421[- ]to[- ]binary", Pattern.CASE_INSENSITIVE);
   private static final Pattern BINBCD_ZH_BARE =
-      Pattern.compile("二进制转bcd|二进制转8421|二进制转二十进制|bin转bcd|二进制转bcd码");
+      Pattern.compile("二进制转bcd|二进制转8421|二进制转二十进制|二进制转十进制|bin转bcd|二进制转bcd码");
   private static final Pattern BINBCD_EN_BARE =
       Pattern.compile("binary[- ]to[- ]bcd|bin[- ]to[- ]bcd|binary[- ]to[- ]8421", Pattern.CASE_INSENSITIVE);
   private static final Pattern TSB_ZH =
@@ -319,7 +321,7 @@ public final class StructuralCircuitTemplates {
     Matcher mlu = MUX_LU.matcher(t);
     if (mlu.find()) {
       Integer n = chineseToInt(mlu.group(1));
-      if (n != null) {
+      if (n != null && n >= 2) {
         return Optional.of(buildMux(n));
       }
     }
@@ -338,6 +340,16 @@ public final class StructuralCircuitTemplates {
     if (dnn.find()) {
       // "3-8译码器" -> 3 input bits -> 8 outputs
       int n = Integer.parseInt(dnn.group(2));
+      int bits = 0;
+      while ((1 << bits) < n) {
+        bits++;
+      }
+      return Optional.of(buildDecoder(bits));
+    }
+    Matcher dline = DECODER_ZH_LINE.matcher(t);
+    if (dline.find()) {
+      // "3线8线译码器" -> 8 outputs -> log2 bits
+      int n = Integer.parseInt(dline.group(2));
       int bits = 0;
       while ((1 << bits) < n) {
         bits++;
