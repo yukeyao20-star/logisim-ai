@@ -149,6 +149,22 @@ public final class BoolFunctionSynthesizer {
       return Optional.of(
           "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
     }
+    // All switches closed = AND; must precede 三个开关 (odd-parity XOR).
+    if (containsAny(t, "都闭合", "全部闭合", "全部接通", "三个开关都闭合")) {
+      return Optional.of("F=A and B and C");
+    }
+    // Any one switch closed = OR.
+    if (containsAny(t, "任何一个开关", "任一开关", "任意一个开关")) {
+      return Optional.of("F=A or B or C");
+    }
+    // At least two of three = majority.
+    if (containsAny(t, "至少两个开关", "至少2个开关", "至少两个闭合")) {
+      return Optional.of("F=(A and B) or (A and C) or (B and C)");
+    }
+    // Exactly one of three closed.
+    if (containsAny(t, "恰好一个开关", "仅一个开关", "只有一个开关闭合")) {
+      return Optional.of("F=(A and not B and not C) or (not A and B and not C) or (not A and not B and C)");
+    }
     // Three switches controlling one light: F=1 when an odd number are on.
     // Must precede the two-switch / 开关控制 mapping below.
     if (containsAny(t, "三个开关", "三开关", "奇数个开关")) {

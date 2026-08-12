@@ -176,7 +176,31 @@ public final class BooleanSynthesisRegression {
             "求两个数的最大值",
             List.of("a", "b"),
             "f",
-            values -> values.get("a") || values.get("b")));
+            values -> values.get("a") || values.get("b")),
+        new Case(
+            "三个开关都闭合",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") && values.get("b") && values.get("c")),
+        new Case(
+            "任何一个开关闭合",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") || values.get("b") || values.get("c")),
+        new Case(
+            "至少两个开关闭合",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && values.get("b"))
+                || (values.get("a") && values.get("c"))
+                || (values.get("b") && values.get("c"))),
+        new Case(
+            "恰好一个开关闭合",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && !values.get("b") && !values.get("c"))
+                || (!values.get("a") && values.get("b") && !values.get("c"))
+                || (!values.get("a") && !values.get("b") && values.get("c"))));
 
     for (Case testCase : cases) {
       runCase(testCase);
