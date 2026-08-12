@@ -305,7 +305,17 @@ public final class BooleanSynthesisRegression {
             "三个开关同时闭合",
             List.of("a", "b", "c"),
             "f",
-            values -> values.get("a") && values.get("b") && values.get("c")));
+            values -> values.get("a") && values.get("b") && values.get("c")),
+        new Case(
+            "判断偶数",
+            List.of("a"),
+            "f",
+            values -> !values.get("a")),
+        new Case(
+            "判断奇数",
+            List.of("a"),
+            "f",
+            values -> values.get("a")));
 
     for (Case testCase : cases) {
       runCase(testCase);

@@ -163,6 +163,13 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "零检测", "全零", "判断为零", "全0", "为0检测")) {
       return Optional.of("F=not (A or B or C or D)");
     }
+    // Even / odd value detection = LSB check (odd number of 1s is xor3, separate).
+    if (containsAny(t, "判断偶数", "偶数判断", "是否为偶数")) {
+      return Optional.of("F=not A");
+    }
+    if (containsAny(t, "判断奇数", "奇数判断", "是否为奇数")) {
+      return Optional.of("F=A");
+    }
     // Logic-operator descriptions: "与逻辑/或逻辑/非逻辑/异或逻辑" and 逻辑X
     if (containsAny(t, "异或逻辑", "逻辑异或", "xor logic")) {
       return Optional.of("F=A xor B");
