@@ -268,7 +268,17 @@ public final class BooleanSynthesisRegression {
             "相反",
             List.of("a", "b"),
             "f",
-            values -> values.get("a") ^ values.get("b")));
+            values -> values.get("a") ^ values.get("b")),
+        new Case(
+            "零检测",
+            List.of("a", "b", "c", "d"),
+            "f",
+            values -> !(values.get("a") || values.get("b") || values.get("c") || values.get("d"))),
+        new Case(
+            "非零检测",
+            List.of("a", "b", "c", "d"),
+            "f",
+            values -> values.get("a") || values.get("b") || values.get("c") || values.get("d")));
 
     for (Case testCase : cases) {
       runCase(testCase);

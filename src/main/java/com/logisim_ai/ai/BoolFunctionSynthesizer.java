@@ -155,6 +155,14 @@ public final class BoolFunctionSynthesizer {
       return Optional.of(
           "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
     }
+    // Zero / non-zero detection of a 4-bit word. 非零检测 must precede 零检测
+    // (substring 零检测 would otherwise intercept it).
+    if (containsAny(t, "非零检测", "有任意1", "非零")) {
+      return Optional.of("F=A or B or C or D");
+    }
+    if (containsAny(t, "零检测", "全零", "判断为零", "全0", "为0检测")) {
+      return Optional.of("F=not (A or B or C or D)");
+    }
     // Logic-operator descriptions: "与逻辑/或逻辑/非逻辑/异或逻辑" and 逻辑X
     if (containsAny(t, "异或逻辑", "逻辑异或", "xor logic")) {
       return Optional.of("F=A xor B");
