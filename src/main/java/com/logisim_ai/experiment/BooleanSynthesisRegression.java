@@ -258,7 +258,17 @@ public final class BooleanSynthesisRegression {
             values -> values.get("a0").equals(values.get("b0"))
                 && values.get("a1").equals(values.get("b1"))
                 && values.get("a2").equals(values.get("b2"))
-                && values.get("a3").equals(values.get("b3"))));
+                && values.get("a3").equals(values.get("b3"))),
+        new Case(
+            "一致",
+            List.of("a", "b"),
+            "f",
+            values -> !(values.get("a") ^ values.get("b"))),
+        new Case(
+            "相反",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") ^ values.get("b")));
 
     for (Case testCase : cases) {
       runCase(testCase);
