@@ -416,6 +416,7 @@ public final class BooleanSynthesisRegression {
         {"tristate_buffer", "tristate.vec", "2", "0"},
         {"ring_counter", "ring.vec", "11", "0"},
         {"nine_complement", "ninecomp.vec", "10", "0"},
+        {"seqdet_1101", "seqdet1101.vec", "19", "0"},
     };
     java.io.File jarProbe = new java.io.File(
         System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",

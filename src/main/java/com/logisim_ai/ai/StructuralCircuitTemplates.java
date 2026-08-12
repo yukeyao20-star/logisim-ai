@@ -563,10 +563,13 @@ public final class StructuralCircuitTemplates {
       return Optional.of(buildTrafficLight());
     }
     if (SEQDET_ZH.matcher(t).find() || SEQDET_EN.matcher(t).find()) {
-      // Only the 101 pattern is implemented; reject explicit different
-      // sequences like "1101序列检测器" (which would otherwise grab the 101
-      // detector via the 序列检测器 substring).
-      if (!t.contains("1101") && !t.contains("110") && !t.contains("1010")) {
+      if (t.contains("1101")) {
+        return Optional.of(buildSequenceDetector1101());
+      }
+      // Only 101 is the other implemented pattern; reject explicit different
+      // sequences like "110序列检测器" (which would grab a detector via the
+      // 序列检测器 substring).
+      if (!t.contains("110") && !t.contains("1010")) {
         return Optional.of(buildSequenceDetector101());
       }
     }
@@ -2094,6 +2097,122 @@ public final class StructuralCircuitTemplates {
     nets.add(net("sd_rst0", e("rst", 0), e("sd0", 4)));
     nets.add(net("sd_rst1", e("rst", 0), e("sd1", 4)));
     return new CircuitSpec("seqdet_101", components, ports, nets, hints);
+  }
+
+  /**
+   * Moore 1101 sequence detector: 5 states S0=000 idle, S1=001 (1), S2=010 (11),
+   * S3=011 (110), S4=100 (1101 → F=1). Next state (verified by trace):
+   * Q0'=X∧¬Q1∧¬Q0; Q1'=¬Q2∧[(¬Q1∧Q0∧X)∨(Q1∧¬Q0)]; Q2'=¬Q2∧Q1∧Q0∧X;
+   * F=Q2∧¬Q1∧¬Q0. 3 D-FF + 3 NOT + 10 AND + 1 OR. Shared CLK/RST. Port maps:
+   * D-FF end0=D, end1=CLK, end2=Q, end4=reset; NOT end0=out/end1=in;
+   * 2-input AND/OR end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildSequenceDetector1101() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "s0");
+    addInput(ports, "x", "X", "s0");
+    addInput(ports, "rst", "RST", "s0");
+    addOutput(ports, "f", "F", "s_a11");
+    components.add(new ComponentSpec("s0", "Memory", "D Flip-Flop", 1, "U1"));
+    components.add(new ComponentSpec("s1", "Memory", "D Flip-Flop", 1, "U2"));
+    components.add(new ComponentSpec("s2", "Memory", "D Flip-Flop", 1, "U3"));
+    components.add(new ComponentSpec("s_nq0", "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec("s_nq1", "Gates", "NOT Gate", 1, "N2"));
+    components.add(new ComponentSpec("s_nq2", "Gates", "NOT Gate", 1, "N3"));
+    components.add(new ComponentSpec("s_a3", "Gates", "AND Gate", 1, "A3"));
+    components.add(new ComponentSpec("s_a4", "Gates", "AND Gate", 1, "A4"));
+    components.add(new ComponentSpec("s_a5", "Gates", "AND Gate", 1, "A5"));
+    components.add(new ComponentSpec("s_o1", "Gates", "OR Gate", 1, "O1"));
+    components.add(new ComponentSpec("s_a6", "Gates", "AND Gate", 1, "A6"));
+    components.add(new ComponentSpec("s_a7", "Gates", "AND Gate", 1, "A7"));
+    components.add(new ComponentSpec("s_a8", "Gates", "AND Gate", 1, "A8"));
+    components.add(new ComponentSpec("s_a9", "Gates", "AND Gate", 1, "A9"));
+    components.add(new ComponentSpec("s_a10", "Gates", "AND Gate", 1, "A10"));
+    components.add(new ComponentSpec("s_a11", "Gates", "AND Gate", 1, "A11"));
+    components.add(new ComponentSpec("s_nx", "Gates", "NOT Gate", 1, "N4"));
+    components.add(new ComponentSpec("s_b1", "Gates", "AND Gate", 1, "B1"));
+    components.add(new ComponentSpec("s_b2", "Gates", "AND Gate", 1, "B2"));
+    components.add(new ComponentSpec("s_b3", "Gates", "AND Gate", 1, "B3"));
+    components.add(new ComponentSpec("s_b4", "Gates", "AND Gate", 1, "B4"));
+    components.add(new ComponentSpec("s_b5", "Gates", "AND Gate", 1, "B5"));
+    components.add(new ComponentSpec("s_bo", "Gates", "OR Gate", 1, "O2"));
+    hints.add(new LayoutHint("s0", 0, 0, 0, null));
+    hints.add(new LayoutHint("s1", 1, 0, 0, null));
+    hints.add(new LayoutHint("s2", 2, 0, 0, null));
+    hints.add(new LayoutHint("s_nq0", 3, 0, 0, null));
+    hints.add(new LayoutHint("s_nq1", 3, 0, 1, null));
+    hints.add(new LayoutHint("s_nq2", 3, 0, 2, null));
+    hints.add(new LayoutHint("s_a3", 5, 0, 0, null));
+    hints.add(new LayoutHint("s_a4", 5, 0, 1, null));
+    hints.add(new LayoutHint("s_a5", 5, 0, 2, null));
+    hints.add(new LayoutHint("s_o1", 5, 0, 3, null));
+    hints.add(new LayoutHint("s_a6", 5, 0, 4, null));
+    hints.add(new LayoutHint("s_a7", 6, 0, 0, null));
+    hints.add(new LayoutHint("s_a8", 6, 0, 1, null));
+    hints.add(new LayoutHint("s_a9", 6, 0, 2, null));
+    hints.add(new LayoutHint("s_a10", 7, 0, 0, null));
+    hints.add(new LayoutHint("s_a11", 7, 0, 1, null));
+    hints.add(new LayoutHint("s_nx", 8, 0, 0, null));
+    hints.add(new LayoutHint("s_b1", 8, 0, 1, null));
+    hints.add(new LayoutHint("s_b2", 8, 0, 2, null));
+    hints.add(new LayoutHint("s_b3", 8, 0, 3, null));
+    hints.add(new LayoutHint("s_b4", 8, 0, 4, null));
+    hints.add(new LayoutHint("s_b5", 8, 0, 5, null));
+    hints.add(new LayoutHint("s_bo", 8, 0, 6, null));
+    // ¬Q0, ¬Q1, ¬Q2
+    nets.add(net("s_nq0_in", e("s0", 2), e("s_nq0", 1)));
+    nets.add(net("s_nq1_in", e("s1", 2), e("s_nq1", 1)));
+    nets.add(net("s_nq2_in", e("s2", 2), e("s_nq2", 1)));
+    // Q0' = (¬Q1∧¬Q0∧X) ∨ (¬Q2∧Q1∧¬Q0∧¬X)
+    nets.add(net("s_nx_in", e("x", 0), e("s_nx", 1)));
+    nets.add(net("s_b1_nq1", e("s_nq1", 0), e("s_b1", 1)));
+    nets.add(net("s_b1_nq0", e("s_nq0", 0), e("s_b1", 2)));
+    nets.add(net("s_b2_b1", e("s_b1", 0), e("s_b2", 1)));
+    nets.add(net("s_b2_x", e("x", 0), e("s_b2", 2)));
+    nets.add(net("s_b3_nq2", e("s_nq2", 0), e("s_b3", 1)));
+    nets.add(net("s_b3_q1", e("s1", 2), e("s_b3", 2)));
+    nets.add(net("s_b4_b3", e("s_b3", 0), e("s_b4", 1)));
+    nets.add(net("s_b4_nq0", e("s_nq0", 0), e("s_b4", 2)));
+    nets.add(net("s_b5_b4", e("s_b4", 0), e("s_b5", 1)));
+    nets.add(net("s_b5_nx", e("s_nx", 0), e("s_b5", 2)));
+    nets.add(net("s_bo_b2", e("s_b2", 0), e("s_bo", 1)));
+    nets.add(net("s_bo_b5", e("s_b5", 0), e("s_bo", 2)));
+    nets.add(net("s_d0", e("s_bo", 0), e("s0", 0)));
+    // Q1' = ¬Q2 ∧ [(¬Q1∧Q0∧X) ∨ (Q1∧¬Q0)]
+    nets.add(net("s_a3_nq1", e("s_nq1", 0), e("s_a3", 1)));
+    nets.add(net("s_a3_q0", e("s0", 2), e("s_a3", 2)));
+    nets.add(net("s_a4_a3", e("s_a3", 0), e("s_a4", 1)));
+    nets.add(net("s_a4_x", e("x", 0), e("s_a4", 2)));
+    nets.add(net("s_a5_q1", e("s1", 2), e("s_a5", 1)));
+    nets.add(net("s_a5_nq0", e("s_nq0", 0), e("s_a5", 2)));
+    nets.add(net("s_o1_a4", e("s_a4", 0), e("s_o1", 1)));
+    nets.add(net("s_o1_a5", e("s_a5", 0), e("s_o1", 2)));
+    nets.add(net("s_a6_nq2", e("s_nq2", 0), e("s_a6", 1)));
+    nets.add(net("s_a6_o1", e("s_o1", 0), e("s_a6", 2)));
+    nets.add(net("s_d1", e("s_a6", 0), e("s1", 0)));
+    // Q2' = ¬Q2 ∧ Q1 ∧ Q0 ∧ X
+    nets.add(net("s_a7_q1", e("s1", 2), e("s_a7", 1)));
+    nets.add(net("s_a7_q0", e("s0", 2), e("s_a7", 2)));
+    nets.add(net("s_a8_a7", e("s_a7", 0), e("s_a8", 1)));
+    nets.add(net("s_a8_x", e("x", 0), e("s_a8", 2)));
+    nets.add(net("s_a9_nq2", e("s_nq2", 0), e("s_a9", 1)));
+    nets.add(net("s_a9_a8", e("s_a8", 0), e("s_a9", 2)));
+    nets.add(net("s_d2", e("s_a9", 0), e("s2", 0)));
+    // F = Q2 ∧ ¬Q1 ∧ ¬Q0
+    nets.add(net("s_a10_q2", e("s2", 2), e("s_a10", 1)));
+    nets.add(net("s_a10_nq1", e("s_nq1", 0), e("s_a10", 2)));
+    nets.add(net("s_a11_a10", e("s_a10", 0), e("s_a11", 1)));
+    nets.add(net("s_a11_nq0", e("s_nq0", 0), e("s_a11", 2)));
+    nets.add(net("s_f", e("s_a11", 0), e("f", 0)));
+    // shared CLK and RST
+    for (int i = 0; i < 3; i++) {
+      nets.add(net("s_clk" + i, e("clk", 0), e("s" + i, 1)));
+      nets.add(net("s_rst" + i, e("rst", 0), e("s" + i, 4)));
+    }
+    return new CircuitSpec("seqdet_1101", components, ports, nets, hints);
   }
 
   /**
