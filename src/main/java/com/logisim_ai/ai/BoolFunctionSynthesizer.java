@@ -176,9 +176,19 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "非逻辑", "逻辑非", "not logic")) {
       return Optional.of("F=not A");
     }
-    // All switches closed = AND; must precede 三个开关 (odd-parity XOR).
-    if (containsAny(t, "都闭合", "全部闭合", "全部接通", "三个开关都闭合")) {
+    // Switch-count-aware closed/open semantics. Specific 2-switch forms precede
+    // the generic 都闭合/都断开 and the 三个开关/两个开关 (XOR) mappings.
+    if (containsAny(t, "两个开关都闭合", "两开关都闭合")) {
+      return Optional.of("F=A and B");
+    }
+    if (containsAny(t, "两个开关都断开", "两开关都断开")) {
+      return Optional.of("F=not (A or B)");
+    }
+    if (containsAny(t, "都闭合", "全部闭合", "全部接通", "同时闭合", "三个开关都闭合")) {
       return Optional.of("F=A and B and C");
+    }
+    if (containsAny(t, "都断开", "全部断开", "同时断开", "三个开关都断开")) {
+      return Optional.of("F=not (A or B or C)");
     }
     // Any one switch closed = OR.
     if (containsAny(t, "任何一个开关", "任一开关", "任意一个开关", "至少一个开关", "至少1个开关")) {

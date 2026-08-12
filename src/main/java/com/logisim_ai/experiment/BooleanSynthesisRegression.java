@@ -290,7 +290,22 @@ public final class BooleanSynthesisRegression {
             "f",
             values -> (values.get("a") && values.get("b") && !values.get("c"))
                 || (values.get("a") && !values.get("b") && values.get("c"))
-                || (!values.get("a") && values.get("b") && values.get("c"))));
+                || (!values.get("a") && values.get("b") && values.get("c"))),
+        new Case(
+            "两个开关都闭合",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "两个开关都断开",
+            List.of("a", "b"),
+            "f",
+            values -> !(values.get("a") || values.get("b"))),
+        new Case(
+            "三个开关同时闭合",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") && values.get("b") && values.get("c")));
 
     for (Case testCase : cases) {
       runCase(testCase);
