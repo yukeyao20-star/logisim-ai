@@ -141,7 +141,7 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=A xor B");
     }
     // 1-bit magnitude comparator (three outputs)
-    if (containsAny(t, "谁大", "谁小", "哪个大", "compare two", "comparison", "比较两个")) {
+    if (containsAny(t, "谁大", "谁小", "哪个大", "大于", "小于", "compare two", "comparison", "比较两个")) {
       return Optional.of(
           "F_GT=A and not B; F_EQ=not (A xor B); F_LT=not A and B");
     }
