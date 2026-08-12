@@ -315,7 +315,36 @@ public final class BooleanSynthesisRegression {
             "判断奇数",
             List.of("a"),
             "f",
-            values -> values.get("a")));
+            values -> values.get("a")),
+        new Case(
+            "两个都为真",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "全部为真",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") && values.get("b") && values.get("c")),
+        new Case(
+            "任一为真",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") || values.get("b") || values.get("c")),
+        new Case(
+            "至少两个为真",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && values.get("b"))
+                || (values.get("a") && values.get("c"))
+                || (values.get("b") && values.get("c"))),
+        new Case(
+            "恰好一个为真",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && !values.get("b") && !values.get("c"))
+                || (!values.get("a") && values.get("b") && !values.get("c"))
+                || (!values.get("a") && !values.get("b") && values.get("c"))));
 
     for (Case testCase : cases) {
       runCase(testCase);

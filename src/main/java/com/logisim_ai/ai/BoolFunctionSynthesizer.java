@@ -185,32 +185,35 @@ public final class BoolFunctionSynthesizer {
     }
     // Switch-count-aware closed/open semantics. Specific 2-switch forms precede
     // the generic 都闭合/都断开 and the 三个开关/两个开关 (XOR) mappings.
-    if (containsAny(t, "两个开关都闭合", "两开关都闭合")) {
+    if (containsAny(t, "两个开关都闭合", "两开关都闭合", "两个都为真", "两个都成立")) {
       return Optional.of("F=A and B");
     }
-    if (containsAny(t, "两个开关都断开", "两开关都断开")) {
+    if (containsAny(t, "两个开关都断开", "两开关都断开", "两个都为假", "两个都不成立")) {
       return Optional.of("F=not (A or B)");
     }
-    if (containsAny(t, "都闭合", "全部闭合", "全部接通", "同时闭合", "三个开关都闭合")) {
+    if (containsAny(t, "都闭合", "全部闭合", "全部接通", "同时闭合", "三个开关都闭合",
+        "都为真", "都成立", "全部为真", "同时为真", "全部成立")) {
       return Optional.of("F=A and B and C");
     }
-    if (containsAny(t, "都断开", "全部断开", "同时断开", "三个开关都断开")) {
+    if (containsAny(t, "都断开", "全部断开", "同时断开", "三个开关都断开",
+        "都为假", "全部为假", "同时为假", "都不成立")) {
       return Optional.of("F=not (A or B or C)");
     }
     // Any one switch closed = OR.
-    if (containsAny(t, "任何一个开关", "任一开关", "任意一个开关", "至少一个开关", "至少1个开关")) {
+    if (containsAny(t, "任何一个开关", "任一开关", "任意一个开关", "至少一个开关", "至少1个开关",
+        "任一为真", "至少一个为真", "任何一个为真", "任意一个为真")) {
       return Optional.of("F=A or B or C");
     }
     // At least two of three = majority.
-    if (containsAny(t, "至少两个开关", "至少2个开关", "至少两个闭合")) {
+    if (containsAny(t, "至少两个开关", "至少2个开关", "至少两个闭合", "至少两个为真")) {
       return Optional.of("F=(A and B) or (A and C) or (B and C)");
     }
     // Exactly two of three closed.
-    if (containsAny(t, "恰好两个开关", "恰好2个开关", "仅两个开关闭合")) {
+    if (containsAny(t, "恰好两个开关", "恰好2个开关", "仅两个开关闭合", "恰好两个为真")) {
       return Optional.of("F=(A and B and not C) or (A and not B and C) or (not A and B and C)");
     }
     // Exactly one of three closed.
-    if (containsAny(t, "恰好一个开关", "仅一个开关", "只有一个开关闭合")) {
+    if (containsAny(t, "恰好一个开关", "仅一个开关", "只有一个开关闭合", "恰好一个为真", "仅一个为真", "只有一个为真")) {
       return Optional.of("F=(A and not B and not C) or (not A and B and not C) or (not A and not B and C)");
     }
     // Three switches controlling one light: F=1 when an odd number are on.
