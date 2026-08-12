@@ -220,7 +220,27 @@ public final class BooleanSynthesisRegression {
             "异或逻辑",
             List.of("a", "b"),
             "f",
-            values -> values.get("a") ^ values.get("b")));
+            values -> values.get("a") ^ values.get("b")),
+        new Case(
+            "逻辑与",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "逻辑或",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") || values.get("b")),
+        new Case(
+            "与非",
+            List.of("a", "b"),
+            "f",
+            values -> !(values.get("a") && values.get("b"))),
+        new Case(
+            "或非",
+            List.of("a", "b"),
+            "f",
+            values -> !(values.get("a") || values.get("b"))));
 
     for (Case testCase : cases) {
       runCase(testCase);

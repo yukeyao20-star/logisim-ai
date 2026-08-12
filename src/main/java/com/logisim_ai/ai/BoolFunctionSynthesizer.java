@@ -115,6 +115,12 @@ public final class BoolFunctionSynthesizer {
    */
   private static Optional<String> tryFunctionalMapping(String text) {
     String t = text.toLowerCase(Locale.ROOT);
+    // Expression-style queries ("Y=A或非B", "F=...") belong to the expression
+    // parser, not the functional-description mapping; bare gate keywords like
+    // 与非/或非 would otherwise intercept them.
+    if (t.contains("=")) {
+      return Optional.empty();
+    }
     if (containsAny(t,
         "三人表决", "多数表决", "表决器", "majority", "voting", "vote of")) {
       return Optional.of("F=(A and B) or (A and C) or (B and C)");
@@ -149,17 +155,17 @@ public final class BoolFunctionSynthesizer {
       return Optional.of(
           "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
     }
-    // Logic-operator descriptions: "与逻辑/或逻辑/非逻辑/异或逻辑"
-    if (containsAny(t, "异或逻辑", "xor logic")) {
+    // Logic-operator descriptions: "与逻辑/或逻辑/非逻辑/异或逻辑" and 逻辑X
+    if (containsAny(t, "异或逻辑", "逻辑异或", "xor logic")) {
       return Optional.of("F=A xor B");
     }
-    if (containsAny(t, "与逻辑", "and logic")) {
+    if (containsAny(t, "与逻辑", "逻辑与", "and logic")) {
       return Optional.of("F=A and B");
     }
-    if (containsAny(t, "或逻辑", "or logic")) {
+    if (containsAny(t, "或逻辑", "逻辑或", "or logic")) {
       return Optional.of("F=A or B");
     }
-    if (containsAny(t, "非逻辑", "not logic")) {
+    if (containsAny(t, "非逻辑", "逻辑非", "not logic")) {
       return Optional.of("F=not A");
     }
     // All switches closed = AND; must precede 三个开关 (odd-parity XOR).
@@ -244,6 +250,9 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "与非门", "nand gate")) {
       return Optional.of("F=not (A and B)");
     }
+    if (containsAny(t, "与非")) {
+      return Optional.of("F=not (A and B)");
+    }
     if (containsAny(t, "四输入或非", "四或非", "4输入或非")) {
       return Optional.of("F=not (A or B or C or D)");
     }
@@ -251,6 +260,9 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=not (A or B or C)");
     }
     if (containsAny(t, "或非门", "nor gate")) {
+      return Optional.of("F=not (A or B)");
+    }
+    if (containsAny(t, "或非")) {
       return Optional.of("F=not (A or B)");
     }
     if (containsAny(t, "四输入与", "四与", "4输入与")) {
