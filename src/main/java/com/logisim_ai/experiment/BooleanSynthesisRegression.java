@@ -384,6 +384,21 @@ public final class BooleanSynthesisRegression {
             "两个都为1",
             List.of("a", "b"),
             "f",
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "有信号",
+            List.of("a"),
+            "f",
+            values -> values.get("a")),
+        new Case(
+            "无信号",
+            List.of("a"),
+            "f",
+            values -> !values.get("a")),
+        new Case(
+            "两个信号都有效",
+            List.of("a", "b"),
+            "f",
             values -> values.get("a") && values.get("b")));
 
     for (Case testCase : cases) {
