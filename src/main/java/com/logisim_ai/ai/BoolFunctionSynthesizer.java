@@ -131,7 +131,7 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "偶校验", "奇偶校验", "校验器", "even parity", "parity")) {
       return Optional.of("F=A xor B xor C");
     }
-    if (containsAny(t, "不相等", "相反", "not equal", "unequal", "different bits")) {
+    if (containsAny(t, "不相等", "相反", "一开一关", "一个开一个关", "一开一闭", "not equal", "unequal", "different bits")) {
       return Optional.of("F=A xor B");
     }
     if (containsAny(t, "相等", "一致", "相同", "equal", "equals", "xnor", "同或")) {
