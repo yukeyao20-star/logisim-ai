@@ -155,6 +155,13 @@ public final class BoolFunctionSynthesizer {
       return Optional.of(
           "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
     }
+    // 1-bit subtractor / multiplier described functionally.
+    if (containsAny(t, "求差", "两数之差", "减法运算", "求两数之差", "差值")) {
+      return Optional.of("D=A xor B; BOUT=not A and B");
+    }
+    if (containsAny(t, "求积", "两数之积", "乘法运算", "乘积", "求两数之积")) {
+      return Optional.of("P=A and B");
+    }
     // Zero / non-zero detection of a 4-bit word. 非零检测 must precede 零检测
     // (substring 零检测 would otherwise intercept it).
     if (containsAny(t, "非零检测", "有任意1", "非零")) {
