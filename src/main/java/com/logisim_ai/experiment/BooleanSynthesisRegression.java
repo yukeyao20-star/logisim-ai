@@ -359,7 +359,32 @@ public final class BooleanSynthesisRegression {
             "两个输入选一个",
             List.of("d0", "d1", "s"),
             "f",
-            values -> values.get("s") ? values.get("d1") : values.get("d0")));
+            values -> values.get("s") ? values.get("d1") : values.get("d0")),
+        new Case(
+            "全部为1",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") && values.get("b") && values.get("c")),
+        new Case(
+            "任一为1",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") || values.get("b") || values.get("c")),
+        new Case(
+            "全部为0",
+            List.of("a", "b", "c"),
+            "f",
+            values -> !(values.get("a") || values.get("b") || values.get("c"))),
+        new Case(
+            "任一为0",
+            List.of("a", "b", "c"),
+            "f",
+            values -> !(values.get("a") && values.get("b") && values.get("c"))),
+        new Case(
+            "两个都为1",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") && values.get("b")));
 
     for (Case testCase : cases) {
       runCase(testCase);
