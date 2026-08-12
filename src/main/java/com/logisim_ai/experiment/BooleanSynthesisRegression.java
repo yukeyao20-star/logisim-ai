@@ -278,7 +278,19 @@ public final class BooleanSynthesisRegression {
             "非零检测",
             List.of("a", "b", "c", "d"),
             "f",
-            values -> values.get("a") || values.get("b") || values.get("c") || values.get("d")));
+            values -> values.get("a") || values.get("b") || values.get("c") || values.get("d")),
+        new Case(
+            "至少一个开关闭合",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") || values.get("b") || values.get("c")),
+        new Case(
+            "恰好两个开关闭合",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && values.get("b") && !values.get("c"))
+                || (values.get("a") && !values.get("b") && values.get("c"))
+                || (!values.get("a") && values.get("b") && values.get("c"))));
 
     for (Case testCase : cases) {
       runCase(testCase);
