@@ -145,9 +145,22 @@ public final class BoolFunctionSynthesizer {
           "F=not (A0 xor B0) and not (A1 xor B1) and not (A2 xor B2) and not (A3 xor B3)");
     }
     // One-bit full adder described functionally
-    if (containsAny(t, "两个数相加", "求和电路", "加法运算", "相加", "进位加法")) {
+    if (containsAny(t, "两个数相加", "求和", "两数之和", "求和电路", "加法运算", "相加", "进位加法")) {
       return Optional.of(
           "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
+    }
+    // Logic-operator descriptions: "与逻辑/或逻辑/非逻辑/异或逻辑"
+    if (containsAny(t, "异或逻辑", "xor logic")) {
+      return Optional.of("F=A xor B");
+    }
+    if (containsAny(t, "与逻辑", "and logic")) {
+      return Optional.of("F=A and B");
+    }
+    if (containsAny(t, "或逻辑", "or logic")) {
+      return Optional.of("F=A or B");
+    }
+    if (containsAny(t, "非逻辑", "not logic")) {
+      return Optional.of("F=not A");
     }
     // All switches closed = AND; must precede 三个开关 (odd-parity XOR).
     if (containsAny(t, "都闭合", "全部闭合", "全部接通", "三个开关都闭合")) {
