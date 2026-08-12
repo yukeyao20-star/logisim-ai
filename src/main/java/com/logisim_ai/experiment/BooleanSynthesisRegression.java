@@ -134,7 +134,49 @@ public final class BooleanSynthesisRegression {
             "Y=A与非B",
             List.of("a", "b"),
             "y",
-            values -> !(values.get("a") && values.get("b"))));
+            values -> !(values.get("a") && values.get("b"))),
+        new Case(
+            "三人表决器",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && values.get("b"))
+                || (values.get("a") && values.get("c"))
+                || (values.get("b") && values.get("c"))),
+        new Case(
+            "两个开关串联",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "两个开关并联",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") || values.get("b")),
+        new Case(
+            "三个开关控制一盏灯",
+            List.of("a", "b", "c"),
+            "f",
+            values -> values.get("a") ^ values.get("b") ^ values.get("c")),
+        new Case(
+            "两个数不相等",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") ^ values.get("b")),
+        new Case(
+            "三输入与非门",
+            List.of("a", "b", "c"),
+            "f",
+            values -> !(values.get("a") && values.get("b") && values.get("c"))),
+        new Case(
+            "取反",
+            List.of("a"),
+            "f",
+            values -> !values.get("a")),
+        new Case(
+            "求两个数的最大值",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") || values.get("b")));
 
     for (Case testCase : cases) {
       runCase(testCase);
