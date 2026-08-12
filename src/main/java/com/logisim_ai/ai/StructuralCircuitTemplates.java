@@ -184,6 +184,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("补码器|求补|二进制补码");
   private static final Pattern TWOS_EN_BARE =
       Pattern.compile("two.?s?\\s*complement|2s\\s*complement", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NC_ZH =
+      Pattern.compile("9的补码|九的补码|9的补数|九的补数|9补码");
+  private static final Pattern NC_EN =
+      Pattern.compile("nine.?s?\\s*complement|9s?\\s*complement", Pattern.CASE_INSENSITIVE);
   private static final Pattern TRAFFIC_ZH =
       Pattern.compile("交通灯|红绿灯|交通信号|交通灯控制");
   private static final Pattern TRAFFIC_EN =
@@ -550,6 +554,10 @@ public final class StructuralCircuitTemplates {
     }
     if (TWOS_ZH_BARE.matcher(t).find() || TWOS_EN_BARE.matcher(t).find()) {
       return Optional.of(buildTwosComplement(4));
+    }
+    // 9's complement of a BCD digit (BCD subtraction helper).
+    if (NC_ZH.matcher(t).find() || NC_EN.matcher(t).find()) {
+      return Optional.of(buildNineComplement());
     }
     if (TRAFFIC_ZH.matcher(t).find() || TRAFFIC_EN.matcher(t).find()) {
       return Optional.of(buildTrafficLight());
@@ -1523,6 +1531,54 @@ public final class StructuralCircuitTemplates {
     nets.add(net("bb_or3_b", e("bb_u3b", 0), e("bb_or3", 2)));
     nets.add(net("bb_u3", e("bb_or3", 0), e("u3", 0)));
     return new CircuitSpec("bin2bcd_4bit", components, ports, nets, hints);
+  }
+
+  /**
+   * 9's complement of a BCD digit (9的补码, used in BCD subtraction): with
+   * BCD bits (w,x,y,z)=(D8,D4,D2,D1), the borrow-subtraction of 9−D gives
+   * r0=¬z, r1=y, r2=x⊕y, r3=¬(w⊕(x∨y)). Verified: 0→9, 5→4, 9→0. ~5 gates.
+   * Combinational. 2-input gates end0=out, end1/end2=in; NOT end0=out, end1=in.
+   */
+  static CircuitSpec buildNineComplement() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addInput(ports, "z", "D1", "nc_n0");
+    addInput(ports, "y", "D2", "nc_x2");
+    addInput(ports, "x", "D4", "nc_x2");
+    addInput(ports, "w", "D8", "nc_x3");
+    addOutput(ports, "r0", "C1", "nc_n0");
+    addOutput(ports, "r1", "C2", "nc_x2");
+    addOutput(ports, "r2", "C4", "nc_x2");
+    addOutput(ports, "r3", "C8", "nc_n3");
+    components.add(new ComponentSpec("nc_n0", "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec("nc_x2", "Gates", "XOR Gate", 1, "X2"));
+    components.add(new ComponentSpec("nc_o", "Gates", "OR Gate", 1, "O1"));
+    components.add(new ComponentSpec("nc_x3", "Gates", "XOR Gate", 1, "X3"));
+    components.add(new ComponentSpec("nc_n3", "Gates", "NOT Gate", 1, "N2"));
+    hints.add(new LayoutHint("nc_n0", 0, 0, 0, null));
+    hints.add(new LayoutHint("nc_x2", 1, 0, 0, null));
+    hints.add(new LayoutHint("nc_o", 2, 0, 0, null));
+    hints.add(new LayoutHint("nc_x3", 3, 0, 0, null));
+    hints.add(new LayoutHint("nc_n3", 4, 0, 0, null));
+    // r0 = ¬z
+    nets.add(net("nc_n0_in", e("z", 0), e("nc_n0", 1)));
+    nets.add(net("nc_r0", e("nc_n0", 0), e("r0", 0)));
+    // r1 = y
+    nets.add(net("nc_r1", e("y", 0), e("r1", 0)));
+    // r2 = x⊕y
+    nets.add(net("nc_x2_x", e("x", 0), e("nc_x2", 1)));
+    nets.add(net("nc_x2_y", e("y", 0), e("nc_x2", 2)));
+    nets.add(net("nc_r2", e("nc_x2", 0), e("r2", 0)));
+    // b3 = x∨y; r3 = ¬(w⊕b3)
+    nets.add(net("nc_o_x", e("x", 0), e("nc_o", 1)));
+    nets.add(net("nc_o_y", e("y", 0), e("nc_o", 2)));
+    nets.add(net("nc_x3_w", e("w", 0), e("nc_x3", 1)));
+    nets.add(net("nc_x3_b", e("nc_o", 0), e("nc_x3", 2)));
+    nets.add(net("nc_n3_in", e("nc_x3", 0), e("nc_n3", 1)));
+    nets.add(net("nc_r3", e("nc_n3", 0), e("r3", 0)));
+    return new CircuitSpec("nine_complement", components, ports, nets, hints);
   }
 
   /**

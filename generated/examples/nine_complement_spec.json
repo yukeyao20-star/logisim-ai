@@ -1,0 +1,41 @@
+{
+  "name": "nine_complement",
+  "components": [
+    {"id": "nc_n0", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N1"},
+    {"id": "nc_x2", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "X2"},
+    {"id": "nc_o", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "O1"},
+    {"id": "nc_x3", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": "X3"},
+    {"id": "nc_n3", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N2"}
+  ],
+  "externalPorts": [
+    {"id": "z", "label": "D1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nc_n0", "targetEndIndex": 0},
+    {"id": "y", "label": "D2", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nc_x2", "targetEndIndex": 0},
+    {"id": "x", "label": "D4", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nc_x2", "targetEndIndex": 0},
+    {"id": "w", "label": "D8", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "nc_x3", "targetEndIndex": 0},
+    {"id": "r0", "label": "C1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "nc_n0", "targetEndIndex": 0},
+    {"id": "r1", "label": "C2", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "nc_x2", "targetEndIndex": 0},
+    {"id": "r2", "label": "C4", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "nc_x2", "targetEndIndex": 0},
+    {"id": "r3", "label": "C8", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "nc_n3", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "nc_n0_in", "endpoints": [{"componentId": "z", "endIndex": 0}, {"componentId": "nc_n0", "endIndex": 1}]},
+    {"id": "nc_r0", "endpoints": [{"componentId": "nc_n0", "endIndex": 0}, {"componentId": "r0", "endIndex": 0}]},
+    {"id": "nc_r1", "endpoints": [{"componentId": "y", "endIndex": 0}, {"componentId": "r1", "endIndex": 0}]},
+    {"id": "nc_x2_x", "endpoints": [{"componentId": "x", "endIndex": 0}, {"componentId": "nc_x2", "endIndex": 1}]},
+    {"id": "nc_x2_y", "endpoints": [{"componentId": "y", "endIndex": 0}, {"componentId": "nc_x2", "endIndex": 2}]},
+    {"id": "nc_r2", "endpoints": [{"componentId": "nc_x2", "endIndex": 0}, {"componentId": "r2", "endIndex": 0}]},
+    {"id": "nc_o_x", "endpoints": [{"componentId": "x", "endIndex": 0}, {"componentId": "nc_o", "endIndex": 1}]},
+    {"id": "nc_o_y", "endpoints": [{"componentId": "y", "endIndex": 0}, {"componentId": "nc_o", "endIndex": 2}]},
+    {"id": "nc_x3_w", "endpoints": [{"componentId": "w", "endIndex": 0}, {"componentId": "nc_x3", "endIndex": 1}]},
+    {"id": "nc_x3_b", "endpoints": [{"componentId": "nc_o", "endIndex": 0}, {"componentId": "nc_x3", "endIndex": 2}]},
+    {"id": "nc_n3_in", "endpoints": [{"componentId": "nc_x3", "endIndex": 0}, {"componentId": "nc_n3", "endIndex": 1}]},
+    {"id": "nc_r3", "endpoints": [{"componentId": "nc_n3", "endIndex": 0}, {"componentId": "r3", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "nc_n0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "nc_x2", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "nc_o", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "nc_x3", "rank": 3, "column": 0, "row": 0, "side": null},
+    {"componentId": "nc_n3", "rank": 4, "column": 0, "row": 0, "side": null}
+  ]
+}
