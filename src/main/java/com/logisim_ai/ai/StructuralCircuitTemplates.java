@@ -316,17 +316,17 @@ public final class StructuralCircuitTemplates {
     if (mzh.find()) {
       Integer n = chineseToInt(mzh.group(1));
       if (n != null) {
-        return Optional.of(buildMux(n));
+        return Optional.of(buildMux(pow2Ceil(n)));
       }
     }
     if (men.find()) {
-      return Optional.of(buildMux(Integer.parseInt(men.group(1))));
+      return Optional.of(buildMux(pow2Ceil(Integer.parseInt(men.group(1)))));
     }
     Matcher mlu = MUX_LU.matcher(t);
     if (mlu.find()) {
       Integer n = chineseToInt(mlu.group(1));
       if (n != null && n >= 2) {
-        return Optional.of(buildMux(n));
+        return Optional.of(buildMux(pow2Ceil(n)));
       }
     }
     Matcher dzh = DECODER_ZH.matcher(t);
@@ -3066,6 +3066,15 @@ public final class StructuralCircuitTemplates {
 
   private static EndpointRef e(String componentId, int endIndex) {
     return new EndpointRef(componentId, endIndex);
+  }
+
+  /** Smallest power of two ≥ n (for MUX widths; 3 → 4, 5 → 8). */
+  private static int pow2Ceil(int n) {
+    int r = 1;
+    while (r < n) {
+      r <<= 1;
+    }
+    return r;
   }
 
   private static NetSpec net(String id, EndpointRef... endpoints) {

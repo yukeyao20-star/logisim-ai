@@ -185,7 +185,7 @@ public final class BoolFunctionSynthesizer {
     }
     // Switch-count-aware closed/open semantics. Specific 2-switch forms precede
     // the generic 都闭合/都断开 and the 三个开关/两个开关 (XOR) mappings.
-    if (containsAny(t, "两个开关都闭合", "两开关都闭合", "两个都为真", "两个都成立")) {
+    if (containsAny(t, "两个开关都闭合", "两开关都闭合", "两个都为真", "两个都成立", "两个开关同时闭合")) {
       return Optional.of("F=A and B");
     }
     if (containsAny(t, "两个开关都断开", "两开关都断开", "两个都为假", "两个都不成立")) {
@@ -330,6 +330,9 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=A");
     }
     // 4-to-1 data selector described functionally
+    if (containsAny(t, "两个输入选一个", "两个输入中选一个", "两路选一")) {
+      return Optional.of("F=(D0 and not S) or (D1 and S)");
+    }
     if (containsAny(t, "从四个输入选一个", "从四个输入中选一个", "四选一", "数据选择", "数据选择器", "四路选一")) {
       return Optional.of(
           "F=(D0 and not S1 and not S0) or (D1 and not S1 and S0) or (D2 and S1 and not S0) or (D3 and S1 and S0)");
