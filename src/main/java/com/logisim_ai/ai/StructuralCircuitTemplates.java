@@ -191,7 +191,7 @@ public final class StructuralCircuitTemplates {
   private static final Pattern SR_ZH =
       Pattern.compile("(?:sr|s-r|rs|r-s)\\s*(?:触发器|锁存器)|(?:sr|s-r|rs|r-s)\\s*latch", Pattern.CASE_INSENSITIVE);
   private static final Pattern BUZZER_ZH =
-      Pattern.compile("抢答器|优先抢答|抢答电路");
+      Pattern.compile("抢答器|优先抢答|抢答电路|抢答");
   private static final Pattern DIVIDER_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:分频器|分频电路|频率分频器)");
   private static final Pattern DIVIDER_EN =

@@ -122,7 +122,8 @@ public final class BoolFunctionSynthesizer {
       return Optional.empty();
     }
     if (containsAny(t,
-        "三人表决", "多数表决", "表决器", "majority", "voting", "vote of", "voter")) {
+        "三人表决", "多数表决", "表决器", "majority", "voting", "vote of", "voter",
+        "多数同意", "多数人同意", "大部分人同意", "大部分同意")) {
       return Optional.of("F=(A and B) or (A and C) or (B and C)");
     }
     if (containsAny(t, "不一致", "意见不同", "disagreement", "disagree")) {
@@ -205,7 +206,7 @@ public final class BoolFunctionSynthesizer {
     }
     if (containsAny(t, "都闭合", "全部闭合", "全部接通", "同时闭合", "三个开关都闭合",
         "都为真", "都成立", "全部为真", "同时为真", "全部成立", "全部为1", "都为1", "都是1",
-        "都有效", "全部有效", "都有效信号")) {
+        "都有效", "全部有效", "都有效信号", "全部信号有效", "所有信号有效")) {
       return Optional.of("F=A and B and C");
     }
     if (containsAny(t, "都断开", "全部断开", "同时断开", "三个开关都断开",
@@ -215,7 +216,8 @@ public final class BoolFunctionSynthesizer {
     // Any one switch closed = OR.
     if (containsAny(t, "任何一个开关", "任一开关", "任意一个开关", "至少一个开关", "至少1个开关",
         "任一为真", "至少一个为真", "任何一个为真", "任意一个为真",
-        "任一为1", "至少一个为1", "有一个为1", "有任一为1")) {
+        "任一为1", "至少一个为1", "有一个为1", "有任一为1",
+        "任一信号有效", "任意信号有效", "任一有效")) {
       return Optional.of("F=A or B or C");
     }
     // Any one input zero = NAND (not all are 1).
