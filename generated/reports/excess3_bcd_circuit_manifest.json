@@ -1,0 +1,21 @@
+{
+  "circuitName": "excess3_bcd",
+  "complete": true,
+  "artifactCount": 3,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=8856"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] excess3_bcd.circ round-trip loaded with main circuit excess3_bcd"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] excess3_bcd.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] excess3_bcd.circ\n - Vertical wire in left boundary lane can short external inputs: (110,110) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,30) -> (160,200)\n - Vertical wire in left boundary lane can short external inputs: (210,0) -> (210,250)\n - Wire crosses reserved area of Pin E1 in circuit excess3_bcd: (110,110) -> (2220,110)\n - Wire crosses reserved area of Pin E2 in circuit excess3_bcd: (630,160) -> (2270,160)\n - Wire crosses reserved area of Pin E2 in circuit excess3_bcd: (660,140) -> (2280,140)\n - Wire crosses reserved area of Pin E1 in circuit excess3_bcd: (930,90) -> (2350,90)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=16"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\excess3_bcd.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\excess3_bcd_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\excess3_bcd_circuit_truth_table.json", "exists": true}
+  ],
+  "issues": []
+}

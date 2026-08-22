@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "密码锁",
+  "request": "keypad lock",
   "description": "Synthesized Boolean function into CircuitSpec",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",

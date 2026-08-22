@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "序列检测器",
+  "request": "101序列检测",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,9 +19,11 @@
   "manifestComplete": null,
   "manifestCheckCount": null,
   "manifestIssueCount": null,
-  "artifactCount": 2,
+  "artifactCount": 4,
   "artifacts": [
     {"path": "generated\\circ\\seqdet_101.circ", "exists": true},
+    {"path": "generated\\reports\\seqdet_101_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\seqdet_101_generation_summary.md", "exists": true},
     {"path": "generated\\reports\\seqdet_101_multichip.md", "exists": true}
   ]
 }

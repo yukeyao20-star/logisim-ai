@@ -1,7 +1,7 @@
 # Generation delivery report for logic_f_ab_xor
 
 - Request kind: natural_language
-- Request: 两个数不相等
+- Request: 2 input xor
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

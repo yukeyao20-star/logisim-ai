@@ -1,7 +1,7 @@
 # Generation delivery report for bcd_counter
 
 - Request kind: natural_language
-- Request: BCD计数器
+- Request: 十进制计数器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

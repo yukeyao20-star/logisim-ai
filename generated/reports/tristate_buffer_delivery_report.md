@@ -1,7 +1,7 @@
 # Generation delivery report for tristate_buffer
 
 - Request kind: natural_language
-- Request: 三态缓冲器
+- Request: tri state buffer
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -10,9 +10,9 @@
 - Circuit: generated\circ\tristate_buffer.circ
 - Summary: generated\reports\tristate_buffer_generation_summary.md
 - Manifest: generated\reports\tristate_buffer_circuit_manifest.md
-- Complete: unknown
-- Manifest check count: unknown
-- Manifest issue count: unknown
+- Complete: true
+- Manifest check count: 7
+- Manifest issue count: 0
 - Layout clean: false
 - Layout issue count: 2
 - Layout score: 50
@@ -28,7 +28,7 @@
 - Layout other issue count: 0
 - Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
 - Layout auto repair applied: false
-- Recommended actions: review_manifest, fix_manifest_issues, regenerate_circuit, fix_layout, regenerate_layout
+- Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
 - Artifact count: 8
 
 ## Layout Issues
@@ -46,8 +46,8 @@
 | Kind | Path | Exists |
 | --- | --- | --- |
 | circuit | generated\circ\tristate_buffer.circ | true |
-| manifest_json | generated\reports\tristate_buffer_circuit_manifest.json | false |
-| manifest_markdown | generated\reports\tristate_buffer_circuit_manifest.md | false |
+| manifest_json | generated\reports\tristate_buffer_circuit_manifest.json | true |
+| manifest_markdown | generated\reports\tristate_buffer_circuit_manifest.md | true |
 | delivery_json | generated\reports\tristate_buffer_delivery_report.json | true |
 | delivery_markdown | generated\reports\tristate_buffer_delivery_report.md | true |
 | summary_json | generated\reports\tristate_buffer_generation_summary.json | true |

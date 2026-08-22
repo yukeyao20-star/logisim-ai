@@ -1,7 +1,7 @@
 # Generation summary for decoder_3bit
 
 - Request kind: natural_language
-- Request: 三位译码器
+- Request: 3 to 8 decoder
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 8
+- Artifact count: 10
 
 ## Artifacts
 
@@ -31,3 +31,5 @@
 | generated\reports\decoder_3bit_generation_summary.json | true |
 | generated\reports\decoder_3bit_generation_summary.md | true |
 | generated\reports\decoder_3bit_multichip.md | true |
+| generated\reports\decoder_3bit_official_simulation.json | true |
+| generated\reports\decoder_3bit_official_simulation.md | true |

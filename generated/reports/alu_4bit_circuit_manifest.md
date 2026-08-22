@@ -1,0 +1,23 @@
+# Circuit artifact manifest for alu_4bit
+
+- Artifact count: 1
+- Check count: 7
+- Complete: true
+
+## Checks
+
+| Check | Passed | Detail |
+| --- | --- | --- |
+| circuit_exists | true | circuit file exists |
+| circuit_non_empty | true | bytes=67828 |
+| round_trip_loadable | true | [OK] alu_4bit.circ round-trip loaded with main circuit alu_4bit |
+| semantic_valid | true | [OK] CircuitSpec semantic validation passed |
+| structure_matches_spec | true | [OK] alu_4bit.circ structure matches CircuitSpec |
+| layout_clean | true | [FAIL] alu_4bit.circ<br> - Vertical wire in left boundary lane can short external inputs: (110,50) -> (110,150)<br> - Vertical wire in left boundary lane can short external inputs: (160,-370) -> (160,200)<br> - Vertical wire in left boundary lane can short external inputs: (210,-380) -> (210,250)<br> - Vertical wire in left boundary lane can short external inputs: (260,-710) -> (260,300)<br> - Wire crosses reserved area of Pin R1 in circuit alu_4bit: (1090,160) -> (17100,160)<br> - Wire crosses reserved area of Pin R1 in circuit alu_4bit: (1250,140) -> (17110,140)<br> - Wire crosses reserved area of Pin Z in circuit alu_4bit: (1890,340) -> (17210,340)<br> - Wire crosses reserved area of Pin R0 in circuit alu_4bit: (1890,90) -> (17180,90)<br> - Wire crosses reserved area of Pin R2 in circuit alu_4bit: (2620,210) -> (17600,210)<br> - Wire crosses reserved area of Pin R3 in circuit alu_4bit: (2730,260) -> (17550,260)<br> - Wire crosses reserved area of Pin R3 in circuit alu_4bit: (2780,240) -> (17580,240)<br> - Wire crosses reserved area of Pin R2 in circuit alu_4bit: (2890,190) -> (17630,190)<br> - Wire crosses reserved area of Pin R0 in circuit alu_4bit: (2940,110) -> (17660,110)<br> - Wire crosses reserved area of Pin Cout in circuit alu_4bit: (3370,290) -> (17530,290)<br> - Wire crosses reserved area of Pin Z in circuit alu_4bit: (4690,360) -> (17870,360)<br> - Wire crosses reserved area of Pin Cout in circuit alu_4bit: (610,310) -> (17080,310)<br> - Wire crosses reserved area of XOR Gate ALU2BX in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of NOT Gate ALU2N1 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of NOT Gate ALU2N2 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of AND Gate ALU2M1A in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of AND Gate ALU2M2A in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of XOR Gate ALU2X2 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of AND Gate ALU2G1 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of AND Gate ALU2G2 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of AND Gate ALU2G3 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of OR Gate ALU2C1 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of OR Gate ALU2C2 in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of AND Gate ALU2SS in circuit alu_4bit: (7130,1920) -> (18350,1920)<br> - Wire crosses reserved area of XOR Gate ALU2BX in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of NOT Gate ALU2N1 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of NOT Gate ALU2N2 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of AND Gate ALU2M1A in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of AND Gate ALU2M2A in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of XOR Gate ALU2X2 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of AND Gate ALU2G1 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of AND Gate ALU2G2 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of AND Gate ALU2G3 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of OR Gate ALU2C1 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of OR Gate ALU2C2 in circuit alu_4bit: (7450,1940) -> (18390,1940)<br> - Wire crosses reserved area of AND Gate ALU2SS in circuit alu_4bit: (7450,1940) -> (18390,1940) |
+| truth_table_evidence | true | [SKIP] too many inputs for exhaustive evidence: 11 |
+
+## Artifacts
+
+| Kind | Path | Exists |
+| --- | --- | --- |
+| circuit | generated\circ\alu_4bit.circ | true |

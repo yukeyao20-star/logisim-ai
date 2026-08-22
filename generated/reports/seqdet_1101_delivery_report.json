@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "1101序列检测器",
+  "request": "1101序列检测",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

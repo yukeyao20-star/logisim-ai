@@ -1,7 +1,7 @@
 # Generation summary for comparator_4bit
 
 - Request kind: natural_language
-- Request: 四位比较器
+- Request: 4位比较器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 5
+- Artifact count: 8
 
 ## Artifacts
 
@@ -28,3 +28,6 @@
 | generated\reports\comparator_4bit_circuit_manifest.md | true |
 | generated\reports\comparator_4bit_generation_summary.json | true |
 | generated\reports\comparator_4bit_generation_summary.md | true |
+| generated\reports\comparator_4bit_multichip.md | true |
+| generated\reports\comparator_4bit_official_simulation.json | true |
+| generated\reports\comparator_4bit_official_simulation.md | true |

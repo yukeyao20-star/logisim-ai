@@ -17,11 +17,13 @@
 - Manifest complete: unknown
 - Manifest check count: unknown
 - Manifest issue count: unknown
-- Artifact count: 2
+- Artifact count: 4
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\dff.circ | true |
+| generated\reports\dff_generation_summary.json | true |
+| generated\reports\dff_generation_summary.md | true |
 | generated\reports\dff_multichip.md | true |

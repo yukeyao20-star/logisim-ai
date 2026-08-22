@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "4位移位寄存器",
+  "request": "锁存器",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",

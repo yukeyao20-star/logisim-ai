@@ -1,0 +1,32 @@
+{
+  "requestKind": "natural_language",
+  "request": "8 bit adder",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "adder_8bit",
+  "circuitPath": "generated\\circ\\adder_8bit.circ",
+  "manifestPath": "generated\\reports\\adder_8bit_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 7,
+  "artifacts": [
+    {"path": "generated\\circ\\adder_8bit.circ", "exists": true},
+    {"path": "generated\\reports\\adder_8bit_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\adder_8bit_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\adder_8bit_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\adder_8bit_multichip.md", "exists": true},
+    {"path": "generated\\reports\\adder_8bit_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\adder_8bit_official_simulation.md", "exists": true}
+  ]
+}

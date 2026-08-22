@@ -1,7 +1,7 @@
 # Generation summary for logic_f_abc
 
 - Request kind: natural_language
-- Request: 三人表决器
+- Request: 3 input nor
 - Description: Synthesized Boolean function into CircuitSpec
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 7
+- Artifact count: 13
 
 ## Artifacts
 
@@ -30,3 +30,9 @@
 | generated\reports\logic_f_abc_circuit_truth_table.md | true |
 | generated\reports\logic_f_abc_generation_summary.json | true |
 | generated\reports\logic_f_abc_generation_summary.md | true |
+| generated\reports\logic_f_abc_xor_circuit_manifest.json | true |
+| generated\reports\logic_f_abc_xor_circuit_manifest.md | true |
+| generated\reports\logic_f_abc_xor_circuit_truth_table.json | true |
+| generated\reports\logic_f_abc_xor_circuit_truth_table.md | true |
+| generated\reports\logic_f_abc_xor_generation_summary.json | true |
+| generated\reports\logic_f_abc_xor_generation_summary.md | true |

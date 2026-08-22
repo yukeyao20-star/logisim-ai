@@ -1,0 +1,31 @@
+{
+  "requestKind": "natural_language",
+  "request": "1位ALU",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the manifest first and fix its issues before trusting the circuit artifact.",
+  "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit"],
+  "sourceJson": "",
+  "circuitName": "alu_1bit",
+  "circuitPath": "generated\\circ\\alu_1bit.circ",
+  "manifestPath": "generated\\reports\\alu_1bit_circuit_manifest.md",
+  "manifestComplete": null,
+  "manifestCheckCount": null,
+  "manifestIssueCount": null,
+  "artifactCount": 6,
+  "artifacts": [
+    {"path": "generated\\circ\\alu_1bit.circ", "exists": true},
+    {"path": "generated\\reports\\alu_1bit_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\alu_1bit_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\alu_1bit_multichip.md", "exists": true},
+    {"path": "generated\\reports\\alu_1bit_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\alu_1bit_official_simulation.md", "exists": true}
+  ]
+}

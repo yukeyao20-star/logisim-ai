@@ -1,0 +1,19 @@
+{
+  "circuitName": "excess3_adder",
+  "complete": true,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=37344"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] excess3_adder.circ round-trip loaded with main circuit excess3_adder"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] excess3_adder.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] excess3_adder.circ\n - Vertical wire in left boundary lane can short external inputs: (110,80) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,50) -> (160,200)\n - Vertical wire in left boundary lane can short external inputs: (210,20) -> (210,250)\n - Vertical wire in left boundary lane can short external inputs: (260,-80) -> (260,300)\n - Wire crosses reserved area of Pin Cout in circuit excess3_adder: (1940,290) -> (7560,290)\n - Wire crosses reserved area of Pin S3 in circuit excess3_adder: (2000,240) -> (7640,240)\n - Wire crosses reserved area of Pin S2 in circuit excess3_adder: (2240,210) -> (7670,210)\n - Wire crosses reserved area of Pin S3 in circuit excess3_adder: (2310,260) -> (7630,260)\n - Wire crosses reserved area of Pin S2 in circuit excess3_adder: (2430,190) -> (7680,190)\n - Wire crosses reserved area of Pin Cout in circuit excess3_adder: (440,310) -> (7260,310)\n - Wire crosses reserved area of Pin S1 in circuit excess3_adder: (500,160) -> (7280,160)\n - Wire crosses reserved area of XOR Gate E3X1 in circuit excess3_adder: (510,-490) -> (510,550)\n - Wire crosses reserved area of Pin S1 in circuit excess3_adder: (560,140) -> (7290,140)\n - Wire crosses reserved area of OR Gate E3G28 in circuit excess3_adder: (6150,1920) -> (8490,1920)\n - Wire crosses reserved area of Pin S0 in circuit excess3_adder: (860,110) -> (7330,110)\n - Wire crosses reserved area of Pin S0 in circuit excess3_adder: (980,90) -> (7350,90)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] too many inputs for exhaustive evidence: 10"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\excess3_adder.circ", "exists": true}
+  ],
+  "issues": []
+}

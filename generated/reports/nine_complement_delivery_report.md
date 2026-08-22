@@ -1,7 +1,7 @@
 # Generation delivery report for nine_complement
 
 - Request kind: natural_language
-- Request: 9的补码
+- Request: 9's complement
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -10,9 +10,9 @@
 - Circuit: generated\circ\nine_complement.circ
 - Summary: generated\reports\nine_complement_generation_summary.md
 - Manifest: generated\reports\nine_complement_circuit_manifest.md
-- Complete: unknown
-- Manifest check count: unknown
-- Manifest issue count: unknown
+- Complete: true
+- Manifest check count: 7
+- Manifest issue count: 0
 - Layout clean: false
 - Layout issue count: 5
 - Layout score: 0
@@ -28,8 +28,8 @@
 - Layout other issue count: 0
 - Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
 - Layout auto repair applied: false
-- Recommended actions: review_manifest, fix_manifest_issues, regenerate_circuit, fix_layout, regenerate_layout
-- Artifact count: 8
+- Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
+- Artifact count: 12
 
 ## Layout Issues
 
@@ -52,10 +52,14 @@
 | Kind | Path | Exists |
 | --- | --- | --- |
 | circuit | generated\circ\nine_complement.circ | true |
-| manifest_json | generated\reports\nine_complement_circuit_manifest.json | false |
-| manifest_markdown | generated\reports\nine_complement_circuit_manifest.md | false |
+| manifest_json | generated\reports\nine_complement_circuit_manifest.json | true |
+| manifest_markdown | generated\reports\nine_complement_circuit_manifest.md | true |
+| truth_table_json | generated\reports\nine_complement_circuit_truth_table.json | true |
+| truth_table_markdown | generated\reports\nine_complement_circuit_truth_table.md | true |
 | delivery_json | generated\reports\nine_complement_delivery_report.json | true |
 | delivery_markdown | generated\reports\nine_complement_delivery_report.md | true |
 | summary_json | generated\reports\nine_complement_generation_summary.json | true |
 | summary_markdown | generated\reports\nine_complement_generation_summary.md | true |
 | artifact | generated\reports\nine_complement_multichip.md | true |
+| artifact | generated\reports\nine_complement_official_simulation.json | true |
+| artifact | generated\reports\nine_complement_official_simulation.md | true |

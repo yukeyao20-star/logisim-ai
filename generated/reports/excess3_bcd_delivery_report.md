@@ -1,7 +1,7 @@
 # Generation delivery report for excess3_bcd
 
 - Request kind: natural_language
-- Request: 余三码转换器
+- Request: excess 3
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -10,9 +10,9 @@
 - Circuit: generated\circ\excess3_bcd.circ
 - Summary: generated\reports\excess3_bcd_generation_summary.md
 - Manifest: generated\reports\excess3_bcd_circuit_manifest.md
-- Complete: unknown
-- Manifest check count: unknown
-- Manifest issue count: unknown
+- Complete: true
+- Manifest check count: 7
+- Manifest issue count: 0
 - Layout clean: false
 - Layout issue count: 7
 - Layout score: 0
@@ -28,8 +28,8 @@
 - Layout other issue count: 0
 - Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
 - Layout auto repair applied: false
-- Recommended actions: review_manifest, fix_manifest_issues, regenerate_circuit, fix_layout, regenerate_layout
-- Artifact count: 8
+- Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
+- Artifact count: 12
 
 ## Layout Issues
 
@@ -56,10 +56,14 @@
 | Kind | Path | Exists |
 | --- | --- | --- |
 | circuit | generated\circ\excess3_bcd.circ | true |
-| manifest_json | generated\reports\excess3_bcd_circuit_manifest.json | false |
-| manifest_markdown | generated\reports\excess3_bcd_circuit_manifest.md | false |
+| manifest_json | generated\reports\excess3_bcd_circuit_manifest.json | true |
+| manifest_markdown | generated\reports\excess3_bcd_circuit_manifest.md | true |
+| truth_table_json | generated\reports\excess3_bcd_circuit_truth_table.json | true |
+| truth_table_markdown | generated\reports\excess3_bcd_circuit_truth_table.md | true |
 | delivery_json | generated\reports\excess3_bcd_delivery_report.json | true |
 | delivery_markdown | generated\reports\excess3_bcd_delivery_report.md | true |
 | summary_json | generated\reports\excess3_bcd_generation_summary.json | true |
 | summary_markdown | generated\reports\excess3_bcd_generation_summary.md | true |
 | artifact | generated\reports\excess3_bcd_multichip.md | true |
+| artifact | generated\reports\excess3_bcd_official_simulation.json | true |
+| artifact | generated\reports\excess3_bcd_official_simulation.md | true |

@@ -1,0 +1,26 @@
+{
+  "name": "logic_multi_d_bout_ab_xor",
+  "components": [
+    {"id": "xor1", "library": "Gates", "factory": "XOR Gate", "bitWidth": 1, "label": ""},
+    {"id": "not_a2", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": ""},
+    {"id": "and3", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": ""}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "xor1", "targetEndIndex": 1},
+    {"id": "b", "label": "B", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "xor1", "targetEndIndex": 2},
+    {"id": "d", "label": "D", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "xor1", "targetEndIndex": 0},
+    {"id": "bout", "label": "BOUT", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "and3", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "net_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "xor1", "endIndex": 1}, {"componentId": "not_a2", "endIndex": 1}]},
+    {"id": "net_b", "endpoints": [{"componentId": "b", "endIndex": 0}, {"componentId": "xor1", "endIndex": 2}, {"componentId": "and3", "endIndex": 2}]},
+    {"id": "net_i1", "endpoints": [{"componentId": "not_a2", "endIndex": 0}, {"componentId": "and3", "endIndex": 1}]},
+    {"id": "net_i2", "endpoints": [{"componentId": "xor1", "endIndex": 0}, {"componentId": "d", "endIndex": 0}]},
+    {"id": "net_i3", "endpoints": [{"componentId": "and3", "endIndex": 0}, {"componentId": "bout", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "xor1", "rank": 1, "column": 1, "row": 0, "side": null},
+    {"componentId": "not_a2", "rank": 1, "column": 1, "row": 0, "side": null},
+    {"componentId": "and3", "rank": 2, "column": 2, "row": 2, "side": null}
+  ]
+}

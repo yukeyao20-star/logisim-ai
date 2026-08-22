@@ -1,0 +1,29 @@
+{
+  "requestKind": "natural_language",
+  "request": "8 bit multiplier",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "multiplier_8x8",
+  "circuitPath": "generated\\circ\\multiplier_8x8.circ",
+  "manifestPath": "generated\\reports\\multiplier_8x8_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 4,
+  "artifacts": [
+    {"path": "generated\\circ\\multiplier_8x8.circ", "exists": true},
+    {"path": "generated\\reports\\multiplier_8x8_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\multiplier_8x8_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\multiplier_8x8_multichip.md", "exists": true}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "circuitName": "seqdet_101",
+  "circuitPath": "generated\\circ\\seqdet_101.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

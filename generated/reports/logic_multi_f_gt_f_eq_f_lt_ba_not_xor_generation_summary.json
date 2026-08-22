@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "比较两个数的大小",
+  "request": "compare which is bigger",
   "description": "Synthesized Boolean function into CircuitSpec",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",

@@ -1,0 +1,8 @@
+{
+  "circuitName": "logic_f_a",
+  "rowCount": 2,
+  "rows": [
+    {"inputs": {"a": false}, "outputs": {"f": false}},
+    {"inputs": {"a": true}, "outputs": {"f": true}}
+  ]
+}

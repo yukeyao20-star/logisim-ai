@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "比较两个数的大小",
+  "request": "compare which is bigger",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

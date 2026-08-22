@@ -1,7 +1,7 @@
 # Generation summary for counter_4bit
 
 - Request kind: natural_language
-- Request: 4bit二进制计数器
+- Request: 4 bit counter
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

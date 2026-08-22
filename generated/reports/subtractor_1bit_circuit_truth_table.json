@@ -1,0 +1,14 @@
+{
+  "circuitName": "subtractor_1bit",
+  "rowCount": 8,
+  "rows": [
+    {"inputs": {"a0": false, "b0": false, "bin": false}, "outputs": {"d0": false, "bout": false}},
+    {"inputs": {"a0": false, "b0": false, "bin": true}, "outputs": {"d0": true, "bout": true}},
+    {"inputs": {"a0": false, "b0": true, "bin": false}, "outputs": {"d0": true, "bout": true}},
+    {"inputs": {"a0": false, "b0": true, "bin": true}, "outputs": {"d0": false, "bout": true}},
+    {"inputs": {"a0": true, "b0": false, "bin": false}, "outputs": {"d0": true, "bout": false}},
+    {"inputs": {"a0": true, "b0": false, "bin": true}, "outputs": {"d0": false, "bout": false}},
+    {"inputs": {"a0": true, "b0": true, "bin": false}, "outputs": {"d0": false, "bout": false}},
+    {"inputs": {"a0": true, "b0": true, "bin": true}, "outputs": {"d0": true, "bout": true}}
+  ]
+}

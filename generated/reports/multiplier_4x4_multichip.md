@@ -2,7 +2,7 @@
 
 - Circuit: generated\circ\multiplier_4x4.circ
 - Components: 124
-- Nets: 238
+- Nets: 256
 
 ## Components
 

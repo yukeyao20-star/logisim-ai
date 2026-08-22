@@ -19,9 +19,11 @@
   "manifestComplete": null,
   "manifestCheckCount": null,
   "manifestIssueCount": null,
-  "artifactCount": 2,
+  "artifactCount": 4,
   "artifacts": [
     {"path": "generated\\circ\\ring_counter.circ", "exists": true},
+    {"path": "generated\\reports\\ring_counter_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\ring_counter_generation_summary.md", "exists": true},
     {"path": "generated\\reports\\ring_counter_multichip.md", "exists": true}
   ]
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project source="4.2.0dev" version="1.0">
+<project source="4.1.0" version="1.0">
   This file is intended to be loaded by Logisim-evolution v4.2.0dev(https://github.com/logisim-evolution/).
 
   <lib desc="#Base" name="0"/>
@@ -52,57 +52,47 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="logic_f_ab"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(1130,290)" name="Tunnel">
-      <a name="label" val="n4"/>
-    </comp>
-    <comp lib="1" loc="(1500,290)" name="Tunnel">
+    <comp lib="1" loc="(1180,120)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="n4"/>
+      <a name="label" val="n3"/>
     </comp>
-    <comp lib="1" loc="(1680,290)" name="Pin">
+    <comp lib="1" loc="(1360,120)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="F"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(260,270)" name="Tunnel">
+    <comp lib="1" loc="(260,100)" name="Tunnel">
+      <a name="label" val="n1"/>
+    </comp>
+    <comp lib="1" loc="(260,180)" name="Tunnel">
       <a name="label" val="n2"/>
     </comp>
-    <comp lib="1" loc="(260,460)" name="Tunnel">
-      <a name="label" val="n3"/>
-    </comp>
-    <comp lib="1" loc="(670,460)" name="Tunnel">
+    <comp lib="1" loc="(640,100)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="n3"/>
+      <a name="label" val="n1"/>
     </comp>
-    <comp lib="1" loc="(80,270)" name="Pin">
+    <comp lib="1" loc="(640,140)" name="Tunnel">
+      <a name="facing" val="east"/>
+      <a name="label" val="n2"/>
+    </comp>
+    <comp lib="1" loc="(80,100)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="A"/>
     </comp>
-    <comp lib="1" loc="(80,460)" name="Pin">
+    <comp lib="1" loc="(80,180)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="B"/>
     </comp>
-    <comp lib="1" loc="(810,460)" name="Tunnel">
-      <a name="label" val="n1"/>
+    <comp lib="1" loc="(810,120)" name="Tunnel">
+      <a name="label" val="n3"/>
     </comp>
-    <comp lib="1" loc="(970,270)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="n2"/>
-    </comp>
-    <comp lib="1" loc="(970,310)" name="Tunnel">
-      <a name="facing" val="east"/>
-      <a name="label" val="n1"/>
-    </comp>
-    <comp lib="2" loc="(1040,290)" name="AND Gate"/>
-    <comp lib="2" loc="(720,460)" name="NOT Gate"/>
-    <wire from="(1040,290)" to="(1130,290)"/>
-    <wire from="(1500,290)" to="(1680,290)"/>
-    <wire from="(670,460)" to="(690,460)"/>
-    <wire from="(720,460)" to="(810,460)"/>
-    <wire from="(80,270)" to="(260,270)"/>
-    <wire from="(80,460)" to="(260,460)"/>
-    <wire from="(970,270)" to="(990,270)"/>
-    <wire from="(970,310)" to="(990,310)"/>
+    <comp lib="2" loc="(720,120)" name="XOR Gate"/>
+    <wire from="(1180,120)" to="(1360,120)"/>
+    <wire from="(640,100)" to="(660,100)"/>
+    <wire from="(640,140)" to="(660,140)"/>
+    <wire from="(720,120)" to="(810,120)"/>
+    <wire from="(80,100)" to="(260,100)"/>
+    <wire from="(80,180)" to="(260,180)"/>
   </circuit>
 </project>

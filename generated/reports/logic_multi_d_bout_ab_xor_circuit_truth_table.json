@@ -1,0 +1,10 @@
+{
+  "circuitName": "logic_multi_d_bout_ab_xor",
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"a": false, "b": false}, "outputs": {"d": false, "bout": false}},
+    {"inputs": {"a": false, "b": true}, "outputs": {"d": true, "bout": true}},
+    {"inputs": {"a": true, "b": false}, "outputs": {"d": true, "bout": false}},
+    {"inputs": {"a": true, "b": true}, "outputs": {"d": false, "bout": false}}
+  ]
+}

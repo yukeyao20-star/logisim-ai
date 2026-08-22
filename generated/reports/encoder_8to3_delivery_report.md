@@ -1,7 +1,7 @@
 # Generation delivery report for encoder_8to3
 
 - Request kind: natural_language
-- Request: 8-3优先编码器
+- Request: priority encoder
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -14,7 +14,7 @@
 - Manifest check count: 7
 - Manifest issue count: 0
 - Layout clean: false
-- Layout issue count: 13
+- Layout issue count: 9
 - Layout score: 0
 - Layout risk level: high
 - Layout unresolved tool count: 0
@@ -23,7 +23,7 @@
 - Layout pin facing issue count: 0
 - Layout pin/tunnel proximity count: 0
 - Layout label risk count: 0
-- Layout reserved area intrusion count: 9
+- Layout reserved area intrusion count: 5
 - Layout inspection failure count: 0
 - Layout other issue count: 0
 - Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
@@ -37,15 +37,11 @@
 - [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (160,130) -> (160,200)
 - [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (210,170) -> (210,250)
 - [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (260,210) -> (260,300)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin A1 in circuit encoder_8to3: (1000,70) -> (1000,510)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin A1 in circuit encoder_8to3: (1020,50) -> (1020,520)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin A0 in circuit encoder_8to3: (1050,-40) -> (1050,530)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin A0 in circuit encoder_8to3: (1070,20) -> (1070,540)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nGS in circuit encoder_8to3: (310,240) -> (920,240)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nEO in circuit encoder_8to3: (360,290) -> (940,290)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nEO in circuit encoder_8to3: (410,310) -> (970,310)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nEO in circuit encoder_8to3: (870,170) -> (870,460)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nGS in circuit encoder_8to3: (920,240) -> (920,480)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin A0 in circuit encoder_8to3: (110,90) -> (1380,90)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin A2 in circuit encoder_8to3: (260,210) -> (1440,210)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nGS in circuit encoder_8to3: (310,240) -> (1460,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nEO in circuit encoder_8to3: (360,290) -> (1480,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin nEO in circuit encoder_8to3: (410,310) -> (1500,310)
 
 ## Layout Repair Suggestions
 
@@ -53,15 +49,11 @@
 - [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=encoder_8to3;x1=160;y1=130;x2=160;y2=200)
 - [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=encoder_8to3;x1=210;y1=170;x2=210;y2=250)
 - [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=encoder_8to3;x1=260;y1=210;x2=260;y2=300)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=A1;anchorX=1010;anchorY=150;left=996;top=136;right=1024;bottom=164;connectionPoints=1;x1=1000;y1=70;x2=1000;y2=510)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=A1;anchorX=1010;anchorY=150;left=996;top=136;right=1024;bottom=164;connectionPoints=1;x1=1020;y1=50;x2=1020;y2=520)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=A0;anchorX=1060;anchorY=100;left=1046;top=86;right=1074;bottom=114;connectionPoints=1;x1=1050;y1=-40;x2=1050;y2=530)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=A0;anchorX=1060;anchorY=100;left=1046;top=86;right=1074;bottom=114;connectionPoints=1;x1=1070;y1=20;x2=1070;y2=540)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nGS;anchorX=910;anchorY=250;left=896;top=236;right=924;bottom=264;connectionPoints=1;x1=310;y1=240;x2=920;y2=240)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nEO;anchorX=860;anchorY=300;left=846;top=286;right=874;bottom=314;connectionPoints=1;x1=360;y1=290;x2=940;y2=290)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nEO;anchorX=860;anchorY=300;left=846;top=286;right=874;bottom=314;connectionPoints=1;x1=410;y1=310;x2=970;y2=310)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nEO;anchorX=860;anchorY=300;left=846;top=286;right=874;bottom=314;connectionPoints=1;x1=870;y1=170;x2=870;y2=460)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nGS;anchorX=910;anchorY=250;left=896;top=236;right=924;bottom=264;connectionPoints=1;x1=920;y1=240;x2=920;y2=480)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=A0;anchorX=1060;anchorY=100;left=1046;top=86;right=1074;bottom=114;connectionPoints=1;x1=110;y1=90;x2=1380;y2=90)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=A2;anchorX=960;anchorY=200;left=946;top=186;right=974;bottom=214;connectionPoints=1;x1=260;y1=210;x2=1440;y2=210)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nGS;anchorX=910;anchorY=250;left=896;top=236;right=924;bottom=264;connectionPoints=1;x1=310;y1=240;x2=1460;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nEO;anchorX=860;anchorY=300;left=846;top=286;right=874;bottom=314;connectionPoints=1;x1=360;y1=290;x2=1480;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=encoder_8to3;component=Pin;label=nEO;anchorX=860;anchorY=300;left=846;top=286;right=874;bottom=314;connectionPoints=1;x1=410;y1=310;x2=1500;y2=310)
 
 ## Artifacts
 

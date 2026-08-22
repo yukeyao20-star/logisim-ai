@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "LFSR",
+  "request": "伪随机数发生器",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,9 +19,11 @@
   "manifestComplete": null,
   "manifestCheckCount": null,
   "manifestIssueCount": null,
-  "artifactCount": 2,
+  "artifactCount": 4,
   "artifacts": [
     {"path": "generated\\circ\\lfsr_4bit.circ", "exists": true},
+    {"path": "generated\\reports\\lfsr_4bit_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\lfsr_4bit_generation_summary.md", "exists": true},
     {"path": "generated\\reports\\lfsr_4bit_multichip.md", "exists": true}
   ]
 }

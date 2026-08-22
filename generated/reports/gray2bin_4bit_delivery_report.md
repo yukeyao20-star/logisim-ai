@@ -1,7 +1,7 @@
 # Generation delivery report for gray2bin_4bit
 
 - Request kind: natural_language
-- Request: 4 bit gray to binary
+- Request: 格雷码转二进制
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -29,7 +29,7 @@
 - Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
 - Layout auto repair applied: false
 - Recommended actions: review_manifest, fix_manifest_issues, regenerate_circuit, fix_layout, regenerate_layout
-- Artifact count: 8
+- Artifact count: 10
 
 ## Layout Issues
 
@@ -63,3 +63,5 @@
 | summary_json | generated\reports\gray2bin_4bit_generation_summary.json | true |
 | summary_markdown | generated\reports\gray2bin_4bit_generation_summary.md | true |
 | artifact | generated\reports\gray2bin_4bit_multichip.md | true |
+| artifact | generated\reports\gray2bin_4bit_official_simulation.json | true |
+| artifact | generated\reports\gray2bin_4bit_official_simulation.md | true |

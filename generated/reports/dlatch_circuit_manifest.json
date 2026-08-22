@@ -1,0 +1,19 @@
+{
+  "circuitName": "dlatch",
+  "complete": false,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=6371"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] dlatch.circ round-trip loaded with main circuit dlatch"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] dlatch.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] dlatch.circ\n - Vertical wire in left boundary lane can short external inputs: (110,90) -> (110,150)\n - Wire crosses reserved area of Pin Q in circuit dlatch: (110,90) -> (1940,90)\n - Wire crosses reserved area of Pin nQ in circuit dlatch: (600,160) -> (1950,160)\n - Wire crosses reserved area of Pin nQ in circuit dlatch: (760,140) -> (1990,140)\n - Wire crosses reserved area of Pin Q in circuit dlatch: (820,110) -> (2020,110)"},
+    {"name": "truth_table_evidence", "passed": false, "detail": "IllegalStateException: Output was not resolved: q"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\dlatch.circ", "exists": true}
+  ],
+  "issues": ["Check failed: truth_table_evidence - IllegalStateException: Output was not resolved: q"]
+}

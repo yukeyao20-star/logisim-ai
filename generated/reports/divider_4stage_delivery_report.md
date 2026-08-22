@@ -1,7 +1,7 @@
 # Generation delivery report for divider_4stage
 
 - Request kind: natural_language
-- Request: 4 bit divider
+- Request: 分频器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

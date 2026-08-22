@@ -1,7 +1,7 @@
 # Generation delivery report for logic_multi_f_gt_f_eq_f_lt_ba_not_xor
 
 - Request kind: natural_language
-- Request: 比较两个数的大小
+- Request: compare which is bigger
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

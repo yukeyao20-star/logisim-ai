@@ -1,7 +1,7 @@
 # Generation delivery report for seqdet_101
 
 - Request kind: natural_language
-- Request: 序列检测器
+- Request: 101序列检测
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

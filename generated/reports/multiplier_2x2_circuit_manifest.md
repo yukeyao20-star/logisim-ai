@@ -1,27 +1,25 @@
 # Circuit artifact manifest for multiplier_2x2
 
-- Artifact count: 1
+- Artifact count: 3
 - Check count: 7
-- Complete: false
-
-## Issues
-
-- Check failed: truth_table_evidence - IllegalStateException: Output was not resolved: p2
+- Complete: true
 
 ## Checks
 
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=21577 |
+| circuit_non_empty | true | bytes=20522 |
 | round_trip_loadable | true | [OK] multiplier_2x2.circ round-trip loaded with main circuit multiplier_2x2 |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] multiplier_2x2.circ structure matches CircuitSpec |
-| layout_clean | true | [FAIL] multiplier_2x2.circ<br> - Small components are too close in circuit multiplier_2x2 at (320,120) and (330,100): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (320,120) and (330,140): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (320,280) and (330,270): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (320,280) and (330,310): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (320,440) and (330,440): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (330,440) and (380,440): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (440,440) and (490,460): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (490,460) and (500,440): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (500,440) and (550,460): Tunnel and Tunnel<br> - Small components are too close in circuit multiplier_2x2 at (550,460) and (560,440): Tunnel and Tunnel<br> - Wire crosses reserved area of Tunnel n3 in circuit multiplier_2x2: (260,280) -> (320,280)<br> - Wire crosses reserved area of Tunnel n5 in circuit multiplier_2x2: (260,440) -> (320,440)<br> - Wire crosses reserved area of Tunnel n4 in circuit multiplier_2x2: (330,270) -> (350,270)<br> - Wire crosses reserved area of Tunnel n15 in circuit multiplier_2x2: (330,440) -> (350,440)<br> - Wire crosses reserved area of AND Gate MULP3 in circuit multiplier_2x2: (350,440) -> (380,440)<br> - Wire crosses reserved area of Tunnel n32 in circuit multiplier_2x2: (550,340) -> (550,460) |
-| truth_table_evidence | false | IllegalStateException: Output was not resolved: p2 |
+| layout_clean | true | [FAIL] multiplier_2x2.circ<br> - Vertical wire in left boundary lane can short external inputs: (110,80) -> (110,150)<br> - Vertical wire in left boundary lane can short external inputs: (160,140) -> (160,200)<br> - Vertical wire in left boundary lane can short external inputs: (210,110) -> (210,250)<br> - Vertical wire in left boundary lane can short external inputs: (260,10) -> (260,300)<br> - Wire crosses reserved area of Pin P1 in circuit multiplier_2x2: (160,140) -> (4840,140)<br> - Wire crosses reserved area of Pin P0 in circuit multiplier_2x2: (210,110) -> (4920,110)<br> - Wire crosses reserved area of Pin P3 in circuit multiplier_2x2: (2620,260) -> (5380,260)<br> - Wire crosses reserved area of Pin P3 in circuit multiplier_2x2: (2890,240) -> (5390,240)<br> - Wire crosses reserved area of Pin P2 in circuit multiplier_2x2: (2940,210) -> (5420,210)<br> - Wire crosses reserved area of Pin P2 in circuit multiplier_2x2: (3050,190) -> (5430,190)<br> - Wire crosses reserved area of Pin P1 in circuit multiplier_2x2: (3260,160) -> (5500,160)<br> - Wire crosses reserved area of Pin P0 in circuit multiplier_2x2: (930,90) -> (4950,90) |
+| truth_table_evidence | true | [OK] exhaustive rows=32 |
 
 ## Artifacts
 
 | Kind | Path | Exists |
 | --- | --- | --- |
 | circuit | generated\circ\multiplier_2x2.circ | true |
+| truth_table_markdown | generated\reports\multiplier_2x2_circuit_truth_table.md | true |
+| truth_table_json | generated\reports\multiplier_2x2_circuit_truth_table.json | true |

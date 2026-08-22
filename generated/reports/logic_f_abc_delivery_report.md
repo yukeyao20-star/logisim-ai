@@ -1,7 +1,7 @@
 # Generation delivery report for logic_f_abc
 
 - Request kind: natural_language
-- Request: 三人表决器
+- Request: 3 input nor
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -29,7 +29,7 @@
 - Layout repair suggestions: 
 - Layout auto repair applied: false
 - Recommended actions: open_circuit, review_manifest, review_truth_table
-- Artifact count: 9
+- Artifact count: 15
 
 ## Artifacts
 
@@ -44,3 +44,9 @@
 | delivery_markdown | generated\reports\logic_f_abc_delivery_report.md | true |
 | summary_json | generated\reports\logic_f_abc_generation_summary.json | true |
 | summary_markdown | generated\reports\logic_f_abc_generation_summary.md | true |
+| manifest_json | generated\reports\logic_f_abc_xor_circuit_manifest.json | true |
+| manifest_markdown | generated\reports\logic_f_abc_xor_circuit_manifest.md | true |
+| truth_table_json | generated\reports\logic_f_abc_xor_circuit_truth_table.json | true |
+| truth_table_markdown | generated\reports\logic_f_abc_xor_circuit_truth_table.md | true |
+| summary_json | generated\reports\logic_f_abc_xor_generation_summary.json | true |
+| summary_markdown | generated\reports\logic_f_abc_xor_generation_summary.md | true |

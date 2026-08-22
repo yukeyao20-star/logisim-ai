@@ -1,7 +1,7 @@
 # Generation delivery report for half_adder
 
 - Request kind: natural_language
-- Request: 生成一个半加器
+- Request: half adder described
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

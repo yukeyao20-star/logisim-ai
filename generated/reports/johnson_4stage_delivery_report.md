@@ -1,7 +1,7 @@
 # Generation delivery report for johnson_4stage
 
 - Request kind: natural_language
-- Request: 4 bit johnson counter
+- Request: 约翰逊计数器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

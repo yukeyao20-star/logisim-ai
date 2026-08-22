@@ -1,7 +1,7 @@
 # Generation summary for shiftreg_4bit
 
 - Request kind: natural_language
-- Request: 4位移位寄存器
+- Request: 移位寄存器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

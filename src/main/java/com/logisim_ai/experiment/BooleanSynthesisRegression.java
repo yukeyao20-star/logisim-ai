@@ -178,6 +178,11 @@ public final class BooleanSynthesisRegression {
             "f",
             values -> values.get("a") || values.get("b")),
         new Case(
+            "求两个数的最小值",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") && values.get("b")),
+        new Case(
             "三个开关都闭合",
             List.of("a", "b", "c"),
             "f",
@@ -416,6 +421,21 @@ public final class BooleanSynthesisRegression {
     }
     runMultiOutputHalfAdder();
     runMultiOutputFullAdder();
+    runAluTruthTable();
+    runMagnitudeComparatorRegression();
+    runPasswordLockRegression();
+    runBcdSubtractorRegression();
+    runBarrelShifterRegression();
+    runRotateShifterRegression();
+    runRightShiftRegression();
+    runDividerRegression();
+    runBcd2Regression();
+    runBcdSub2Regression();
+    runHex7SegRegression();
+    runSquarerRegression();
+    runExcess3AdderRegression();
+    runSaturatingAdderRegression();
+    runEnglishTemplateQueriesRegression();
     runCommutativeReuse();
     runNandOnlySynthesis();
     runTtl7400Synthesis();
@@ -436,14 +456,28 @@ public final class BooleanSynthesisRegression {
     runGenericTtlPackageMapper();
     runNaturalLanguageImplementationIntent();
     runOfficialSimulationRegression();
+    runNetlistConnectivityRegression();
     runClockSequenceRegression();
+    runDirectedVectorRegression();
     System.out.println("[OK] Boolean synthesis/template truth-table regression passed");
   }
 
   /** Official JAR truth-table evidence for the shipped example circuits, when the JAR is present. */
   private static void runOfficialSimulationRegression() {
     List<String> circuitNames =
-        List.of("half_adder", "full_adder", "mux_4to1", "nand_xor3");
+        List.of(
+            // Example circuits (template keyword path)
+            "half_adder", "full_adder", "mux_4to1", "nand_xor3",
+            // Structural templates verified against the official Logisim JAR
+            "adder_4bit", "comparator_4bit", "subtractor_4bit",
+            "multiplier_2x2", "multiplier_4x4", "decoder_3bit",
+            "mux_8to1", "parity_8bit", "bcd7seg", "nine_complement",
+            "excess3_bcd", "excess3tobcd", "gray_4bit", "gray2bin_4bit",
+            "twoscomp_4bit", "bin2bcd_4bit", "bcd2bin_2digit", "demux_4to1",
+            "alu_4bit", "bcd_adder", "bcd_subtractor", "barrel_shifter_4bit",
+            "rotate_shifter_4bit_left", "shift_right_4bit", "sar_4bit",
+            "subtractor_1bit", "encoder_8to3", "decoder_2bit", "comparator_3bit",
+            "parity_4bit", "hex7seg", "squarer_4bit", "excess3_adder", "satadd_4bit");
     java.io.File jarProbe = new java.io.File(
         System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
             com.logisim_ai.validation.OfficialSimulationVerifier.DEFAULT_LOGISIM_JAR));
@@ -478,6 +512,68 @@ public final class BooleanSynthesisRegression {
     System.out.println("[OK] official Logisim JAR simulation regression passed: circuits=" + checked);
   }
 
+  /**
+   * Spec↔circuit connectivity audit over every Direct-routed generated circuit:
+   * each intended net's endpoints must be one connected wire component with no
+   * foreign driver. This is the static defense against the router's silent
+   * fan-out cross-connection defect (the gray-counter failure class) that the
+   * junction/floating/two-driver heuristics all miss.
+   */
+  private static void runNetlistConnectivityRegression() {
+    java.io.File circDir = new java.io.File("generated/circ");
+    java.io.File[] files = circDir.listFiles((dir, name) -> name.endsWith(".circ"));
+    if (files == null) {
+      throw new IllegalStateException("generated/circ directory not found");
+    }
+    int checked = 0;
+    int skipped = 0;
+    for (java.io.File circ : files) {
+      String stem = circ.getName().replaceAll("\\.circ$", "");
+      java.io.File specJson = new java.io.File("generated/examples/" + stem + "_spec.json");
+      if (!specJson.exists()) {
+        skipped++;
+        continue;
+      }
+      try {
+        CircuitSpec spec = com.logisim_ai.ai.CircuitSpecJsonParser.parse(
+            java.nio.file.Files.readString(specJson.toPath()));
+        if (!GenerateAndGate.usesDirectCompiler(spec)) {
+          skipped++;
+          continue;
+        }
+        com.cburch.logisim.Main.headless = true;
+        System.setProperty("java.awt.headless", "true");
+        com.cburch.logisim.file.Loader loader = new com.cburch.logisim.file.Loader(null);
+        com.cburch.logisim.file.LogisimFile file = loader.openLogisimFile(circ);
+        com.cburch.logisim.proj.Project project = new com.cburch.logisim.proj.Project(file);
+        com.cburch.logisim.circuit.Circuit circuit = file.getMainCircuit();
+        project.setCurrentCircuit(circuit);
+        java.util.List<String> issues;
+        try {
+          issues = com.logisim_ai.validation.CircuitWiringChecker.auditAgainstSpec(spec, circuit);
+        } finally {
+          try {
+            if (project.getSimulator() != null) {
+              project.getSimulator().shutDown();
+            }
+          } catch (Exception ignored) {
+            // best effort
+          }
+          file.stopAutosaveThread(false);
+        }
+        if (!issues.isEmpty()) {
+          throw new IllegalStateException("connectivity audit failed for " + stem + ": "
+              + String.join(" | ", issues.subList(0, Math.min(issues.size(), 5))));
+        }
+        checked++;
+      } catch (Exception e) {
+        throw new IllegalStateException("netlist-connectivity regression failed for " + stem, e);
+      }
+    }
+    System.out.println("[OK] netlist-connectivity regression passed: circuits=" + checked
+        + " skipped=" + skipped);
+  }
+
   /** Clock-pulse sequence evidence for sequential circuits (real Clock + <SET>/<SEQ> vectors). */
   private static void runClockSequenceRegression() {
     String[][] cases = {
@@ -494,12 +590,19 @@ public final class BooleanSynthesisRegression {
         {"dlatch", "dlatch.vec", "5", "0"},
         {"gray_4bit", "gray4.vec", "16", "0"},
         {"gray2bin_4bit", "g2b4.vec", "16", "0"},
+        {"graycnt_3bit", "graycnt3.vec", "17", "0"},
+        {"graycnt_4bit", "graycnt4.vec", "32", "0"},
         {"excess3_bcd", "e3.vec", "16", "0"},
         {"twoscomp_4bit", "twosc.vec", "16", "0"},
         {"traffic_light", "traffic.vec", "17", "0"},
         {"seqdet_101", "seqdet.vec", "17", "0"},
         {"bidirsreg_4bit", "bidirsreg.vec", "11", "0"},
         {"bcd_counter", "bcdcnt.vec", "23", "0"},
+        {"accumulator_4bit", "acc4.vec", "25", "0"},
+        {"mac_4bit", "mac4.vec", "14", "0"},
+        {"edge_detector", "edgedet.vec", "10", "0"},
+        {"oneshot_4clk", "oneshot.vec", "36", "0"},
+        {"debouncer", "debounce.vec", "18", "0"},
         {"excess3tobcd", "e3b.vec", "10", "0"},
         {"updown_counter_4bit", "updown.vec", "17", "0"},
         {"lfsr_4bit", "lfsr.vec", "33", "0"},
@@ -545,6 +648,58 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] clock-sequence regression passed: circuits=" + checked);
+  }
+
+  /**
+   * Directed test-vector evidence for wide combinational circuits that exceed
+   * the official exhaustive-table input limit (12). These circuits get a set of
+   * hand-picked directed vectors covering boundary cases (all-0, all-1,
+   * carry/borrow propagation) instead of being skipped.
+   */
+  private static void runDirectedVectorRegression() {
+    String[][] cases = {
+        {"adder_8bit", "adder8.vec", "12", "0"},
+        {"alu_8bit", "alu8.vec", "12", "0"},
+        {"divider_4x4", "divider4.vec", "20", "0"},
+        {"multiplier_8x8", "mul8.vec", "16", "0"},
+        {"subtractor_8bit", "sub8.vec", "20", "0"},
+        {"comparator_8bit", "cmp8.vec", "16", "0"},
+        {"bcd_adder_2digit", "bcd2.vec", "16", "0"},
+        {"bcd_subtractor_2digit", "bcdsub2.vec", "16", "0"},
+    };
+    java.io.File jarProbe = new java.io.File(
+        System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
+            com.logisim_ai.validation.OfficialSimulationVerifier.DEFAULT_LOGISIM_JAR));
+    if (!jarProbe.exists()
+        && !new java.io.File("third_party", "logisim-evolution/build/libs/logisim-evolution-4.2.0dev-all.jar")
+            .exists()) {
+      System.out.println("[OK] directed-vector regression: SKIP (JAR not present)");
+      return;
+    }
+    int checked = 0;
+    for (String[] c : cases) {
+      String name = c[0];
+      java.io.File circ = new java.io.File("generated/circ/" + name + ".circ");
+      java.io.File vec = new java.io.File("generated/" + c[1]);
+      if (!circ.exists() || !vec.exists()) {
+        System.out.println("[OK] directed-vector regression: SKIP missing " + name);
+        continue;
+      }
+      try {
+        com.logisim_ai.validation.TestVectorRunner.Result result =
+            com.logisim_ai.validation.TestVectorRunner.runVectors(circ, name, vec);
+        if (result.passCount() != Integer.parseInt(c[2])
+            || result.failCount() != Integer.parseInt(c[3])) {
+          throw new IllegalStateException("unexpected pass/fail counts for " + name + ": "
+              + result.passCount() + "/" + result.failCount());
+        }
+        System.out.println("[OK] " + name + " directed vectors passed: " + result.passCount() + " rows");
+        checked++;
+      } catch (Exception e) {
+        throw new IllegalStateException("directed-vector regression failed for " + name, e);
+      }
+    }
+    System.out.println("[OK] directed-vector regression passed: circuits=" + checked);
   }
 
   private static void runCase(Case testCase) {
@@ -625,6 +780,676 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] " + query + " truth table passed");
+  }
+
+  /**
+   * N-bit ALU exhaustive truth table (in-process): verifies all four functions
+   * AND/OR/ADD/SUB across every A/B/Cin combination, plus the Cout and Z flags.
+   */
+  private static void runAluTruthTable() {
+    int bits = 4;
+    String query = bits + "位ALU";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+
+    List<String> inputs = new java.util.ArrayList<>();
+    for (int i = 0; i < bits; i++) {
+      inputs.add("a" + i);
+    }
+    for (int i = 0; i < bits; i++) {
+      inputs.add("b" + i);
+    }
+    inputs.add("s1");
+    inputs.add("s0");
+    inputs.add("cin");
+
+    int combinations = 1 << inputs.size();
+    for (int mask = 0; mask < combinations; mask++) {
+      Map<String, Boolean> values = valuesFor(inputs, mask);
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      boolean s1 = values.get("s1");
+      boolean s0 = values.get("s0");
+      boolean cin = values.get("cin");
+      int a = 0;
+      int b = 0;
+      for (int i = 0; i < bits; i++) {
+        if (Boolean.TRUE.equals(values.get("a" + i))) a |= (1 << i);
+        if (Boolean.TRUE.equals(values.get("b" + i))) b |= (1 << i);
+      }
+      int expectedResult;
+      boolean expectedCout;
+      if (!s1 && !s0) { // AND
+        expectedResult = a & b;
+        expectedCout = false;
+      } else if (!s1 && s0) { // OR
+        expectedResult = a | b;
+        expectedCout = false;
+      } else if (s1 && !s0) { // ADD
+        int sum = a + b + (cin ? 1 : 0);
+        expectedResult = sum & ((1 << bits) - 1);
+        expectedCout = (sum >> bits) != 0;
+      } else { // SUB: a - b, borrow out (Cout = borrow)
+        int diff = a - b;
+        expectedResult = diff & ((1 << bits) - 1);
+        expectedCout = diff < 0;
+      }
+      for (int i = 0; i < bits; i++) {
+        boolean actualBit = Boolean.TRUE.equals(outputs.get("r" + i));
+        boolean expectedBit = ((expectedResult >> i) & 1) == 1;
+        if (actualBit != expectedBit) {
+          throw new IllegalStateException("ALU R" + i + " mismatch mask=" + mask + " inputs=" + values
+              + " expected=" + expectedResult + " actual=" + outputs);
+        }
+      }
+      if (!Boolean.valueOf(expectedCout).equals(outputs.get("cout"))) {
+        throw new IllegalStateException("ALU Cout mismatch mask=" + mask + " inputs=" + values
+            + " expectedCout=" + expectedCout + " actual=" + outputs);
+      }
+      boolean expectedZ = expectedResult == 0;
+      if (!Boolean.valueOf(expectedZ).equals(outputs.get("z"))) {
+        throw new IllegalStateException("ALU Z mismatch mask=" + mask + " inputs=" + values
+            + " expectedZ=" + expectedZ + " actual=" + outputs);
+      }
+    }
+    System.out.println("[OK] " + query + " exhaustive truth table passed: combinations=" + combinations);
+  }
+
+  /** 1-bit magnitude comparator described functionally ("谁大"): GT/EQ/LT. */
+  private static void runMagnitudeComparatorRegression() {
+    String query = "比较两个数谁大";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    List<String> inputs = List.of("a", "b");
+    for (int mask = 0; mask < 4; mask++) {
+      Map<String, Boolean> values = valuesFor(inputs, mask);
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      boolean a = values.get("a");
+      boolean b = values.get("b");
+      if (!Boolean.valueOf(a && !b).equals(outputs.get("f_gt"))) {
+        throw new IllegalStateException("GT mismatch inputs=" + values + " outputs=" + outputs);
+      }
+      if (!Boolean.valueOf(a == b).equals(outputs.get("f_eq"))) {
+        throw new IllegalStateException("EQ mismatch inputs=" + values + " outputs=" + outputs);
+      }
+      if (!Boolean.valueOf(!a && b).equals(outputs.get("f_lt"))) {
+        throw new IllegalStateException("LT mismatch inputs=" + values + " outputs=" + outputs);
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed (GT/EQ/LT)");
+  }
+
+  /** 4-bit password/keypad lock ("开锁/密码"): F=1 exactly when A==B on all 4 bits. */
+  private static void runPasswordLockRegression() {
+    String query = "密码锁开锁电路";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    List<String> inputs = List.of("a0", "a1", "a2", "a3", "b0", "b1", "b2", "b3");
+    int unlocked = 0;
+    for (int mask = 0; mask < 256; mask++) {
+      Map<String, Boolean> values = valuesFor(inputs, mask);
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      int a = bitField(values, "a", 4);
+      int b = bitField(values, "b", 4);
+      boolean expected = a == b;
+      if (expected) unlocked++;
+      if (!Boolean.valueOf(expected).equals(outputs.get("f"))) {
+        throw new IllegalStateException("Password lock mismatch inputs=" + values
+            + " expected=" + expected + " outputs=" + outputs);
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: unlocked=" + unlocked + "/256");
+  }
+
+  /** 1-digit BCD subtractor ("BCD减法器"): D = A-B mod 10, Borrow = (A<B). */
+  private static void runBcdSubtractorRegression() {
+    String query = "BCD减法器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    List<String> inputs = List.of("a0", "a1", "a2", "a3", "b0", "b1", "b2", "b3",
+        "gnd", "one");
+    // Exhaustive over all valid BCD inputs A,B in 0..9 (gnd/one are constants 0/1).
+    for (int a = 0; a < 10; a++) {
+      for (int b = 0; b < 10; b++) {
+        Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+        for (int i = 0; i < 4; i++) {
+          values.put("a" + i, ((a >> i) & 1) == 1);
+          values.put("b" + i, ((b >> i) & 1) == 1);
+        }
+        values.put("gnd", false);
+        values.put("one", true);
+        Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+        int d = 0;
+        for (int i = 0; i < 4; i++) {
+          if (Boolean.TRUE.equals(outputs.get("d" + i))) d |= (1 << i);
+        }
+        int expectedD = ((a - b) % 10 + 10) % 10;
+        boolean expectedBorrow = a < b;
+        if (d != expectedD || !Boolean.valueOf(expectedBorrow).equals(outputs.get("borrow"))) {
+          throw new IllegalStateException("BCD subtractor mismatch A=" + a + " B=" + b
+              + " d=" + d + " (expected " + expectedD + ") borrow=" + outputs.get("borrow")
+              + " (expected " + expectedBorrow + ")");
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 100 BCD pairs (mod-10 + borrow)");
+  }
+
+  /** N-bit barrel shifter ("桶形移位器"): Y = D logical-left-shifted by SH (0..N-1). */
+  private static void runBarrelShifterRegression() {
+    String query = "4位桶形移位器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    List<String> inputs = List.of("d0", "d1", "d2", "d3", "sh0", "sh1", "gnd");
+    int shBits = 2;
+    for (int d = 0; d < 16; d++) {
+      for (int sh = 0; sh < (1 << shBits); sh++) {
+        Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+        for (int i = 0; i < 4; i++) {
+          values.put("d" + i, ((d >> i) & 1) == 1);
+        }
+        for (int k = 0; k < shBits; k++) {
+          values.put("sh" + k, ((sh >> k) & 1) == 1);
+        }
+        values.put("gnd", false);
+        Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+        int expected = sh >= 4 ? 0 : (d << sh) & 0xF;
+        int y = 0;
+        for (int i = 0; i < 4; i++) {
+          if (Boolean.TRUE.equals(outputs.get("y" + i))) y |= (1 << i);
+        }
+        if (y != expected) {
+          throw new IllegalStateException("Barrel shifter mismatch D=" + d + " SH=" + sh
+              + " y=" + y + " (expected " + expected + ")");
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 64 D×SH combos (logical left shift)");
+  }
+
+  /** N-bit rotate shifter ("循环移位器"): Y = rotate_left(D, SH) / rotate_right(D, SH). */
+  private static void runRotateShifterRegression() {
+    String[][] cases = {
+        {"4位循环左移", "left"},
+        {"4位循环右移", "right"},
+        {"4 bit rotate left", "left"},
+        {"4 bit rotate right", "right"},
+    };
+    for (String[] c : cases) {
+      String query = c[0];
+      boolean left = c[1].equals("left");
+      NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+      if (result == null) {
+        throw new IllegalStateException("Planner did not match query: " + query);
+      }
+      CircuitSpec spec = result.spec();
+      CircuitSemanticValidator.requireValid(spec);
+      if (!spec.name().contains(left ? "_left" : "_right")) {
+        throw new IllegalStateException("Rotate direction mismatch for '" + query + "': spec="
+            + spec.name() + " expected " + (left ? "left" : "right"));
+      }
+      List<String> inputs = List.of("d0", "d1", "d2", "d3", "sh0", "sh1");
+      for (int d = 0; d < 16; d++) {
+        for (int sh = 0; sh < 4; sh++) {
+          Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+          for (int i = 0; i < 4; i++) {
+            values.put("d" + i, ((d >> i) & 1) == 1);
+          }
+          for (int k = 0; k < 2; k++) {
+            values.put("sh" + k, ((sh >> k) & 1) == 1);
+          }
+          Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+          int expected = left
+              ? (((d << sh) | (d >>> (4 - sh))) & 0xF)
+              : (((d >>> sh) | (d << (4 - sh))) & 0xF);
+          int y = 0;
+          for (int i = 0; i < 4; i++) {
+            if (Boolean.TRUE.equals(outputs.get("y" + i))) y |= (1 << i);
+          }
+          if (y != expected) {
+            throw new IllegalStateException("Rotate mismatch " + query + " D=" + d + " SH=" + sh
+                + " y=" + y + " (expected " + expected + ")");
+          }
+        }
+      }
+      System.out.println("[OK] " + query + " truth table passed: 64 D×SH combos");
+    }
+  }
+
+  /** Right-shift templates: LSR (zero fill) and SAR (sign fill), 4-bit each. */
+  private static void runRightShiftRegression() {
+    String[][] cases = {
+        {"4位逻辑右移", "shift_right_4bit"},
+        {"4 bit logical shift right", "shift_right_4bit"},
+        {"4位算术右移", "sar_4bit"},
+        {"4 bit arithmetic shift right", "sar_4bit"},
+    };
+    for (String[] c : cases) {
+      String query = c[0];
+      String expectName = c[1];
+      NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+      if (result == null) {
+        throw new IllegalStateException("Planner did not match query: " + query);
+      }
+      CircuitSpec spec = result.spec();
+      CircuitSemanticValidator.requireValid(spec);
+      if (!spec.name().equals(expectName)) {
+        throw new IllegalStateException("Right-shift name mismatch for '" + query + "': spec="
+            + spec.name() + " expected " + expectName);
+      }
+      boolean arithmetic = expectName.startsWith("sar_");
+      for (int d = 0; d < 16; d++) {
+        for (int sh = 0; sh < 4; sh++) {
+          Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+          for (int i = 0; i < 4; i++) {
+            values.put("d" + i, ((d >> i) & 1) == 1);
+          }
+          for (int k = 0; k < 2; k++) {
+            values.put("sh" + k, ((sh >> k) & 1) == 1);
+          }
+          values.put("gnd", false); // LSR zero-fill source; SAR spec has no gnd port (ignored)
+          Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+          int expected = arithmetic
+              ? ((d << 28) >> (28 + sh)) & 0xF   // sign-extend bit 3, then shift
+              : (d >>> sh) & 0xF;                // zero fill
+          int y = 0;
+          for (int i = 0; i < 4; i++) {
+            if (Boolean.TRUE.equals(outputs.get("y" + i))) y |= (1 << i);
+          }
+          if (y != expected) {
+            throw new IllegalStateException("Right-shift mismatch " + query + " D=" + d + " SH=" + sh
+                + " y=" + y + " (expected " + expected + ")");
+          }
+        }
+      }
+      System.out.println("[OK] " + query + " truth table passed: 64 D×SH combos");
+    }
+  }
+
+  /** 4-bit restoring divider ("除法器"): Q = A/B, R = A mod B, full in-process sweep. */
+  private static void runDividerRegression() {
+    String query = "4位除法器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("divider_4x4")) {
+      throw new IllegalStateException("Divider name mismatch: " + spec.name());
+    }
+    for (int a = 0; a < 16; a++) {
+      for (int b = 0; b < 16; b++) {
+        Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+        for (int i = 0; i < 4; i++) {
+          values.put("a" + i, ((a >> i) & 1) == 1);
+          values.put("b" + i, ((b >> i) & 1) == 1);
+        }
+        values.put("gnd", false);
+        Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+        int expectedQ = b == 0 ? 15 : a / b;
+        int expectedR = b == 0 ? a : a % b;
+        int q = 0;
+        int r = 0;
+        for (int i = 0; i < 4; i++) {
+          if (Boolean.TRUE.equals(outputs.get("q" + i))) q |= (1 << i);
+          if (Boolean.TRUE.equals(outputs.get("r" + i))) r |= (1 << i);
+        }
+        if (q != expectedQ || r != expectedR) {
+          throw new IllegalStateException("Divider mismatch A=" + a + " B=" + b
+              + " q=" + q + " (expected " + expectedQ + ") r=" + r + " (expected " + expectedR + ")");
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 256 A×B combos (B=0 → Q=15,R=A)");
+  }
+
+  /** 2-digit BCD adder ("两位BCD加法器"): full in-process sweep of valid BCD digits. */
+  private static void runBcd2Regression() {
+    String query = "两位BCD加法器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("bcd_adder_2digit")) {
+      throw new IllegalStateException("2-digit BCD adder name mismatch: " + spec.name());
+    }
+    int combos = 0;
+    for (int al = 0; al < 10; al++) {
+      for (int ah = 0; ah < 10; ah++) {
+        for (int bl = 0; bl < 10; bl++) {
+          for (int bh = 0; bh < 10; bh++) {
+            for (int cin = 0; cin <= 1; cin++) {
+              Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+              putNibble(values, "a", al);
+              putNibble(values, "a", ah, 4);
+              putNibble(values, "b", bl);
+              putNibble(values, "b", bh, 4);
+              values.put("cin", cin == 1);
+              values.put("z", false);
+              Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+              int total = (ah * 10 + al) + (bh * 10 + bl) + cin;
+              int sl = total % 10;
+              int sh = (total / 10) % 10;
+              int cout = total / 100;
+              int s = 0;
+              for (int i = 0; i < 8; i++) {
+                if (Boolean.TRUE.equals(outputs.get("s" + i))) s |= (1 << i);
+              }
+              int expectedBits = sl | (sh << 4);
+              boolean expectedCout = cout == 1;
+              if (s != expectedBits
+                  || !Boolean.valueOf(expectedCout).equals(outputs.get("cout"))) {
+                throw new IllegalStateException("2-digit BCD adder mismatch A=" + ah + al
+                    + " B=" + bh + bl + " cin=" + cin + " s=" + s
+                    + " (expected " + expectedBits + ") cout=" + outputs.get("cout")
+                    + " (expected " + expectedCout + ")");
+              }
+              combos++;
+            }
+          }
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: " + combos + " combos");
+  }
+
+  /** 2-digit BCD subtractor ("两位BCD减法器"): full in-process sweep of valid BCD digits. */
+  private static void runBcdSub2Regression() {
+    String query = "两位BCD减法器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("bcd_subtractor_2digit")) {
+      throw new IllegalStateException("2-digit BCD subtractor name mismatch: " + spec.name());
+    }
+    int combos = 0;
+    for (int al = 0; al < 10; al++) {
+      for (int ah = 0; ah < 10; ah++) {
+        for (int bl = 0; bl < 10; bl++) {
+          for (int bh = 0; bh < 10; bh++) {
+            for (int bin = 0; bin <= 1; bin++) {
+              Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+              putNibble(values, "a", al);
+              putNibble(values, "a", ah, 4);
+              putNibble(values, "b", bl);
+              putNibble(values, "b", bh, 4);
+              values.put("bin", bin == 1);
+              values.put("gnd", false);
+              Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+              int a = ah * 10 + al;
+              int b = bh * 10 + bl;
+              int diff = a - b - bin;
+              boolean borrow = diff < 0;
+              int d = ((diff % 100) + 100) % 100;
+              int dLow = d % 10;
+              int dHigh = d / 10;
+              int got = 0;
+              for (int i = 0; i < 8; i++) {
+                if (Boolean.TRUE.equals(outputs.get("d" + i))) got |= (1 << i);
+              }
+              int expectedBits = dLow | (dHigh << 4);
+              if (got != expectedBits
+                  || !Boolean.valueOf(borrow).equals(outputs.get("borrow"))) {
+                throw new IllegalStateException("2-digit BCD subtractor mismatch A=" + ah + al
+                    + " B=" + bh + bl + " bin=" + bin + " d=" + got
+                    + " (expected " + expectedBits + ") borrow=" + outputs.get("borrow")
+                    + " (expected " + borrow + ")");
+              }
+              combos++;
+            }
+          }
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: " + combos + " combos");
+  }
+
+  /** Hex 7-segment display ("十六进制转七段"): all 16 values vs the hex segment table. */
+  private static void runHex7SegRegression() {
+    String query = "十六进制转七段";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("hex7seg")) {
+      throw new IllegalStateException("hex7seg name mismatch: " + spec.name());
+    }
+    int[][] segs = {
+      {0, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14, 15},
+      {0, 1, 2, 3, 4, 7, 8, 9, 10, 13},
+      {0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13},
+      {0, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13, 14},
+      {0, 2, 6, 8, 10, 11, 12, 13, 14, 15},
+      {0, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15},
+      {2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14, 15},
+    };
+    for (int v = 0; v < 16; v++) {
+      Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+      for (int i = 0; i < 4; i++) {
+        values.put("b" + i, ((v >> i) & 1) == 1);
+      }
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      for (int s = 0; s < 7; s++) {
+        boolean expected = false;
+        for (int m : segs[s]) {
+          if (m == v) {
+            expected = true;
+            break;
+          }
+        }
+        Boolean actual = outputs.get("seg" + s);
+        if (actual == null || actual != expected) {
+          throw new IllegalStateException("hex7seg mismatch value=" + v + " seg=" + s
+              + " expected=" + expected + " actual=" + actual);
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 16 values × 7 segments");
+  }
+
+  /** 4-bit squarer ("4位平方器"): all 16 A values, P = A*A. */
+  private static void runSquarerRegression() {
+    String query = "4位平方器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("squarer_4bit")) {
+      throw new IllegalStateException("squarer name mismatch: " + spec.name());
+    }
+    for (int a = 0; a < 16; a++) {
+      Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+      for (int i = 0; i < 4; i++) {
+        values.put("a" + i, ((a >> i) & 1) == 1);
+      }
+      values.put("gnd", false);
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      int expected = a * a;
+      int p = 0;
+      for (int i = 0; i < 8; i++) {
+        if (Boolean.TRUE.equals(outputs.get("p" + i))) p |= (1 << i);
+      }
+      if (p != expected) {
+        throw new IllegalStateException("Squarer mismatch A=" + a + " p=" + p
+            + " (expected " + expected + ")");
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 16 A values (P=A²)");
+  }
+
+  /** Excess-3 adder ("余3码加法器"): full sweep of valid excess-3 digit pairs. */
+  private static void runExcess3AdderRegression() {
+    String query = "余3码加法器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("excess3_adder")) {
+      throw new IllegalStateException("excess3_adder name mismatch: " + spec.name()
+          + " (query resolved to the converter?)");
+    }
+    for (int a = 3; a <= 12; a++) { // valid excess-3 digits (decimal 0..9)
+      for (int b = 3; b <= 12; b++) {
+        Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+        for (int i = 0; i < 4; i++) {
+          values.put("a" + i, ((a >> i) & 1) == 1);
+          values.put("b" + i, ((b >> i) & 1) == 1);
+        }
+        values.put("one", true);
+        values.put("gnd", false);
+        Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+        int da = a - 3;
+        int db = b - 3;
+        int ds = da + db;
+        int expectedS = ds <= 9 ? ds + 3 : ds - 10 + 3;
+        boolean expectedCout = ds > 9;
+        int s = 0;
+        for (int i = 0; i < 4; i++) {
+          if (Boolean.TRUE.equals(outputs.get("s" + i))) s |= (1 << i);
+        }
+        if (s != expectedS || !Boolean.valueOf(expectedCout).equals(outputs.get("cout"))) {
+          throw new IllegalStateException("Excess-3 adder mismatch A=" + a + " B=" + b
+              + " s=" + s + " (expected " + expectedS + ") cout=" + outputs.get("cout")
+              + " (expected " + expectedCout + ")");
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 100 excess-3 digit pairs");
+  }
+
+  /** Saturating adder ("饱和加法器"): S = min(A+B, 15), full 4-bit sweep. */
+  private static void runSaturatingAdderRegression() {
+    String query = "饱和加法器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("satadd_4bit")) {
+      throw new IllegalStateException("saturating adder name mismatch: " + spec.name());
+    }
+    for (int a = 0; a < 16; a++) {
+      for (int b = 0; b < 16; b++) {
+        Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+        for (int i = 0; i < 4; i++) {
+          values.put("a" + i, ((a >> i) & 1) == 1);
+          values.put("b" + i, ((b >> i) & 1) == 1);
+        }
+        values.put("gnd", false);
+        Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+        int expected = Math.min(a + b, 15);
+        int s = 0;
+        for (int i = 0; i < 4; i++) {
+          if (Boolean.TRUE.equals(outputs.get("s" + i))) s |= (1 << i);
+        }
+        if (s != expected) {
+          throw new IllegalStateException("Saturating adder mismatch A=" + a + " B=" + b
+              + " s=" + s + " (expected " + expected + ")");
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 256 A×B combos (S=min(A+B,15))");
+  }
+
+  /** Write a BCD nibble value into a value map under prefix (+ optional bit offset). */
+  private static void putNibble(Map<String, Boolean> values, String prefix, int v, int offset) {
+    for (int i = 0; i < 4; i++) {
+      values.put(prefix + (i + offset), ((v >> i) & 1) == 1);
+    }
+  }
+
+  private static void putNibble(Map<String, Boolean> values, String prefix, int v) {
+    putNibble(values, prefix, v, 0);
+  }
+
+  /** English structural-template queries must all resolve to a valid spec. */
+  private static void runEnglishTemplateQueriesRegression() {
+    String[] queries = {
+        "half adder", "full adder", "4 bit adder", "8 bit adder",
+        "3 bit comparator", "4 to 1 mux", "8 to 1 mux", "2 to 4 decoder",
+        "1 bit subtractor", "4 bit subtractor", "8 to 3 priority encoder",
+        "3 to 8 decoder", "4 bit multiplier", "2 bit multiplier", "8 bit multiplier",
+        "priority encoder", "even parity checker", "odd parity",
+        "7 segment display", "bcd to 7 segment", "d flip flop", "jk flip flop",
+        "t flip flop", "d latch", "4 bit register", "shift register",
+        "ring counter", "johnson counter", "mod 5 counter", "up down counter",
+        "decade counter", "frequency divider", "lfsr", "pseudo random",
+        "gray code counter", "3 bit gray counter", "4-bit gray code counter",
+        "tri state buffer", "traffic light", "101 sequence detector", "alu",
+        "arithmetic logic unit", "bcd adder", "bcd subtractor", "gray code",
+        "excess 3", "two's complement", "9's complement", "demultiplexer",
+        "1 to 4 demux", "barrel shifter", "4 bit barrel shifter",
+        "8 bit subtractor", "8 bit comparator", "2 digit bcd adder",
+        "2 digit bcd subtractor", "hex to 7 segment", "4 bit squarer", "squarer",
+        "excess 3 adder", "accumulator", "saturating adder",
+        "multiply accumulate", "4 bit multiply accumulate", "mac unit", "4 bit mac",
+        "edge detector", "rising edge detector", "falling edge detector",
+        "one shot", "monostable", "4 cycle pulse generator", "pulse generator",
+        "debounce", "debouncer", "button debounce",
+        "4 bit rotate left", "rotate right",
+        "4 bit shift right", "logical shift right", "arithmetic shift right",
+        "4 bit division circuit", "division circuit",
+        // English functional descriptions (BoolFunctionSynthesizer mappings)
+        "two numbers are different", "find the maximum of two numbers",
+        "find the minimum of two numbers", "subtract two numbers",
+        "multiply two numbers", "detect non-zero", "detect all zeros",
+        "even number detector", "odd number detector",
+        "staircase light switch", "two switches control one light",
+        "compare which is bigger", "3 input nand", "3 to 1 voter",
+        "exactly one of three", "at least two of three"
+    };
+    int checked = 0;
+    for (String query : queries) {
+      NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+      if (result == null) {
+        throw new IllegalStateException("English template query did not match: " + query);
+      }
+      CircuitSpec spec = result.spec();
+      CircuitSemanticValidator.requireValid(spec);
+      checked++;
+    }
+    System.out.println("[OK] English template queries regression passed: queries=" + checked);
+  }
+
+  /** Extract an N-bit little-endian integer from a value map under a prefix. */
+  private static int bitField(Map<String, Boolean> values, String prefix, int bits) {
+    int v = 0;
+    for (int i = 0; i < bits; i++) {
+      if (Boolean.TRUE.equals(values.get(prefix + i))) v |= (1 << i);
+    }
+    return v;
   }
 
   private static void runCommutativeReuse() {

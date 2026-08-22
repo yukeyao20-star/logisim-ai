@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "三人表决器",
+  "request": "3 input nor",
   "description": "Synthesized Boolean function into CircuitSpec",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,7 +19,7 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 7,
+  "artifactCount": 13,
   "artifacts": [
     {"path": "generated\\circ\\logic_f_abc.circ", "exists": true},
     {"path": "generated\\reports\\logic_f_abc_circuit_manifest.json", "exists": true},
@@ -27,6 +27,12 @@
     {"path": "generated\\reports\\logic_f_abc_circuit_truth_table.json", "exists": true},
     {"path": "generated\\reports\\logic_f_abc_circuit_truth_table.md", "exists": true},
     {"path": "generated\\reports\\logic_f_abc_generation_summary.json", "exists": true},
-    {"path": "generated\\reports\\logic_f_abc_generation_summary.md", "exists": true}
+    {"path": "generated\\reports\\logic_f_abc_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_generation_summary.md", "exists": true}
   ]
 }

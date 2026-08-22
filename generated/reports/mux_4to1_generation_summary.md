@@ -1,8 +1,8 @@
 # Generation summary for mux_4to1
 
 - Request kind: natural_language
-- Request: 4选1多路选择器
-- Description: Matched verified JSON template: 多路选择器
+- Request: 4 to 1 mux
+- Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
 - Implementation level: GATE_LEVEL
@@ -11,13 +11,13 @@
 - Routing primitive: primitive_gates
 - Recommended next action: Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.
 - Recommended action ids: open_circuit, review_manifest, review_truth_table
-- Source JSON: generated\examples\mux_4to1_spec.json
+- Source JSON: 
 - Circuit: generated\circ\mux_4to1.circ
 - Manifest: generated\reports\mux_4to1_circuit_manifest.md
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 7
+- Artifact count: 10
 
 ## Artifacts
 
@@ -28,5 +28,8 @@
 | generated\reports\mux_4to1_circuit_manifest.md | true |
 | generated\reports\mux_4to1_circuit_truth_table.json | true |
 | generated\reports\mux_4to1_circuit_truth_table.md | true |
+| generated\reports\mux_4to1_generation_summary.json | true |
+| generated\reports\mux_4to1_generation_summary.md | true |
+| generated\reports\mux_4to1_multichip.md | true |
 | generated\reports\mux_4to1_official_simulation.json | true |
 | generated\reports\mux_4to1_official_simulation.md | true |

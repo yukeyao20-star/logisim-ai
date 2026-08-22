@@ -2,7 +2,7 @@
 
 - Circuit: generated\circ\multiplier_2x2.circ
 - Components: 22
-- Nets: 45
+- Nets: 48
 
 ## Components
 

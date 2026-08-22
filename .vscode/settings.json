@@ -1,0 +1,20 @@
+{
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-21",
+      "path": "G:\\logisim_ai\\.jdks\\jdk-21.0.11+10",
+      "default": true
+    }
+  ],
+  "java.jdt.ls.java.home": "G:\\logisim_ai\\.jdks\\jdk-21.0.11+10",
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.gradle.enabled": true,
+  "java.import.gradle.home": "G:\\logisim_ai\\.gradle-local\\gradle-9.6.0",
+  "java.import.gradle.wrapper.enabled": false,
+  "java.compile.nullAnalysis.mode": "automatic",
+  "files.encoding": "utf8",
+  "[gradle]": {
+    "files.encoding": "utf8"
+  },
+  "kotlin.languageServer.enableTelemetry": false
+}

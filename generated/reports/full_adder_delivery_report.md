@@ -1,7 +1,7 @@
 # Generation delivery report for full_adder
 
 - Request kind: natural_language
-- Request: 做一个全加器
+- Request: full adder description
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

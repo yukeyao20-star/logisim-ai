@@ -1,0 +1,21 @@
+{
+  "circuitName": "demux_4to1",
+  "complete": true,
+  "artifactCount": 3,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=10833"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] demux_4to1.circ round-trip loaded with main circuit demux_4to1"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] demux_4to1.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] demux_4to1.circ\n - Vertical wire in left boundary lane can short external inputs: (110,110) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,140) -> (160,200)\n - Wire crosses reserved area of Pin Y0 in circuit demux_4to1: (110,110) -> (2700,110)\n - Wire crosses reserved area of Pin Y1 in circuit demux_4to1: (160,140) -> (2720,140)\n - Wire crosses reserved area of Pin Y2 in circuit demux_4to1: (470,190) -> (2710,190)\n - Wire crosses reserved area of Pin Y0 in circuit demux_4to1: (930,90) -> (2790,90)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=8"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\demux_4to1.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\demux_4to1_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\demux_4to1_circuit_truth_table.json", "exists": true}
+  ],
+  "issues": []
+}

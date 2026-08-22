@@ -1,0 +1,235 @@
+# Generation delivery report for divider_4x4
+
+- Request kind: natural_language
+- Request: 4位除法器
+- Intent: GATE_LEVEL_CIRCUIT
+- Implementation level: GATE_LEVEL
+- Target package: 
+- Package primitive: false
+- Routing primitive: primitive_gates
+- Circuit: generated\circ\divider_4x4.circ
+- Summary: generated\reports\divider_4x4_generation_summary.md
+- Manifest: generated\reports\divider_4x4_circuit_manifest.md
+- Complete: true
+- Manifest check count: 7
+- Manifest issue count: 0
+- Layout clean: false
+- Layout issue count: 92
+- Layout score: 0
+- Layout risk level: high
+- Layout unresolved tool count: 0
+- Layout overlap count: 0
+- Layout wire risk count: 4
+- Layout pin facing issue count: 0
+- Layout pin/tunnel proximity count: 0
+- Layout label risk count: 0
+- Layout reserved area intrusion count: 88
+- Layout inspection failure count: 0
+- Layout other issue count: 0
+- Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
+- Layout auto repair applied: false
+- Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
+- Artifact count: 8
+
+## Layout Issues
+
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (110,80) -> (110,150)
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (160,-1790) -> (160,200)
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (210,0) -> (210,250)
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (260,-720) -> (260,300)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R2 in circuit divider_4x4: (1090,340) -> (34980,340)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q3 in circuit divider_4x4: (1410,390) -> (35040,390)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q3 in circuit divider_4x4: (1560,410) -> (35090,410)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV19B in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV19C in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV20X in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV20D in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV20N in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV20O in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV20A in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV20B in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV20C in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV21X in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV21D in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV21N in circuit divider_4x4: (15930,4020) -> (37870,4020)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV19B in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV19C in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV20X in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV20D in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV20N in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV20O in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV20A in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV20B in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV20C in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV21X in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV21D in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV21N in circuit divider_4x4: (16090,4040) -> (37910,4040)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R3 in circuit divider_4x4: (2050,440) -> (35170,440)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R3 in circuit divider_4x4: (2210,460) -> (35210,460)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV30O in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV30A in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV30B in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV30C in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV31X in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV31D in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV31N in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV31O in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV31A in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV31B in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV31C in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DVQ33 in circuit divider_4x4: (24410,6120) -> (39540,6120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV30O in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV30A in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV30B in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV30C in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV31X in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV31D in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV31N in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV31O in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV31A in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV31B in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV31C in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DVQ33 in circuit divider_4x4: (24570,6140) -> (39580,6140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q2 in circuit divider_4x4: (2730,290) -> (35250,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R1 in circuit divider_4x4: (2880,260) -> (35290,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R0 in circuit divider_4x4: (3040,160) -> (35360,160)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R1 in circuit divider_4x4: (3230,240) -> (35300,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R2 in circuit divider_4x4: (360,360) -> (34820,360)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q1 in circuit divider_4x4: (3690,210) -> (35340,210)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q2 in circuit divider_4x4: (440,310) -> (34860,310)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q0 in circuit divider_4x4: (600,110) -> (34900,110)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV10X in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV10D in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV10N in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV10O in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV10A in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV9X in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV9D in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV9N in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV9O in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV9A in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV9B in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV9C in circuit divider_4x4: (7450,1920) -> (36200,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV10X in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV10D in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV10N in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV10O in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV10A in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV9X in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate DV9D in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate DV9N in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV9O in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV9A in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate DV9B in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate DV9C in circuit divider_4x4: (7610,1940) -> (36240,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q1 in circuit divider_4x4: (790,190) -> (34840,190)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Q0 in circuit divider_4x4: (820,90) -> (34950,90)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin R0 in circuit divider_4x4: (930,140) -> (34870,140)
+
+## Layout Repair Suggestions
+
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=divider_4x4;x1=110;y1=80;x2=110;y2=150)
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=divider_4x4;x1=160;y1=-1790;x2=160;y2=200)
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=divider_4x4;x1=210;y1=0;x2=210;y2=250)
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=divider_4x4;x1=260;y1=-720;x2=260;y2=300)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R2;anchorX=34270;anchorY=350;left=34256;top=336;right=34284;bottom=364;connectionPoints=1;x1=1090;y1=340;x2=34980;y2=340)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q3;anchorX=34220;anchorY=400;left=34206;top=386;right=34234;bottom=414;connectionPoints=1;x1=1410;y1=390;x2=35040;y2=390)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q3;anchorX=34220;anchorY=400;left=34206;top=386;right=34234;bottom=414;connectionPoints=1;x1=1560;y1=410;x2=35090;y2=410)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV19B;anchorX=19580;anchorY=4030;left=19544;top=4001;right=19616;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV19C;anchorX=19740;anchorY=4030;left=19704;top=4001;right=19776;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV20X;anchorX=19900;anchorY=4030;left=19864;top=4001;right=19936;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV20D;anchorX=20060;anchorY=4030;left=20024;top=4001;right=20096;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV20N;anchorX=20220;anchorY=4030;left=20199;top=4014;right=20241;bottom=4046;connectionPoints=2;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV20O;anchorX=20380;anchorY=4030;left=20344;top=4001;right=20416;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV20A;anchorX=20540;anchorY=4030;left=20504;top=4001;right=20576;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV20B;anchorX=20700;anchorY=4030;left=20664;top=4001;right=20736;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV20C;anchorX=20860;anchorY=4030;left=20824;top=4001;right=20896;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV21X;anchorX=21020;anchorY=4030;left=20984;top=4001;right=21056;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV21D;anchorX=21180;anchorY=4030;left=21144;top=4001;right=21216;bottom=4059;connectionPoints=3;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV21N;anchorX=21340;anchorY=4030;left=21319;top=4014;right=21361;bottom=4046;connectionPoints=2;x1=15930;y1=4020;x2=37870;y2=4020)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV19B;anchorX=19580;anchorY=4030;left=19544;top=4001;right=19616;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV19C;anchorX=19740;anchorY=4030;left=19704;top=4001;right=19776;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV20X;anchorX=19900;anchorY=4030;left=19864;top=4001;right=19936;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV20D;anchorX=20060;anchorY=4030;left=20024;top=4001;right=20096;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV20N;anchorX=20220;anchorY=4030;left=20199;top=4014;right=20241;bottom=4046;connectionPoints=2;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV20O;anchorX=20380;anchorY=4030;left=20344;top=4001;right=20416;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV20A;anchorX=20540;anchorY=4030;left=20504;top=4001;right=20576;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV20B;anchorX=20700;anchorY=4030;left=20664;top=4001;right=20736;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV20C;anchorX=20860;anchorY=4030;left=20824;top=4001;right=20896;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV21X;anchorX=21020;anchorY=4030;left=20984;top=4001;right=21056;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV21D;anchorX=21180;anchorY=4030;left=21144;top=4001;right=21216;bottom=4059;connectionPoints=3;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV21N;anchorX=21340;anchorY=4030;left=21319;top=4014;right=21361;bottom=4046;connectionPoints=2;x1=16090;y1=4040;x2=37910;y2=4040)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R3;anchorX=34170;anchorY=450;left=34156;top=436;right=34184;bottom=464;connectionPoints=1;x1=2050;y1=440;x2=35170;y2=440)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R3;anchorX=34170;anchorY=450;left=34156;top=436;right=34184;bottom=464;connectionPoints=1;x1=2210;y1=460;x2=35210;y2=460)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV30O;anchorX=30180;anchorY=6130;left=30144;top=6101;right=30216;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV30A;anchorX=30340;anchorY=6130;left=30304;top=6101;right=30376;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV30B;anchorX=30500;anchorY=6130;left=30464;top=6101;right=30536;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV30C;anchorX=30660;anchorY=6130;left=30624;top=6101;right=30696;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV31X;anchorX=30820;anchorY=6130;left=30784;top=6101;right=30856;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV31D;anchorX=30980;anchorY=6130;left=30944;top=6101;right=31016;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV31N;anchorX=31140;anchorY=6130;left=31119;top=6114;right=31161;bottom=6146;connectionPoints=2;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV31O;anchorX=31300;anchorY=6130;left=31264;top=6101;right=31336;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV31A;anchorX=31460;anchorY=6130;left=31424;top=6101;right=31496;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV31B;anchorX=31620;anchorY=6130;left=31584;top=6101;right=31656;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV31C;anchorX=31780;anchorY=6130;left=31744;top=6101;right=31816;bottom=6159;connectionPoints=3;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DVQ33;anchorX=31940;anchorY=6130;left=31919;top=6114;right=31961;bottom=6146;connectionPoints=2;x1=24410;y1=6120;x2=39540;y2=6120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV30O;anchorX=30180;anchorY=6130;left=30144;top=6101;right=30216;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV30A;anchorX=30340;anchorY=6130;left=30304;top=6101;right=30376;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV30B;anchorX=30500;anchorY=6130;left=30464;top=6101;right=30536;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV30C;anchorX=30660;anchorY=6130;left=30624;top=6101;right=30696;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV31X;anchorX=30820;anchorY=6130;left=30784;top=6101;right=30856;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV31D;anchorX=30980;anchorY=6130;left=30944;top=6101;right=31016;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV31N;anchorX=31140;anchorY=6130;left=31119;top=6114;right=31161;bottom=6146;connectionPoints=2;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV31O;anchorX=31300;anchorY=6130;left=31264;top=6101;right=31336;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV31A;anchorX=31460;anchorY=6130;left=31424;top=6101;right=31496;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV31B;anchorX=31620;anchorY=6130;left=31584;top=6101;right=31656;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV31C;anchorX=31780;anchorY=6130;left=31744;top=6101;right=31816;bottom=6159;connectionPoints=3;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DVQ33;anchorX=31940;anchorY=6130;left=31919;top=6114;right=31961;bottom=6146;connectionPoints=2;x1=24570;y1=6140;x2=39580;y2=6140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q2;anchorX=34320;anchorY=300;left=34306;top=286;right=34334;bottom=314;connectionPoints=1;x1=2730;y1=290;x2=35250;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R1;anchorX=34370;anchorY=250;left=34356;top=236;right=34384;bottom=264;connectionPoints=1;x1=2880;y1=260;x2=35290;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R0;anchorX=34470;anchorY=150;left=34456;top=136;right=34484;bottom=164;connectionPoints=1;x1=3040;y1=160;x2=35360;y2=160)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R1;anchorX=34370;anchorY=250;left=34356;top=236;right=34384;bottom=264;connectionPoints=1;x1=3230;y1=240;x2=35300;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R2;anchorX=34270;anchorY=350;left=34256;top=336;right=34284;bottom=364;connectionPoints=1;x1=360;y1=360;x2=34820;y2=360)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q1;anchorX=34420;anchorY=200;left=34406;top=186;right=34434;bottom=214;connectionPoints=1;x1=3690;y1=210;x2=35340;y2=210)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q2;anchorX=34320;anchorY=300;left=34306;top=286;right=34334;bottom=314;connectionPoints=1;x1=440;y1=310;x2=34860;y2=310)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q0;anchorX=34520;anchorY=100;left=34506;top=86;right=34534;bottom=114;connectionPoints=1;x1=600;y1=110;x2=34900;y2=110)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV10X;anchorX=10100;anchorY=1930;left=10064;top=1901;right=10136;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV10D;anchorX=10260;anchorY=1930;left=10224;top=1901;right=10296;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV10N;anchorX=10420;anchorY=1930;left=10399;top=1914;right=10441;bottom=1946;connectionPoints=2;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV10O;anchorX=10580;anchorY=1930;left=10544;top=1901;right=10616;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV10A;anchorX=10740;anchorY=1930;left=10704;top=1901;right=10776;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV9X;anchorX=8980;anchorY=1930;left=8944;top=1901;right=9016;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV9D;anchorX=9140;anchorY=1930;left=9104;top=1901;right=9176;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV9N;anchorX=9300;anchorY=1930;left=9279;top=1914;right=9321;bottom=1946;connectionPoints=2;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV9O;anchorX=9460;anchorY=1930;left=9424;top=1901;right=9496;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV9A;anchorX=9620;anchorY=1930;left=9584;top=1901;right=9656;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV9B;anchorX=9780;anchorY=1930;left=9744;top=1901;right=9816;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV9C;anchorX=9940;anchorY=1930;left=9904;top=1901;right=9976;bottom=1959;connectionPoints=3;x1=7450;y1=1920;x2=36200;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV10X;anchorX=10100;anchorY=1930;left=10064;top=1901;right=10136;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV10D;anchorX=10260;anchorY=1930;left=10224;top=1901;right=10296;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV10N;anchorX=10420;anchorY=1930;left=10399;top=1914;right=10441;bottom=1946;connectionPoints=2;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV10O;anchorX=10580;anchorY=1930;left=10544;top=1901;right=10616;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV10A;anchorX=10740;anchorY=1930;left=10704;top=1901;right=10776;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV9X;anchorX=8980;anchorY=1930;left=8944;top=1901;right=9016;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=XOR Gate;label=DV9D;anchorX=9140;anchorY=1930;left=9104;top=1901;right=9176;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=NOT Gate;label=DV9N;anchorX=9300;anchorY=1930;left=9279;top=1914;right=9321;bottom=1946;connectionPoints=2;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV9O;anchorX=9460;anchorY=1930;left=9424;top=1901;right=9496;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV9A;anchorX=9620;anchorY=1930;left=9584;top=1901;right=9656;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=AND Gate;label=DV9B;anchorX=9780;anchorY=1930;left=9744;top=1901;right=9816;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=OR Gate;label=DV9C;anchorX=9940;anchorY=1930;left=9904;top=1901;right=9976;bottom=1959;connectionPoints=3;x1=7610;y1=1940;x2=36240;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q1;anchorX=34420;anchorY=200;left=34406;top=186;right=34434;bottom=214;connectionPoints=1;x1=790;y1=190;x2=34840;y2=190)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=Q0;anchorX=34520;anchorY=100;left=34506;top=86;right=34534;bottom=114;connectionPoints=1;x1=820;y1=90;x2=34950;y2=90)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=divider_4x4;component=Pin;label=R0;anchorX=34470;anchorY=150;left=34456;top=136;right=34484;bottom=164;connectionPoints=1;x1=930;y1=140;x2=34870;y2=140)
+
+## Artifacts
+
+| Kind | Path | Exists |
+| --- | --- | --- |
+| circuit | generated\circ\divider_4x4.circ | true |
+| manifest_json | generated\reports\divider_4x4_circuit_manifest.json | true |
+| manifest_markdown | generated\reports\divider_4x4_circuit_manifest.md | true |
+| delivery_json | generated\reports\divider_4x4_delivery_report.json | true |
+| delivery_markdown | generated\reports\divider_4x4_delivery_report.md | true |
+| summary_json | generated\reports\divider_4x4_generation_summary.json | true |
+| summary_markdown | generated\reports\divider_4x4_generation_summary.md | true |
+| artifact | generated\reports\divider_4x4_multichip.md | true |

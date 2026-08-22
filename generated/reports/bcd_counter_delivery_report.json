@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "BCD计数器",
+  "request": "十进制计数器",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

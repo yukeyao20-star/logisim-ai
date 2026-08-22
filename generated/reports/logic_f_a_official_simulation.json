@@ -1,0 +1,11 @@
+{
+  "circuitName": "logic_f_a",
+  "circuitPath": "generated\\circ\\logic_f_a.circ",
+  "status": "PASS",
+  "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=2",
+  "rowCount": 2,
+  "rows": [
+    ["0", "0"],
+    ["1", "1"]
+  ]
+}

@@ -1,7 +1,7 @@
 # Generation delivery report for register_4bit
 
 - Request kind: natural_language
-- Request: 4位移位寄存器
+- Request: 锁存器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

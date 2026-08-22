@@ -1,0 +1,22 @@
+{
+  "circuitName": "gray_4bit",
+  "rowCount": 16,
+  "rows": [
+    {"inputs": {"b0": false, "b1": false, "b2": false, "b3": false}, "outputs": {"g0": false, "g1": false, "g2": false, "g3": false}},
+    {"inputs": {"b0": false, "b1": false, "b2": false, "b3": true}, "outputs": {"g0": false, "g1": false, "g2": true, "g3": true}},
+    {"inputs": {"b0": false, "b1": false, "b2": true, "b3": false}, "outputs": {"g0": false, "g1": true, "g2": true, "g3": false}},
+    {"inputs": {"b0": false, "b1": false, "b2": true, "b3": true}, "outputs": {"g0": false, "g1": true, "g2": false, "g3": true}},
+    {"inputs": {"b0": false, "b1": true, "b2": false, "b3": false}, "outputs": {"g0": true, "g1": true, "g2": false, "g3": false}},
+    {"inputs": {"b0": false, "b1": true, "b2": false, "b3": true}, "outputs": {"g0": true, "g1": true, "g2": true, "g3": true}},
+    {"inputs": {"b0": false, "b1": true, "b2": true, "b3": false}, "outputs": {"g0": true, "g1": false, "g2": true, "g3": false}},
+    {"inputs": {"b0": false, "b1": true, "b2": true, "b3": true}, "outputs": {"g0": true, "g1": false, "g2": false, "g3": true}},
+    {"inputs": {"b0": true, "b1": false, "b2": false, "b3": false}, "outputs": {"g0": true, "g1": false, "g2": false, "g3": false}},
+    {"inputs": {"b0": true, "b1": false, "b2": false, "b3": true}, "outputs": {"g0": true, "g1": false, "g2": true, "g3": true}},
+    {"inputs": {"b0": true, "b1": false, "b2": true, "b3": false}, "outputs": {"g0": true, "g1": true, "g2": true, "g3": false}},
+    {"inputs": {"b0": true, "b1": false, "b2": true, "b3": true}, "outputs": {"g0": true, "g1": true, "g2": false, "g3": true}},
+    {"inputs": {"b0": true, "b1": true, "b2": false, "b3": false}, "outputs": {"g0": false, "g1": true, "g2": false, "g3": false}},
+    {"inputs": {"b0": true, "b1": true, "b2": false, "b3": true}, "outputs": {"g0": false, "g1": true, "g2": true, "g3": true}},
+    {"inputs": {"b0": true, "b1": true, "b2": true, "b3": false}, "outputs": {"g0": false, "g1": false, "g2": true, "g3": false}},
+    {"inputs": {"b0": true, "b1": true, "b2": true, "b3": true}, "outputs": {"g0": false, "g1": false, "g2": false, "g3": true}}
+  ]
+}

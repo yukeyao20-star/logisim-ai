@@ -1,0 +1,21 @@
+{
+  "circuitName": "nine_complement",
+  "complete": true,
+  "artifactCount": 3,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=7446"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] nine_complement.circ round-trip loaded with main circuit nine_complement"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] nine_complement.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] nine_complement.circ\n - Vertical wire in left boundary lane can short external inputs: (110,70) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,90) -> (160,200)\n - Vertical wire in left boundary lane can short external inputs: (210,20) -> (210,250)\n - Wire crosses reserved area of Pin C1 in circuit nine_complement: (160,90) -> (1960,90)\n - Wire crosses reserved area of Pin C4 in circuit nine_complement: (470,190) -> (1910,190)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=16"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\nine_complement.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\nine_complement_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\nine_complement_circuit_truth_table.json", "exists": true}
+  ],
+  "issues": []
+}

@@ -5,11 +5,11 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=21521"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=19195"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] decoder_3bit.circ round-trip loaded with main circuit decoder_3bit"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] decoder_3bit.circ structure matches CircuitSpec"},
-    {"name": "layout_clean", "passed": true, "detail": "[OK] decoder_3bit.circ static layout checks passed"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] decoder_3bit.circ\n - Vertical wire in left boundary lane can short external inputs: (110,90) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,120) -> (160,200)\n - Wire crosses reserved area of Pin Y0 in circuit decoder_3bit: (110,90) -> (4360,90)\n - Wire crosses reserved area of Pin Y5 in circuit decoder_3bit: (1410,340) -> (4570,340)\n - Wire crosses reserved area of Pin Y5 in circuit decoder_3bit: (1570,360) -> (4630,360)\n - Wire crosses reserved area of Pin Y6 in circuit decoder_3bit: (2050,390) -> (4770,390)\n - Wire crosses reserved area of Pin Y6 in circuit decoder_3bit: (2210,410) -> (4830,410)\n - Wire crosses reserved area of Pin Y4 in circuit decoder_3bit: (2570,290) -> (4850,290)\n - Wire crosses reserved area of Pin Y3 in circuit decoder_3bit: (2730,260) -> (4910,260)\n - Wire crosses reserved area of Pin Y3 in circuit decoder_3bit: (2780,240) -> (4940,240)\n - Wire crosses reserved area of Pin Y2 in circuit decoder_3bit: (2940,210) -> (4980,210)\n - Wire crosses reserved area of Pin Y2 in circuit decoder_3bit: (470,190) -> (4350,190)\n - Wire crosses reserved area of Pin Y1 in circuit decoder_3bit: (500,140) -> (4400,140)\n - Wire crosses reserved area of Pin Y1 in circuit decoder_3bit: (790,160) -> (4390,160)\n - Wire crosses reserved area of Pin Y0 in circuit decoder_3bit: (930,110) -> (4410,110)\n - Wire crosses reserved area of Pin Y4 in circuit decoder_3bit: (930,310) -> (4430,310)"},
     {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=8"}
   ],
   "artifacts": [

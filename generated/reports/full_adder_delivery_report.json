@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "做一个全加器",
+  "request": "full adder description",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

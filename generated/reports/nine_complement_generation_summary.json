@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "9的补码",
+  "request": "9's complement",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -10,18 +10,26 @@
     "packagePrimitive": false,
     "routingPrimitive": "primitive_gates"
   },
-  "recommendedNextAction": "Open the manifest first and fix its issues before trusting the circuit artifact.",
-  "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit"],
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
   "sourceJson": "",
   "circuitName": "nine_complement",
   "circuitPath": "generated\\circ\\nine_complement.circ",
   "manifestPath": "generated\\reports\\nine_complement_circuit_manifest.md",
-  "manifestComplete": null,
-  "manifestCheckCount": null,
-  "manifestIssueCount": null,
-  "artifactCount": 2,
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 10,
   "artifacts": [
     {"path": "generated\\circ\\nine_complement.circ", "exists": true},
-    {"path": "generated\\reports\\nine_complement_multichip.md", "exists": true}
+    {"path": "generated\\reports\\nine_complement_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\nine_complement_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\nine_complement_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\nine_complement_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\nine_complement_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\nine_complement_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\nine_complement_multichip.md", "exists": true},
+    {"path": "generated\\reports\\nine_complement_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\nine_complement_official_simulation.md", "exists": true}
   ]
 }

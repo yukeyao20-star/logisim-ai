@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "三个开关控制一盏灯",
+  "request": "odd parity",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

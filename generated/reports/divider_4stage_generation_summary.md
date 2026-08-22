@@ -1,7 +1,7 @@
 # Generation summary for divider_4stage
 
 - Request kind: natural_language
-- Request: 4 bit divider
+- Request: 分频器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

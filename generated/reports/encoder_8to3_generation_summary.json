@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "8-3优先编码器",
+  "request": "priority encoder",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",

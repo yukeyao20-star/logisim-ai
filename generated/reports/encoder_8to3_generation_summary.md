@@ -1,7 +1,7 @@
 # Generation summary for encoder_8to3
 
 - Request kind: natural_language
-- Request: 8-3优先编码器
+- Request: priority encoder
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

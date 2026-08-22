@@ -1,0 +1,22 @@
+{
+  "circuitName": "barrel_shifter_2bit",
+  "rowCount": 16,
+  "rows": [
+    {"inputs": {"d0": false, "d1": false, "sh0": false, "gnd": false}, "outputs": {"y0": false, "y1": false}},
+    {"inputs": {"d0": false, "d1": false, "sh0": false, "gnd": true}, "outputs": {"y0": false, "y1": false}},
+    {"inputs": {"d0": false, "d1": false, "sh0": true, "gnd": false}, "outputs": {"y0": false, "y1": false}},
+    {"inputs": {"d0": false, "d1": false, "sh0": true, "gnd": true}, "outputs": {"y0": true, "y1": false}},
+    {"inputs": {"d0": false, "d1": true, "sh0": false, "gnd": false}, "outputs": {"y0": false, "y1": true}},
+    {"inputs": {"d0": false, "d1": true, "sh0": false, "gnd": true}, "outputs": {"y0": false, "y1": true}},
+    {"inputs": {"d0": false, "d1": true, "sh0": true, "gnd": false}, "outputs": {"y0": false, "y1": false}},
+    {"inputs": {"d0": false, "d1": true, "sh0": true, "gnd": true}, "outputs": {"y0": true, "y1": false}},
+    {"inputs": {"d0": true, "d1": false, "sh0": false, "gnd": false}, "outputs": {"y0": true, "y1": false}},
+    {"inputs": {"d0": true, "d1": false, "sh0": false, "gnd": true}, "outputs": {"y0": true, "y1": false}},
+    {"inputs": {"d0": true, "d1": false, "sh0": true, "gnd": false}, "outputs": {"y0": false, "y1": true}},
+    {"inputs": {"d0": true, "d1": false, "sh0": true, "gnd": true}, "outputs": {"y0": true, "y1": true}},
+    {"inputs": {"d0": true, "d1": true, "sh0": false, "gnd": false}, "outputs": {"y0": true, "y1": true}},
+    {"inputs": {"d0": true, "d1": true, "sh0": false, "gnd": true}, "outputs": {"y0": true, "y1": true}},
+    {"inputs": {"d0": true, "d1": true, "sh0": true, "gnd": false}, "outputs": {"y0": false, "y1": true}},
+    {"inputs": {"d0": true, "d1": true, "sh0": true, "gnd": true}, "outputs": {"y0": true, "y1": true}}
+  ]
+}

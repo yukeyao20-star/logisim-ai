@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "4bitx4bit乘法器",
+  "request": "4 bit multiplier",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,13 +19,15 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 6,
+  "artifactCount": 8,
   "artifacts": [
     {"path": "generated\\circ\\multiplier_4x4.circ", "exists": true},
     {"path": "generated\\reports\\multiplier_4x4_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\multiplier_4x4_circuit_manifest.md", "exists": true},
     {"path": "generated\\reports\\multiplier_4x4_generation_summary.json", "exists": true},
     {"path": "generated\\reports\\multiplier_4x4_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\multiplier_4x4_multichip.md", "exists": true}
+    {"path": "generated\\reports\\multiplier_4x4_multichip.md", "exists": true},
+    {"path": "generated\\reports\\multiplier_4x4_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\multiplier_4x4_official_simulation.md", "exists": true}
   ]
 }

@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "三人表决器",
+  "request": "3 input nor",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",
@@ -37,7 +37,7 @@
   "layoutAutoRepairApplied": false,
   "layoutAutoRepairResults": [],
   "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
-  "artifactCount": 9,
+  "artifactCount": 15,
   "artifacts": [
     {"kind": "circuit", "path": "generated\\circ\\logic_f_abc.circ", "exists": true},
     {"kind": "manifest_json", "path": "generated\\reports\\logic_f_abc_circuit_manifest.json", "exists": true},
@@ -47,6 +47,12 @@
     {"kind": "delivery_json", "path": "generated\\reports\\logic_f_abc_delivery_report.json", "exists": true},
     {"kind": "delivery_markdown", "path": "generated\\reports\\logic_f_abc_delivery_report.md", "exists": true},
     {"kind": "summary_json", "path": "generated\\reports\\logic_f_abc_generation_summary.json", "exists": true},
-    {"kind": "summary_markdown", "path": "generated\\reports\\logic_f_abc_generation_summary.md", "exists": true}
+    {"kind": "summary_markdown", "path": "generated\\reports\\logic_f_abc_generation_summary.md", "exists": true},
+    {"kind": "manifest_json", "path": "generated\\reports\\logic_f_abc_xor_circuit_manifest.json", "exists": true},
+    {"kind": "manifest_markdown", "path": "generated\\reports\\logic_f_abc_xor_circuit_manifest.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\logic_f_abc_xor_circuit_truth_table.json", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\logic_f_abc_xor_circuit_truth_table.md", "exists": true},
+    {"kind": "summary_json", "path": "generated\\reports\\logic_f_abc_xor_generation_summary.json", "exists": true},
+    {"kind": "summary_markdown", "path": "generated\\reports\\logic_f_abc_xor_generation_summary.md", "exists": true}
   ]
 }

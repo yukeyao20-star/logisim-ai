@@ -1,0 +1,14 @@
+{
+  "circuitName": "demux_4to1",
+  "rowCount": 8,
+  "rows": [
+    {"inputs": {"data": false, "s0": false, "s1": false}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false}},
+    {"inputs": {"data": false, "s0": false, "s1": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false}},
+    {"inputs": {"data": false, "s0": true, "s1": false}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false}},
+    {"inputs": {"data": false, "s0": true, "s1": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": false}},
+    {"inputs": {"data": true, "s0": false, "s1": false}, "outputs": {"y0": true, "y1": false, "y2": false, "y3": false}},
+    {"inputs": {"data": true, "s0": false, "s1": true}, "outputs": {"y0": false, "y1": false, "y2": true, "y3": false}},
+    {"inputs": {"data": true, "s0": true, "s1": false}, "outputs": {"y0": false, "y1": true, "y2": false, "y3": false}},
+    {"inputs": {"data": true, "s0": true, "s1": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": true}}
+  ]
+}

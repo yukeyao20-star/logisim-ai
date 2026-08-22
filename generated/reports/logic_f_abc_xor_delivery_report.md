@@ -1,7 +1,7 @@
 # Generation delivery report for logic_f_abc_xor
 
 - Request kind: natural_language
-- Request: 三个开关控制一盏灯
+- Request: odd parity
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

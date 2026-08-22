@@ -1,7 +1,7 @@
 # Generation summary for nine_complement
 
 - Request kind: natural_language
-- Request: 9的补码
+- Request: 9's complement
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -9,19 +9,27 @@
 - Target package: 
 - Package primitive: false
 - Routing primitive: primitive_gates
-- Recommended next action: Open the manifest first and fix its issues before trusting the circuit artifact.
-- Recommended action ids: review_manifest, fix_manifest_issues, regenerate_circuit
+- Recommended next action: Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.
+- Recommended action ids: open_circuit, review_manifest, review_truth_table
 - Source JSON: 
 - Circuit: generated\circ\nine_complement.circ
 - Manifest: generated\reports\nine_complement_circuit_manifest.md
-- Manifest complete: unknown
-- Manifest check count: unknown
-- Manifest issue count: unknown
-- Artifact count: 2
+- Manifest complete: true
+- Manifest check count: 7
+- Manifest issue count: 0
+- Artifact count: 10
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\nine_complement.circ | true |
+| generated\reports\nine_complement_circuit_manifest.json | true |
+| generated\reports\nine_complement_circuit_manifest.md | true |
+| generated\reports\nine_complement_circuit_truth_table.json | true |
+| generated\reports\nine_complement_circuit_truth_table.md | true |
+| generated\reports\nine_complement_generation_summary.json | true |
+| generated\reports\nine_complement_generation_summary.md | true |
 | generated\reports\nine_complement_multichip.md | true |
+| generated\reports\nine_complement_official_simulation.json | true |
+| generated\reports\nine_complement_official_simulation.md | true |

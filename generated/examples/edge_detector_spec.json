@@ -1,0 +1,37 @@
+{
+  "name": "edge_detector",
+  "components": [
+    {"id": "ed_ff", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U1"},
+    {"id": "ed_nq", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N1"},
+    {"id": "ed_ni", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "N2"},
+    {"id": "ed_rise", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A1"},
+    {"id": "ed_fall", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A2"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ed_ff", "targetEndIndex": 0},
+    {"id": "in", "label": "IN", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ed_ff", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ed_ff", "targetEndIndex": 0},
+    {"id": "rise", "label": "RISE", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "ed_rise", "targetEndIndex": 0},
+    {"id": "fall", "label": "FALL", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "ed_fall", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "ed_d", "endpoints": [{"componentId": "in", "endIndex": 0}, {"componentId": "ed_ff", "endIndex": 0}]},
+    {"id": "ed_clk", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "ed_ff", "endIndex": 1}]},
+    {"id": "ed_rst", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "ed_ff", "endIndex": 4}]},
+    {"id": "ed_nq_in", "endpoints": [{"componentId": "ed_ff", "endIndex": 2}, {"componentId": "ed_nq", "endIndex": 1}]},
+    {"id": "ed_ni_in", "endpoints": [{"componentId": "in", "endIndex": 0}, {"componentId": "ed_ni", "endIndex": 1}]},
+    {"id": "ed_rise_a", "endpoints": [{"componentId": "in", "endIndex": 0}, {"componentId": "ed_rise", "endIndex": 1}]},
+    {"id": "ed_rise_b", "endpoints": [{"componentId": "ed_nq", "endIndex": 0}, {"componentId": "ed_rise", "endIndex": 2}]},
+    {"id": "ed_fall_a", "endpoints": [{"componentId": "ed_ff", "endIndex": 2}, {"componentId": "ed_fall", "endIndex": 1}]},
+    {"id": "ed_fall_b", "endpoints": [{"componentId": "ed_ni", "endIndex": 0}, {"componentId": "ed_fall", "endIndex": 2}]},
+    {"id": "ed_rise_o", "endpoints": [{"componentId": "ed_rise", "endIndex": 0}, {"componentId": "rise", "endIndex": 0}]},
+    {"id": "ed_fall_o", "endpoints": [{"componentId": "ed_fall", "endIndex": 0}, {"componentId": "fall", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "ed_ff", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "ed_nq", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "ed_ni", "rank": 1, "column": 0, "row": 3, "side": null},
+    {"componentId": "ed_rise", "rank": 1, "column": 0, "row": 1, "side": null},
+    {"componentId": "ed_fall", "rank": 1, "column": 0, "row": 2, "side": null}
+  ]
+}

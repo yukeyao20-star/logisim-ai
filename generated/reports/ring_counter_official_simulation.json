@@ -1,0 +1,9 @@
+{
+  "circuitName": "ring_counter",
+  "circuitPath": "generated\\circ\\ring_counter.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

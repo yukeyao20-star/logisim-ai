@@ -1,0 +1,10 @@
+{
+  "circuitName": "logic_f_ab",
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"a": false, "b": false}, "outputs": {"f": false}},
+    {"inputs": {"a": false, "b": true}, "outputs": {"f": true}},
+    {"inputs": {"a": true, "b": false}, "outputs": {"f": true}},
+    {"inputs": {"a": true, "b": true}, "outputs": {"f": false}}
+  ]
+}

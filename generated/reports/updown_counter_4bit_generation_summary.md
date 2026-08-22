@@ -1,7 +1,7 @@
 # Generation summary for updown_counter_4bit
 
 - Request kind: natural_language
-- Request: 4 bit up down counter
+- Request: 可逆计数器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,11 +17,13 @@
 - Manifest complete: unknown
 - Manifest check count: unknown
 - Manifest issue count: unknown
-- Artifact count: 2
+- Artifact count: 4
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\updown_counter_4bit.circ | true |
+| generated\reports\updown_counter_4bit_generation_summary.json | true |
+| generated\reports\updown_counter_4bit_generation_summary.md | true |
 | generated\reports\updown_counter_4bit_multichip.md | true |

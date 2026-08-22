@@ -49,6 +49,14 @@ public final class IsolatedRouter {
       CircuitMutation mutation,
       List<NetWire> nets,
       Map<String, Location> endpointLocs) {
+    // Fan-out roots: a driving port (e.g. a D-FF's Q) legitimately appears in
+    // several spec nets (Q->gate1, Q->gate2, Q->output pin). The router's
+    // contract is "one net per port" -- otherwise each net gives the same port
+    // a different trunk column and Pass 2's merged stub-row horizontal shorts
+    // them together. Any two nets sharing a port are the same electrical
+    // signal, so union them into one NetWire first.
+    nets = unionNetsBySharedPort(nets);
+
     // Compute routing zone from component bounding box
     int maxX = 0, maxY = 0;
     for (Location loc : endpointLocs.values()) {
@@ -164,9 +172,81 @@ public final class IsolatedRouter {
     }
   }
 
+  /**
+   * Merge nets that share any port into a single electrical net. A driving
+   * port (FF Q, gate output, input pin) appears in one spec net per fan-out
+   * target; unioning restores the router's one-net-per-port contract so each
+   * port gets exactly one trunk column. Ports appear in at most one net after
+   * this, so Pass 2's merged stub-row horizontal can never short two nets.
+   */
+  private static List<NetWire> unionNetsBySharedPort(List<NetWire> nets) {
+    int n = nets.size();
+    if (n <= 1) {
+      return nets;
+    }
+    int[] parent = new int[n];
+    for (int i = 0; i < n; i++) {
+      parent[i] = i;
+    }
+    Map<String, Integer> portToNet = new HashMap<>();
+    for (int i = 0; i < n; i++) {
+      for (EndpointRef ref : nets.get(i).endpoints()) {
+        String key = key(ref);
+        Integer prev = portToNet.putIfAbsent(key, i);
+        if (prev != null) {
+          union(parent, prev, i);
+        }
+      }
+    }
+    Map<Integer, List<NetWire>> groups = new HashMap<>();
+    for (int i = 0; i < n; i++) {
+      int root = find(parent, i);
+      groups.computeIfAbsent(root, k -> new ArrayList<>()).add(nets.get(i));
+    }
+    List<NetWire> merged = new ArrayList<>();
+    for (List<NetWire> group : groups.values()) {
+      if (group.size() == 1) {
+        merged.add(group.get(0));
+        continue;
+      }
+      StringBuilder id = new StringBuilder();
+      List<EndpointRef> refs = new ArrayList<>();
+      Set<String> seen = new HashSet<>();
+      for (NetWire net : group) {
+        if (id.length() > 0) {
+          id.append('+');
+        }
+        id.append(net.id());
+        for (EndpointRef ref : net.endpoints()) {
+          String k = key(ref);
+          if (seen.add(k)) {
+            refs.add(ref);
+          }
+        }
+      }
+      merged.add(new NetWire(id.toString(), refs));
+    }
+    return merged;
+  }
+
+  private static int find(int[] parent, int i) {
+    while (parent[i] != i) {
+      parent[i] = parent[parent[i]];
+      i = parent[i];
+    }
+    return i;
+  }
+
+  private static void union(int[] parent, int a, int b) {
+    int ra = find(parent, a);
+    int rb = find(parent, b);
+    if (ra != rb) {
+      parent[ra] = rb;
+    }
+  }
+
   /** Grow a port's trunk range to cover a trunk column and the port itself. */
-  private static void includeTrunk(
-      Map<String, int[]> portTrunkRange, String key, int trunk, int portX) {
+  private static void includeTrunk(      Map<String, int[]> portTrunkRange, String key, int trunk, int portX) {
     int[] range = portTrunkRange.get(key);
     if (range == null) {
       portTrunkRange.put(key, new int[] {Math.min(trunk, portX), Math.max(trunk, portX)});

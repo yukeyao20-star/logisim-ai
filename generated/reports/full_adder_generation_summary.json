@@ -1,7 +1,7 @@
 {
   "requestKind": "natural_language",
-  "request": "做一个全加器",
-  "description": "Matched verified JSON template: 全加器",
+  "request": "full adder description",
+  "description": "Matched verified JSON template: full adder",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
   "implementationProfile": {

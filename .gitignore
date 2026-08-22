@@ -4,6 +4,10 @@
 .jdks/
 build/
 
+# LSP language-server runtimes (installed by lsp\setup-lsp.ps1); tracked
+# launcher scripts live in lsp/.
+.tools/
+
 # Agent/tool state
 .agents/
 .claude/

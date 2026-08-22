@@ -122,7 +122,7 @@ public final class BoolFunctionSynthesizer {
       return Optional.empty();
     }
     if (containsAny(t,
-        "三人表决", "多数表决", "表决器", "majority", "voting", "vote of")) {
+        "三人表决", "多数表决", "表决器", "majority", "voting", "vote of", "voter")) {
       return Optional.of("F=(A and B) or (A and C) or (B and C)");
     }
     if (containsAny(t, "不一致", "意见不同", "disagreement", "disagree")) {
@@ -131,17 +131,19 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "偶校验", "奇偶校验", "校验器", "even parity", "parity")) {
       return Optional.of("F=A xor B xor C");
     }
-    if (containsAny(t, "不相等", "相反", "一开一关", "一个开一个关", "一开一闭", "not equal", "unequal", "different bits")) {
+    if (containsAny(t, "不相等", "相反", "一开一关", "一个开一个关", "一开一闭", "not equal", "unequal", "different bits",
+        "are different", "numbers are different")) {
       return Optional.of("F=A xor B");
     }
-    if (containsAny(t, "相等", "一致", "相同", "equal", "equals", "xnor", "同或")) {
+    if (containsAny(t, "相等", "一致", "相同", "equal", "equals", "xnor", "同或", "are equal", "numbers are equal")) {
       return Optional.of("F=not (A xor B)");
     }
     if (containsAny(t, "互斥", "只能一个", "exclusive", "mutually")) {
       return Optional.of("F=A xor B");
     }
     // 1-bit magnitude comparator (three outputs)
-    if (containsAny(t, "谁大", "谁小", "哪个大", "大于", "小于", "compare two", "comparison", "比较两个")) {
+    if (containsAny(t, "谁大", "谁小", "哪个大", "大于", "小于", "compare two", "comparison", "比较两个",
+        "which is bigger", "which is larger", "which is smaller")) {
       return Optional.of(
           "F_GT=A and not B; F_EQ=not (A xor B); F_LT=not A and B");
     }
@@ -156,25 +158,27 @@ public final class BoolFunctionSynthesizer {
           "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
     }
     // 1-bit subtractor / multiplier described functionally.
-    if (containsAny(t, "求差", "两数之差", "减法运算", "求两数之差", "差值")) {
+    if (containsAny(t, "求差", "两数之差", "减法运算", "求两数之差", "差值", "subtract two", "two numbers subtract",
+        "difference of two")) {
       return Optional.of("D=A xor B; BOUT=not A and B");
     }
-    if (containsAny(t, "求积", "两数之积", "乘法运算", "乘积", "求两数之积")) {
+    if (containsAny(t, "求积", "两数之积", "乘法运算", "乘积", "求两数之积", "multiply two", "product of two")) {
       return Optional.of("P=A and B");
     }
     // Zero / non-zero detection of a 4-bit word. 非零检测 must precede 零检测
     // (substring 零检测 would otherwise intercept it).
-    if (containsAny(t, "非零检测", "有任意1", "非零")) {
+    if (containsAny(t, "非零检测", "有任意1", "非零", "non-zero", "nonzero", "detect non-zero", "any one is 1")) {
       return Optional.of("F=A or B or C or D");
     }
-    if (containsAny(t, "零检测", "全零", "判断为零", "全0", "为0检测")) {
+    if (containsAny(t, "零检测", "全零", "判断为零", "全0", "为0检测", "detect zero", "all zeros", "all zero",
+        "detect all zeros")) {
       return Optional.of("F=not (A or B or C or D)");
     }
     // Even / odd value detection = LSB check (odd number of 1s is xor3, separate).
-    if (containsAny(t, "判断偶数", "偶数判断", "是否为偶数")) {
+    if (containsAny(t, "判断偶数", "偶数判断", "是否为偶数", "even number", "even detector", "detect even")) {
       return Optional.of("F=not A");
     }
-    if (containsAny(t, "判断奇数", "奇数判断", "是否为奇数")) {
+    if (containsAny(t, "判断奇数", "奇数判断", "是否为奇数", "odd number", "odd detector", "detect odd")) {
       return Optional.of("F=A");
     }
     // Logic-operator descriptions: "与逻辑/或逻辑/非逻辑/异或逻辑" and 逻辑X
@@ -219,20 +223,23 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=not (A and B and C)");
     }
     // At least two of three = majority.
-    if (containsAny(t, "至少两个开关", "至少2个开关", "至少两个闭合", "至少两个为真")) {
+    if (containsAny(t, "至少两个开关", "至少2个开关", "至少两个闭合", "至少两个为真", "at least two of three",
+        "at least 2 of 3", "2 of 3")) {
       return Optional.of("F=(A and B) or (A and C) or (B and C)");
     }
     // Exactly two of three closed.
-    if (containsAny(t, "恰好两个开关", "恰好2个开关", "仅两个开关闭合", "恰好两个为真")) {
+    if (containsAny(t, "恰好两个开关", "恰好2个开关", "仅两个开关闭合", "恰好两个为真", "exactly two of three",
+        "exactly 2 of 3")) {
       return Optional.of("F=(A and B and not C) or (A and not B and C) or (not A and B and C)");
     }
     // Exactly one of three closed.
-    if (containsAny(t, "恰好一个开关", "仅一个开关", "只有一个开关闭合", "恰好一个为真", "仅一个为真", "只有一个为真")) {
+    if (containsAny(t, "恰好一个开关", "仅一个开关", "只有一个开关闭合", "恰好一个为真", "仅一个为真", "只有一个为真",
+        "exactly one of three", "exactly 1 of 3", "only one of three")) {
       return Optional.of("F=(A and not B and not C) or (not A and B and not C) or (not A and not B and C)");
     }
     // Three switches controlling one light: F=1 when an odd number are on.
     // Must precede the two-switch / 开关控制 mapping below.
-    if (containsAny(t, "三个开关", "三开关", "奇数个开关")) {
+    if (containsAny(t, "三个开关", "三开关", "奇数个开关", "three switches", "odd number of switches")) {
       return Optional.of("F=A xor B xor C");
     }
     // Series switches = AND, parallel switches = OR. Must precede 开关控制
@@ -244,7 +251,8 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=A or B");
     }
     // Staircase / two-way light switch: F = A xor B
-    if (containsAny(t, "楼梯灯", "两个开关", "双控", "开关控制", "双联")) {
+    if (containsAny(t, "楼梯灯", "两个开关", "双控", "开关控制", "双联", "staircase light", "two-way switch",
+        "two switches control", "control one light", "light switch")) {
       return Optional.of("F=A xor B");
     }
     // Bare single gates (order matters: 三输入与非 before 与非门; 三输入或非
@@ -274,6 +282,39 @@ public final class BoolFunctionSynthesizer {
           String joiner = switch (op) {
             case "与" -> " and ";
             case "或" -> " or ";
+            default -> " xor ";
+          };
+          for (int i = 0; i < n; i++) {
+            if (i > 0) expr.append(joiner);
+            expr.append(vars[i]);
+          }
+        }
+        return Optional.of(expr.toString());
+      }
+    }
+    // English "N input X gate" / "N-input X" (nand/nor/xor/and/or), N in 2..8.
+    java.util.regex.Matcher ninGateEn = java.util.regex.Pattern
+        .compile("(\\d{1,2})[ -]?input\\s*(nand|nor|xor|and|or)")
+        .matcher(t);
+    if (ninGateEn.find()) {
+      Integer n = Integer.parseInt(ninGateEn.group(1));
+      String op = ninGateEn.group(2);
+      if (n >= 2 && n <= 8) {
+        String[] vars = {"A", "B", "C", "D", "E", "G", "H", "I"};
+        StringBuilder expr = new StringBuilder();
+        if (op.equals("nand") || op.equals("nor")) {
+          expr.append("F=not (");
+          String joiner = op.equals("nand") ? " and " : " or ";
+          for (int i = 0; i < n; i++) {
+            if (i > 0) expr.append(joiner);
+            expr.append(vars[i]);
+          }
+          expr.append(")");
+        } else {
+          expr.append("F=");
+          String joiner = switch (op) {
+            case "and" -> " and ";
+            case "or" -> " or ";
             default -> " xor ";
           };
           for (int i = 0; i < n; i++) {
@@ -333,10 +374,10 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=not A");
     }
     // Max/min of two 1-bit numbers: max = OR, min = AND.
-    if (containsAny(t, "求最大", "最大值", "取大", "max of")) {
+    if (containsAny(t, "求最大", "最大值", "取大", "max of", "maximum of", "find the maximum", "find maximum")) {
       return Optional.of("F=A or B");
     }
-    if (containsAny(t, "求最小", "最小值", "取小", "min of")) {
+    if (containsAny(t, "求最小", "最小值", "取小", "min of", "minimum of", "find the minimum", "find minimum")) {
       return Optional.of("F=A and B");
     }
     // A single light switch: the switch directly drives the lamp.
@@ -360,7 +401,80 @@ public final class BoolFunctionSynthesizer {
       return Optional.of(
           "SUM=A xor B xor Cin; CARRY=(A and B) or (Cin and (A xor B))");
     }
+    // Generic conditional sentence: 当/如果/若 <条件> 则/那么 <结果> — the last
+    // generic fallback toward arbitrary NL. The condition phrase is rewritten
+    // into Chinese boolean operators (与/或/非/异或/同或) that the parser
+    // already accepts, then validated by actually parsing it.
+    Optional<String> cond = tryConditionalMapping(text);
+    if (cond.isPresent()) {
+      return cond;
+    }
     return Optional.empty();
+  }
+
+  /**
+   * Parses Chinese conditional sentences like 「当A与B时灯亮」「如果A或者非B则报警」
+   * into F=<condition>. Only returns a mapping when the extracted condition
+   * parses as a valid boolean expression, so non-logic sentences fall through.
+   */
+  private static Optional<String> tryConditionalMapping(String text) {
+    // Normalize connectives FIRST so phrases like 「不同时」 don't get split at
+    // the 时 inside 不同时 during extraction.
+    String t = normalizeConnectives(text.trim());
+    String condition = null;
+    java.util.regex.Matcher m = java.util.regex.Pattern
+        .compile("(?:当|如果|若是?|只要)(.+?)(?:的话)?(?:就|则|那么|时|的时候)(.*)")
+        .matcher(t);
+    if (m.matches()) {
+      condition = m.group(1);
+    } else {
+      m = java.util.regex.Pattern.compile("(.+?)的时候(.*)").matcher(t);
+      if (m.matches()) {
+        condition = m.group(1);
+      }
+    }
+    if (condition == null || condition.isBlank()) {
+      return Optional.empty();
+    }
+    String expr = cleanupCondition(condition);
+    if (expr.isBlank()) {
+      return Optional.empty();
+    }
+    try {
+      com.logisim_ai.logic.BoolExpressionParser.parseNormalized(expr);
+    } catch (IllegalArgumentException e) {
+      return Optional.empty();
+    }
+    return Optional.of("F=" + expr);
+  }
+
+  /** Rewrites colloquial Chinese connectives into the parser's operator set. */
+  private static String normalizeConnectives(String s) {
+    return s
+        // 「A和B不同」 is a two-variable comparison, not a three-term chain:
+        // collapse it before the plain 和->与 rewrite would break the phrase.
+        .replaceAll("([A-Za-z0-9]+)\\s*和\\s*([A-Za-z0-9]+)\\s*(?:不同|不相同|不一致)", "$1 异或 $2")
+        .replaceAll("([A-Za-z0-9]+)\\s*和\\s*([A-Za-z0-9]+)\\s*(?:相同|一致|相等)", "$1 同或 $2")
+        .replace("不相同", "异或").replace("不一致", "异或").replace("不同", "异或")
+        .replace("并且", "与").replace("且", "与")
+        .replace("同时", "与").replace("以及", "与").replace("还有", "与")
+        .replace("或者", "或").replace("还是", "或").replace("或是", "或")
+        .replace("相同", "同或").replace("一致", "同或").replace("相等", "同或")
+        .replace("没有", "非").replace("无", "非")
+        .replace("和", "与").replace("跟", "与");
+  }
+
+  /** Post-extraction cleanup: colloquial negation and trailing particles. */
+  private static String cleanupCondition(String s) {
+    String r = s;
+    // 「A非B」 (variable followed by 非) means A and not B in colloquial speech
+    r = r.replaceAll("([A-Za-z0-9])\\s*非\\s*([A-Za-z])", "$1 与 非$2");
+    // The parser has no 同或 operator: rewrite X 同或 Y as not (X 异或 Y)
+    r = r.replaceAll("([A-Za-z0-9]+)\\s*同或\\s*([A-Za-z0-9]+)", "not ($1 异或 $2)");
+    r = r.replace("不", "非");
+    r = r.replaceAll("(的时候|时|的话|则|就|那么)$", "");
+    r = r.replace("，", "").replace(",", "").replace("。", "").trim();
+    return r;
   }
 
   private static Integer chineseNumToInt(String s) {

@@ -1,8 +1,8 @@
 # Generation summary for full_adder
 
 - Request kind: natural_language
-- Request: 做一个全加器
-- Description: Matched verified JSON template: 全加器
+- Request: full adder description
+- Description: Matched verified JSON template: full adder
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
 - Implementation level: GATE_LEVEL

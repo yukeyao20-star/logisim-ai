@@ -1,0 +1,17 @@
+{
+  "circuitName": "demux_4to1",
+  "circuitPath": "generated\\circ\\demux_4to1.circ",
+  "status": "PASS",
+  "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=8",
+  "rowCount": 8,
+  "rows": [
+    ["0", "0", "0", "0", "0", "0", "0"],
+    ["0", "0", "1", "0", "0", "0", "0"],
+    ["0", "1", "0", "0", "0", "0", "0"],
+    ["0", "1", "1", "0", "0", "0", "0"],
+    ["1", "0", "0", "1", "0", "0", "0"],
+    ["1", "0", "1", "0", "0", "1", "0"],
+    ["1", "1", "0", "0", "1", "0", "0"],
+    ["1", "1", "1", "0", "0", "0", "1"]
+  ]
+}

@@ -1,0 +1,112 @@
+# Multi-chip circuit bcd_adder_2digit
+
+- Circuit: generated\circ\bcd_adder_2digit.circ
+- Components: 102
+- Nets: 213
+
+## Components
+
+| id | factory | label |
+|--- | --- | --- |
+| bcd0_x0 | XOR Gate | BXA1 |
+| bcd0_s0 | XOR Gate | BXS1 |
+| bcd0_a0 | AND Gate | BAA1 |
+| bcd0_b0 | AND Gate | BAB1 |
+| bcd0_o0 | OR Gate | BAO1 |
+| bcd0_g0 | OR Gate | BAG1 |
+| bcd0_x1 | XOR Gate | BXA2 |
+| bcd0_s1 | XOR Gate | BXS2 |
+| bcd0_a1 | AND Gate | BAA2 |
+| bcd0_b1 | AND Gate | BAB2 |
+| bcd0_o1 | OR Gate | BAO2 |
+| bcd0_g1 | OR Gate | BAG2 |
+| bcd0_x2 | XOR Gate | BXA3 |
+| bcd0_s2 | XOR Gate | BXS3 |
+| bcd0_a2 | AND Gate | BAA3 |
+| bcd0_b2 | AND Gate | BAB3 |
+| bcd0_o2 | OR Gate | BAO3 |
+| bcd0_g2 | OR Gate | BAG3 |
+| bcd0_x3 | XOR Gate | BXA4 |
+| bcd0_s3 | XOR Gate | BXS4 |
+| bcd0_a3 | AND Gate | BAA4 |
+| bcd0_b3 | AND Gate | BAB4 |
+| bcd0_o3 | OR Gate | BAO4 |
+| bcd0_g3 | OR Gate | BAG4 |
+| bcd0_adj4 | OR Gate | BAJ5 |
+| bcd0_adj24 | AND Gate | BAK5 |
+| bcd0_adj34 | OR Gate | BAL5 |
+| bcd0_x2_5 | XOR Gate | BX26 |
+| bcd0_s2_5 | XOR Gate | BX36 |
+| bcd0_a2_5 | AND Gate | BA26 |
+| bcd0_b2_5 | AND Gate | BB26 |
+| bcd0_o2_5 | OR Gate | BO26 |
+| bcd0_g2_5 | OR Gate | BG26 |
+| bcd0_x2_6 | XOR Gate | BX27 |
+| bcd0_s2_6 | XOR Gate | BX37 |
+| bcd0_a2_6 | AND Gate | BA27 |
+| bcd0_b2_6 | AND Gate | BB27 |
+| bcd0_o2_6 | OR Gate | BO27 |
+| bcd0_g2_6 | OR Gate | BG27 |
+| bcd0_x2_7 | XOR Gate | BX28 |
+| bcd0_s2_7 | XOR Gate | BX38 |
+| bcd0_a2_7 | AND Gate | BA28 |
+| bcd0_b2_7 | AND Gate | BB28 |
+| bcd0_o2_7 | OR Gate | BO28 |
+| bcd0_g2_7 | OR Gate | BG28 |
+| bcd0_x2_8 | XOR Gate | BX29 |
+| bcd0_s2_8 | XOR Gate | BX39 |
+| bcd0_a2_8 | AND Gate | BA29 |
+| bcd0_b2_8 | AND Gate | BB29 |
+| bcd0_o2_8 | OR Gate | BO29 |
+| bcd0_g2_8 | OR Gate | BG29 |
+| bcd1_x9 | XOR Gate | BXA10 |
+| bcd1_s9 | XOR Gate | BXS10 |
+| bcd1_a9 | AND Gate | BAA10 |
+| bcd1_b9 | AND Gate | BAB10 |
+| bcd1_o9 | OR Gate | BAO10 |
+| bcd1_g9 | OR Gate | BAG10 |
+| bcd1_x10 | XOR Gate | BXA11 |
+| bcd1_s10 | XOR Gate | BXS11 |
+| bcd1_a10 | AND Gate | BAA11 |
+| bcd1_b10 | AND Gate | BAB11 |
+| bcd1_o10 | OR Gate | BAO11 |
+| bcd1_g10 | OR Gate | BAG11 |
+| bcd1_x11 | XOR Gate | BXA12 |
+| bcd1_s11 | XOR Gate | BXS12 |
+| bcd1_a11 | AND Gate | BAA12 |
+| bcd1_b11 | AND Gate | BAB12 |
+| bcd1_o11 | OR Gate | BAO12 |
+| bcd1_g11 | OR Gate | BAG12 |
+| bcd1_x12 | XOR Gate | BXA13 |
+| bcd1_s12 | XOR Gate | BXS13 |
+| bcd1_a12 | AND Gate | BAA13 |
+| bcd1_b12 | AND Gate | BAB13 |
+| bcd1_o12 | OR Gate | BAO13 |
+| bcd1_g12 | OR Gate | BAG13 |
+| bcd1_adj13 | OR Gate | BAJ14 |
+| bcd1_adj213 | AND Gate | BAK14 |
+| bcd1_adj313 | OR Gate | BAL14 |
+| bcd1_x2_14 | XOR Gate | BX215 |
+| bcd1_s2_14 | XOR Gate | BX315 |
+| bcd1_a2_14 | AND Gate | BA215 |
+| bcd1_b2_14 | AND Gate | BB215 |
+| bcd1_o2_14 | OR Gate | BO215 |
+| bcd1_g2_14 | OR Gate | BG215 |
+| bcd1_x2_15 | XOR Gate | BX216 |
+| bcd1_s2_15 | XOR Gate | BX316 |
+| bcd1_a2_15 | AND Gate | BA216 |
+| bcd1_b2_15 | AND Gate | BB216 |
+| bcd1_o2_15 | OR Gate | BO216 |
+| bcd1_g2_15 | OR Gate | BG216 |
+| bcd1_x2_16 | XOR Gate | BX217 |
+| bcd1_s2_16 | XOR Gate | BX317 |
+| bcd1_a2_16 | AND Gate | BA217 |
+| bcd1_b2_16 | AND Gate | BB217 |
+| bcd1_o2_16 | OR Gate | BO217 |
+| bcd1_g2_16 | OR Gate | BG217 |
+| bcd1_x2_17 | XOR Gate | BX218 |
+| bcd1_s2_17 | XOR Gate | BX318 |
+| bcd1_a2_17 | AND Gate | BA218 |
+| bcd1_b2_17 | AND Gate | BB218 |
+| bcd1_o2_17 | OR Gate | BO218 |
+| bcd1_g2_17 | OR Gate | BG218 |

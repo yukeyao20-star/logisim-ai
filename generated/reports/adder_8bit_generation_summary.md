@@ -1,7 +1,7 @@
 # Generation summary for adder_8bit
 
 - Request kind: natural_language
-- Request: 8位加法器
+- Request: 8 bit adder
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 3
+- Artifact count: 7
 
 ## Artifacts
 
@@ -26,3 +26,7 @@
 | generated\circ\adder_8bit.circ | true |
 | generated\reports\adder_8bit_circuit_manifest.json | true |
 | generated\reports\adder_8bit_circuit_manifest.md | true |
+| generated\reports\adder_8bit_generation_summary.md | true |
+| generated\reports\adder_8bit_multichip.md | true |
+| generated\reports\adder_8bit_official_simulation.json | true |
+| generated\reports\adder_8bit_official_simulation.md | true |

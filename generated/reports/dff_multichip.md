@@ -8,4 +8,4 @@
 
 | id | factory | label |
 |--- | --- | --- |
-| dff0 | D Flip-Flop | U1 |
+| ff0 | D Flip-Flop | U1 |

@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "密码锁",
+  "request": "keypad lock",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

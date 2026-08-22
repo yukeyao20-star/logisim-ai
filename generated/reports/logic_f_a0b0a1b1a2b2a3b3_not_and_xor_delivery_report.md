@@ -1,7 +1,7 @@
 # Generation delivery report for logic_f_a0b0a1b1a2b2a3b3_not_and_xor
 
 - Request kind: natural_language
-- Request: 密码锁
+- Request: keypad lock
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

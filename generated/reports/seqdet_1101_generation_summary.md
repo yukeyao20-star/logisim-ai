@@ -1,7 +1,7 @@
 # Generation summary for seqdet_1101
 
 - Request kind: natural_language
-- Request: 1101序列检测器
+- Request: 1101序列检测
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

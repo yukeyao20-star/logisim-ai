@@ -1,0 +1,22 @@
+{
+  "circuitName": "twoscomp_4bit",
+  "rowCount": 16,
+  "rows": [
+    {"inputs": {"a0": false, "a1": false, "a2": false, "a3": false}, "outputs": {"b0": false, "b1": false, "b2": false, "b3": false}},
+    {"inputs": {"a0": false, "a1": false, "a2": false, "a3": true}, "outputs": {"b0": false, "b1": false, "b2": false, "b3": true}},
+    {"inputs": {"a0": false, "a1": false, "a2": true, "a3": false}, "outputs": {"b0": false, "b1": false, "b2": true, "b3": true}},
+    {"inputs": {"a0": false, "a1": false, "a2": true, "a3": true}, "outputs": {"b0": false, "b1": false, "b2": true, "b3": false}},
+    {"inputs": {"a0": false, "a1": true, "a2": false, "a3": false}, "outputs": {"b0": false, "b1": true, "b2": true, "b3": true}},
+    {"inputs": {"a0": false, "a1": true, "a2": false, "a3": true}, "outputs": {"b0": false, "b1": true, "b2": true, "b3": false}},
+    {"inputs": {"a0": false, "a1": true, "a2": true, "a3": false}, "outputs": {"b0": false, "b1": true, "b2": false, "b3": true}},
+    {"inputs": {"a0": false, "a1": true, "a2": true, "a3": true}, "outputs": {"b0": false, "b1": true, "b2": false, "b3": false}},
+    {"inputs": {"a0": true, "a1": false, "a2": false, "a3": false}, "outputs": {"b0": true, "b1": true, "b2": true, "b3": true}},
+    {"inputs": {"a0": true, "a1": false, "a2": false, "a3": true}, "outputs": {"b0": true, "b1": true, "b2": true, "b3": false}},
+    {"inputs": {"a0": true, "a1": false, "a2": true, "a3": false}, "outputs": {"b0": true, "b1": true, "b2": false, "b3": true}},
+    {"inputs": {"a0": true, "a1": false, "a2": true, "a3": true}, "outputs": {"b0": true, "b1": true, "b2": false, "b3": false}},
+    {"inputs": {"a0": true, "a1": true, "a2": false, "a3": false}, "outputs": {"b0": true, "b1": false, "b2": true, "b3": true}},
+    {"inputs": {"a0": true, "a1": true, "a2": false, "a3": true}, "outputs": {"b0": true, "b1": false, "b2": true, "b3": false}},
+    {"inputs": {"a0": true, "a1": true, "a2": true, "a3": false}, "outputs": {"b0": true, "b1": false, "b2": false, "b3": true}},
+    {"inputs": {"a0": true, "a1": true, "a2": true, "a3": true}, "outputs": {"b0": true, "b1": false, "b2": false, "b3": false}}
+  ]
+}

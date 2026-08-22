@@ -1,0 +1,19 @@
+{
+  "circuitName": "bcd_counter",
+  "complete": false,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=13388"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] bcd_counter.circ round-trip loaded with main circuit bcd_counter"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": false, "detail": "[FAIL] bcd_counter.circ\n - Component factory counts mismatch: expected {T Flip-Flop=4, NOT Gate=1, AND Gate=5, OR Gate=1}, got {Clock=1, NOT Gate=1, AND Gate=5, OR Gate=1, T Flip-Flop=4}\n - External pin labels mismatch: expected [CLK, EN, Q0, Q1, Q2, Q3, RST], got [EN, Q0, Q1, Q2, Q3, RST]"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] bcd_counter.circ\n - Vertical wire in left boundary lane can short external inputs: (110,110) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,-80) -> (160,200)\n - Wire crosses reserved area of Pin Q0 in circuit bcd_counter: (110,110) -> (3260,110)\n - Wire crosses reserved area of Pin Q2 in circuit bcd_counter: (1330,190) -> (3280,190)\n - Wire crosses reserved area of Pin Q1 in circuit bcd_counter: (1650,140) -> (3310,140)\n - Wire crosses reserved area of Pin Q2 in circuit bcd_counter: (490,210) -> (3270,210)\n - Wire crosses reserved area of Pin Q0 in circuit bcd_counter: (750,90) -> (3350,90)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\bcd_counter.circ", "exists": true}
+  ],
+  "issues": ["Check failed: structure_matches_spec - [FAIL] bcd_counter.circ\n - Component factory counts mismatch: expected {T Flip-Flop=4, NOT Gate=1, AND Gate=5, OR Gate=1}, got {Clock=1, NOT Gate=1, AND Gate=5, OR Gate=1, T Flip-Flop=4}\n - External pin labels mismatch: expected [CLK, EN, Q0, Q1, Q2, Q3, RST], got [EN, Q0, Q1, Q2, Q3, RST]"]
+}

@@ -1,0 +1,22 @@
+{
+  "circuitName": "nine_complement",
+  "rowCount": 16,
+  "rows": [
+    {"inputs": {"z": false, "y": false, "x": false, "w": false}, "outputs": {"r0": true, "r1": false, "r2": false, "r3": true}},
+    {"inputs": {"z": false, "y": false, "x": false, "w": true}, "outputs": {"r0": true, "r1": false, "r2": false, "r3": false}},
+    {"inputs": {"z": false, "y": false, "x": true, "w": false}, "outputs": {"r0": true, "r1": false, "r2": true, "r3": false}},
+    {"inputs": {"z": false, "y": false, "x": true, "w": true}, "outputs": {"r0": true, "r1": false, "r2": true, "r3": true}},
+    {"inputs": {"z": false, "y": true, "x": false, "w": false}, "outputs": {"r0": true, "r1": true, "r2": true, "r3": false}},
+    {"inputs": {"z": false, "y": true, "x": false, "w": true}, "outputs": {"r0": true, "r1": true, "r2": true, "r3": true}},
+    {"inputs": {"z": false, "y": true, "x": true, "w": false}, "outputs": {"r0": true, "r1": true, "r2": false, "r3": false}},
+    {"inputs": {"z": false, "y": true, "x": true, "w": true}, "outputs": {"r0": true, "r1": true, "r2": false, "r3": true}},
+    {"inputs": {"z": true, "y": false, "x": false, "w": false}, "outputs": {"r0": false, "r1": false, "r2": false, "r3": true}},
+    {"inputs": {"z": true, "y": false, "x": false, "w": true}, "outputs": {"r0": false, "r1": false, "r2": false, "r3": false}},
+    {"inputs": {"z": true, "y": false, "x": true, "w": false}, "outputs": {"r0": false, "r1": false, "r2": true, "r3": false}},
+    {"inputs": {"z": true, "y": false, "x": true, "w": true}, "outputs": {"r0": false, "r1": false, "r2": true, "r3": true}},
+    {"inputs": {"z": true, "y": true, "x": false, "w": false}, "outputs": {"r0": false, "r1": true, "r2": true, "r3": false}},
+    {"inputs": {"z": true, "y": true, "x": false, "w": true}, "outputs": {"r0": false, "r1": true, "r2": true, "r3": true}},
+    {"inputs": {"z": true, "y": true, "x": true, "w": false}, "outputs": {"r0": false, "r1": true, "r2": false, "r3": false}},
+    {"inputs": {"z": true, "y": true, "x": true, "w": true}, "outputs": {"r0": false, "r1": true, "r2": false, "r3": true}}
+  ]
+}

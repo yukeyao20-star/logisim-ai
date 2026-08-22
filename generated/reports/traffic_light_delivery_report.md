@@ -1,7 +1,7 @@
 # Generation delivery report for traffic_light
 
 - Request kind: natural_language
-- Request: 交通灯控制
+- Request: 交通灯
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

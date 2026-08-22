@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "BCD加法器",
+  "request": "bcd adder",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,13 +19,20 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 6,
+  "artifactCount": 13,
   "artifacts": [
     {"path": "generated\\circ\\bcd_adder.circ", "exists": true},
+    {"path": "generated\\reports\\bcd_adder_2digit_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\bcd_adder_2digit_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\bcd_adder_2digit_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\bcd_adder_2digit_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\bcd_adder_2digit_multichip.md", "exists": true},
     {"path": "generated\\reports\\bcd_adder_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\bcd_adder_circuit_manifest.md", "exists": true},
     {"path": "generated\\reports\\bcd_adder_generation_summary.json", "exists": true},
     {"path": "generated\\reports\\bcd_adder_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\bcd_adder_multichip.md", "exists": true}
+    {"path": "generated\\reports\\bcd_adder_multichip.md", "exists": true},
+    {"path": "generated\\reports\\bcd_adder_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\bcd_adder_official_simulation.md", "exists": true}
   ]
 }

@@ -1,7 +1,7 @@
 # Generation summary for logic_f_ab_xor
 
 - Request kind: natural_language
-- Request: 两个数不相等
+- Request: 2 input xor
 - Description: Synthesized Boolean function into CircuitSpec
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

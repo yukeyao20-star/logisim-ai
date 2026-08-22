@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "生成一个半加器",
+  "request": "half adder described",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

@@ -1,0 +1,22 @@
+{
+  "circuitName": "excess3_bcd",
+  "rowCount": 16,
+  "rows": [
+    {"inputs": {"z": false, "y": false, "x": false, "w": false}, "outputs": {"e1": true, "e2": true, "e4": false, "e8": false}},
+    {"inputs": {"z": false, "y": false, "x": false, "w": true}, "outputs": {"e1": true, "e2": true, "e4": false, "e8": true}},
+    {"inputs": {"z": false, "y": false, "x": true, "w": false}, "outputs": {"e1": true, "e2": true, "e4": true, "e8": false}},
+    {"inputs": {"z": false, "y": false, "x": true, "w": true}, "outputs": {"e1": true, "e2": true, "e4": true, "e8": true}},
+    {"inputs": {"z": false, "y": true, "x": false, "w": false}, "outputs": {"e1": true, "e2": false, "e4": true, "e8": false}},
+    {"inputs": {"z": false, "y": true, "x": false, "w": true}, "outputs": {"e1": true, "e2": false, "e4": true, "e8": true}},
+    {"inputs": {"z": false, "y": true, "x": true, "w": false}, "outputs": {"e1": true, "e2": false, "e4": false, "e8": true}},
+    {"inputs": {"z": false, "y": true, "x": true, "w": true}, "outputs": {"e1": true, "e2": false, "e4": false, "e8": false}},
+    {"inputs": {"z": true, "y": false, "x": false, "w": false}, "outputs": {"e1": false, "e2": false, "e4": true, "e8": false}},
+    {"inputs": {"z": true, "y": false, "x": false, "w": true}, "outputs": {"e1": false, "e2": false, "e4": true, "e8": true}},
+    {"inputs": {"z": true, "y": false, "x": true, "w": false}, "outputs": {"e1": false, "e2": false, "e4": false, "e8": true}},
+    {"inputs": {"z": true, "y": false, "x": true, "w": true}, "outputs": {"e1": false, "e2": false, "e4": false, "e8": false}},
+    {"inputs": {"z": true, "y": true, "x": false, "w": false}, "outputs": {"e1": false, "e2": true, "e4": true, "e8": false}},
+    {"inputs": {"z": true, "y": true, "x": false, "w": true}, "outputs": {"e1": false, "e2": true, "e4": true, "e8": true}},
+    {"inputs": {"z": true, "y": true, "x": true, "w": false}, "outputs": {"e1": false, "e2": true, "e4": false, "e8": true}},
+    {"inputs": {"z": true, "y": true, "x": true, "w": true}, "outputs": {"e1": false, "e2": true, "e4": false, "e8": false}}
+  ]
+}

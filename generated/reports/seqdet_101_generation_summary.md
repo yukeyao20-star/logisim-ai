@@ -1,7 +1,7 @@
 # Generation summary for seqdet_101
 
 - Request kind: natural_language
-- Request: 序列检测器
+- Request: 101序列检测
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,11 +17,13 @@
 - Manifest complete: unknown
 - Manifest check count: unknown
 - Manifest issue count: unknown
-- Artifact count: 2
+- Artifact count: 4
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\seqdet_101.circ | true |
+| generated\reports\seqdet_101_generation_summary.json | true |
+| generated\reports\seqdet_101_generation_summary.md | true |
 | generated\reports\seqdet_101_multichip.md | true |

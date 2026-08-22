@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "4 bit gray to binary",
+  "request": "格雷码转二进制",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,9 +19,13 @@
   "manifestComplete": null,
   "manifestCheckCount": null,
   "manifestIssueCount": null,
-  "artifactCount": 2,
+  "artifactCount": 6,
   "artifacts": [
     {"path": "generated\\circ\\gray2bin_4bit.circ", "exists": true},
-    {"path": "generated\\reports\\gray2bin_4bit_multichip.md", "exists": true}
+    {"path": "generated\\reports\\gray2bin_4bit_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\gray2bin_4bit_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\gray2bin_4bit_multichip.md", "exists": true},
+    {"path": "generated\\reports\\gray2bin_4bit_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\gray2bin_4bit_official_simulation.md", "exists": true}
   ]
 }

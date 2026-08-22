@@ -1,0 +1,223 @@
+# Generation delivery report for subtractor_8bit
+
+- Request kind: natural_language
+- Request: 8 bit subtractor
+- Intent: GATE_LEVEL_CIRCUIT
+- Implementation level: GATE_LEVEL
+- Target package: 
+- Package primitive: false
+- Routing primitive: primitive_gates
+- Circuit: generated\circ\subtractor_8bit.circ
+- Summary: generated\reports\subtractor_8bit_generation_summary.md
+- Manifest: generated\reports\subtractor_8bit_circuit_manifest.md
+- Complete: true
+- Manifest check count: 7
+- Manifest issue count: 0
+- Layout clean: false
+- Layout issue count: 86
+- Layout score: 0
+- Layout risk level: high
+- Layout unresolved tool count: 0
+- Layout overlap count: 0
+- Layout wire risk count: 4
+- Layout pin facing issue count: 0
+- Layout pin/tunnel proximity count: 0
+- Layout label risk count: 0
+- Layout reserved area intrusion count: 82
+- Layout inspection failure count: 0
+- Layout other issue count: 0
+- Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
+- Layout auto repair applied: false
+- Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
+- Artifact count: 8
+
+## Layout Issues
+
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (110,80) -> (110,150)
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (160,90) -> (160,200)
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (210,70) -> (210,250)
+- [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (260,40) -> (260,300)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D0 in circuit subtractor_8bit: (160,90) -> (10370,90)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D0 in circuit subtractor_8bit: (1910,110) -> (10390,110)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Bout in circuit subtractor_8bit: (2430,490) -> (10430,490)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D1 in circuit subtractor_8bit: (310,160) -> (10470,160)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D7 in circuit subtractor_8bit: (3230,440) -> (10490,440)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D6 in circuit subtractor_8bit: (4210,410) -> (10530,410)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D4 in circuit subtractor_8bit: (440,310) -> (10340,310)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D3 in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB0A in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB0B in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB0C in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB1X in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB1D in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB1N in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB1O in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB1A in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB0X in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB0D in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB0N in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB0O in circuit subtractor_8bit: (510,240) -> (10610,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB0X in circuit subtractor_8bit: (510,240) -> (510,550)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB5D in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB5N in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB5O in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB5A in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB5B in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB5C in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB6X in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB6D in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB6N in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB6O in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB6A in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB6B in circuit subtractor_8bit: (5530,1500) -> (11650,1500)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D3 in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB0A in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB0B in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB0C in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB1X in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB1D in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB1N in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB1O in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB1A in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB0D in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB0N in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB0O in circuit subtractor_8bit: (560,260) -> (10650,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB5D in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB5N in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB5O in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB5A in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB5B in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB5C in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB6X in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB6D in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB6N in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB6O in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB6A in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB6B in circuit subtractor_8bit: (5690,1520) -> (11690,1520)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D7 in circuit subtractor_8bit: (600,460) -> (10890,460)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB6C in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB7X in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB7D in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB7N in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB7O in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB7A in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB7B in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB7C in circuit subtractor_8bit: (6380,1920) -> (11790,1920)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D6 in circuit subtractor_8bit: (6380,390) -> (11770,390)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D4 in circuit subtractor_8bit: (6600,290) -> (11840,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB6C in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB7X in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate SUB7D in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate SUB7N in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB7O in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB7A in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate SUB7B in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate SUB7C in circuit subtractor_8bit: (6710,1940) -> (11830,1940)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D2 in circuit subtractor_8bit: (6870,210) -> (11850,210)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D5 in circuit subtractor_8bit: (760,340) -> (10790,340)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D2 in circuit subtractor_8bit: (790,190) -> (10320,190)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D5 in circuit subtractor_8bit: (860,360) -> (10880,360)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin D1 in circuit subtractor_8bit: (930,140) -> (10350,140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Bout in circuit subtractor_8bit: (930,510) -> (10930,510)
+
+## Layout Repair Suggestions
+
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=subtractor_8bit;x1=110;y1=80;x2=110;y2=150)
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=subtractor_8bit;x1=160;y1=90;x2=160;y2=200)
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=subtractor_8bit;x1=210;y1=70;x2=210;y2=250)
+- [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=subtractor_8bit;x1=260;y1=40;x2=260;y2=300)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D0;anchorX=10000;anchorY=100;left=9986;top=86;right=10014;bottom=114;connectionPoints=1;x1=160;y1=90;x2=10370;y2=90)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D0;anchorX=10000;anchorY=100;left=9986;top=86;right=10014;bottom=114;connectionPoints=1;x1=1910;y1=110;x2=10390;y2=110)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=Bout;anchorX=9600;anchorY=500;left=9586;top=486;right=9614;bottom=514;connectionPoints=1;x1=2430;y1=490;x2=10430;y2=490)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D1;anchorX=9950;anchorY=150;left=9936;top=136;right=9964;bottom=164;connectionPoints=1;x1=310;y1=160;x2=10470;y2=160)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D7;anchorX=9650;anchorY=450;left=9636;top=436;right=9664;bottom=464;connectionPoints=1;x1=3230;y1=440;x2=10490;y2=440)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D6;anchorX=9700;anchorY=400;left=9686;top=386;right=9714;bottom=414;connectionPoints=1;x1=4210;y1=410;x2=10530;y2=410)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D4;anchorX=9800;anchorY=300;left=9786;top=286;right=9814;bottom=314;connectionPoints=1;x1=440;y1=310;x2=10340;y2=310)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D3;anchorX=9850;anchorY=250;left=9836;top=236;right=9864;bottom=264;connectionPoints=1;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB0A;anchorX=1140;anchorY=250;left=1104;top=221;right=1176;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB0B;anchorX=1300;anchorY=250;left=1264;top=221;right=1336;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB0C;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB1X;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB1D;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB1N;anchorX=1940;anchorY=250;left=1919;top=234;right=1961;bottom=266;connectionPoints=2;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB1O;anchorX=2100;anchorY=250;left=2064;top=221;right=2136;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB1A;anchorX=2260;anchorY=250;left=2224;top=221;right=2296;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB0X;anchorX=500;anchorY=250;left=464;top=221;right=536;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB0D;anchorX=660;anchorY=250;left=624;top=221;right=696;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB0N;anchorX=820;anchorY=250;left=799;top=234;right=841;bottom=266;connectionPoints=2;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB0O;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=510;y1=240;x2=10610;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB0X;anchorX=500;anchorY=250;left=464;top=221;right=536;bottom=279;connectionPoints=3;x1=510;y1=240;x2=510;y2=550)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB5D;anchorX=6440;anchorY=1510;left=6404;top=1481;right=6476;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB5N;anchorX=6600;anchorY=1510;left=6579;top=1494;right=6621;bottom=1526;connectionPoints=2;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB5O;anchorX=6760;anchorY=1510;left=6724;top=1481;right=6796;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB5A;anchorX=6920;anchorY=1510;left=6884;top=1481;right=6956;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB5B;anchorX=7080;anchorY=1510;left=7044;top=1481;right=7116;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB5C;anchorX=7240;anchorY=1510;left=7204;top=1481;right=7276;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB6X;anchorX=7400;anchorY=1510;left=7364;top=1481;right=7436;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB6D;anchorX=7560;anchorY=1510;left=7524;top=1481;right=7596;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB6N;anchorX=7720;anchorY=1510;left=7699;top=1494;right=7741;bottom=1526;connectionPoints=2;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB6O;anchorX=7880;anchorY=1510;left=7844;top=1481;right=7916;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB6A;anchorX=8040;anchorY=1510;left=8004;top=1481;right=8076;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB6B;anchorX=8200;anchorY=1510;left=8164;top=1481;right=8236;bottom=1539;connectionPoints=3;x1=5530;y1=1500;x2=11650;y2=1500)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D3;anchorX=9850;anchorY=250;left=9836;top=236;right=9864;bottom=264;connectionPoints=1;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB0A;anchorX=1140;anchorY=250;left=1104;top=221;right=1176;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB0B;anchorX=1300;anchorY=250;left=1264;top=221;right=1336;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB0C;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB1X;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB1D;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB1N;anchorX=1940;anchorY=250;left=1919;top=234;right=1961;bottom=266;connectionPoints=2;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB1O;anchorX=2100;anchorY=250;left=2064;top=221;right=2136;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB1A;anchorX=2260;anchorY=250;left=2224;top=221;right=2296;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB0D;anchorX=660;anchorY=250;left=624;top=221;right=696;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB0N;anchorX=820;anchorY=250;left=799;top=234;right=841;bottom=266;connectionPoints=2;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB0O;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=560;y1=260;x2=10650;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB5D;anchorX=6440;anchorY=1510;left=6404;top=1481;right=6476;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB5N;anchorX=6600;anchorY=1510;left=6579;top=1494;right=6621;bottom=1526;connectionPoints=2;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB5O;anchorX=6760;anchorY=1510;left=6724;top=1481;right=6796;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB5A;anchorX=6920;anchorY=1510;left=6884;top=1481;right=6956;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB5B;anchorX=7080;anchorY=1510;left=7044;top=1481;right=7116;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB5C;anchorX=7240;anchorY=1510;left=7204;top=1481;right=7276;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB6X;anchorX=7400;anchorY=1510;left=7364;top=1481;right=7436;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB6D;anchorX=7560;anchorY=1510;left=7524;top=1481;right=7596;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB6N;anchorX=7720;anchorY=1510;left=7699;top=1494;right=7741;bottom=1526;connectionPoints=2;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB6O;anchorX=7880;anchorY=1510;left=7844;top=1481;right=7916;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB6A;anchorX=8040;anchorY=1510;left=8004;top=1481;right=8076;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB6B;anchorX=8200;anchorY=1510;left=8164;top=1481;right=8236;bottom=1539;connectionPoints=3;x1=5690;y1=1520;x2=11690;y2=1520)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D7;anchorX=9650;anchorY=450;left=9636;top=436;right=9664;bottom=464;connectionPoints=1;x1=600;y1=460;x2=10890;y2=460)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB6C;anchorX=8420;anchorY=1930;left=8384;top=1901;right=8456;bottom=1959;connectionPoints=3;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB7X;anchorX=8580;anchorY=1930;left=8544;top=1901;right=8616;bottom=1959;connectionPoints=3;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB7D;anchorX=8740;anchorY=1930;left=8704;top=1901;right=8776;bottom=1959;connectionPoints=3;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB7N;anchorX=8900;anchorY=1930;left=8879;top=1914;right=8921;bottom=1946;connectionPoints=2;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB7O;anchorX=9060;anchorY=1930;left=9024;top=1901;right=9096;bottom=1959;connectionPoints=3;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB7A;anchorX=9220;anchorY=1930;left=9184;top=1901;right=9256;bottom=1959;connectionPoints=3;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB7B;anchorX=9380;anchorY=1930;left=9344;top=1901;right=9416;bottom=1959;connectionPoints=3;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB7C;anchorX=9540;anchorY=1930;left=9504;top=1901;right=9576;bottom=1959;connectionPoints=3;x1=6380;y1=1920;x2=11790;y2=1920)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D6;anchorX=9700;anchorY=400;left=9686;top=386;right=9714;bottom=414;connectionPoints=1;x1=6380;y1=390;x2=11770;y2=390)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D4;anchorX=9800;anchorY=300;left=9786;top=286;right=9814;bottom=314;connectionPoints=1;x1=6600;y1=290;x2=11840;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB6C;anchorX=8420;anchorY=1930;left=8384;top=1901;right=8456;bottom=1959;connectionPoints=3;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB7X;anchorX=8580;anchorY=1930;left=8544;top=1901;right=8616;bottom=1959;connectionPoints=3;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=XOR Gate;label=SUB7D;anchorX=8740;anchorY=1930;left=8704;top=1901;right=8776;bottom=1959;connectionPoints=3;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=NOT Gate;label=SUB7N;anchorX=8900;anchorY=1930;left=8879;top=1914;right=8921;bottom=1946;connectionPoints=2;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB7O;anchorX=9060;anchorY=1930;left=9024;top=1901;right=9096;bottom=1959;connectionPoints=3;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB7A;anchorX=9220;anchorY=1930;left=9184;top=1901;right=9256;bottom=1959;connectionPoints=3;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=AND Gate;label=SUB7B;anchorX=9380;anchorY=1930;left=9344;top=1901;right=9416;bottom=1959;connectionPoints=3;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=OR Gate;label=SUB7C;anchorX=9540;anchorY=1930;left=9504;top=1901;right=9576;bottom=1959;connectionPoints=3;x1=6710;y1=1940;x2=11830;y2=1940)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D2;anchorX=9900;anchorY=200;left=9886;top=186;right=9914;bottom=214;connectionPoints=1;x1=6870;y1=210;x2=11850;y2=210)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D5;anchorX=9750;anchorY=350;left=9736;top=336;right=9764;bottom=364;connectionPoints=1;x1=760;y1=340;x2=10790;y2=340)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D2;anchorX=9900;anchorY=200;left=9886;top=186;right=9914;bottom=214;connectionPoints=1;x1=790;y1=190;x2=10320;y2=190)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D5;anchorX=9750;anchorY=350;left=9736;top=336;right=9764;bottom=364;connectionPoints=1;x1=860;y1=360;x2=10880;y2=360)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=D1;anchorX=9950;anchorY=150;left=9936;top=136;right=9964;bottom=164;connectionPoints=1;x1=930;y1=140;x2=10350;y2=140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=subtractor_8bit;component=Pin;label=Bout;anchorX=9600;anchorY=500;left=9586;top=486;right=9614;bottom=514;connectionPoints=1;x1=930;y1=510;x2=10930;y2=510)
+
+## Artifacts
+
+| Kind | Path | Exists |
+| --- | --- | --- |
+| circuit | generated\circ\subtractor_8bit.circ | true |
+| manifest_json | generated\reports\subtractor_8bit_circuit_manifest.json | true |
+| manifest_markdown | generated\reports\subtractor_8bit_circuit_manifest.md | true |
+| delivery_json | generated\reports\subtractor_8bit_delivery_report.json | true |
+| delivery_markdown | generated\reports\subtractor_8bit_delivery_report.md | true |
+| summary_json | generated\reports\subtractor_8bit_generation_summary.json | true |
+| summary_markdown | generated\reports\subtractor_8bit_generation_summary.md | true |
+| artifact | generated\reports\subtractor_8bit_multichip.md | true |

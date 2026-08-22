@@ -1,0 +1,51 @@
+{
+  "name": "debouncer",
+  "components": [
+    {"id": "db0", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U1"},
+    {"id": "db1", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U2"},
+    {"id": "db2", "library": "Memory", "factory": "D Flip-Flop", "bitWidth": 1, "label": "U3"},
+    {"id": "db_ab", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A1"},
+    {"id": "db_ac", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A2"},
+    {"id": "db_bc", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "A3"},
+    {"id": "db_abac", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "O1"},
+    {"id": "db_out", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "O2"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "db0", "targetEndIndex": 0},
+    {"id": "in", "label": "IN", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "db0", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "db0", "targetEndIndex": 0},
+    {"id": "out", "label": "OUT", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "db_out", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "db_clk0", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "db0", "endIndex": 1}]},
+    {"id": "db_rst0", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "db0", "endIndex": 4}]},
+    {"id": "db_clk1", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "db1", "endIndex": 1}]},
+    {"id": "db_rst1", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "db1", "endIndex": 4}]},
+    {"id": "db_clk2", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "db2", "endIndex": 1}]},
+    {"id": "db_rst2", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "db2", "endIndex": 4}]},
+    {"id": "db_d0", "endpoints": [{"componentId": "in", "endIndex": 0}, {"componentId": "db0", "endIndex": 0}]},
+    {"id": "db_d1", "endpoints": [{"componentId": "db0", "endIndex": 2}, {"componentId": "db1", "endIndex": 0}]},
+    {"id": "db_d2", "endpoints": [{"componentId": "db1", "endIndex": 2}, {"componentId": "db2", "endIndex": 0}]},
+    {"id": "db_ab_a", "endpoints": [{"componentId": "db0", "endIndex": 2}, {"componentId": "db_ab", "endIndex": 1}]},
+    {"id": "db_ab_b", "endpoints": [{"componentId": "db1", "endIndex": 2}, {"componentId": "db_ab", "endIndex": 2}]},
+    {"id": "db_ac_a", "endpoints": [{"componentId": "db0", "endIndex": 2}, {"componentId": "db_ac", "endIndex": 1}]},
+    {"id": "db_ac_b", "endpoints": [{"componentId": "db2", "endIndex": 2}, {"componentId": "db_ac", "endIndex": 2}]},
+    {"id": "db_bc_a", "endpoints": [{"componentId": "db1", "endIndex": 2}, {"componentId": "db_bc", "endIndex": 1}]},
+    {"id": "db_bc_b", "endpoints": [{"componentId": "db2", "endIndex": 2}, {"componentId": "db_bc", "endIndex": 2}]},
+    {"id": "db_o1a", "endpoints": [{"componentId": "db_ab", "endIndex": 0}, {"componentId": "db_abac", "endIndex": 1}]},
+    {"id": "db_o1b", "endpoints": [{"componentId": "db_ac", "endIndex": 0}, {"componentId": "db_abac", "endIndex": 2}]},
+    {"id": "db_o2a", "endpoints": [{"componentId": "db_abac", "endIndex": 0}, {"componentId": "db_out", "endIndex": 1}]},
+    {"id": "db_o2b", "endpoints": [{"componentId": "db_bc", "endIndex": 0}, {"componentId": "db_out", "endIndex": 2}]},
+    {"id": "db_out", "endpoints": [{"componentId": "db_out", "endIndex": 0}, {"componentId": "out", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "db0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "db1", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "db2", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "db_ab", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "db_ac", "rank": 2, "column": 0, "row": 1, "side": null},
+    {"componentId": "db_bc", "rank": 2, "column": 0, "row": 2, "side": null},
+    {"componentId": "db_abac", "rank": 3, "column": 0, "row": 0, "side": null},
+    {"componentId": "db_out", "rank": 3, "column": 0, "row": 1, "side": null}
+  ]
+}

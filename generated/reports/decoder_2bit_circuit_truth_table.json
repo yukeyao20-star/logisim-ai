@@ -1,0 +1,10 @@
+{
+  "circuitName": "decoder_2bit",
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"a0": false, "a1": false}, "outputs": {"y0": true, "y1": false, "y2": false, "y3": false}},
+    {"inputs": {"a0": false, "a1": true}, "outputs": {"y0": false, "y1": false, "y2": true, "y3": false}},
+    {"inputs": {"a0": true, "a1": false}, "outputs": {"y0": false, "y1": true, "y2": false, "y3": false}},
+    {"inputs": {"a0": true, "a1": true}, "outputs": {"y0": false, "y1": false, "y2": false, "y3": true}}
+  ]
+}

@@ -1,7 +1,7 @@
 # Generation summary for traffic_light
 
 - Request kind: natural_language
-- Request: 交通灯控制
+- Request: 交通灯
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,11 +17,13 @@
 - Manifest complete: unknown
 - Manifest check count: unknown
 - Manifest issue count: unknown
-- Artifact count: 2
+- Artifact count: 4
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\traffic_light.circ | true |
+| generated\reports\traffic_light_generation_summary.json | true |
+| generated\reports\traffic_light_generation_summary.md | true |
 | generated\reports\traffic_light_multichip.md | true |

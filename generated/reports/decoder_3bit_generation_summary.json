@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "三位译码器",
+  "request": "3 to 8 decoder",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,7 +19,7 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 8,
+  "artifactCount": 10,
   "artifacts": [
     {"path": "generated\\circ\\decoder_3bit.circ", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_circuit_manifest.json", "exists": true},
@@ -28,6 +28,8 @@
     {"path": "generated\\reports\\decoder_3bit_circuit_truth_table.md", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_generation_summary.json", "exists": true},
     {"path": "generated\\reports\\decoder_3bit_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\decoder_3bit_multichip.md", "exists": true}
+    {"path": "generated\\reports\\decoder_3bit_multichip.md", "exists": true},
+    {"path": "generated\\reports\\decoder_3bit_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\decoder_3bit_official_simulation.md", "exists": true}
   ]
 }

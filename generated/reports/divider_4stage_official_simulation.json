@@ -1,0 +1,9 @@
+{
+  "circuitName": "divider_4stage",
+  "circuitPath": "generated\\circ\\divider_4stage.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

@@ -1,0 +1,23 @@
+# Circuit artifact manifest for bcd_subtractor
+
+- Artifact count: 1
+- Check count: 7
+- Complete: true
+
+## Checks
+
+| Check | Passed | Detail |
+| --- | --- | --- |
+| circuit_exists | true | circuit file exists |
+| circuit_non_empty | true | bytes=66863 |
+| round_trip_loadable | true | [OK] bcd_subtractor.circ round-trip loaded with main circuit bcd_subtractor |
+| semantic_valid | true | [OK] CircuitSpec semantic validation passed |
+| structure_matches_spec | true | [OK] bcd_subtractor.circ structure matches CircuitSpec |
+| layout_clean | true | [FAIL] bcd_subtractor.circ<br> - Vertical wire in left boundary lane can short external inputs: (110,110) -> (110,150)<br> - Vertical wire in left boundary lane can short external inputs: (160,-80) -> (160,200)<br> - Vertical wire in left boundary lane can short external inputs: (210,170) -> (210,250)<br> - Vertical wire in left boundary lane can short external inputs: (260,-120) -> (260,300)<br> - Wire crosses reserved area of Pin D0 in circuit bcd_subtractor: (110,110) -> (15420,110)<br> - Wire crosses reserved area of Pin D3 in circuit bcd_subtractor: (2560,260) -> (15870,260)<br> - Wire crosses reserved area of Pin D3 in circuit bcd_subtractor: (2730,240) -> (15910,240)<br> - Wire crosses reserved area of Pin D2 in circuit bcd_subtractor: (2780,210) -> (15980,210)<br> - Wire crosses reserved area of Pin Borrow in circuit bcd_subtractor: (310,290) -> (15440,290)<br> - Wire crosses reserved area of Pin D2 in circuit bcd_subtractor: (470,190) -> (15430,190)<br> - Wire crosses reserved area of NOT Gate N1 in circuit bcd_subtractor: (510,-340) -> (510,550)<br> - Wire crosses reserved area of Pin D1 in circuit bcd_subtractor: (600,160) -> (15450,160)<br> - Wire crosses reserved area of Pin Borrow in circuit bcd_subtractor: (600,310) -> (15470,310)<br> - Wire crosses reserved area of OR Gate B2L9 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of OR Gate B2T10 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of XOR Gate X41 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of XOR Gate S41 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of AND Gate A41 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of XOR Gate S34 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of AND Gate A34 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of AND Gate B34 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of OR Gate C34 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of OR Gate G34 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of OR Gate B2J9 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of AND Gate B2K9 in circuit bcd_subtractor: (6800,1920) -> (16850,1920)<br> - Wire crosses reserved area of OR Gate B2L9 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of OR Gate B2T10 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of XOR Gate X41 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of XOR Gate S41 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of AND Gate A41 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of XOR Gate S34 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of AND Gate A34 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of AND Gate B34 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of OR Gate C34 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of OR Gate G34 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of OR Gate B2J9 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of AND Gate B2K9 in circuit bcd_subtractor: (6970,1940) -> (16890,1940)<br> - Wire crosses reserved area of Pin D1 in circuit bcd_subtractor: (770,140) -> (15490,140)<br> - Wire crosses reserved area of Pin D0 in circuit bcd_subtractor: (980,90) -> (15560,90) |
+| truth_table_evidence | true | [SKIP] too many inputs for exhaustive evidence: 10 |
+
+## Artifacts
+
+| Kind | Path | Exists |
+| --- | --- | --- |
+| circuit | generated\circ\bcd_subtractor.circ | true |

@@ -1,7 +1,7 @@
 # Generation summary for bcd_counter
 
 - Request kind: natural_language
-- Request: BCD计数器
+- Request: 十进制计数器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,11 +17,13 @@
 - Manifest complete: unknown
 - Manifest check count: unknown
 - Manifest issue count: unknown
-- Artifact count: 2
+- Artifact count: 4
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\bcd_counter.circ | true |
+| generated\reports\bcd_counter_generation_summary.json | true |
+| generated\reports\bcd_counter_generation_summary.md | true |
 | generated\reports\bcd_counter_multichip.md | true |

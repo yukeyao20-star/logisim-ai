@@ -1,0 +1,29 @@
+{
+  "requestKind": "natural_language",
+  "request": "8位桶形移位器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "barrel_shifter_8bit",
+  "circuitPath": "generated\\circ\\barrel_shifter_8bit.circ",
+  "manifestPath": "generated\\reports\\barrel_shifter_8bit_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 4,
+  "artifacts": [
+    {"path": "generated\\circ\\barrel_shifter_8bit.circ", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_8bit_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_8bit_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_8bit_multichip.md", "exists": true}
+  ]
+}

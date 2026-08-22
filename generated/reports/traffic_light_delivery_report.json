@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "交通灯控制",
+  "request": "交通灯",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

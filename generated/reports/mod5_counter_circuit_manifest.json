@@ -1,0 +1,19 @@
+{
+  "circuitName": "mod5_counter",
+  "complete": false,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=16799"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] mod5_counter.circ round-trip loaded with main circuit mod5_counter"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": false, "detail": "[FAIL] mod5_counter.circ\n - Component factory counts mismatch: expected {T Flip-Flop=4, NOT Gate=4, AND Gate=8, OR Gate=1}, got {Clock=1, NOT Gate=4, AND Gate=8, OR Gate=1, T Flip-Flop=4}\n - External pin labels mismatch: expected [CLK, Q0, Q1, Q2, Q3, RST], got [Q0, Q1, Q2, Q3, RST]"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] mod5_counter.circ\n - Vertical wire in left boundary lane can short external inputs: (110,-240) -> (110,150)\n - Wire crosses reserved area of Pin Q0 in circuit mod5_counter: (1070,90) -> (4520,90)\n - Wire crosses reserved area of Pin Q2 in circuit mod5_counter: (1510,190) -> (4430,190)\n - Wire crosses reserved area of Pin Q1 in circuit mod5_counter: (1540,160) -> (4460,160)\n - Wire crosses reserved area of Pin Q1 in circuit mod5_counter: (1810,140) -> (4470,140)\n - Wire crosses reserved area of Pin Q0 in circuit mod5_counter: (1970,110) -> (4510,110)\n - Wire crosses reserved area of Pin Q3 in circuit mod5_counter: (3500,240) -> (4880,240)\n - Wire crosses reserved area of Pin Q2 in circuit mod5_counter: (3610,210) -> (4890,210)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\mod5_counter.circ", "exists": true}
+  ],
+  "issues": ["Check failed: structure_matches_spec - [FAIL] mod5_counter.circ\n - Component factory counts mismatch: expected {T Flip-Flop=4, NOT Gate=4, AND Gate=8, OR Gate=1}, got {Clock=1, NOT Gate=4, AND Gate=8, OR Gate=1, T Flip-Flop=4}\n - External pin labels mismatch: expected [CLK, Q0, Q1, Q2, Q3, RST], got [Q0, Q1, Q2, Q3, RST]"]
+}

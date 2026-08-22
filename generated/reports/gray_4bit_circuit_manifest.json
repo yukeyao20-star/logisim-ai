@@ -1,0 +1,21 @@
+{
+  "circuitName": "gray_4bit",
+  "complete": true,
+  "artifactCount": 3,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=6589"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] gray_4bit.circ round-trip loaded with main circuit gray_4bit"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] gray_4bit.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] gray_4bit.circ\n - Vertical wire in left boundary lane can short external inputs: (110,90) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,80) -> (160,200)\n - Vertical wire in left boundary lane can short external inputs: (210,110) -> (210,250)\n - Wire crosses reserved area of Pin G0 in circuit gray_4bit: (110,90) -> (1600,90)\n - Wire crosses reserved area of Pin G0 in circuit gray_4bit: (210,110) -> (1720,110)\n - Wire crosses reserved area of Pin G1 in circuit gray_4bit: (600,140) -> (1650,140)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=16"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\gray_4bit.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\gray_4bit_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\gray_4bit_circuit_truth_table.json", "exists": true}
+  ],
+  "issues": []
+}

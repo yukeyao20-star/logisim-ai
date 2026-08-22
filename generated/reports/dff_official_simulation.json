@@ -1,0 +1,9 @@
+{
+  "circuitName": "dff",
+  "circuitPath": "generated\\circ\\dff.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

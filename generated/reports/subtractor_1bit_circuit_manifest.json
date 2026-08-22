@@ -1,0 +1,21 @@
+{
+  "circuitName": "subtractor_1bit",
+  "complete": true,
+  "artifactCount": 3,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=7722"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] subtractor_1bit.circ round-trip loaded with main circuit subtractor_1bit"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] subtractor_1bit.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] subtractor_1bit.circ\n - Vertical wire in left boundary lane can short external inputs: (110,80) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,70) -> (160,200)\n - Wire crosses reserved area of Pin D0 in circuit subtractor_1bit: (600,110) -> (2300,110)\n - Wire crosses reserved area of Pin D0 in circuit subtractor_1bit: (660,90) -> (2330,90)\n - Wire crosses reserved area of Pin Bout in circuit subtractor_1bit: (930,140) -> (2270,140)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=8"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\subtractor_1bit.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\subtractor_1bit_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\subtractor_1bit_circuit_truth_table.json", "exists": true}
+  ],
+  "issues": []
+}

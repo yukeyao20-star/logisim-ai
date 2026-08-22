@@ -1,0 +1,33 @@
+{
+  "requestKind": "natural_language",
+  "request": "余3码加法器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "excess3_adder",
+  "circuitPath": "generated\\circ\\excess3_adder.circ",
+  "manifestPath": "generated\\reports\\excess3_adder_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 8,
+  "artifacts": [
+    {"path": "generated\\circ\\excess3_adder.circ", "exists": true},
+    {"path": "generated\\reports\\excess3_adder_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\excess3_adder_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\excess3_adder_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\excess3_adder_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\excess3_adder_multichip.md", "exists": true},
+    {"path": "generated\\reports\\excess3_adder_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\excess3_adder_official_simulation.md", "exists": true}
+  ]
+}

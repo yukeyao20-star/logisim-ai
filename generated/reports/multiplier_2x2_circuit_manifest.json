@@ -1,19 +1,21 @@
 {
   "circuitName": "multiplier_2x2",
-  "complete": false,
-  "artifactCount": 1,
+  "complete": true,
+  "artifactCount": 3,
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=21577"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=20522"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] multiplier_2x2.circ round-trip loaded with main circuit multiplier_2x2"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] multiplier_2x2.circ structure matches CircuitSpec"},
-    {"name": "layout_clean", "passed": true, "detail": "[FAIL] multiplier_2x2.circ\n - Small components are too close in circuit multiplier_2x2 at (320,120) and (330,100): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (320,120) and (330,140): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (320,280) and (330,270): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (320,280) and (330,310): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (320,440) and (330,440): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (330,440) and (380,440): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (440,440) and (490,460): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (490,460) and (500,440): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (500,440) and (550,460): Tunnel and Tunnel\n - Small components are too close in circuit multiplier_2x2 at (550,460) and (560,440): Tunnel and Tunnel\n - Wire crosses reserved area of Tunnel n3 in circuit multiplier_2x2: (260,280) -> (320,280)\n - Wire crosses reserved area of Tunnel n5 in circuit multiplier_2x2: (260,440) -> (320,440)\n - Wire crosses reserved area of Tunnel n4 in circuit multiplier_2x2: (330,270) -> (350,270)\n - Wire crosses reserved area of Tunnel n15 in circuit multiplier_2x2: (330,440) -> (350,440)\n - Wire crosses reserved area of AND Gate MULP3 in circuit multiplier_2x2: (350,440) -> (380,440)\n - Wire crosses reserved area of Tunnel n32 in circuit multiplier_2x2: (550,340) -> (550,460)"},
-    {"name": "truth_table_evidence", "passed": false, "detail": "IllegalStateException: Output was not resolved: p2"}
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] multiplier_2x2.circ\n - Vertical wire in left boundary lane can short external inputs: (110,80) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,140) -> (160,200)\n - Vertical wire in left boundary lane can short external inputs: (210,110) -> (210,250)\n - Vertical wire in left boundary lane can short external inputs: (260,10) -> (260,300)\n - Wire crosses reserved area of Pin P1 in circuit multiplier_2x2: (160,140) -> (4840,140)\n - Wire crosses reserved area of Pin P0 in circuit multiplier_2x2: (210,110) -> (4920,110)\n - Wire crosses reserved area of Pin P3 in circuit multiplier_2x2: (2620,260) -> (5380,260)\n - Wire crosses reserved area of Pin P3 in circuit multiplier_2x2: (2890,240) -> (5390,240)\n - Wire crosses reserved area of Pin P2 in circuit multiplier_2x2: (2940,210) -> (5420,210)\n - Wire crosses reserved area of Pin P2 in circuit multiplier_2x2: (3050,190) -> (5430,190)\n - Wire crosses reserved area of Pin P1 in circuit multiplier_2x2: (3260,160) -> (5500,160)\n - Wire crosses reserved area of Pin P0 in circuit multiplier_2x2: (930,90) -> (4950,90)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=32"}
   ],
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\multiplier_2x2.circ", "exists": true}
+    {"kind": "circuit", "path": "generated\\circ\\multiplier_2x2.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\multiplier_2x2_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\multiplier_2x2_circuit_truth_table.json", "exists": true}
   ],
-  "issues": ["Check failed: truth_table_evidence - IllegalStateException: Output was not resolved: p2"]
+  "issues": []
 }

@@ -1,0 +1,19 @@
+{
+  "circuitName": "accumulator_4bit",
+  "complete": true,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=23972"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] accumulator_4bit.circ round-trip loaded with main circuit accumulator_4bit"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] accumulator_4bit.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] accumulator_4bit.circ\n - Vertical wire in left boundary lane can short external inputs: (110,-520) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,-300) -> (160,200)\n - Vertical wire in left boundary lane can short external inputs: (210,210) -> (210,250)\n - Vertical wire in left boundary lane can short external inputs: (260,70) -> (260,300)\n - Wire crosses reserved area of AND Gate AA2 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of AND Gate AB2 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of OR Gate AO2 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of OR Gate AG2 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of XOR Gate AX3 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of XOR Gate AS3 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of AND Gate AA3 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of AND Gate AB3 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of OR Gate AO3 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of OR Gate AG3 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of XOR Gate AX4 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of XOR Gate AS4 in circuit accumulator_4bit: (1270,680) -> (6020,680)\n - Wire crosses reserved area of Pin Q1 in circuit accumulator_4bit: (1540,160) -> (5170,160)\n - Wire crosses reserved area of Pin Q1 in circuit accumulator_4bit: (1600,140) -> (5180,140)\n - Wire crosses reserved area of Pin Q0 in circuit accumulator_4bit: (1900,110) -> (5220,110)\n - Wire crosses reserved area of Pin Q0 in circuit accumulator_4bit: (2020,90) -> (5240,90)\n - Wire crosses reserved area of Pin Q2 in circuit accumulator_4bit: (210,210) -> (5140,210)\n - Wire crosses reserved area of Pin Q3 in circuit accumulator_4bit: (3100,240) -> (5480,240)\n - Wire crosses reserved area of Pin Q2 in circuit accumulator_4bit: (3470,190) -> (5510,190)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\accumulator_4bit.circ", "exists": true}
+  ],
+  "issues": []
+}

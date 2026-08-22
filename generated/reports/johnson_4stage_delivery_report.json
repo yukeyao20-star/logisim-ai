@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "4 bit johnson counter",
+  "request": "约翰逊计数器",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",

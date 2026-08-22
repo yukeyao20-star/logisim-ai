@@ -56,7 +56,7 @@ public final class DirectMultiChipCompiler {
   /** Vertical distance between row centers (leaves room for DIP chips + stubs). */
   private static final int ROW_GAP = 420;
   /** Horizontal gap between consecutive rows (keeps cross-row port x disjoint). */
-  private static final int ROW_GAP_X = 200;
+  private static final int ROW_GAP_X = 60;
 
   public static void compile(CircuitSpec spec, File outputFile) throws Exception {
     Main.headless = true;
@@ -90,11 +90,13 @@ public final class DirectMultiChipCompiler {
           row++;
           rowCount = 1;
           // Each row starts just past the previous row's widest component x
-          // (ROW_GAP_X gap). Since a row's x range is always above the next
-          // row's start, ports of different rows never share an x column.
-          // Same-x ports would force the router to keep their stub segments
-          // disjoint; a long cross-row stub could otherwise overlap forever or
-          // short another net via a WireRepair junction.
+          // (ROW_GAP_X gap). Rows must stay x-disjoint: with aligned rows the
+          // official JAR reported unresolved outputs (E). Root cause (round
+          // 55-16/17 debug): aligned rows make the IsolatedRouter wire a net
+          // into 5 two-driver conflicts (e.g. input pin + AND output on one
+          // net; two OR outputs joined) — CircuitWiringChecker's
+          // two-driver check detects exactly these. The stagger keeps row
+          // x-ranges disjoint and the nets separate.
           cursor = prevRowMaxX + ROW_GAP_X;
         }
         Library library = LogisimProjectSetup.addLibrary(loader, file, cs.libraryName());
@@ -113,7 +115,7 @@ public final class DirectMultiChipCompiler {
         Component comp = factory.createComponent(loc, attrs);
         positioned.put(cs.id(), comp);
         mutation.add(comp);
-        cursor += cs.libraryName().equals("Gates") ? 160 : 260;
+        cursor += cs.libraryName().equals("Gates") ? 120 : 260;
         rowCount++;
         prevRowMaxX = Math.max(prevRowMaxX, cursor);
       }

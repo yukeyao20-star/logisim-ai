@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "三个开关控制一盏灯",
+  "request": "odd parity",
   "description": "Synthesized Boolean function into CircuitSpec",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,12 +19,14 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 5,
+  "artifactCount": 7,
   "artifacts": [
     {"path": "generated\\circ\\logic_f_abc_xor.circ", "exists": true},
     {"path": "generated\\reports\\logic_f_abc_xor_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\logic_f_abc_xor_circuit_manifest.md", "exists": true},
     {"path": "generated\\reports\\logic_f_abc_xor_circuit_truth_table.json", "exists": true},
-    {"path": "generated\\reports\\logic_f_abc_xor_circuit_truth_table.md", "exists": true}
+    {"path": "generated\\reports\\logic_f_abc_xor_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\logic_f_abc_xor_generation_summary.md", "exists": true}
   ]
 }

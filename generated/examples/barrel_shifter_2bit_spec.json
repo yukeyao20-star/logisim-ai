@@ -1,0 +1,46 @@
+{
+  "name": "barrel_shifter_2bit",
+  "components": [
+    {"id": "bs_ns0", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": "NS1"},
+    {"id": "bs_0_sa0_0", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "SA1"},
+    {"id": "bs_0_sa1_0", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "SA2"},
+    {"id": "bs_0_mo2", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "MO3"},
+    {"id": "bs_1_sa3_0", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "SA4"},
+    {"id": "bs_1_sa4_0", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "SA5"},
+    {"id": "bs_1_mo5", "library": "Gates", "factory": "OR Gate", "bitWidth": 1, "label": "MO6"}
+  ],
+  "externalPorts": [
+    {"id": "d0", "label": "D0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "bs_ns0", "targetEndIndex": 0},
+    {"id": "y0", "label": "Y0", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "bs_ns0", "targetEndIndex": 0},
+    {"id": "d1", "label": "D1", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "bs_ns0", "targetEndIndex": 0},
+    {"id": "y1", "label": "Y1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "bs_ns0", "targetEndIndex": 0},
+    {"id": "sh0", "label": "SH0", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "bs_ns0", "targetEndIndex": 0},
+    {"id": "gnd", "label": "GND", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "bs_ns0", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "bs_ns_in0", "endpoints": [{"componentId": "sh0", "endIndex": 0}, {"componentId": "bs_ns0", "endIndex": 1}]},
+    {"id": "bs_sa10", "endpoints": [{"componentId": "d0", "endIndex": 0}, {"componentId": "bs_0_sa0_0", "endIndex": 1}]},
+    {"id": "bs_sa20", "endpoints": [{"componentId": "bs_ns0", "endIndex": 0}, {"componentId": "bs_0_sa0_0", "endIndex": 2}]},
+    {"id": "bs_sa11", "endpoints": [{"componentId": "gnd", "endIndex": 0}, {"componentId": "bs_0_sa1_0", "endIndex": 1}]},
+    {"id": "bs_sa21", "endpoints": [{"componentId": "sh0", "endIndex": 0}, {"componentId": "bs_0_sa1_0", "endIndex": 2}]},
+    {"id": "bs_mo12", "endpoints": [{"componentId": "bs_0_sa0_0", "endIndex": 0}, {"componentId": "bs_0_mo2", "endIndex": 1}]},
+    {"id": "bs_mo22", "endpoints": [{"componentId": "bs_0_sa1_0", "endIndex": 0}, {"componentId": "bs_0_mo2", "endIndex": 2}]},
+    {"id": "bs_y0", "endpoints": [{"componentId": "bs_0_mo2", "endIndex": 0}, {"componentId": "y0", "endIndex": 0}]},
+    {"id": "bs_sa13", "endpoints": [{"componentId": "d1", "endIndex": 0}, {"componentId": "bs_1_sa3_0", "endIndex": 1}]},
+    {"id": "bs_sa23", "endpoints": [{"componentId": "bs_ns0", "endIndex": 0}, {"componentId": "bs_1_sa3_0", "endIndex": 2}]},
+    {"id": "bs_sa14", "endpoints": [{"componentId": "d0", "endIndex": 0}, {"componentId": "bs_1_sa4_0", "endIndex": 1}]},
+    {"id": "bs_sa24", "endpoints": [{"componentId": "sh0", "endIndex": 0}, {"componentId": "bs_1_sa4_0", "endIndex": 2}]},
+    {"id": "bs_mo15", "endpoints": [{"componentId": "bs_1_sa3_0", "endIndex": 0}, {"componentId": "bs_1_mo5", "endIndex": 1}]},
+    {"id": "bs_mo25", "endpoints": [{"componentId": "bs_1_sa4_0", "endIndex": 0}, {"componentId": "bs_1_mo5", "endIndex": 2}]},
+    {"id": "bs_y1", "endpoints": [{"componentId": "bs_1_mo5", "endIndex": 0}, {"componentId": "y1", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "bs_ns0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "bs_0_sa0_0", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "bs_0_sa1_0", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "bs_0_mo2", "rank": 3, "column": 0, "row": 2, "side": null},
+    {"componentId": "bs_1_sa3_0", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "bs_1_sa4_0", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "bs_1_mo5", "rank": 3, "column": 0, "row": 5, "side": null}
+  ]
+}

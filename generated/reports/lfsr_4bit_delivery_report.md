@@ -1,7 +1,7 @@
 # Generation delivery report for lfsr_4bit
 
 - Request kind: natural_language
-- Request: LFSR
+- Request: 伪随机数发生器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

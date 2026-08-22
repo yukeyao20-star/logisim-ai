@@ -1,7 +1,7 @@
 # Generation delivery report for adder_4bit
 
 - Request kind: natural_language
-- Request: 四位加法器
+- Request: 4 bit adder
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -14,7 +14,7 @@
 - Manifest check count: 7
 - Manifest issue count: 0
 - Layout clean: false
-- Layout issue count: 42
+- Layout issue count: 46
 - Layout score: 0
 - Layout risk level: high
 - Layout unresolved tool count: 0
@@ -23,13 +23,13 @@
 - Layout pin facing issue count: 0
 - Layout pin/tunnel proximity count: 0
 - Layout label risk count: 0
-- Layout reserved area intrusion count: 38
+- Layout reserved area intrusion count: 42
 - Layout inspection failure count: 0
 - Layout other issue count: 0
 - Layout repair suggestions: Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. | Move wires, tunnels, or labels away from reserved component visual areas.
 - Layout auto repair applied: false
 - Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
-- Artifact count: 8
+- Artifact count: 10
 
 ## Layout Issues
 
@@ -37,44 +37,48 @@
 - [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (160,110) -> (160,200)
 - [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (210,90) -> (210,250)
 - [ERROR/WIRE_RISK] Vertical wire in left boundary lane can short external inputs: (260,160) -> (260,300)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G2 in circuit adder_4bit: (1000,50) -> (1000,710)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G2 in circuit adder_4bit: (1010,40) -> (1010,710)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G3 in circuit adder_4bit: (1120,220) -> (1120,740)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G3 in circuit adder_4bit: (1150,-10) -> (1150,740)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G3 in circuit adder_4bit: (1170,260) -> (1170,750)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O1 in circuit adder_4bit: (1270,-80) -> (1270,780)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O1 in circuit adder_4bit: (1280,-70) -> (1280,790)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O1 in circuit adder_4bit: (1310,-90) -> (1310,800)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O1 in circuit adder_4bit: (1330,-100) -> (1330,810)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O2 in circuit adder_4bit: (1430,-260) -> (1430,840)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O2 in circuit adder_4bit: (1440,-170) -> (1440,850)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O2 in circuit adder_4bit: (1450,-200) -> (1450,850)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O2 in circuit adder_4bit: (1470,-210) -> (1470,860)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O2 in circuit adder_4bit: (1490,-220) -> (1490,870)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (1590,-290) -> (1590,900)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (1600,-300) -> (1600,910)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (1610,-330) -> (1610,910)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (1630,-310) -> (1630,920)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (1640,-320) -> (1640,920)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (1650,-340) -> (1650,930)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (1750,-390) -> (1750,960)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (1760,-400) -> (1760,970)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (1770,-410) -> (1770,970)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (1790,-420) -> (1790,980)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (1800,-430) -> (1800,980)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (1810,-440) -> (1810,990)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA1G1 in circuit adder_4bit: (1910,-510) -> (1910,1030)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G3 in circuit adder_4bit: (460,260) -> (1170,260)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA0X1 in circuit adder_4bit: (460,260) -> (1170,260)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA0X2 in circuit adder_4bit: (460,260) -> (1170,260)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G1 in circuit adder_4bit: (460,260) -> (1170,260)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G2 in circuit adder_4bit: (460,260) -> (1170,260)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G1 in circuit adder_4bit: (800,60) -> (800,670)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G1 in circuit adder_4bit: (810,180) -> (810,670)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G1 in circuit adder_4bit: (830,170) -> (830,670)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G1 in circuit adder_4bit: (850,80) -> (850,680)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G2 in circuit adder_4bit: (960,70) -> (960,700)
-- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G2 in circuit adder_4bit: (990,160) -> (990,710)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA2G2 in circuit adder_4bit: (1050,660) -> (2970,660)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA2G3 in circuit adder_4bit: (1050,660) -> (2970,660)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA2O1 in circuit adder_4bit: (1050,660) -> (2970,660)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA2O2 in circuit adder_4bit: (1050,660) -> (2970,660)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA3X1 in circuit adder_4bit: (1050,660) -> (2970,660)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA3X2 in circuit adder_4bit: (1050,660) -> (2970,660)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA3G1 in circuit adder_4bit: (1050,660) -> (2970,660)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S0 in circuit adder_4bit: (160,110) -> (2620,110)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S0 in circuit adder_4bit: (210,90) -> (2660,90)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S1 in circuit adder_4bit: (260,160) -> (2700,160)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S2 in circuit adder_4bit: (360,210) -> (2780,210)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA3G2 in circuit adder_4bit: (450,1080) -> (3130,1080)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA3G3 in circuit adder_4bit: (450,1080) -> (3130,1080)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA3O1 in circuit adder_4bit: (450,1080) -> (3130,1080)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA3O2 in circuit adder_4bit: (450,1080) -> (3130,1080)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S2 in circuit adder_4bit: (450,190) -> (3110,190)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Cin in circuit adder_4bit: (450,190) -> (450,650)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S3 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O1 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O2 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA1G1 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA1G2 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA1G3 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA0X1 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA0X2 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G1 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G2 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G3 in circuit adder_4bit: (460,260) -> (2860,260)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S1 in circuit adder_4bit: (690,140) -> (2600,140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin Cout in circuit adder_4bit: (690,310) -> (2570,310)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin S3 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O1 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of OR Gate FA0O2 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X1 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of XOR Gate FA1X2 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA1G1 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA1G2 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA1G3 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G2 in circuit adder_4bit: (810,240) -> (3490,240)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate FA0G3 in circuit adder_4bit: (810,240) -> (3490,240)
 
 ## Layout Repair Suggestions
 
@@ -82,44 +86,48 @@
 - [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=adder_4bit;x1=160;y1=110;x2=160;y2=200)
 - [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=adder_4bit;x1=210;y1=90;x2=210;y2=250)
 - [reroute_wires/WIRE_RISK] Reroute risky wires through tunnels or move boundary wire lanes away from external input rows. (kind=boundary_vertical;circuit=adder_4bit;x1=260;y1=160;x2=260;y2=300)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G2;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=1000;y1=50;x2=1000;y2=710)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G2;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=1010;y1=40;x2=1010;y2=710)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G3;anchorX=1140;anchorY=250;left=1104;top=221;right=1176;bottom=279;connectionPoints=3;x1=1120;y1=220;x2=1120;y2=740)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G3;anchorX=1140;anchorY=250;left=1104;top=221;right=1176;bottom=279;connectionPoints=3;x1=1150;y1=-10;x2=1150;y2=740)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G3;anchorX=1140;anchorY=250;left=1104;top=221;right=1176;bottom=279;connectionPoints=3;x1=1170;y1=260;x2=1170;y2=750)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O1;anchorX=1300;anchorY=250;left=1264;top=221;right=1336;bottom=279;connectionPoints=3;x1=1270;y1=-80;x2=1270;y2=780)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O1;anchorX=1300;anchorY=250;left=1264;top=221;right=1336;bottom=279;connectionPoints=3;x1=1280;y1=-70;x2=1280;y2=790)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O1;anchorX=1300;anchorY=250;left=1264;top=221;right=1336;bottom=279;connectionPoints=3;x1=1310;y1=-90;x2=1310;y2=800)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O1;anchorX=1300;anchorY=250;left=1264;top=221;right=1336;bottom=279;connectionPoints=3;x1=1330;y1=-100;x2=1330;y2=810)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O2;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=1430;y1=-260;x2=1430;y2=840)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O2;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=1440;y1=-170;x2=1440;y2=850)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O2;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=1450;y1=-200;x2=1450;y2=850)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O2;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=1470;y1=-210;x2=1470;y2=860)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O2;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=1490;y1=-220;x2=1490;y2=870)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=1590;y1=-290;x2=1590;y2=900)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=1600;y1=-300;x2=1600;y2=910)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=1610;y1=-330;x2=1610;y2=910)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=1630;y1=-310;x2=1630;y2=920)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=1640;y1=-320;x2=1640;y2=920)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1620;anchorY=250;left=1584;top=221;right=1656;bottom=279;connectionPoints=3;x1=1650;y1=-340;x2=1650;y2=930)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=1750;y1=-390;x2=1750;y2=960)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=1760;y1=-400;x2=1760;y2=970)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=1770;y1=-410;x2=1770;y2=970)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=1790;y1=-420;x2=1790;y2=980)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=1800;y1=-430;x2=1800;y2=980)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1780;anchorY=250;left=1744;top=221;right=1816;bottom=279;connectionPoints=3;x1=1810;y1=-440;x2=1810;y2=990)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA1G1;anchorX=1940;anchorY=250;left=1904;top=221;right=1976;bottom=279;connectionPoints=3;x1=1910;y1=-510;x2=1910;y2=1030)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G3;anchorX=1140;anchorY=250;left=1104;top=221;right=1176;bottom=279;connectionPoints=3;x1=460;y1=260;x2=1170;y2=260)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA0X1;anchorX=500;anchorY=250;left=464;top=221;right=536;bottom=279;connectionPoints=3;x1=460;y1=260;x2=1170;y2=260)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA0X2;anchorX=660;anchorY=250;left=624;top=221;right=696;bottom=279;connectionPoints=3;x1=460;y1=260;x2=1170;y2=260)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G1;anchorX=820;anchorY=250;left=784;top=221;right=856;bottom=279;connectionPoints=3;x1=460;y1=260;x2=1170;y2=260)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G2;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=460;y1=260;x2=1170;y2=260)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G1;anchorX=820;anchorY=250;left=784;top=221;right=856;bottom=279;connectionPoints=3;x1=800;y1=60;x2=800;y2=670)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G1;anchorX=820;anchorY=250;left=784;top=221;right=856;bottom=279;connectionPoints=3;x1=810;y1=180;x2=810;y2=670)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G1;anchorX=820;anchorY=250;left=784;top=221;right=856;bottom=279;connectionPoints=3;x1=830;y1=170;x2=830;y2=670)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G1;anchorX=820;anchorY=250;left=784;top=221;right=856;bottom=279;connectionPoints=3;x1=850;y1=80;x2=850;y2=680)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G2;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=960;y1=70;x2=960;y2=700)
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G2;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=990;y1=160;x2=990;y2=710)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA2G2;anchorX=1100;anchorY=670;left=1064;top=641;right=1136;bottom=699;connectionPoints=3;x1=1050;y1=660;x2=2970;y2=660)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA2G3;anchorX=1220;anchorY=670;left=1184;top=641;right=1256;bottom=699;connectionPoints=3;x1=1050;y1=660;x2=2970;y2=660)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA2O1;anchorX=1340;anchorY=670;left=1304;top=641;right=1376;bottom=699;connectionPoints=3;x1=1050;y1=660;x2=2970;y2=660)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA2O2;anchorX=1460;anchorY=670;left=1424;top=641;right=1496;bottom=699;connectionPoints=3;x1=1050;y1=660;x2=2970;y2=660)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA3X1;anchorX=1580;anchorY=670;left=1544;top=641;right=1616;bottom=699;connectionPoints=3;x1=1050;y1=660;x2=2970;y2=660)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA3X2;anchorX=1700;anchorY=670;left=1664;top=641;right=1736;bottom=699;connectionPoints=3;x1=1050;y1=660;x2=2970;y2=660)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA3G1;anchorX=1820;anchorY=670;left=1784;top=641;right=1856;bottom=699;connectionPoints=3;x1=1050;y1=660;x2=2970;y2=660)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S0;anchorX=2240;anchorY=100;left=2226;top=86;right=2254;bottom=114;connectionPoints=1;x1=160;y1=110;x2=2620;y2=110)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S0;anchorX=2240;anchorY=100;left=2226;top=86;right=2254;bottom=114;connectionPoints=1;x1=210;y1=90;x2=2660;y2=90)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S1;anchorX=2190;anchorY=150;left=2176;top=136;right=2204;bottom=164;connectionPoints=1;x1=260;y1=160;x2=2700;y2=160)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S2;anchorX=2140;anchorY=200;left=2126;top=186;right=2154;bottom=214;connectionPoints=1;x1=360;y1=210;x2=2780;y2=210)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA3G2;anchorX=500;anchorY=1090;left=464;top=1061;right=536;bottom=1119;connectionPoints=3;x1=450;y1=1080;x2=3130;y2=1080)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA3G3;anchorX=620;anchorY=1090;left=584;top=1061;right=656;bottom=1119;connectionPoints=3;x1=450;y1=1080;x2=3130;y2=1080)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA3O1;anchorX=740;anchorY=1090;left=704;top=1061;right=776;bottom=1119;connectionPoints=3;x1=450;y1=1080;x2=3130;y2=1080)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA3O2;anchorX=860;anchorY=1090;left=824;top=1061;right=896;bottom=1119;connectionPoints=3;x1=450;y1=1080;x2=3130;y2=1080)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S2;anchorX=2140;anchorY=200;left=2126;top=186;right=2154;bottom=214;connectionPoints=1;x1=450;y1=190;x2=3110;y2=190)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=Cin;anchorX=460;anchorY=500;left=446;top=486;right=474;bottom=514;connectionPoints=1;x1=450;y1=190;x2=450;y2=650)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S3;anchorX=2090;anchorY=250;left=2076;top=236;right=2104;bottom=264;connectionPoints=1;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O1;anchorX=1100;anchorY=250;left=1064;top=221;right=1136;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O2;anchorX=1220;anchorY=250;left=1184;top=221;right=1256;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1340;anchorY=250;left=1304;top=221;right=1376;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA1G1;anchorX=1580;anchorY=250;left=1544;top=221;right=1616;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA1G2;anchorX=1700;anchorY=250;left=1664;top=221;right=1736;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA1G3;anchorX=1820;anchorY=250;left=1784;top=221;right=1856;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA0X1;anchorX=500;anchorY=250;left=464;top=221;right=536;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA0X2;anchorX=620;anchorY=250;left=584;top=221;right=656;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G1;anchorX=740;anchorY=250;left=704;top=221;right=776;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G2;anchorX=860;anchorY=250;left=824;top=221;right=896;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G3;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=460;y1=260;x2=2860;y2=260)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S1;anchorX=2190;anchorY=150;left=2176;top=136;right=2204;bottom=164;connectionPoints=1;x1=690;y1=140;x2=2600;y2=140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=Cout;anchorX=2040;anchorY=300;left=2026;top=286;right=2054;bottom=314;connectionPoints=1;x1=690;y1=310;x2=2570;y2=310)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=Pin;label=S3;anchorX=2090;anchorY=250;left=2076;top=236;right=2104;bottom=264;connectionPoints=1;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O1;anchorX=1100;anchorY=250;left=1064;top=221;right=1136;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=OR Gate;label=FA0O2;anchorX=1220;anchorY=250;left=1184;top=221;right=1256;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X1;anchorX=1340;anchorY=250;left=1304;top=221;right=1376;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=XOR Gate;label=FA1X2;anchorX=1460;anchorY=250;left=1424;top=221;right=1496;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA1G1;anchorX=1580;anchorY=250;left=1544;top=221;right=1616;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA1G2;anchorX=1700;anchorY=250;left=1664;top=221;right=1736;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA1G3;anchorX=1820;anchorY=250;left=1784;top=221;right=1856;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G2;anchorX=860;anchorY=250;left=824;top=221;right=896;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=adder_4bit;component=AND Gate;label=FA0G3;anchorX=980;anchorY=250;left=944;top=221;right=1016;bottom=279;connectionPoints=3;x1=810;y1=240;x2=3490;y2=240)
 
 ## Artifacts
 
@@ -133,3 +141,5 @@
 | summary_json | generated\reports\adder_4bit_generation_summary.json | true |
 | summary_markdown | generated\reports\adder_4bit_generation_summary.md | true |
 | artifact | generated\reports\adder_4bit_multichip.md | true |
+| artifact | generated\reports\adder_4bit_official_simulation.json | true |
+| artifact | generated\reports\adder_4bit_official_simulation.md | true |

@@ -47,13 +47,13 @@ public final class StructuralCircuitTemplates {
   private static final Pattern DECODER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?(\\d{1,3})\\s*(?:decoder|demultiplexer)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DECODER_ZH_NN =
-      Pattern.compile("(\\d{1,2})\\s*(?:[-－ ])\\s*(\\d{1,3})\\s*(?:译码器|解码器|分配器)");
+      Pattern.compile("(\\d{1,2})\\s*(?:[-－]|\\s)\\s*(\\d{1,3})\\s*线?\\s*(?:译码器|解码器|分配器)");
   private static final Pattern DECODER_ZH_LINE =
       Pattern.compile("(\\d{1,2})\\s*线\\s*(\\d{1,3})\\s*线\\s*(?:译码器|解码器)");
   private static final Pattern DEMUX_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*路\\s*(?:分配器|多路分配器|选择分配器)");
   private static final Pattern DEMUX_EN =
-      Pattern.compile("(\\d{1,2})\\s*[- ]?way\\s*(?:demultiplexer|demux|de[- ]?multiplexer)", Pattern.CASE_INSENSITIVE);
+      Pattern.compile("(\\d{1,2})\\s*[- ]?way\\s*(?:demultiplexer|demux|de[- ]?multiplexer)|1\\s*to\\s*(\\d{1,2})\\s*(?:demux|demultiplexer)|demultiplexer|demux", Pattern.CASE_INSENSITIVE);
   private static final Pattern COUNTER_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:二进制计数器|计数器|加法计数器|up计数器|向上计数器)");
   private static final Pattern COUNTER_EN =
@@ -85,21 +85,93 @@ public final class StructuralCircuitTemplates {
   private static final Pattern BCD7_ZH =
       Pattern.compile("(?:bcd|二十进制|8421码|8421)\\s*(?:转|到|[-])?\\s*(?:7段|七段|七段数码管|七段显示|数码管)\\s*(?:译码器|解码器|驱动器)?");
   private static final Pattern BCD7_EN =
-      Pattern.compile("(?:bcd|binary\\s+coded\\s+decimal)\\s*(?:to)?\\s*7[- ]seg(?:ment)?\\s*(?:decoder|display|driver)", Pattern.CASE_INSENSITIVE);
+      Pattern.compile("(?:bcd|binary\\s+coded\\s+decimal)\\s*(?:to)?\\s*7[- ]seg(?:ment)?\\s*(?:decoder|display|driver)?|7[- ]segment\\s*(?:display|decoder)", Pattern.CASE_INSENSITIVE);
   private static final Pattern MUL_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*[xX×位]\\s*([0-9一二三四五六七八九十两]{1,3})?\\s*位?\\s*(?:乘法器|二进制乘法器)");
   private static final Pattern MUL_ZH2 =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:乘法器|二进制乘法器)");
   private static final Pattern MUL_EN =
-      Pattern.compile("(\\d{1,2})\\s*[xX×]\\s*(\\d{1,2})\\s*(?:multiplier)", Pattern.CASE_INSENSITIVE);
+      Pattern.compile("(\\d{1,2})\\s*[xX×]\\s*(\\d{1,2})\\s*(?:multiplier)|(\\d{1,2})\\s*[- ]?bit\\s*multiplier", Pattern.CASE_INSENSITIVE);
   private static final Pattern SUB_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:减法器|全减器|二进制减法器)");
   private static final Pattern SUB_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:subtractor|full\\s+subtractor)", Pattern.CASE_INSENSITIVE);
+  // Saturating adder (饱和加法器): S = min(A+B, 2^N-1). Checked BEFORE ADDER_*
+  // so "饱和加法器" does not fall into the plain adder template.
+  private static final Pattern SATADD_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(饱和加法器|饱和加法|防溢出加法器|饱和运算器)");
+  private static final Pattern SATADD_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:saturating\\s*adder|saturation\\s*adder|saturated\\s*adder|saturating\\s*addition)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SATADD_ZH_BARE =
+      Pattern.compile("饱和加法器|饱和加法|防溢出加法器|饱和运算器");
+  private static final Pattern SATADD_EN_BARE =
+      Pattern.compile("saturating\\s*adder|saturation\\s*adder|saturated\\s*adder|saturating\\s*addition", Pattern.CASE_INSENSITIVE);
   private static final Pattern BCDADD_ZH =
       Pattern.compile("(?:bcd|二十进制|8421码|8421)\\s*(?:加法器|加法)");
   private static final Pattern BCDADD_EN =
       Pattern.compile("(?:bcd|binary\\s+coded\\s+decimal)\\s*adder", Pattern.CASE_INSENSITIVE);
+  // 2-digit BCD adder (两位BCD加法器): checked BEFORE BCDADD_* so "2位BCD加法器"
+  // builds the 2-digit chain, not the 1-digit adder.
+  private static final Pattern BCDADD2_ZH =
+      Pattern.compile("(?:两位|二位|2位|二位数|两位数)\\s*(?:bcd|二十进制|8421码|8421)\\s*(?:加法器|加法)");
+  private static final Pattern BCDADD2_EN =
+      Pattern.compile("(?:2[- ]digit|two[- ]digit|double[- ]digit)\\s*(?:bcd|binary\\s+coded\\s+decimal)\\s*adder", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BCDSUB_ZH =
+      Pattern.compile("(?:bcd|二十进制|8421码|8421)\\s*(?:减法器|减法)");
+  private static final Pattern BCDSUB_EN =
+      Pattern.compile("(?:bcd|binary\\s+coded\\s+decimal)\\s*subtract", Pattern.CASE_INSENSITIVE);
+  // 2-digit BCD subtractor (两位BCD减法器): checked BEFORE BCDSUB_* so "2位BCD减法器"
+  // builds the 2-digit chain, not the 1-digit subtractor.
+  private static final Pattern BCDSUB2_ZH =
+      Pattern.compile("(?:两位|二位|2位|二位数|两位数)\\s*(?:bcd|二十进制|8421码|8421)\\s*(?:减法器|减法)");
+  private static final Pattern BCDSUB2_EN =
+      Pattern.compile("(?:2[- ]digit|two[- ]digit|double[- ]digit)\\s*(?:bcd|binary\\s+coded\\s+decimal)\\s*subtract", Pattern.CASE_INSENSITIVE);
+  // Hex 7-segment display (十六进制转七段).
+  private static final Pattern HEX7_ZH =
+      Pattern.compile("十六进制\\s*(?:转|到|至)?\\s*七段|十六进制\\s*显示|hex\\s*七段");
+  private static final Pattern HEX7_EN =
+      Pattern.compile("hex\\s*(?:to|->|-)?\\s*(?:7[- ]segment|seven[- ]segment|display)", Pattern.CASE_INSENSITIVE);
+  // N-bit squarer (平方器).
+  private static final Pattern SQUARE_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(平方器|平方电路|平方运算|平方)");
+  private static final Pattern SQUARE_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:squarer|square\\s*circuit|square\\s*of)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SQUARE_ZH_BARE =
+      Pattern.compile("平方器|平方电路|平方运算");
+  private static final Pattern SQUARE_EN_BARE =
+      Pattern.compile("\\bsquarer\\b|square\\s*circuit", Pattern.CASE_INSENSITIVE);
+  // N-bit accumulator (累加器): ACC <- ACC + A on each clock edge.
+  private static final Pattern ACCUM_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(累加器|累加电路|累加器电路)");
+  private static final Pattern ACCUM_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:accumulator|accumulating\\s*adder)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ACCUM_ZH_BARE =
+      Pattern.compile("累加器|累加电路|累加器电路");
+  private static final Pattern ACCUM_EN_BARE =
+      Pattern.compile("\\baccumulator\\b|accumulating\\s*adder", Pattern.CASE_INSENSITIVE);
+  // N-bit multiply-accumulate (乘累加器 / MAC): ACC += A*B per clock edge.
+  private static final Pattern MAC_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)?\\s*(?:乘累加器|乘加器|乘法累加器)|乘累加器|乘加器|乘法累加器");
+  private static final Pattern MAC_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:multiply[- ]?accumulate|mac\\s*unit)|multiply[- ]?accumulate|\\bmac\\b", Pattern.CASE_INSENSITIVE);
+  // Edge detector (边沿检测器 / edge detector): one-clock pulse on signal
+  // transitions. Rising = IN ∧ ¬INprev, Falling = ¬IN ∧ INprev.
+  private static final Pattern EDGE_ZH =
+      Pattern.compile("边沿检测|上升沿检测|下降沿检测|沿检测器|边沿探测器");
+  private static final Pattern EDGE_EN =
+      Pattern.compile("edge\\s*detector|rising[- ]edge|falling[- ]edge", Pattern.CASE_INSENSITIVE);
+  // One-shot pulse generator (单脉冲/单稳态): TRIG rising edge -> PULSE high
+  // for N clock cycles (retriggerable). N from query or default 4.
+  private static final Pattern ONESHOT_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:周期|拍|个时钟|clk)?\\s*(?:单脉冲|单稳态|脉冲发生器)|单脉冲|单稳态|脉冲发生器");
+  private static final Pattern ONESHOT_EN =
+      Pattern.compile("(\\d{1,2})\\s*(?:cycle|clk)?\\s*(?:one[- ]?shot|monostable|pulse\\s*generator)|one[- ]?shot|monostable|pulse\\s*generator", Pattern.CASE_INSENSITIVE);
+  // Debouncer (消抖): 3-stage shift register + majority vote. Stable input
+  // for 2+ cycles passes; single-cycle glitches are rejected.
+  private static final Pattern DEBOUNCE_ZH =
+      Pattern.compile("消抖|去抖|防抖|按键消抖|抖动消除");
+  private static final Pattern DEBOUNCE_EN =
+      Pattern.compile("debounce|de[- ]?bounc|glitch\\s*filter|noise\\s*filter", Pattern.CASE_INSENSITIVE);
   private static final Pattern DFF_ZH =
       Pattern.compile("(?:d|D)触发器|d\\s*触发器|d触发器|触发器");
   private static final Pattern DFF_EN =
@@ -115,7 +187,7 @@ public final class StructuralCircuitTemplates {
   private static final Pattern SHIFTREG_ZH_BARE =
       Pattern.compile("(?:移位寄存器|移位寄存器)");
   private static final Pattern SHIFTREG_EN =
-      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:shift\\s*register|sipo|piso)", Pattern.CASE_INSENSITIVE);
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:shift\\s*register|sipo|piso)|shift\\s*register", Pattern.CASE_INSENSITIVE);
   private static final Pattern SR_ZH =
       Pattern.compile("(?:sr|s-r|rs|r-s)\\s*(?:触发器|锁存器)|(?:sr|s-r|rs|r-s)\\s*latch", Pattern.CASE_INSENSITIVE);
   private static final Pattern BUZZER_ZH =
@@ -156,6 +228,12 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("格雷码转二进制|格雷转二进制");
   private static final Pattern G2B_EN_BARE =
       Pattern.compile("gray[- ]to[- ]binary|gray\\s*cod[ed]?\\s*to\\s*binary", Pattern.CASE_INSENSITIVE);
+  // Gray-code COUNTER (格雷码计数器 / gray counter): checked before the
+  // binary→gray converter so "格雷码计数器" builds the sequential counter.
+  private static final Pattern GRAYCNT_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)?\\s*格雷码计数器|格雷码计数器|格雷计数器");
+  private static final Pattern GRAYCNT_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:gray[- ]?code[- ]?counter|gray\\s*counter)|gray[- ]?code[- ]?counter|gray\\s*counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern B2B_ZH_BARE =
       Pattern.compile("bcd转二进制|8421码转二进制|bcd码转二进制|十进制转二进制");
   private static final Pattern B2B_EN_BARE =
@@ -172,6 +250,12 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("余三码|余3码|8421码转余3|8421转余3");
   private static final Pattern E3_EN =
       Pattern.compile("excess[- ]?3|bcd[- ]to[- ]excess", Pattern.CASE_INSENSITIVE);
+  // Excess-3 ADDER (余3码加法器): checked BEFORE E3_ZH/E3_EN so "余3码加法器"
+  // builds the adder, not the BCD→excess-3 converter.
+  private static final Pattern E3ADD_ZH =
+      Pattern.compile("余3码加法器|余三码加法器|余3加法器|余三加法器|excess3?\\s*加法器");
+  private static final Pattern E3ADD_EN =
+      Pattern.compile("excess[- ]?3\\s*(?:adder|addition)", Pattern.CASE_INSENSITIVE);
   private static final Pattern E3B_ZH =
       Pattern.compile("余3码转8421|余三码转8421|余3转8421|余三转8421");
   private static final Pattern E3B_EN =
@@ -187,7 +271,7 @@ public final class StructuralCircuitTemplates {
   private static final Pattern NC_ZH =
       Pattern.compile("9的补码|九的补码|9的补数|九的补数|9补码");
   private static final Pattern NC_EN =
-      Pattern.compile("nine.?s?\\s*complement|9s?\\s*complement", Pattern.CASE_INSENSITIVE);
+      Pattern.compile("nine.?s?\\s*complement|9'?s?\\s*complement", Pattern.CASE_INSENSITIVE);
   private static final Pattern TRAFFIC_ZH =
       Pattern.compile("交通灯|红绿灯|交通信号|交通灯控制");
   private static final Pattern TRAFFIC_EN =
@@ -208,11 +292,70 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("伪随机数发生器|伪随机序列|线性反馈移位寄存器|随机数发生器|m序列|线性反馈");
   private static final Pattern LFSR_EN =
       Pattern.compile("lfsr|linear\\s*feedback\\s*shift\\s*register|pseudo[ -]random", Pattern.CASE_INSENSITIVE);
+  // N-bit ALU (arithmetic logic unit): A op B selected by S1S0.
+  // 00=AND, 01=OR, 10=ADD, 11=SUB. Outputs R[N], Cout, Z (zero flag).
+  private static final Pattern ALU_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:alu|算术逻辑单元|算术运算单元)");
+  private static final Pattern ALU_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:alu|arithmetic\\s*logic\\s*unit)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ALU_ZH_BARE =
+      Pattern.compile("(?:alu|算术逻辑单元|算术运算单元|运算器)");
+  private static final Pattern ALU_EN_BARE =
+      Pattern.compile("\\balu\\b|arithmetic\\s*logic\\s*unit", Pattern.CASE_INSENSITIVE);
+  // N-bit barrel shifter (桶形移位器): logical left shift by SH bits (0..N-1).
+  private static final Pattern BARREL_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:桶形移位器|桶式移位器|桶移位器)");
+  private static final Pattern BARREL_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:barrel\\s*shifter|barrel\\s*shift)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BARREL_ZH_BARE =
+      Pattern.compile("桶形移位器|桶式移位器|桶移位器");
+  private static final Pattern BARREL_EN_BARE =
+      Pattern.compile("barrel\\s*shifter|barrel\\s*shift", Pattern.CASE_INSENSITIVE);
+  // N-bit rotate shifter (循环移位器): rotate left/right by SH bits (0..N-1).
+  private static final Pattern ROTATE_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(循环移位器|循环移位|循环左移|左循环移位)");
+  private static final Pattern ROTATE_RIGHT_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(循环右移|右循环移位)");
+  private static final Pattern ROTATE_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(left|right)?\\s*(?:rotate|rotation|cyclical\\s*shift)\\s*(left|right)?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ROTATE_ZH_BARE =
+      Pattern.compile("循环移位器|循环移位|循环左移|左循环移位|循环右移|右循环移位");
+  private static final Pattern ROTATE_EN_BARE =
+      Pattern.compile("\\brotate\\b|\\brotation\\b|cyclical\\s*shift", Pattern.CASE_INSENSITIVE);
+  // N-bit logical right shift (逻辑右移): zero fill. Also accepts bare "右移".
+  private static final Pattern LSR_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(逻辑右移|逻辑右移位|右移)");
+  private static final Pattern LSR_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:logical\\s*(?:right\\s*)?shift|shift\\s*right)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LSR_ZH_BARE =
+      Pattern.compile("逻辑右移|逻辑右移位");
+  private static final Pattern LSR_EN_BARE =
+      Pattern.compile("logical\\s*(?:right\\s*)?shift|shift\\s*right", Pattern.CASE_INSENSITIVE);
+  // N-bit arithmetic right shift (算术右移): sign fill.
+  private static final Pattern SAR_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(算术右移|算数右移|符号右移)");
+  private static final Pattern SAR_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:arithmetic\\s*(?:right\\s*)?shift|arithmetic\\s*right\\s*shift)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SAR_ZH_BARE =
+      Pattern.compile("算术右移|算数右移|符号右移");
+  private static final Pattern SAR_EN_BARE =
+      Pattern.compile("arithmetic\\s*(?:right\\s*)?shift|arithmetic\\s*right\\s*shift", Pattern.CASE_INSENSITIVE);
+  // N-bit unsigned restoring divider (除法器): Q = A / B, R = A mod B.
+  // Distinct from 分频器/frequency divider (DIVIDER_* above).
+  private static final Pattern DIVISION_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(除法器|除法电路|除法运算器|除法)");
+  private static final Pattern DIVISION_EN =
+      Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:division\\s*circuit|unsigned\\s*divider|restoring\\s*divider|division)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DIVISION_ZH_BARE =
+      Pattern.compile("除法器|除法电路|除法运算器");
+  private static final Pattern DIVISION_EN_BARE =
+      Pattern.compile("division\\s*circuit|unsigned\\s*divider|restoring\\s*divider", Pattern.CASE_INSENSITIVE);
 
   /** Human-readable names of the parameterized structural templates, for NL help. */
   public static List<String> supportedStructuralNames() {
     return List.of(
         "Adder 加法器 (N-bit)",
+        "Saturating adder 饱和加法器 (N-bit, S=min(A+B,2^N-1))",
         "Subtractor 减法器 (N-bit)",
         "Multiplier 乘法器 (N×N)",
         "Comparator 比较器 (N-bit)",
@@ -221,7 +364,13 @@ public final class StructuralCircuitTemplates {
         "Priority encoder 优先编码器 (8-to-3)",
         "Parity 奇偶校验器 (N-bit)",
         "BCD 7-segment 七段显示",
+        "Hex 7-segment 十六进制转七段 (0-9,A-F)",
+        "Squarer 平方器 (N-bit, Y=A²)",
+        "Accumulator 累加器 (N-bit, ACC←ACC+A)",
         "BCD adder 8421加法器",
+        "BCD adder 2-digit 两位BCD加法器",
+        "BCD subtractor 8421减法器",
+        "BCD subtractor 2-digit 两位BCD减法器",
         "D flip-flop D触发器",
         "JK flip-flop JK触发器",
         "T flip-flop T触发器",
@@ -235,9 +384,28 @@ public final class StructuralCircuitTemplates {
         "Gray code 格雷码转换器 (binary→gray)",
         "Gray→binary 格雷码转二进制",
         "Excess-3 余三码 (BCD→excess-3)",
+        "Excess-3 adder 余3码加法器 (两位余3码相加)",
+        "Excess-3→BCD 余三码转8421",
         "Two's complement 补码器 (N-bit)",
+        "Nine's complement 9的补码",
         "Traffic light 交通灯控制器",
-        "101 sequence detector 序列检测器");
+        "101 sequence detector 101序列检测器",
+        "1101 sequence detector 1101序列检测器",
+        "LFSR 线性反馈移位寄存器/伪随机数",
+        "Ring counter 环形计数器",
+        "SR latch SR锁存器",
+        "Tri-state buffer 三态缓冲器",
+        "Demux 多路分配器 (1-to-N)",
+        "Mod-N counter 模N计数器",
+        "Up/down counter 可逆计数器",
+        "BCD→binary 二十进制转二进制",
+        "Binary→BCD 二进制转8421",
+        "ALU 算术逻辑单元 (N-bit, AND/OR/ADD/SUB)",
+        "Barrel shifter 桶形移位器 (N-bit, 逻辑左移)",
+        "Rotate shifter 循环移位器 (N-bit, 左/右循环)",
+        "Logical shift right 逻辑右移 (N-bit, 补零)",
+        "Arithmetic shift right 算术右移 (N-bit, 符号扩展)",
+        "Divider 除法器 (N×N, 恢复余数, Q=A/B R=A mod B)");
   }
 
   public static Optional<CircuitSpec> tryBuild(String query) {
@@ -251,6 +419,99 @@ public final class StructuralCircuitTemplates {
     // Bare 七段/数码管 without the bcd/8421 prefix (e.g. "七段译码器").
     if (t.contains("七段译码器") || t.contains("七段显示") || t.contains("数码管") || t.contains("七段数码管")) {
       return Optional.of(buildBcd7Seg());
+    }
+    // Hex 7-segment display (checked before the bare 七段 branch so "十六进制转七段"
+    // builds the hex display, not the BCD one).
+    if (HEX7_ZH.matcher(t).find() || HEX7_EN.matcher(t).find()) {
+      return Optional.of(buildHex7Seg());
+    }
+    // N-bit squarer (平方器).
+    Matcher sqzh = SQUARE_ZH.matcher(t);
+    if (sqzh.find()) {
+      Integer n = chineseToInt(sqzh.group(1));
+      if (n != null && n >= 2 && n <= 4) {
+        return Optional.of(buildSquarer(n));
+      }
+    }
+    Matcher sqen = SQUARE_EN.matcher(t);
+    if (sqen.find()) {
+      int n = Integer.parseInt(sqen.group(1));
+      if (n >= 2 && n <= 4) {
+        return Optional.of(buildSquarer(n));
+      }
+    }
+    if (SQUARE_ZH_BARE.matcher(t).find() || SQUARE_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildSquarer(4));
+    }
+    // Edge detector (边沿检测器) — sequential pulse on signal transitions.
+    if (EDGE_ZH.matcher(t).find() || EDGE_EN.matcher(t).find()) {
+      return Optional.of(buildEdgeDetector());
+    }
+    // One-shot pulse generator (单脉冲/单稳态). Guard "脉冲发生器" against the
+    // frequency-divider and clock paths that also mention pulses.
+    Matcher osZH = ONESHOT_ZH.matcher(t);
+    Matcher osEN = ONESHOT_EN.matcher(t);
+    if (osZH.find()) {
+      String g = osZH.group(1);
+      if (g != null) {
+        Integer n = chineseToInt(g);
+        if (n != null && n >= 1 && n <= 16) {
+          return Optional.of(buildOneShot(n));
+        }
+      }
+      return Optional.of(buildOneShot(4));
+    }
+    if (osEN.find()) {
+      if (osEN.group(1) != null) {
+        int n = Integer.parseInt(osEN.group(1));
+        if (n >= 1 && n <= 16) {
+          return Optional.of(buildOneShot(n));
+        }
+      }
+      return Optional.of(buildOneShot(4));
+    }
+    // Debouncer (消抖/防抖).
+    if (DEBOUNCE_ZH.matcher(t).find() || DEBOUNCE_EN.matcher(t).find()) {
+      return Optional.of(buildDebouncer());
+    }
+    // N-bit multiply-accumulate (乘累加器 / MAC): ACC += A*B per clock edge.
+    // Checked BEFORE the accumulator so "乘累加器" (which contains "累加器")
+    // builds the MAC, not the plain accumulator.
+    Matcher macZH = MAC_ZH.matcher(t);
+    Matcher macEN = MAC_EN.matcher(t);
+    if (macZH.find()) {
+      Integer n = chineseToInt(macZH.group(1));
+      if (n != null && n >= 2 && n <= 4) {
+        return Optional.of(buildMac(n));
+      }
+      return Optional.of(buildMac(4));
+    }
+    if (macEN.find()) {
+      if (macEN.group(1) != null) {
+        int n = Integer.parseInt(macEN.group(1));
+        if (n >= 2 && n <= 4) {
+          return Optional.of(buildMac(n));
+        }
+      }
+      return Optional.of(buildMac(4));
+    }
+    // N-bit accumulator (累加器).
+    Matcher acczh = ACCUM_ZH.matcher(t);
+    if (acczh.find()) {
+      Integer n = chineseToInt(acczh.group(1));
+      if (n != null && n >= 2 && n <= 8) {
+        return Optional.of(buildAccumulator(n));
+      }
+    }
+    Matcher accen = ACCUM_EN.matcher(t);
+    if (accen.find()) {
+      int n = Integer.parseInt(accen.group(1));
+      if (n >= 2 && n <= 8) {
+        return Optional.of(buildAccumulator(n));
+      }
+    }
+    if (ACCUM_ZH_BARE.matcher(t).find() || ACCUM_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildAccumulator(4));
     }
     Matcher mul = MUL_ZH.matcher(t);
     Matcher mul2 = MUL_ZH2.matcher(t);
@@ -269,10 +530,21 @@ public final class StructuralCircuitTemplates {
       }
     }
     if (mulEn.find()) {
-      int a = Integer.parseInt(mulEn.group(1));
-      int b = Integer.parseInt(mulEn.group(2));
-      if (a == b) {
-        return Optional.of(buildMultiplier(a));
+      // "NxN multiplier" -> group(1),group(2); "N bit multiplier" -> group(3)
+      String ga = mulEn.group(1);
+      String gb = mulEn.group(2);
+      String gbits = mulEn.group(3);
+      if (ga != null && gb != null) {
+        int a = Integer.parseInt(ga);
+        int b = Integer.parseInt(gb);
+        if (a == b) {
+          return Optional.of(buildMultiplier(a));
+        }
+      } else if (gbits != null) {
+        int n = Integer.parseInt(gbits);
+        if (n >= 1 && n <= 8) {
+          return Optional.of(buildMultiplier(n));
+        }
       }
     }
     Matcher subzh = SUB_ZH.matcher(t);
@@ -286,8 +558,38 @@ public final class StructuralCircuitTemplates {
     if (suben.find()) {
       return Optional.of(buildSubtractor(Integer.parseInt(suben.group(1))));
     }
+    if (BCDADD2_ZH.matcher(t).find() || BCDADD2_EN.matcher(t).find()) {
+      return Optional.of(buildBcdAdder2Digit());
+    }
     if (BCDADD_ZH.matcher(t).find() || BCDADD_EN.matcher(t).find()) {
       return Optional.of(buildBcdAdder());
+    }
+    // BCD subtractor must precede the generic 减法器 match below so
+    // "BCD减法器"/"8421减法" route here, not to the binary subtractor.
+    if (BCDSUB2_ZH.matcher(t).find() || BCDSUB2_EN.matcher(t).find()) {
+      return Optional.of(buildBcdSubtractor2Digit());
+    }
+    if (BCDSUB_ZH.matcher(t).find() || BCDSUB_EN.matcher(t).find()) {
+      return Optional.of(buildBcdSubtractor());
+    }
+    // Saturating adder (checked before the plain adder so "饱和加法器" builds
+    // the saturating variant, not adder_4bit).
+    Matcher satzh = SATADD_ZH.matcher(t);
+    if (satzh.find()) {
+      Integer n = chineseToInt(satzh.group(1));
+      if (n != null && n >= 2 && n <= 8) {
+        return Optional.of(buildSaturatingAdder(n));
+      }
+    }
+    Matcher saten = SATADD_EN.matcher(t);
+    if (saten.find()) {
+      int n = Integer.parseInt(saten.group(1));
+      if (n >= 2 && n <= 8) {
+        return Optional.of(buildSaturatingAdder(n));
+      }
+    }
+    if (SATADD_ZH_BARE.matcher(t).find() || SATADD_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildSaturatingAdder(4));
     }
     Matcher zh = ADDER_ZH.matcher(t);
     Matcher en = ADDER_EN.matcher(t);
@@ -370,7 +672,20 @@ public final class StructuralCircuitTemplates {
       }
     }
     if (dmen.find()) {
-      return Optional.of(buildDemux(Integer.parseInt(dmen.group(1))));
+      // "N way demux" -> group(1); "1 to N demux" -> group(2); bare demux -> 4
+      String g1 = dmen.group(1);
+      String g2 = dmen.group(2);
+      int n;
+      if (g1 != null) {
+        n = Integer.parseInt(g1);
+      } else if (g2 != null) {
+        n = Integer.parseInt(g2);
+      } else {
+        n = 4;
+      }
+      if (n >= 2 && n <= 16) {
+        return Optional.of(buildDemux(n));
+      }
     }
     // BCD / decade counter (mod-10). Must precede the 74161 binary counter
     // and its bare "计数器" fallback below.
@@ -487,6 +802,27 @@ public final class StructuralCircuitTemplates {
     if (DLATCH_ZH.matcher(t).find() || DLATCH_EN.matcher(t).find()) {
       return Optional.of(buildDLatch());
     }
+    // Gray-code COUNTER (格雷码计数器) — checked BEFORE the converters so the
+    // "计数器" wording builds the sequential counter, not the combinational
+    // binary→gray converter.
+    Matcher gcZH = GRAYCNT_ZH.matcher(t);
+    Matcher gcEN = GRAYCNT_EN.matcher(t);
+    if (gcZH.find()) {
+      String g = gcZH.group(1);
+      if (g != null) {
+        Integer bits = chineseToInt(g);
+        if (bits != null) {
+          return Optional.of(buildGrayCounter(bits));
+        }
+      }
+      return Optional.of(buildGrayCounter(4));
+    }
+    if (gcEN.find()) {
+      if (gcEN.group(1) != null) {
+        return Optional.of(buildGrayCounter(Integer.parseInt(gcEN.group(1))));
+      }
+      return Optional.of(buildGrayCounter(4));
+    }
     // Gray → Binary reverse converter (格雷码转二进制 / gray to binary).
     Matcher g2bzh = G2B_ZH.matcher(t);
     Matcher g2ben = G2B_EN.matcher(t);
@@ -530,6 +866,11 @@ public final class StructuralCircuitTemplates {
       if (GRAY_ZH_BARE.matcher(t).find() || GRAY_EN_BARE.matcher(t).find()) {
         return Optional.of(buildGrayCode(4));
       }
+    }
+    // Excess-3 ADDER (余3码加法器) — checked before the converter so the
+    // "加法器" wording builds the adder, not the BCD→excess-3 converter.
+    if (E3ADD_ZH.matcher(t).find() || E3ADD_EN.matcher(t).find()) {
+      return Optional.of(buildExcess3Adder());
     }
     // BCD → excess-3 (余3码). Guard the inverse "余3码转8421 / to bcd".
     if (!t.contains("转8421") && !t.contains("to bcd")) {
@@ -603,7 +944,11 @@ public final class StructuralCircuitTemplates {
       }
     }
     if (shren.find()) {
-      return Optional.of(buildShiftRegister(Integer.parseInt(shren.group(1))));
+      // "N bit shift register" -> group(1); bare "shift register" -> 4 bits
+      if (shren.group(1) != null) {
+        return Optional.of(buildShiftRegister(Integer.parseInt(shren.group(1))));
+      }
+      return Optional.of(buildShiftRegister(4));
     }
     if (SHIFTREG_ZH_BARE.matcher(t).find()) {
       return Optional.of(buildShiftRegister(4));
@@ -656,6 +1001,124 @@ public final class StructuralCircuitTemplates {
     // Tri-state buffer (native TTL 74125 gate 1)
     if (TSB_ZH.matcher(t).find() || TSB_EN.matcher(t).find()) {
       return Optional.of(buildTriStateBuffer());
+    }
+    // N-bit ALU: 4 function select lines S1S0; 00=AND 01=OR 10=ADD 11=SUB.
+    Matcher aluzh = ALU_ZH.matcher(t);
+    Matcher aluen = ALU_EN.matcher(t);
+    if (aluzh.find()) {
+      Integer bits = chineseToInt(aluzh.group(1));
+      if (bits != null) {
+        return Optional.of(buildAlu(bits));
+      }
+    }
+    if (aluen.find()) {
+      return Optional.of(buildAlu(Integer.parseInt(aluen.group(1))));
+    }
+    if (ALU_ZH_BARE.matcher(t).find() || ALU_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildAlu(4));
+    }
+    // N-bit barrel shifter (logical left shift by SH). Bare queries default to 4.
+    Matcher barrelzh = BARREL_ZH.matcher(t);
+    Matcher barrelen = BARREL_EN.matcher(t);
+    if (barrelzh.find()) {
+      Integer n = chineseToInt(barrelzh.group(1));
+      if (n != null && n >= 2 && n <= 8) {
+        return Optional.of(buildBarrelShifter(n));
+      }
+    }
+    if (barrelen.find()) {
+      int n = Integer.parseInt(barrelen.group(1));
+      if (n >= 2 && n <= 8) {
+        return Optional.of(buildBarrelShifter(n));
+      }
+    }
+    if (BARREL_ZH_BARE.matcher(t).find() || BARREL_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildBarrelShifter(4));
+    }
+    // N-bit rotate shifter (循环移位器): rotate by SH, wrap-around (no gnd needed).
+    Matcher rotrightzh = ROTATE_RIGHT_ZH.matcher(t);
+    if (rotrightzh.find()) {
+      Integer n = chineseToInt(rotrightzh.group(1));
+      if (n != null && n >= 2 && n <= 8) {
+        return Optional.of(buildRotateShifter(n, false));
+      }
+    }
+    Matcher rotzh = ROTATE_ZH.matcher(t);
+    if (rotzh.find()) {
+      Integer n = chineseToInt(rotzh.group(1));
+      if (n != null && n >= 2 && n <= 8) {
+        return Optional.of(buildRotateShifter(n, true));
+      }
+    }
+    Matcher roten = ROTATE_EN.matcher(t);
+    if (roten.find()) {
+      int n = Integer.parseInt(roten.group(1));
+      if (n >= 2 && n <= 8) {
+        String dir = roten.group(2) != null ? roten.group(2) : roten.group(3);
+        boolean left = dir == null || dir.equalsIgnoreCase("left");
+        return Optional.of(buildRotateShifter(n, left));
+      }
+    }
+    if (ROTATE_ZH_BARE.matcher(t).find() || ROTATE_EN_BARE.matcher(t).find()) {
+      // Bare rotate defaults left unless the query says 右/right.
+      boolean left = !t.contains("右") && !t.contains("right");
+      return Optional.of(buildRotateShifter(4, left));
+    }
+    // N-bit arithmetic right shift (算术右移): sign fill (checked before LSR so
+    // "算术右移" never falls through to the bare LSR "右移" branch).
+    Matcher sarzh = SAR_ZH.matcher(t);
+    if (sarzh.find()) {
+      Integer n = chineseToInt(sarzh.group(1));
+      if (n != null && n >= 2 && n <= 8) {
+        return Optional.of(buildArithmeticShiftRight(n));
+      }
+    }
+    Matcher saren = SAR_EN.matcher(t);
+    if (saren.find()) {
+      int n = Integer.parseInt(saren.group(1));
+      if (n >= 2 && n <= 8) {
+        return Optional.of(buildArithmeticShiftRight(n));
+      }
+    }
+    if (SAR_ZH_BARE.matcher(t).find() || SAR_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildArithmeticShiftRight(4));
+    }
+    // N-bit logical right shift (逻辑右移): zero fill.
+    Matcher lsrzh = LSR_ZH.matcher(t);
+    if (lsrzh.find()) {
+      Integer n = chineseToInt(lsrzh.group(1));
+      if (n != null && n >= 2 && n <= 8) {
+        return Optional.of(buildLogicalShiftRight(n));
+      }
+    }
+    Matcher lsren = LSR_EN.matcher(t);
+    if (lsren.find()) {
+      int n = Integer.parseInt(lsren.group(1));
+      if (n >= 2 && n <= 8) {
+        return Optional.of(buildLogicalShiftRight(n));
+      }
+    }
+    if (LSR_ZH_BARE.matcher(t).find() || LSR_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildLogicalShiftRight(4));
+    }
+    // N-bit unsigned restoring divider (除法器). Checked after 分频器/frequency
+    // divider (DIVIDER_*) so those keep their sequential meaning.
+    Matcher divizh = DIVISION_ZH.matcher(t);
+    if (divizh.find()) {
+      Integer n = chineseToInt(divizh.group(1));
+      if (n != null && n >= 2 && n <= 4) {
+        return Optional.of(buildArithmeticDivider(n));
+      }
+    }
+    Matcher divien = DIVISION_EN.matcher(t);
+    if (divien.find()) {
+      int n = Integer.parseInt(divien.group(1));
+      if (n >= 2 && n <= 4) {
+        return Optional.of(buildArithmeticDivider(n));
+      }
+    }
+    if (DIVISION_ZH_BARE.matcher(t).find() || DIVISION_EN_BARE.matcher(t).find()) {
+      return Optional.of(buildArithmeticDivider(4));
     }
     return Optional.empty();
   }
@@ -917,6 +1380,502 @@ public final class StructuralCircuitTemplates {
       nets.add(net("reg_q" + i, e(g, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("register_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit accumulator (累加器): ACC ← ACC + A on each rising clock edge.
+   * N D flip-flops + an N-bit ripple adder; adder sum feeds the flip-flop D
+   * inputs, flip-flop Q feeds the adder B side and the Q outputs. Shared CLK,
+   * RST (async reset) and a GND pin for the constant-0 carry lanes.
+   * Port map per flip-flop: end0=D, end1=CLK, end2=Q, end3=nQ, end4=reset.
+   */
+  static CircuitSpec buildAccumulator(int bits) {
+    if (bits < 2 || bits > 8) {
+      throw new IllegalArgumentException("Accumulator width must be 2..8, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+
+    addClockInput(ports, "clk", "CLK", "acc_ff0");
+    addInput(ports, "rst", "RST", "acc_ff0");
+    addInput(ports, "gnd", "GND", "acc_ff0");
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "acc_ff0");
+      addOutput(ports, "q" + i, "Q" + i, "acc_ff0");
+    }
+    for (int i = 0; i < bits; i++) {
+      components.add(new ComponentSpec("acc_ff" + i, "Memory", "D Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint("acc_ff" + i, i, 0, 0, null));
+    }
+
+    // Ripple adder: sum[i] = a[i] + q[i] + carry; carry chain via fg.
+    String[] sum = new String[bits];
+    String c = "gnd";
+    for (int i = 0; i < bits; i++) {
+      String x = "acc_x" + seq;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "AX" + (seq + 1)));
+      hints.add(new LayoutHint(x, 1, 0, i, null));
+      String s = "acc_s" + seq;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "AS" + (seq + 1)));
+      hints.add(new LayoutHint(s, 1, 0, i, null));
+      String fa = "acc_fa" + seq;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "AA" + (seq + 1)));
+      hints.add(new LayoutHint(fa, 1, 0, i, null));
+      String fb = "acc_fb" + seq;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "AB" + (seq + 1)));
+      hints.add(new LayoutHint(fb, 1, 0, i, null));
+      String fo = "acc_fo" + seq;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "AO" + (seq + 1)));
+      hints.add(new LayoutHint(fo, 1, 0, i, null));
+      String fg = "acc_fg" + seq;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "AG" + (seq + 1)));
+      hints.add(new LayoutHint(fg, 1, 0, i, null));
+      seq++;
+      nets.add(net("acc_xa" + seq, e("a" + i, 0), e(x, 1)));
+      nets.add(net("acc_xb" + seq, e("acc_ff" + i, 2), e(x, 2)));
+      nets.add(net("acc_sa" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("acc_sb" + seq, e(c, 0), e(s, 2)));
+      sum[i] = s;
+      nets.add(net("acc_faa" + seq, e("a" + i, 0), e(fa, 1)));
+      nets.add(net("acc_fab" + seq, e("acc_ff" + i, 2), e(fa, 2)));
+      nets.add(net("acc_fba" + seq, e(c, 0), e(fb, 1)));
+      nets.add(net("acc_fbb" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("acc_fo1" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("acc_fo2" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("acc_fg1" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("acc_fg2" + seq, e("gnd", 0), e(fg, 2)));
+      c = fg;
+    }
+    // Connect flip-flops: D = sum, CLK = clk, RST = rst, Q -> output pins.
+    for (int i = 0; i < bits; i++) {
+      nets.add(net("acc_d" + i, e(sum[i], 0), e("acc_ff" + i, 0)));
+      nets.add(net("acc_clk" + i, e("clk", 0), e("acc_ff" + i, 1)));
+      nets.add(net("acc_rst" + i, e("rst", 0), e("acc_ff" + i, 4)));
+      nets.add(net("acc_q" + i, e("acc_ff" + i, 2), e("q" + i, 0)));
+    }
+
+    return new CircuitSpec("accumulator_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit multiply-accumulate (乘累加器 / MAC): ACC += A*B on every clock
+   * edge. Product A*B is built as 2N-bit ripple adder over partial products;
+   * the accumulation adder adds the product to the FF feedback. FF port map:
+   * end0=D, end1=CLK, end2=Q, end3=nQ, end4=reset.
+   */
+  static CircuitSpec buildMac(int bits) {
+    if (bits < 2 || bits > 4) {
+      throw new IllegalArgumentException("MAC width must be 2..4, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+    int outBits = 2 * bits;
+
+    addClockInput(ports, "clk", "CLK", "mac_ff0");
+    addInput(ports, "rst", "RST", "mac_ff0");
+    addInput(ports, "gnd", "GND", "mac_ff0");
+    for (int j = 0; j < bits; j++) {
+      addInput(ports, "a" + j, "A" + j, "mac_ff0");
+    }
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "b" + i, "B" + i, "mac_ff0");
+    }
+    for (int k = 0; k < outBits; k++) {
+      addOutput(ports, "q" + k, "Q" + k, "mac_ff" + k);
+    }
+
+    // Accumulator flip-flops.
+    for (int k = 0; k < outBits; k++) {
+      components.add(new ComponentSpec("mac_ff" + k, "Memory", "D Flip-Flop", 1, "U" + (k + 1)));
+      hints.add(new LayoutHint("mac_ff" + k, 0, 0, k, null));
+    }
+
+    // Partial products pp[i][j] = A[j] AND B[i].
+    String[][] pp = new String[bits][bits];
+    for (int i = 0; i < bits; i++) {
+      for (int j = 0; j < bits; j++) {
+        String g = "mac_p" + seq;
+        components.add(new ComponentSpec(g, "Gates", "AND Gate", 1, "MACP" + (seq + 1)));
+        hints.add(new LayoutHint(g, 1, 0, i, null));
+        nets.add(net("mac_pa" + seq, e("a" + j, 0), e(g, 1)));
+        nets.add(net("mac_pb" + seq, e("b" + i, 0), e(g, 2)));
+        pp[i][j] = g;
+        seq++;
+      }
+    }
+
+    // Product P = A*B: ripple-adder stages over shifted partial products.
+    String[] prod = new String[outBits];
+    String[] acc = new String[bits];
+    for (int k = 0; k < bits; k++) {
+      acc[k] = pp[0][k];
+    }
+    for (int i = 1; i < bits; i++) {
+      int accBits = acc.length;
+      int stageBits = accBits + 2;
+      String[] nacc = new String[stageBits];
+      String cin = null;
+      for (int k = 0; k < stageBits; k++) {
+        if (k < i) {
+          nacc[k] = acc[k];
+          continue;
+        }
+        String a = k < accBits ? acc[k] : "gnd";
+        int pj = k - i;
+        String b = (pj >= 0 && pj < bits) ? pp[i][pj] : "gnd";
+        String cinSig = cin == null ? "gnd" : cin;
+        String x = "mac_x" + seq;
+        components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "MACX" + (seq + 1)));
+        hints.add(new LayoutHint(x, 2 + i, 0, k, null));
+        String s = "mac_s" + seq;
+        components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "MACS" + (seq + 1)));
+        hints.add(new LayoutHint(s, 2 + i, 0, k, null));
+        String fa = "mac_f" + seq;
+        components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "MACA" + (seq + 1)));
+        hints.add(new LayoutHint(fa, 2 + i, 0, k, null));
+        String fb = "mac_b" + seq;
+        components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "MACB" + (seq + 1)));
+        hints.add(new LayoutHint(fb, 2 + i, 0, k, null));
+        String fo = "mac_o" + seq;
+        components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "MACO" + (seq + 1)));
+        hints.add(new LayoutHint(fo, 2 + i, 0, k, null));
+        String fg = "mac_g" + seq;
+        components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "MACG" + (seq + 1)));
+        hints.add(new LayoutHint(fg, 2 + i, 0, k, null));
+        seq++;
+        nets.add(net("mac_xa" + seq, e(a, 0), e(x, 1)));
+        nets.add(net("mac_xb" + seq, e(b, 0), e(x, 2)));
+        nets.add(net("mac_sa" + seq, e(x, 0), e(s, 1)));
+        nets.add(net("mac_sb" + seq, e(cinSig, 0), e(s, 2)));
+        nacc[k] = s;
+        nets.add(net("mac_fa" + seq, e(a, 0), e(fa, 1)));
+        nets.add(net("mac_fb" + seq, e(b, 0), e(fa, 2)));
+        nets.add(net("mac_ga" + seq, e(cinSig, 0), e(fb, 1)));
+        nets.add(net("mac_gb" + seq, e(x, 0), e(fb, 2)));
+        nets.add(net("mac_o1" + seq, e(fa, 0), e(fo, 1)));
+        nets.add(net("mac_o2" + seq, e(fb, 0), e(fo, 2)));
+        nets.add(net("mac_g1" + seq, e(fo, 0), e(fg, 1)));
+        nets.add(net("mac_g2" + seq, e("gnd", 0), e(fg, 2)));
+        cin = fg;
+      }
+      acc = nacc;
+    }
+    for (int k = 0; k < outBits; k++) {
+      prod[k] = acc[k];
+    }
+
+    // Accumulation: sum[k] = prod[k] + Q[k] + carry (ripple); FF D = sum.
+    String cin = null;
+    String[] sum = new String[outBits];
+    for (int k = 0; k < outBits; k++) {
+      String a = prod[k];
+      String b = "mac_ff" + k;
+      String cinSig = cin == null ? "gnd" : cin;
+      String x = "mac_y" + seq;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "MACY" + (seq + 1)));
+      hints.add(new LayoutHint(x, 3 + bits, 0, k, null));
+      String s = "mac_t" + seq;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "MACT" + (seq + 1)));
+      hints.add(new LayoutHint(s, 3 + bits, 0, k, null));
+      String fa = "mac_h" + seq;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "MACH" + (seq + 1)));
+      hints.add(new LayoutHint(fa, 3 + bits, 0, k, null));
+      String fb = "mac_i" + seq;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "MACI" + (seq + 1)));
+      hints.add(new LayoutHint(fb, 3 + bits, 0, k, null));
+      String fo = "mac_j" + seq;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "MACJ" + (seq + 1)));
+      hints.add(new LayoutHint(fo, 3 + bits, 0, k, null));
+      String fg = "mac_k" + seq;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "MACK" + (seq + 1)));
+      hints.add(new LayoutHint(fg, 3 + bits, 0, k, null));
+      seq++;
+      nets.add(net("mac_ya" + seq, e(a, 0), e(x, 1)));
+      nets.add(net("mac_yb" + seq, e(b, 2), e(x, 2)));
+      nets.add(net("mac_ta" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("mac_tb" + seq, e(cinSig, 0), e(s, 2)));
+      sum[k] = s;
+      nets.add(net("mac_ha" + seq, e(a, 0), e(fa, 1)));
+      nets.add(net("mac_hb" + seq, e(b, 2), e(fa, 2)));
+      nets.add(net("mac_ia" + seq, e(cinSig, 0), e(fb, 1)));
+      nets.add(net("mac_ib" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("mac_j1" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("mac_j2" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("mac_k1" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("mac_k2" + seq, e("gnd", 0), e(fg, 2)));
+      cin = fg;
+    }
+
+    // Connect flip-flops: D = sum, CLK, RST, Q -> output pins.
+    for (int k = 0; k < outBits; k++) {
+      nets.add(net("mac_d" + k, e(sum[k], 0), e("mac_ff" + k, 0)));
+      nets.add(net("mac_clk" + k, e("clk", 0), e("mac_ff" + k, 1)));
+      nets.add(net("mac_rst" + k, e("rst", 0), e("mac_ff" + k, 4)));
+      nets.add(net("mac_q" + k, e("mac_ff" + k, 2), e("q" + k, 0)));
+    }
+
+    return new CircuitSpec("mac_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * Edge detector (边沿检测器): a D-FF samples IN on each clock edge; the
+   * combinational block emits a one-clock pulse when IN differs from the
+   * previous sample. RISE = IN ∧ ¬Q (previous), FALL = ¬IN ∧ Q. Port maps:
+   * D-FF end0=D, end1=CLK, end2=Q, end4=reset; NOT end0=out/end1=in; AND
+   * end0=out/end1/end2=in.
+   */
+  static CircuitSpec buildEdgeDetector() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "ed_ff");
+    addInput(ports, "in", "IN", "ed_ff");
+    addInput(ports, "rst", "RST", "ed_ff");
+    addOutput(ports, "rise", "RISE", "ed_rise");
+    addOutput(ports, "fall", "FALL", "ed_fall");
+    components.add(new ComponentSpec("ed_ff", "Memory", "D Flip-Flop", 1, "U1"));
+    hints.add(new LayoutHint("ed_ff", 0, 0, 0, null));
+    String notQ = "ed_nq";
+    components.add(new ComponentSpec(notQ, "Gates", "NOT Gate", 1, "N1"));
+    hints.add(new LayoutHint(notQ, 1, 0, 0, null));
+    String notIn = "ed_ni";
+    components.add(new ComponentSpec(notIn, "Gates", "NOT Gate", 1, "N2"));
+    hints.add(new LayoutHint(notIn, 1, 0, 3, null));
+    String rise = "ed_rise";
+    components.add(new ComponentSpec(rise, "Gates", "AND Gate", 1, "A1"));
+    hints.add(new LayoutHint(rise, 1, 0, 1, null));
+    String fall = "ed_fall";
+    components.add(new ComponentSpec(fall, "Gates", "AND Gate", 1, "A2"));
+    hints.add(new LayoutHint(fall, 1, 0, 2, null));
+    nets.add(net("ed_d", e("in", 0), e("ed_ff", 0)));
+    nets.add(net("ed_clk", e("clk", 0), e("ed_ff", 1)));
+    nets.add(net("ed_rst", e("rst", 0), e("ed_ff", 4)));
+    nets.add(net("ed_nq_in", e("ed_ff", 2), e(notQ, 1)));
+    nets.add(net("ed_ni_in", e("in", 0), e(notIn, 1)));
+    nets.add(net("ed_rise_a", e("in", 0), e(rise, 1)));
+    nets.add(net("ed_rise_b", e(notQ, 0), e(rise, 2)));
+    nets.add(net("ed_fall_a", e("ed_ff", 2), e(fall, 1)));
+    nets.add(net("ed_fall_b", e(notIn, 0), e(fall, 2)));
+    nets.add(net("ed_rise_o", e(rise, 0), e("rise", 0)));
+    nets.add(net("ed_fall_o", e(fall, 0), e("fall", 0)));
+    return new CircuitSpec("edge_detector", components, ports, nets, hints);
+  }
+
+  /**
+   * One-shot pulse generator (单脉冲/单稳态): a TRIG rising edge starts a
+   * window counter; PULSE stays high until the counter reaches N (N clock
+   * cycles wide). Retriggerable: a fresh TRIG edge while PULSE is high
+   * restarts the window. D-FF end0=D, end1=CLK, end2=Q, end4=reset; XOR/AND
+   * end0=out/end1..=in; NOT end0=out/end1=in.
+   */
+  static CircuitSpec buildOneShot(int cycles) {
+    if (cycles < 1 || cycles > 16) {
+      throw new IllegalArgumentException("One-shot width must be 1..16, got " + cycles);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+    addClockInput(ports, "clk", "CLK", "os_s");
+    addInput(ports, "trig", "TRIG", "os_s");
+    addInput(ports, "rst", "RST", "os_s");
+    addInput(ports, "gnd", "GND", "os_s");
+    addOutput(ports, "pulse", "PULSE", "os_run");
+
+    // Sample TRIG into a D-FF; rising edge = TRIG & !Qprev.
+    String s = "os_s";
+    components.add(new ComponentSpec(s, "Memory", "D Flip-Flop", 1, "U1"));
+    hints.add(new LayoutHint(s, 0, 0, 0, null));
+    String nq = "os_nq";
+    components.add(new ComponentSpec(nq, "Gates", "NOT Gate", 1, "N1"));
+    hints.add(new LayoutHint(nq, 1, 0, 0, null));
+    String rise = "os_rise";
+    components.add(new ComponentSpec(rise, "Gates", "AND Gate", 1, "A1"));
+    hints.add(new LayoutHint(rise, 1, 0, 1, null));
+    nets.add(net("os_sd", e("trig", 0), e(s, 0)));
+    nets.add(net("os_sclk", e("clk", 0), e(s, 1)));
+    nets.add(net("os_srst", e("rst", 0), e(s, 4)));
+    nets.add(net("os_nqi", e(s, 2), e(nq, 1)));
+    nets.add(net("os_risea", e("trig", 0), e(rise, 1)));
+    nets.add(net("os_riseb", e(nq, 0), e(rise, 2)));
+    seq++;
+
+    // Window counter: binary counter CNT 0..cycles-1 gated by RUN.
+    // RUN D-FF: D = RISE | (RUN & !DONE); DONE = (CNT == cycles-1).
+    String run = "os_run";
+    components.add(new ComponentSpec(run, "Memory", "D Flip-Flop", 1, "U2"));
+    hints.add(new LayoutHint(run, 0, 0, 1, null));
+    // DONE = AND over counter bits that are 1 at cycles-1.
+    int bits = 0;
+    int v = cycles - 1;
+    while (v > 0) {
+      bits++;
+      v >>= 1;
+    }
+    String[] cnt = new String[bits];
+    for (int i = 0; i < bits; i++) {
+      String ff = "os_c" + i;
+      components.add(new ComponentSpec(ff, "Memory", "D Flip-Flop", 1, "UC" + (i + 1)));
+      hints.add(new LayoutHint(ff, 0, 0, 2 + i, null));
+      cnt[i] = ff;
+      String x = "os_x" + seq;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "X" + (seq + 1)));
+      hints.add(new LayoutHint(x, 2, 0, i, null));
+      String en = "os_en" + seq;
+      components.add(new ComponentSpec(en, "Gates", "AND Gate", 1, "EA" + (seq + 1)));
+      hints.add(new LayoutHint(en, 2, 0, i + bits, null));
+      // cnt_i' = RUN & (cnt_i XOR (AND of lower cnt bits))
+      if (i == 0) {
+        // toggle every cycle while RUN: xor with constant 1 via NOT(gnd)
+        String one = "os_one" + seq;
+        components.add(new ComponentSpec(one, "Gates", "NOT Gate", 1, "NO" + (seq + 1)));
+        hints.add(new LayoutHint(one, 1, 0, i + 2 * bits + 1, null));
+        nets.add(net("os_one_in" + seq, e("gnd", 0), e(one, 1)));
+        nets.add(net("os_xa" + seq, e(ff, 2), e(x, 1)));
+        nets.add(net("os_xb" + seq, e(one, 0), e(x, 2)));
+      } else if (i == 1) {
+        // lower product = cnt[0] (no AND gate needed for the first stage)
+        nets.add(net("os_xa" + seq, e(ff, 2), e(x, 1)));
+        nets.add(net("os_xb" + seq, e(cnt[0], 2), e(x, 2)));
+      } else {
+        String andLower = "os_l" + seq;
+        components.add(new ComponentSpec(andLower, "Gates", "AND Gate", 1, "LA" + (seq + 1)));
+        hints.add(new LayoutHint(andLower, 2, 0, i + 2 * bits, null));
+        nets.add(net("os_la" + seq, e(cnt[i - 1], 2), e(andLower, 1)));
+        nets.add(net("os_lb" + seq, e(cnt[i - 2], 2), e(andLower, 2)));
+        nets.add(net("os_xa" + seq, e(ff, 2), e(x, 1)));
+        nets.add(net("os_xb" + seq, e(andLower, 0), e(x, 2)));
+      }
+      nets.add(net("os_xo" + seq, e(x, 0), e(en, 1)));
+      nets.add(net("os_ena" + seq, e(run, 2), e(en, 2)));
+      nets.add(net("os_enb" + seq, e(en, 0), e(ff, 0)));
+      nets.add(net("os_clk" + seq, e("clk", 0), e(ff, 1)));
+      nets.add(net("os_rst" + seq, e("rst", 0), e(ff, 4)));
+      seq++;
+    }
+    // DONE: AND of the counter bits equal to (cycles-1) — implement as a chain
+    // over the required-bit mask. For simplicity require a full count to all-1
+    // by adding an AND over all bits when cycles is a power of two minus one;
+    // otherwise compare via a mask built from NOTs of zero-bits.
+    String done = buildDoneMask(components, nets, hints, cnt, bits, cycles - 1, seq);
+    seq++;
+    // RUN' = RISE | (RUN & !DONE)
+    String nd = "os_nd";
+    components.add(new ComponentSpec(nd, "Gates", "NOT Gate", 1, "ND"));
+    hints.add(new LayoutHint(nd, 3, 0, 0, null));
+    String keep = "os_keep";
+    components.add(new ComponentSpec(keep, "Gates", "AND Gate", 1, "KA"));
+    hints.add(new LayoutHint(keep, 3, 0, 1, null));
+    String rset = "os_rset";
+    components.add(new ComponentSpec(rset, "Gates", "OR Gate", 1, "OR1"));
+    hints.add(new LayoutHint(rset, 3, 0, 2, null));
+    nets.add(net("os_ndi", e(done, 0), e(nd, 1)));
+    nets.add(net("os_keepa", e(run, 2), e(keep, 1)));
+    nets.add(net("os_keepb", e(nd, 0), e(keep, 2)));
+    nets.add(net("os_rseta", e(rise, 0), e(rset, 1)));
+    nets.add(net("os_rsetb", e(keep, 0), e(rset, 2)));
+    nets.add(net("os_rund", e(rset, 0), e(run, 0)));
+    nets.add(net("os_runclk", e("clk", 0), e(run, 1)));
+    nets.add(net("os_runrst", e("rst", 0), e(run, 4)));
+    nets.add(net("os_pulse", e(run, 2), e("pulse", 0)));
+    return new CircuitSpec("oneshot_" + cycles + "clk", components, ports, nets, hints);
+  }
+
+  /** Build an AND-chain that is 1 when the counter equals mask (used as DONE). */
+  private static String buildDoneMask(
+      List<ComponentSpec> components, List<NetSpec> nets, List<LayoutHint> hints,
+      String[] cnt, int bits, int mask, int seq) {
+    if (bits == 0) {
+      return "gnd";
+    }
+    List<String> terms = new ArrayList<>();
+    for (int i = 0; i < bits; i++) {
+      boolean want = ((mask >> i) & 1) == 1;
+      if (want) {
+        terms.add(cnt[i]);
+      } else {
+        String n = "os_dn" + seq + "_" + i;
+        components.add(new ComponentSpec(n, "Gates", "NOT Gate", 1, "DN" + (seq + 1) + "_" + i));
+        hints.add(new LayoutHint(n, 3, 0, 3 + i, null));
+        nets.add(net("os_dn_in" + seq + "_" + i, e(cnt[i], 2), e(n, 1)));
+        terms.add(n);
+      }
+    }
+    if (terms.size() == 1) {
+      return terms.get(0);
+    }
+    String acc = terms.get(0);
+    for (int i = 1; i < terms.size(); i++) {
+      String a = "os_dm" + seq + "_" + i;
+      components.add(new ComponentSpec(a, "Gates", "AND Gate", 1, "DM" + (seq + 1) + "_" + i));
+      hints.add(new LayoutHint(a, 3, 0, 4 + i, null));
+      nets.add(net("os_dm_a" + seq + "_" + i, e(acc, 2), e(a, 1)));
+      nets.add(net("os_dm_b" + seq + "_" + i, e(terms.get(i), 2), e(a, 2)));
+      acc = a;
+    }
+    return acc;
+  }
+
+  /**
+   * Debouncer (消抖): a 3-stage shift register samples IN each clock; a
+   * majority-of-3 vote passes IN only when it has been stable for 2+
+   * consecutive samples, rejecting single-cycle glitches. Port maps: D-FF
+   * end0=D, end1=CLK, end2=Q, end4=reset; AND/OR end0=out/end1..=in.
+   */
+  static CircuitSpec buildDebouncer() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "db0");
+    addInput(ports, "in", "IN", "db0");
+    addInput(ports, "rst", "RST", "db0");
+    addOutput(ports, "out", "OUT", "db_out");
+    for (int i = 0; i < 3; i++) {
+      components.add(new ComponentSpec("db" + i, "Memory", "D Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint("db" + i, i, 0, 0, null));
+      nets.add(net("db_clk" + i, e("clk", 0), e("db" + i, 1)));
+      nets.add(net("db_rst" + i, e("rst", 0), e("db" + i, 4)));
+    }
+    nets.add(net("db_d0", e("in", 0), e("db0", 0)));
+    nets.add(net("db_d1", e("db0", 2), e("db1", 0)));
+    nets.add(net("db_d2", e("db1", 2), e("db2", 0)));
+    // majority(d0,d1,d2) = (d0&d1)|(d0&d2)|(d1&d2)
+    String ab = "db_ab";
+    components.add(new ComponentSpec(ab, "Gates", "AND Gate", 1, "A1"));
+    String ac = "db_ac";
+    components.add(new ComponentSpec(ac, "Gates", "AND Gate", 1, "A2"));
+    String bc = "db_bc";
+    components.add(new ComponentSpec(bc, "Gates", "AND Gate", 1, "A3"));
+    String abac = "db_abac";
+    components.add(new ComponentSpec(abac, "Gates", "OR Gate", 1, "O1"));
+    String out = "db_out";
+    components.add(new ComponentSpec(out, "Gates", "OR Gate", 1, "O2"));
+    hints.add(new LayoutHint(ab, 2, 0, 0, null));
+    hints.add(new LayoutHint(ac, 2, 0, 1, null));
+    hints.add(new LayoutHint(bc, 2, 0, 2, null));
+    hints.add(new LayoutHint(abac, 3, 0, 0, null));
+    hints.add(new LayoutHint(out, 3, 0, 1, null));
+    nets.add(net("db_ab_a", e("db0", 2), e(ab, 1)));
+    nets.add(net("db_ab_b", e("db1", 2), e(ab, 2)));
+    nets.add(net("db_ac_a", e("db0", 2), e(ac, 1)));
+    nets.add(net("db_ac_b", e("db2", 2), e(ac, 2)));
+    nets.add(net("db_bc_a", e("db1", 2), e(bc, 1)));
+    nets.add(net("db_bc_b", e("db2", 2), e(bc, 2)));
+    nets.add(net("db_o1a", e(ab, 0), e(abac, 1)));
+    nets.add(net("db_o1b", e(ac, 0), e(abac, 2)));
+    nets.add(net("db_o2a", e(abac, 0), e(out, 1)));
+    nets.add(net("db_o2b", e(bc, 0), e(out, 2)));
+    nets.add(net("db_out", e(out, 0), e("out", 0)));
+    return new CircuitSpec("debouncer", components, ports, nets, hints);
   }
 
   /**
@@ -1790,8 +2749,7 @@ public final class StructuralCircuitTemplates {
       components.add(new ComponentSpec(g, "Gates", "XOR Gate", 1, "U" + (i + 1)));
       hints.add(new LayoutHint(g, i, 0, 0, null));
       nets.add(net("gx" + i + "_a", e("b" + i, 0), e(g, 1)));
-      nets.add(net("gx" + i + "_b", e("b" + (i + 1), 0), e(g, 2)));
-      nets.add(net("gx" + i + "_o", e(g, 0), e("g" + i, 0)));
+      nets.add(net("gx" + i + "_b", e("b" + (i + 1), 0), e(g, 2)));      nets.add(net("gx" + i + "_o", e(g, 0), e("g" + i, 0)));
     }
     nets.add(net("gx_msb", e("b" + (bits - 1), 0), e("g" + (bits - 1), 0)));
     return new CircuitSpec("gray_" + bits + "bit", components, ports, nets, hints);
@@ -1826,6 +2784,84 @@ public final class StructuralCircuitTemplates {
     }
     nets.add(net("g2b_msb", e("g" + (bits - 1), 0), e("b" + (bits - 1), 0)));
     return new CircuitSpec("gray2bin_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit Gray-code counter (格雷码计数器): binary ripple counter whose outputs
+   * are presented as Gray code. FF0 toggles every clock (D=¬Q0); FFi toggles
+   * when all lower bits are 1 (D = Qi XOR carry, carry = AND chain). Gray
+   * outputs G_i = Q_i XOR Q_{i+1} (MSB passes through). Port map per
+   * flip-flop: end0=D, end1=CLK, end2=Q, end3=nQ, end4=reset. Carry chain uses
+   * the Q outputs (endIndex 2), never the D inputs.
+   */
+  static CircuitSpec buildGrayCounter(int bits) {
+    if (bits < 1 || bits > 32) {
+      throw new IllegalArgumentException("Gray counter width must be 1..32, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+
+    addClockInput(ports, "clk", "CLK", "gc_ff0");
+    addInput(ports, "rst", "RST", "gc_ff0");
+    for (int i = 0; i < bits; i++) {
+      addOutput(ports, "g" + i, "G" + i, "gc_ff" + i);
+      addOutput(ports, "q" + i, "Q" + i, "gc_ff" + i);
+      components.add(new ComponentSpec("gc_ff" + i, "Memory", "D Flip-Flop", 1, "U" + (i + 1)));
+      hints.add(new LayoutHint("gc_ff" + i, i, 0, 0, null));
+    }
+
+    // Toggle chain: D0 = ¬Q0; Di = Qi XOR carry (carry = AND of all Qj, j<i).
+    String notQ0 = "gc_n" + seq;
+    components.add(new ComponentSpec(notQ0, "Gates", "NOT Gate", 1, "N1"));
+    hints.add(new LayoutHint(notQ0, 1, 0, 0, null));
+    seq++;
+    nets.add(net("gc_n0i", e("gc_ff0", 2), e(notQ0, 1)));
+    nets.add(net("gc_d0", e(notQ0, 0), e("gc_ff0", 0)));
+    String carry = "gc_ff0";
+    int carryOut = 2; // D-FF Q output is endIndex 2 (end0=D, 1=CLK, 2=Q)
+    for (int i = 1; i < bits; i++) {
+      String dx = "gc_dx" + seq;
+      components.add(new ComponentSpec(dx, "Gates", "XOR Gate", 1, "X" + (seq + 1)));
+      hints.add(new LayoutHint(dx, 2, 0, i, null));
+      seq++;
+      nets.add(net("gc_dxa" + seq, e("gc_ff" + i, 2), e(dx, 1)));
+      nets.add(net("gc_dxb" + seq, e(carry, carryOut), e(dx, 2)));
+      nets.add(net("gc_d" + i, e(dx, 0), e("gc_ff" + i, 0)));
+      if (i < bits - 1) {
+        String cg = "gc_cg" + seq;
+        components.add(new ComponentSpec(cg, "Gates", "AND Gate", 1, "A" + (seq + 1)));
+        hints.add(new LayoutHint(cg, 1, 0, i, null));
+        seq++;
+        nets.add(net("gc_cga" + seq, e(carry, carryOut), e(cg, 1)));
+        nets.add(net("gc_cgb" + seq, e("gc_ff" + i, 2), e(cg, 2)));
+        carry = cg;
+        carryOut = 0; // AND gate output is endIndex 0
+      }
+    }
+
+    // Gray outputs: G_i = Q_i XOR Q_{i+1}, G_msb = Q_msb.
+    for (int i = 0; i < bits - 1; i++) {
+      String gx = "gc_gx" + i;
+      components.add(new ComponentSpec(gx, "Gates", "XOR Gate", 1, "UG" + (i + 1)));
+      hints.add(new LayoutHint(gx, 3, 0, i, null));
+      seq++;
+      nets.add(net("gc_gxa" + seq, e("gc_ff" + i, 2), e(gx, 1)));
+      nets.add(net("gc_gxb" + seq, e("gc_ff" + (i + 1), 2), e(gx, 2)));
+      nets.add(net("gc_g" + i, e(gx, 0), e("g" + i, 0)));
+    }
+    nets.add(net("gc_gmsb", e("gc_ff" + (bits - 1), 2), e("g" + (bits - 1), 0)));
+
+    // Shared CLK and RST.
+    for (int i = 0; i < bits; i++) {
+      nets.add(net("gc_clk" + i, e("clk", 0), e("gc_ff" + i, 1)));
+      nets.add(net("gc_rst" + i, e("rst", 0), e("gc_ff" + i, 4)));
+      nets.add(net("gc_q" + i, e("gc_ff" + i, 2), e("q" + i, 0)));
+    }
+
+    return new CircuitSpec("graycnt_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**
@@ -1881,6 +2917,124 @@ public final class StructuralCircuitTemplates {
     nets.add(net("e3_x8_a", e("e3_a", 0), e("e3_x8", 2)));
     nets.add(net("e3_e8", e("e3_x8", 0), e("e8", 0)));
     return new CircuitSpec("excess3_bcd", components, ports, nets, hints);
+  }
+
+  /**
+   * Excess-3 ADDER (余3码加法器): adds two excess-3 digits (3..12) with the
+   * standard correction — S = A + B; if carry out (decimal sum ≥ 10): result
+   * = S + 3, else result = S - 3 (i.e. +13 mod 16). Outputs S0..S3 (excess-3)
+   * and Cout. All gates 2-input; "ONE"/"GND" pins supply the constant lanes.
+   */
+  static CircuitSpec buildExcess3Adder() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+
+    for (int i = 0; i < 4; i++) {
+      addInput(ports, "a" + i, "A" + i, "e3a_x0");
+      addInput(ports, "b" + i, "B" + i, "e3a_x0");
+    }
+    addInput(ports, "one", "ONE", "e3a_x0");
+    addInput(ports, "gnd", "GND", "e3a_x0");
+    for (int i = 0; i < 4; i++) {
+      addOutput(ports, "s" + i, "S" + i, "e3a_x0");
+    }
+    addOutput(ports, "cout", "Cout", "e3a_x0");
+
+    // Stage 1: T = A + B (ripple, carry-in 0); c4 = carry out.
+    String[] t = new String[4];
+    String c = "gnd";
+    for (int i = 0; i < 4; i++) {
+      String x = "e3a_x" + seq;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "E3X" + (seq + 1)));
+      hints.add(new LayoutHint(x, 0, 0, i, null));
+      String s = "e3a_s" + seq;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "E3S" + (seq + 1)));
+      hints.add(new LayoutHint(s, 0, 0, i, null));
+      String fa = "e3a_fa" + seq;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "E3A" + (seq + 1)));
+      hints.add(new LayoutHint(fa, 0, 0, i, null));
+      String fb = "e3a_fb" + seq;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "E3B" + (seq + 1)));
+      hints.add(new LayoutHint(fb, 0, 0, i, null));
+      String fo = "e3a_fo" + seq;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "E3O" + (seq + 1)));
+      hints.add(new LayoutHint(fo, 0, 0, i, null));
+      String fg = "e3a_fg" + seq;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "E3G" + (seq + 1)));
+      hints.add(new LayoutHint(fg, 0, 0, i, null));
+      nets.add(net("e3a_xa" + seq, e("a" + i, 0), e(x, 1)));
+      nets.add(net("e3a_xb" + seq, e("b" + i, 0), e(x, 2)));
+      nets.add(net("e3a_sa" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("e3a_sb" + seq, e(c, 0), e(s, 2)));
+      t[i] = s;
+      nets.add(net("e3a_faa" + seq, e("a" + i, 0), e(fa, 1)));
+      nets.add(net("e3a_fab" + seq, e("b" + i, 0), e(fa, 2)));
+      nets.add(net("e3a_fba" + seq, e(c, 0), e(fb, 1)));
+      nets.add(net("e3a_fbb" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("e3a_fo1" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("e3a_fo2" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("e3a_fg1" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("e3a_fg2" + seq, e("gnd", 0), e(fg, 2)));
+      c = fg;
+      seq++;
+    }
+    String c4 = c;
+
+    // Correction addend = (¬c4, ¬c4, c4, 1): +3 when carry, -3 (=+13) otherwise.
+    // One NOT(c4) fans out to bits 2 and 3 (router unions fan-out nets).
+    String nc4 = "e3a_nc4";
+    components.add(new ComponentSpec(nc4, "Gates", "NOT Gate", 1, "E3N1"));
+    hints.add(new LayoutHint(nc4, 1, 0, 0, null));
+    nets.add(net("e3a_nc4_in", e(c4, 0), e(nc4, 1)));
+    String[] addend = {"one", c4, nc4, nc4};
+
+    // Stage 2: S = T + addend (ripple, carry-in 0).
+    String[] sOut = new String[4];
+    String c2 = "gnd";
+    for (int i = 0; i < 4; i++) {
+      String x = "e3a_x2_" + seq;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "E3X2" + (seq + 1)));
+      hints.add(new LayoutHint(x, 2, 0, i, null));
+      String s = "e3a_s2_" + seq;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "E3S2" + (seq + 1)));
+      hints.add(new LayoutHint(s, 2, 0, i, null));
+      String fa = "e3a_f2a" + seq;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "E3A2" + (seq + 1)));
+      hints.add(new LayoutHint(fa, 2, 0, i, null));
+      String fb = "e3a_f2b" + seq;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "E3B2" + (seq + 1)));
+      hints.add(new LayoutHint(fb, 2, 0, i, null));
+      String fo = "e3a_f2o" + seq;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "E3O2" + (seq + 1)));
+      hints.add(new LayoutHint(fo, 2, 0, i, null));
+      String fg = "e3a_f2g" + seq;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "E3G2" + (seq + 1)));
+      hints.add(new LayoutHint(fg, 2, 0, i, null));
+      nets.add(net("e3a_x2a" + seq, e(t[i], 0), e(x, 1)));
+      nets.add(net("e3a_x2b" + seq, e(addend[i], 0), e(x, 2)));
+      nets.add(net("e3a_s2a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("e3a_s2b" + seq, e(c2, 0), e(s, 2)));
+      sOut[i] = s;
+      nets.add(net("e3a_f2aa" + seq, e(t[i], 0), e(fa, 1)));
+      nets.add(net("e3a_f2ab" + seq, e(addend[i], 0), e(fa, 2)));
+      nets.add(net("e3a_f2ba" + seq, e(c2, 0), e(fb, 1)));
+      nets.add(net("e3a_f2bb" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("e3a_f2o1" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("e3a_f2o2" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("e3a_f2g1" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("e3a_f2g2" + seq, e("gnd", 0), e(fg, 2)));
+      c2 = fg;
+      seq++;
+    }
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("e3a_sout" + i, e(sOut[i], 0), e("s" + i, 0)));
+    }
+    nets.add(net("e3a_cout", e(c4, 0), e("cout", 0)));
+
+    return new CircuitSpec("excess3_adder", components, ports, nets, hints);
   }
 
   /**
@@ -2575,6 +3729,83 @@ public final class StructuralCircuitTemplates {
   }
 
   /**
+   * N-bit unsigned saturating adder (饱和加法器): S = min(A + B, 2^N - 1).
+   * A ripple adder computes A+B with carry-out c; every output bit is
+   * S_i = sum_i OR c, so an overflow saturates the result to all ones.
+   * All gates 2-input; a GND pin supplies the constant-0 carry-in.
+   */
+  static CircuitSpec buildSaturatingAdder(int bits) {
+    if (bits < 2 || bits > 8) {
+      throw new IllegalArgumentException("Saturating adder width must be 2..8, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "sa_x0");
+      addInput(ports, "b" + i, "B" + i, "sa_x0");
+      addOutput(ports, "s" + i, "S" + i, "sa_x0");
+    }
+    addInput(ports, "gnd", "GND", "sa_x0");
+
+    // Ripple adder A + B (carry-in 0), 6-gate full-adder + fg OR per bit.
+    String[] sum = new String[bits];
+    String c = "gnd";
+    for (int i = 0; i < bits; i++) {
+      String x = "sa_x" + seq;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "SAX" + (seq + 1)));
+      hints.add(new LayoutHint(x, 0, 0, i, null));
+      String s = "sa_s" + seq;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "SAS" + (seq + 1)));
+      hints.add(new LayoutHint(s, 0, 0, i, null));
+      String fa = "sa_fa" + seq;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "SAA" + (seq + 1)));
+      hints.add(new LayoutHint(fa, 0, 0, i, null));
+      String fb = "sa_fb" + seq;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "SAB" + (seq + 1)));
+      hints.add(new LayoutHint(fb, 0, 0, i, null));
+      String fo = "sa_fo" + seq;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "SAO" + (seq + 1)));
+      hints.add(new LayoutHint(fo, 0, 0, i, null));
+      String fg = "sa_fg" + seq;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "SAG" + (seq + 1)));
+      hints.add(new LayoutHint(fg, 0, 0, i, null));
+      seq++;
+      nets.add(net("sa_xa" + seq, e("a" + i, 0), e(x, 1)));
+      nets.add(net("sa_xb" + seq, e("b" + i, 0), e(x, 2)));
+      nets.add(net("sa_sa" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("sa_sb" + seq, e(c, 0), e(s, 2)));
+      sum[i] = s;
+      nets.add(net("sa_faa" + seq, e("a" + i, 0), e(fa, 1)));
+      nets.add(net("sa_fab" + seq, e("b" + i, 0), e(fa, 2)));
+      nets.add(net("sa_fba" + seq, e(c, 0), e(fb, 1)));
+      nets.add(net("sa_fbb" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("sa_fo1" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("sa_fo2" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("sa_fg1" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("sa_fg2" + seq, e("gnd", 0), e(fg, 2)));
+      c = fg;
+    }
+    String carry = c;
+
+    // Saturate: S_i = sum_i OR carry.
+    for (int i = 0; i < bits; i++) {
+      String o = "sa_o" + seq;
+      components.add(new ComponentSpec(o, "Gates", "OR Gate", 1, "SAU" + (seq + 1)));
+      hints.add(new LayoutHint(o, 1, 0, i, null));
+      nets.add(net("sa_o1" + seq, e(sum[i], 0), e(o, 1)));
+      nets.add(net("sa_o2" + seq, e(carry, 0), e(o, 2)));
+      nets.add(net("sa_sout" + i, e(o, 0), e("s" + i, 0)));
+      seq++;
+    }
+
+    return new CircuitSpec("satadd_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
    * N-bit magnitude comparator with outputs GT (A>B), EQ (A==B), LT (A<B).
    * Bit slice i: e_i = XNOR(A_i,B_i), g_i = A_i and not B_i.
    * GT ripple: gt = g(N-1) | e(N-1)&g(N-2) | ... ; EQ = AND of all e_i;
@@ -2686,6 +3917,28 @@ public final class StructuralCircuitTemplates {
       {0, 4, 5, 6, 8, 9},
       {2, 3, 4, 5, 6, 8, 9},
     };
+    return emitSeg7Display("bcd7seg", "seg7", segs);
+  }
+
+  /**
+   * Hex 7-segment display (十六进制转七段): shows 0-9 then A-F. Same OR-of-
+   * minterms structure as {@link #buildBcd7Seg} with the hex segment table.
+   */
+  static CircuitSpec buildHex7Seg() {
+    int[][] segs = {
+      {0, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14, 15},
+      {0, 1, 2, 3, 4, 7, 8, 9, 10, 13},
+      {0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13},
+      {0, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13, 14},
+      {0, 2, 6, 8, 10, 11, 12, 13, 14, 15},
+      {0, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15},
+      {2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14, 15},
+    };
+    return emitSeg7Display("hex7seg", "hex7", segs);
+  }
+
+  /** Shared 4-input → 7-segment display builder (OR of minterm products). */
+  private static CircuitSpec emitSeg7Display(String specName, String prefix, int[][] segs) {
     String[] segNames = {"a", "b", "c", "d", "e", "f", "g"};
 
     List<ComponentSpec> components = new ArrayList<>();
@@ -2694,13 +3947,13 @@ public final class StructuralCircuitTemplates {
     List<LayoutHint> hints = new ArrayList<>();
 
     for (int i = 0; i < 4; i++) {
-      addInput(ports, "b" + i, "B" + i, "seg7_not" + i);
-      components.add(new ComponentSpec("seg7_not" + i, "Gates", "NOT Gate", 1, "B7N" + (i + 1)));
-      hints.add(new LayoutHint("seg7_not" + i, 0, 0, i, null));
-      nets.add(net("seg7_nb" + i, e("b" + i, 0), e("seg7_not" + i, 1)));
+      addInput(ports, "b" + i, "B" + i, prefix + "_not" + i);
+      components.add(new ComponentSpec(prefix + "_not" + i, "Gates", "NOT Gate", 1, "B7N" + (i + 1)));
+      hints.add(new LayoutHint(prefix + "_not" + i, 0, 0, i, null));
+      nets.add(net(prefix + "_nb" + i, e("b" + i, 0), e(prefix + "_not" + i, 1)));
     }
     for (int s = 0; s < 7; s++) {
-      addOutput(ports, "seg" + s, segNames[s], "seg7_not0");
+      addOutput(ports, "seg" + s, segNames[s], prefix + "_not0");
     }
 
     int seq = 0;
@@ -2711,15 +3964,15 @@ public final class StructuralCircuitTemplates {
         String andAcc = null;
         for (int bit = 0; bit < 4; bit++) {
           boolean one = ((minterm >> bit) & 1) == 1;
-          String src = one ? "b" + bit : "seg7_not" + bit;
+          String src = one ? "b" + bit : prefix + "_not" + bit;
           if (andAcc == null) {
             andAcc = src;
           } else {
-            String gate = "seg7_p" + seq;
+            String gate = prefix + "_p" + seq;
             components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "B7P" + (seq + 1)));
             hints.add(new LayoutHint(gate, 1 + bit, 0, s, null));
-            nets.add(net("seg7_pa" + seq, e(andAcc, 0), e(gate, 1)));
-            nets.add(net("seg7_pb" + seq, e(src, 0), e(gate, 2)));
+            nets.add(net(prefix + "_pa" + seq, e(andAcc, 0), e(gate, 1)));
+            nets.add(net(prefix + "_pb" + seq, e(src, 0), e(gate, 2)));
             andAcc = gate;
             seq++;
           }
@@ -2727,19 +3980,123 @@ public final class StructuralCircuitTemplates {
         if (orAcc == null) {
           orAcc = andAcc;
         } else {
-          String gate = "seg7_o" + seq;
+          String gate = prefix + "_o" + seq;
           components.add(new ComponentSpec(gate, "Gates", "OR Gate", 1, "B7O" + (seq + 1)));
           hints.add(new LayoutHint(gate, 6, 0, s, null));
-          nets.add(net("seg7_oa" + seq, e(orAcc, 0), e(gate, 1)));
-          nets.add(net("seg7_ob" + seq, e(andAcc, 0), e(gate, 2)));
+          nets.add(net(prefix + "_oa" + seq, e(orAcc, 0), e(gate, 1)));
+          nets.add(net(prefix + "_ob" + seq, e(andAcc, 0), e(gate, 2)));
           orAcc = gate;
           seq++;
         }
       }
-      nets.add(net("seg7_out" + s, e(orAcc, 0), e("seg" + s, 0)));
+      nets.add(net(prefix + "_out" + s, e(orAcc, 0), e("seg" + s, 0)));
     }
 
-    return new CircuitSpec("bcd7seg", components, ports, nets, hints);
+    return new CircuitSpec(specName, components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit squarer (平方器): Y = A*A (2N-bit result). Partial products
+   * pp[i][j] = A_i AND A_j (symmetric, both orders emitted) are accumulated
+   * with the same carry-save ripple stages as the multiplier (each stage adds
+   * pp[i] shifted by i, outBits = accBits + 2). All gates 2-input.
+   */
+  static CircuitSpec buildSquarer(int bits) {
+    if (bits < 2 || bits > 4) {
+      throw new IllegalArgumentException("Squarer width must be 2..4, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "sq_p0");
+    }
+    addInput(ports, "gnd", "GND", "sq_p0");
+    for (int k = 0; k < 2 * bits; k++) {
+      addOutput(ports, "p" + k, "P" + k, "sq_p0");
+    }
+
+    // partial products pp[i][j] = A_j AND A_i (symmetric, duplicated).
+    String[][] pp = new String[bits][bits];
+    for (int i = 0; i < bits; i++) {
+      for (int j = 0; j < bits; j++) {
+        String g = "sq_p" + seq;
+        components.add(new ComponentSpec(g, "Gates", "AND Gate", 1, "SQP" + (seq + 1)));
+        hints.add(new LayoutHint(g, 0, 0, i, null));
+        nets.add(net("sq_pa" + seq, e("a" + j, 0), e(g, 1)));
+        nets.add(net("sq_pb" + seq, e("a" + i, 0), e(g, 2)));
+        pp[i][j] = g;
+        seq++;
+      }
+    }
+
+    // accumulate: acc = pp[0]; stage i adds (pp[i] << i).
+    String[] acc = new String[bits];
+    for (int k = 0; k < bits; k++) {
+      acc[k] = pp[0][k];
+    }
+    for (int i = 1; i < bits; i++) {
+      int accBits = acc.length;
+      int outBits = accBits + 2;
+      String[] nacc = new String[outBits];
+      String cin = null;
+      for (int k = 0; k < outBits; k++) {
+        if (k < i) {
+          nacc[k] = acc[k];
+          continue;
+        }
+        String a = k < accBits ? acc[k] : "gnd";
+        int pj = k - i;
+        String b = (pj >= 0 && pj < bits) ? pp[i][pj] : "gnd";
+        String cinSig = cin == null ? "gnd" : cin;
+        String x = "sq_x" + seq;
+        components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "SQX" + (seq + 1)));
+        hints.add(new LayoutHint(x, 1 + i, 0, k, null));
+        String s = "sq_s" + seq;
+        components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "SQS" + (seq + 1)));
+        hints.add(new LayoutHint(s, 1 + i, 0, k, null));
+        String fa = "sq_f" + seq;
+        components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "SQA" + (seq + 1)));
+        hints.add(new LayoutHint(fa, 1 + i, 0, k, null));
+        String fb = "sq_b" + seq;
+        components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "SQB" + (seq + 1)));
+        hints.add(new LayoutHint(fb, 1 + i, 0, k, null));
+        String fo = "sq_o" + seq;
+        components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "SQO" + (seq + 1)));
+        hints.add(new LayoutHint(fo, 1 + i, 0, k, null));
+        String fg = "sq_g" + seq;
+        components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "SQG" + (seq + 1)));
+        hints.add(new LayoutHint(fg, 1 + i, 0, k, null));
+        seq++;
+        nets.add(net("sq_xa" + seq, e(a, 0), e(x, 1)));
+        nets.add(net("sq_xb" + seq, e(b, 0), e(x, 2)));
+        nets.add(net("sq_sa" + seq, e(x, 0), e(s, 1)));
+        nets.add(net("sq_sb" + seq, e(cinSig, 0), e(s, 2)));
+        nacc[k] = s;
+        nets.add(net("sq_fa" + seq, e(a, 0), e(fa, 1)));
+        nets.add(net("sq_fb" + seq, e(b, 0), e(fa, 2)));
+        nets.add(net("sq_ga" + seq, e(cinSig, 0), e(fb, 1)));
+        nets.add(net("sq_gb" + seq, e(x, 0), e(fb, 2)));
+        nets.add(net("sq_o1" + seq, e(fa, 0), e(fo, 1)));
+        nets.add(net("sq_o2" + seq, e(fb, 0), e(fo, 2)));
+        nets.add(net("sq_g1" + seq, e(fo, 0), e(fg, 1)));
+        nets.add(net("sq_g2" + seq, e("gnd", 0), e(fg, 2)));
+        cin = fg;
+      }
+      acc = new String[outBits];
+      for (int k = 0; k < outBits; k++) {
+        acc[k] = nacc[k];
+      }
+    }
+
+    for (int k = 0; k < 2 * bits; k++) {
+      nets.add(net("sq_out" + k, e(acc[k], 0), e("p" + k, 0)));
+    }
+
+    return new CircuitSpec("squarer_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**
@@ -2835,7 +4192,11 @@ public final class StructuralCircuitTemplates {
         nets.add(net("mul_gb" + seq, e(x, 0), e(fb, 2)));
         nets.add(net("mul_o1" + seq, e(fa, 0), e(fo, 1)));
         nets.add(net("mul_o2" + seq, e(fb, 0), e(fo, 2)));
+        // fg = fo or gnd: carry-out is fully captured by fo (fa|fb =
+        // (a∧b)|(cin∧x)); the second input is a constant-0 so the OR gate has
+        // >=2 inputs for the in-process evaluator.
         nets.add(net("mul_g1" + seq, e(fo, 0), e(fg, 1)));
+        nets.add(net("mul_g2" + seq, e("gnd", 0), e(fg, 2)));
         cin = fg;
       }
       acc = new String[outBits];
@@ -2920,6 +4281,477 @@ public final class StructuralCircuitTemplates {
   }
 
   /**
+   * N-bit ALU with a 2-bit function select S1S0:
+   * 00 → R = A and B; 01 → R = A or B; 10 → R = A + B (ripple carry);
+   * 11 → R = A - B (A plus two's complement of B, borrow folded into Cout).
+   * Outputs R0..R(N-1), Cout, and Z (zero flag: R == 0).
+   * Every gate is 2-input so the DirectMultiChipCompiler netlist stays valid.
+   */
+  static CircuitSpec buildAlu(int bits) {
+    if (bits < 1 || bits > 8) {
+      throw new IllegalArgumentException("ALU width must be 1..8, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "alu" + i + "_an");
+      addInput(ports, "b" + i, "B" + i, "alu" + i + "_an");
+      addOutput(ports, "r" + i, "R" + i, "alu" + i + "_mo2");
+    }
+    addInput(ports, "s1", "S1", "alu0_an");
+    addInput(ports, "s0", "S0", "alu0_an");
+    addInput(ports, "cin", "Cin", "alu0_x1");
+    addOutput(ports, "cout", "Cout", "alu" + (bits - 1) + "_o2");
+    addOutput(ports, "z", "Z", bits == 1 ? "alu0_zo" : "alu_znot");
+
+    int seq = 0;
+    for (int i = 0; i < bits; i++) {
+      String g = "alu" + i + "_";
+      String chip = "ALU" + i;
+
+      // Logic block: AND + OR.
+      components.add(new ComponentSpec(g + "an", "Gates", "AND Gate", 1, chip + "A"));
+      components.add(new ComponentSpec(g + "or", "Gates", "OR Gate", 1, chip + "O"));
+      hints.add(new LayoutHint(g + "an", 0, 0, 0, null));
+      hints.add(new LayoutHint(g + "or", 0, 0, 1, null));
+
+      // Adder block (XOR pair + generate/propagate ORs): sum = A xor B xor Cin.
+      components.add(new ComponentSpec(g + "x1", "Gates", "XOR Gate", 1, chip + "X1"));
+      components.add(new ComponentSpec(g + "x2", "Gates", "XOR Gate", 1, chip + "X2"));
+      components.add(new ComponentSpec(g + "g1", "Gates", "AND Gate", 1, chip + "G1"));
+      components.add(new ComponentSpec(g + "g2", "Gates", "AND Gate", 1, chip + "G2"));
+      components.add(new ComponentSpec(g + "g3", "Gates", "AND Gate", 1, chip + "G3"));
+      components.add(new ComponentSpec(g + "o1", "Gates", "OR Gate", 1, chip + "C1"));
+      components.add(new ComponentSpec(g + "o2", "Gates", "OR Gate", 1, chip + "C2"));
+      hints.add(new LayoutHint(g + "x1", 1, 0, 0, null));
+      hints.add(new LayoutHint(g + "x2", 1, 0, 1, null));
+      hints.add(new LayoutHint(g + "g1", 1, 0, 2, null));
+      hints.add(new LayoutHint(g + "g2", 1, 0, 3, null));
+      hints.add(new LayoutHint(g + "g3", 1, 0, 4, null));
+      hints.add(new LayoutHint(g + "o1", 1, 0, 5, null));
+      hints.add(new LayoutHint(g + "o2", 1, 0, 6, null));
+
+      // SUB support: S_sub = S1 and S0 (11 = SUB). B' = B xor S_sub, so B is
+      // inverted only in SUB mode; the adder's first carry-in is S_sub too
+      // (A - B = A + ~B + 1). ADD (10) keeps B and carries from Cin.
+      components.add(new ComponentSpec(g + "ssub", "Gates", "AND Gate", 1, chip + "SS"));
+      components.add(new ComponentSpec(g + "bs", "Gates", "XOR Gate", 1, chip + "BX"));
+      hints.add(new LayoutHint(g + "ssub", 2, 0, 0, null));
+      hints.add(new LayoutHint(g + "bs", 2, 0, 1, null));
+
+      // Output mux: R = (and,notS1,notS0)|(or,notS1,S0)|(arith,S1).
+      // ADD and SUB share one arithmetic lane (B' and carry already encode the
+      // mode via S_sub), so only three lanes are needed. Every gate stays
+      // 2-input (multi-input gate size is not auto-set by the compiler, and a
+      // 3rd input would dangle in the official JAR): each select AND is two
+      // stages, e.g. m1 = (an and notS1) and notS0.
+      components.add(new ComponentSpec(g + "ns1", "Gates", "NOT Gate", 1, chip + "N1"));
+      components.add(new ComponentSpec(g + "ns0", "Gates", "NOT Gate", 1, chip + "N2"));
+      components.add(new ComponentSpec(g + "m1a", "Gates", "AND Gate", 1, chip + "M1A"));
+      components.add(new ComponentSpec(g + "m2a", "Gates", "AND Gate", 1, chip + "M2A"));
+      components.add(new ComponentSpec(g + "m1", "Gates", "AND Gate", 1, chip + "M1"));
+      components.add(new ComponentSpec(g + "m2", "Gates", "AND Gate", 1, chip + "M2"));
+      components.add(new ComponentSpec(g + "m3", "Gates", "AND Gate", 1, chip + "M3"));
+      components.add(new ComponentSpec(g + "mo1", "Gates", "OR Gate", 1, chip + "MO1"));
+      components.add(new ComponentSpec(g + "mo2", "Gates", "OR Gate", 1, chip + "MO2"));
+      hints.add(new LayoutHint(g + "ns1", 3, 0, 0, null));
+      hints.add(new LayoutHint(g + "ns0", 3, 0, 1, null));
+      hints.add(new LayoutHint(g + "m1a", 4, 0, 0, null));
+      hints.add(new LayoutHint(g + "m2a", 4, 0, 1, null));
+      hints.add(new LayoutHint(g + "m1", 4, 0, 2, null));
+      hints.add(new LayoutHint(g + "m2", 4, 0, 3, null));
+      hints.add(new LayoutHint(g + "m3", 4, 0, 4, null));
+      hints.add(new LayoutHint(g + "mo1", 5, 0, 0, null));
+      hints.add(new LayoutHint(g + "mo2", 5, 0, 1, null));
+
+      // Inputs fan out: A_i, B_i, S1, S0 shared nets.
+      // Carry-in: first slice uses S_sub (SUB forces 1, ADD/LOGIC pass Cin via
+      // the select below); later slices take the previous carry-out.
+      String carryIn = (i == 0)
+          ? "cin"
+          : "alu" + (i - 1) + "_o2";
+      nets.add(net("alu_in_a" + seq, e("a" + i, 0), e(g + "an", 1), e(g + "or", 2), e(g + "x1", 1), e(g + "g1", 1), e(g + "g2", 1)));
+      nets.add(net("alu_in_b" + seq, e("b" + i, 0), e(g + "an", 2), e(g + "or", 1), e(g + "bs", 2)));
+      seq++;
+      nets.add(net("alu_s1" + seq, e("s1", 0), e(g + "ns1", 1), e(g + "ssub", 1)));
+      nets.add(net("alu_s0" + seq, e("s0", 0), e(g + "ns0", 1), e(g + "ssub", 2)));
+      seq++;
+
+      // AND / OR results feed the mux lanes 1 and 2 via the two-stage selects
+      // below (m1a = an and notS1; m2a = or and notS1).
+      seq++;
+
+      // Adder: sum_i = A xor B' xor carry, where B' = B xor S_sub.
+      // SUB (S_sub=1): B' = not B, first carry = 1 -> A - B = A + not B + 1.
+      // ADD (S_sub=0): B' = B, first carry = Cin.
+      if (i == 0) {
+        // carry0 = (S_sub) ? S_sub : Cin   -- SUB forces 1, else pass Cin.
+        components.add(new ComponentSpec(g + "cs", "Gates", "AND Gate", 1, chip + "CS"));
+        components.add(new ComponentSpec(g + "csn", "Gates", "NOT Gate", 1, chip + "CSN"));
+        components.add(new ComponentSpec(g + "cso", "Gates", "OR Gate", 1, chip + "CSO"));
+        hints.add(new LayoutHint(g + "csn", 8, 0, 0, null));
+        hints.add(new LayoutHint(g + "cs", 8, 0, 1, null));
+        hints.add(new LayoutHint(g + "cso", 8, 0, 2, null));
+        // not S_sub
+        nets.add(net("alu_csn", e(g + "ssub", 0), e(g + "csn", 1)));
+        // (not S_sub and Cin)
+        nets.add(net("alu_csp", e(g + "csn", 0), e(g + "cs", 1)));
+        nets.add(net("alu_csc", e("cin", 0), e(g + "cs", 2)));
+        // (not S_sub and Cin) or S_sub
+        nets.add(net("alu_cso1", e(g + "cs", 0), e(g + "cso", 1)));
+        nets.add(net("alu_cso2", e(g + "ssub", 0), e(g + "cso", 2)));
+        carryIn = g + "cso";
+      }
+      nets.add(net("alu_x1o" + seq, e(g + "x1", 0), e(g + "x2", 1), e(g + "g3", 1)));
+      nets.add(net("alu_ci" + seq, e(carryIn, 0), e(g + "x2", 2), e(g + "g2", 2), e(g + "g3", 2)));
+      nets.add(net("alu_ab" + seq, e(g + "g1", 0), e(g + "o1", 1)));
+      nets.add(net("alu_ac" + seq, e(g + "g2", 0), e(g + "o1", 2)));
+      nets.add(net("alu_bc" + seq, e(g + "g3", 0), e(g + "o2", 2)));
+      nets.add(net("alu_c1" + seq, e(g + "o1", 0), e(g + "o2", 1)));
+      seq++;
+
+      // SUB and ADD share the same x2 result (B' and carry already reflect the
+      // mode via S_sub), so the single arithmetic lane m3 takes x2.
+      // B' = B xor S_sub feeds x1 input2 and the generate term g1.
+      nets.add(net("alu_bs_in" + seq, e(g + "ssub", 0), e(g + "bs", 1)));
+      nets.add(net("alu_bs_x" + seq, e(g + "bs", 0), e(g + "x1", 2), e(g + "g1", 2)));
+      nets.add(net("alu_sum" + seq, e(g + "x2", 0), e(g + "m3", 1)));
+      seq++;
+
+      // Mux selects (two-stage AND, all 2-input).
+      // m1a = AND lane pre-select: an and notS1;  m1 = m1a and notS0.
+      // m2a = OR lane pre-select:  or and notS1;  m2 = m2a and S0.
+      // m3  = arithmetic lane: x2 and S1 (ADD and SUB share it).
+      nets.add(net("alu_m1a" + seq, e(g + "an", 0), e(g + "m1a", 1)));
+      nets.add(net("alu_m1as" + seq, e(g + "ns1", 0), e(g + "m1a", 2)));
+      nets.add(net("alu_m1" + seq, e(g + "m1a", 0), e(g + "m1", 1)));
+      nets.add(net("alu_m1ss" + seq, e(g + "ns0", 0), e(g + "m1", 2)));
+      nets.add(net("alu_m2a" + seq, e(g + "or", 0), e(g + "m2a", 1)));
+      nets.add(net("alu_m2as" + seq, e(g + "ns1", 0), e(g + "m2a", 2)));
+      nets.add(net("alu_m2" + seq, e(g + "m2a", 0), e(g + "m2", 1)));
+      nets.add(net("alu_m2ss" + seq, e("s0", 0), e(g + "m2", 2)));
+      nets.add(net("alu_m3s" + seq, e("s1", 0), e(g + "m3", 2)));
+      seq++;
+
+      // OR-tree: R_i = m1 | m2 | m3.
+      nets.add(net("alu_mo1" + seq, e(g + "m1", 0), e(g + "mo1", 1)));
+      nets.add(net("alu_mo2" + seq, e(g + "m2", 0), e(g + "mo1", 2)));
+      nets.add(net("alu_mo3" + seq, e(g + "mo1", 0), e(g + "mo2", 1)));
+      nets.add(net("alu_mo4" + seq, e(g + "m3", 0), e(g + "mo2", 2)));
+      nets.add(net("alu_r" + seq, e(g + "mo2", 0), e("r" + i, 0)));
+      seq++;
+
+      // Zero flag: Z = not (R0 or R1 or ... or R(N-1)).
+      // For bits>=2, slice 0's OR takes R0|R1 and later slices OR in the rest;
+      // for bits==1, Z = not R0 directly (no constant needed, so the official
+      // exhaustive truth table stays consistent).
+      if (i == 0 && bits >= 2) {
+        components.add(new ComponentSpec(g + "zo", "Gates", "OR Gate", 1, chip + "ZO"));
+        hints.add(new LayoutHint(g + "zo", 6, 0, 0, null));
+        nets.add(net("alu_z0" + seq, e("r0", 0), e(g + "zo", 1)));
+        nets.add(net("alu_z1" + seq, e("r1", 0), e(g + "zo", 2)));
+      } else if (i == 0) {
+        // bits == 1: Z = not R0
+        components.add(new ComponentSpec(g + "zo", "Gates", "NOT Gate", 1, chip + "ZO"));
+        hints.add(new LayoutHint(g + "zo", 6, 0, 0, null));
+        nets.add(net("alu_z0" + seq, e("r0", 0), e(g + "zo", 1)));
+      } else if (i == 1 && bits >= 2) {
+        // slices 2..N-1 accumulate; slice 1 is where the chain continues.
+        components.add(new ComponentSpec(g + "zo", "Gates", "OR Gate", 1, chip + "ZO"));
+        hints.add(new LayoutHint(g + "zo", 6, 0, 0, null));
+        nets.add(net("alu_zr" + seq, e("r" + i, 0), e(g + "zo", 1)));
+        nets.add(net("alu_zz" + seq, e("alu0_zo", 0), e(g + "zo", 2)));
+      } else if (i >= 2) {
+        components.add(new ComponentSpec(g + "zo", "Gates", "OR Gate", 1, chip + "ZO"));
+        hints.add(new LayoutHint(g + "zo", 6, 0, 0, null));
+        nets.add(net("alu_zr" + seq, e("r" + i, 0), e(g + "zo", 1)));
+        nets.add(net("alu_zz" + seq, e("alu" + (i - 1) + "_zo", 0), e(g + "zo", 2)));
+      }
+      seq++;
+    }
+    // Z = not(OR of all R). For bits==1 the slice-0 NOT gate already inverts
+    // R0, so its output drives Z directly. For bits>=2 the last slice's OR
+    // holds the full OR and a shared NOT inverts it.
+    if (bits == 1) {
+      nets.add(net("alu_zout", e("alu0_zo", 0), e("z", 0)));
+    } else {
+      String zOr = "alu" + (bits - 1) + "_zo";
+      components.add(new ComponentSpec("alu_znot", "Gates", "NOT Gate", 1, "ALUZ"));
+      hints.add(new LayoutHint("alu_znot", 7, 0, 0, null));
+      nets.add(net("alu_znot", e(zOr, 0), e("alu_znot", 1)));
+      nets.add(net("alu_zout", e("alu_znot", 0), e("z", 0)));
+    }
+
+    // Cout: adder carry-out of the last slice. In SUB mode (S1 and S0) the
+    // two's-complement carry-out is the inverted borrow, so the raw flag is
+    // o2 xor (S1 and S0); AND/OR modes (S1=0) force Cout to 0, so the result
+    // is gated by S1. Cout = (o2 xor subFlag) and S1.
+    components.add(new ComponentSpec("alu_subf", "Gates", "AND Gate", 1, "ALUF"));
+    components.add(new ComponentSpec("alu_cx", "Gates", "XOR Gate", 1, "ALUCX"));
+    components.add(new ComponentSpec("alu_cg", "Gates", "AND Gate", 1, "ALUCG"));
+    hints.add(new LayoutHint("alu_subf", 8, 0, 3, null));
+    hints.add(new LayoutHint("alu_cx", 8, 0, 4, null));
+    hints.add(new LayoutHint("alu_cg", 8, 0, 5, null));
+    nets.add(net("alu_subf1", e("s1", 0), e("alu_subf", 1)));
+    nets.add(net("alu_subf2", e("s0", 0), e("alu_subf", 2)));
+    nets.add(net("alu_cx1", e("alu" + (bits - 1) + "_o2", 0), e("alu_cx", 1)));
+    nets.add(net("alu_cx2", e("alu_subf", 0), e("alu_cx", 2)));
+    nets.add(net("alu_cg1", e("alu_cx", 0), e("alu_cg", 1)));
+    nets.add(net("alu_cg2", e("s1", 0), e("alu_cg", 2)));
+    nets.add(net("alu_cout", e("alu_cg", 0), e("cout", 0)));
+
+    return new CircuitSpec("alu_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit barrel shifter (桶形移位器): logical left shift of the input word by
+   * SH bits, SH in 0..N-1 (SH width = ceil(log2 N)). Output y[i] selects
+   * D[i-shift] over a mux tree; out-of-range sources (i-shift < 0) read a
+   * constant-0 gnd. All gates 2-input, so the official JAR truth table is
+   * fully deterministic.
+   */
+  static CircuitSpec buildBarrelShifter(int bits) {
+    return buildShiftCircuit("barrel_shifter_" + bits + "bit", bits, true, false, "gnd");
+  }
+
+  /**
+   * N-bit rotate shifter (循环移位器): rotate the input word left (or right) by
+   * SH bits. Output y[i] selects D[(i ∓ shift) mod N]; every source wraps, so
+   * no constant-0 gnd input is needed. SH values ≥ N behave as SH mod N.
+   */
+  static CircuitSpec buildRotateShifter(int bits, boolean left) {
+    return buildShiftCircuit(
+        "rotate_shifter_" + bits + "bit" + (left ? "_left" : "_right"),
+        bits, left, true, null);
+  }
+
+  /** N-bit logical right shift (逻辑右移): zero fill, SH in 0..N-1. */
+  static CircuitSpec buildLogicalShiftRight(int bits) {
+    return buildShiftCircuit("shift_right_" + bits + "bit", bits, false, false, "gnd");
+  }
+
+  /** N-bit arithmetic right shift (算术右移): sign fill (D[N-1]), SH in 0..N-1. */
+  static CircuitSpec buildArithmeticShiftRight(int bits) {
+    return buildShiftCircuit("sar_" + bits + "bit", bits, false, false, "d" + (bits - 1));
+  }
+
+  /**
+   * Shared mux-tree builder for shift/rotate circuits. Every gate is 2-input.
+   * Out-of-range sources (raw outside 0..N-1): with {@code rotate=true} the
+   * index wraps modulo N; otherwise the source reads {@code fillId} (e.g. the
+   * external "gnd" pin for zero fill, or "d{N-1}" for arithmetic sign fill).
+   */
+  private static CircuitSpec buildShiftCircuit(
+      String name, int bits, boolean left, boolean rotate, String fillId) {
+    if (bits < 2 || bits > 8) {
+      throw new IllegalArgumentException("Shift/rotate width must be 2..8, got " + bits);
+    }
+    int shBits = 0;
+    while ((1 << shBits) < bits) {
+      shBits++;
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "d" + i, "D" + i, "bs_ns0");
+      addOutput(ports, "y" + i, "Y" + i, "bs_ns0");
+    }
+    for (int k = 0; k < shBits; k++) {
+      addInput(ports, "sh" + k, "SH" + k, "bs_ns0");
+    }
+    if ("gnd".equals(fillId)) {
+      addInput(ports, "gnd", "GND", "bs_ns0");
+    }
+
+    int seq = 0;
+    // Shared per-bit select signals: sh[k] and not sh[k].
+    String[][] shSel = new String[shBits][2]; // [k][0]=sh, [k][1]=not sh
+    for (int k = 0; k < shBits; k++) {
+      String n = "bs_ns" + k;
+      components.add(new ComponentSpec(n, "Gates", "NOT Gate", 1, "NS" + (k + 1)));
+      hints.add(new LayoutHint(n, 0, 0, k, null));
+      nets.add(net("bs_ns_in" + k, e("sh" + k, 0), e(n, 1)));
+      shSel[k][0] = "sh" + k;
+      shSel[k][1] = n;
+    }
+
+    for (int i = 0; i < bits; i++) {
+      // mux tree: y[i] = OR over all shifts of (src(s) AND select(s)).
+      // select(s) = AND of sh[k] (bit 1) or not sh[k] (bit 0) for each k.
+      int shifts = 1 << shBits;
+      String[] laneAnd = new String[shifts];
+      for (int s = 0; s < shifts; s++) {
+        int raw = left ? (i - s) : (i + s);
+        String srcSig;
+        if (rotate) {
+          int wrapped = ((raw % bits) + bits) % bits;
+          srcSig = "d" + wrapped;
+        } else {
+          srcSig = (raw >= 0 && raw < bits) ? ("d" + raw) : fillId;
+        }
+        // build select AND chain over shBits bits (2-input gates)
+        String acc = null;
+        String accSig = null;
+        for (int k = 0; k < shBits; k++) {
+          String selSig = ((s >> k) & 1) == 1 ? shSel[k][0] : shSel[k][1];
+          if (acc == null) {
+            acc = "bs_" + i + "_sa" + seq + "_" + k;
+            components.add(new ComponentSpec(acc, "Gates", "AND Gate", 1, "SA" + (seq + 1)));
+            hints.add(new LayoutHint(acc, 1, 0, k, null));
+            nets.add(net("bs_sa1" + seq, e(srcSig, 0), e(acc, 1)));
+            nets.add(net("bs_sa2" + seq, e(selSig, 0), e(acc, 2)));
+            accSig = acc;
+          } else {
+            String nxt = "bs_" + i + "_sb" + seq + "_" + k;
+            components.add(new ComponentSpec(nxt, "Gates", "AND Gate", 1, "SB" + (seq + 1)));
+            hints.add(new LayoutHint(nxt, 2, 0, k, null));
+            nets.add(net("bs_sb1" + seq, e(accSig, 0), e(nxt, 1)));
+            nets.add(net("bs_sb2" + seq, e(selSig, 0), e(nxt, 2)));
+            accSig = nxt;
+          }
+          seq++;
+        }
+        laneAnd[s] = accSig;
+      }
+      // OR-tree over all lanes (2-input ORs).
+      String orAcc = null;
+      for (int s = 0; s < shifts; s++) {
+        if (orAcc == null) {
+          orAcc = laneAnd[s];
+        } else {
+          String o = "bs_" + i + "_mo" + seq;
+          components.add(new ComponentSpec(o, "Gates", "OR Gate", 1, "MO" + (seq + 1)));
+          hints.add(new LayoutHint(o, 3, 0, seq % 8, null));
+          nets.add(net("bs_mo1" + seq, e(orAcc, 0), e(o, 1)));
+          nets.add(net("bs_mo2" + seq, e(laneAnd[s], 0), e(o, 2)));
+          orAcc = o;
+          seq++;
+        }
+      }
+      nets.add(net("bs_y" + i, e(orAcc, 0), e("y" + i, 0)));
+    }
+
+    return new CircuitSpec(name, components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit unsigned restoring divider (除法器): Q = A / B, R = A mod B.
+   * Shift-subtract unrolled over N stages; stage for dividend bit i computes
+   * candidate = {R<<1 | A_i} (N+1 bits), subtracts B through a ripple borrow
+   * chain, then muxes the N-bit remainder (quotient bit q_i = NOT borrow).
+   * Every gate is 2-input; a shared GND input pin supplies the initial zero
+   * fill and bit N of B (B < 2^N, so B_N = 0). With B = 0 the circuit yields
+   * Q = 2^N-1, R = A (all-subtract degenerate case).
+   */
+  static CircuitSpec buildArithmeticDivider(int bits) {
+    if (bits < 2 || bits > 4) {
+      throw new IllegalArgumentException("Divider width must be 2..4, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "dv0_x");
+      addInput(ports, "b" + i, "B" + i, "dv0_x");
+      addOutput(ports, "q" + i, "Q" + i, "dv0_x");
+      addOutput(ports, "r" + i, "R" + i, "dv0_x");
+    }
+    addInput(ports, "gnd", "GND", "dv0_x");
+
+    int seq = 0;
+    String[] rPrev = null;
+    for (int stage = 0; stage < bits; stage++) {
+      int i = bits - 1 - stage; // dividend bit processed by this stage
+      // candidate = {rPrev, A_i} as N+1 bits (bit0 = A_i, bit j>=1 = rPrev[j-1]).
+      String[] cand = new String[bits + 1];
+      for (int j = 0; j <= bits; j++) {
+        if (j == 0) {
+          cand[j] = "a" + i;
+        } else if (stage == 0) {
+          cand[j] = "gnd";
+        } else {
+          cand[j] = rPrev[j - 1];
+        }
+      }
+      // Ripple subtract cand - B over N+1 bits; B_N = 0 via the gnd pin.
+      String[] diff = new String[bits + 1];
+      String bin = "gnd";
+      for (int k = 0; k <= bits; k++) {
+        String g = "dv" + seq + "_";
+        String chip = "DV" + seq;
+        components.add(new ComponentSpec(g + "x", "Gates", "XOR Gate", 1, chip + "X"));
+        components.add(new ComponentSpec(g + "d", "Gates", "XOR Gate", 1, chip + "D"));
+        components.add(new ComponentSpec(g + "na", "Gates", "NOT Gate", 1, chip + "N"));
+        components.add(new ComponentSpec(g + "bo", "Gates", "OR Gate", 1, chip + "O"));
+        components.add(new ComponentSpec(g + "b1", "Gates", "AND Gate", 1, chip + "A"));
+        components.add(new ComponentSpec(g + "b2", "Gates", "AND Gate", 1, chip + "B"));
+        components.add(new ComponentSpec(g + "b3", "Gates", "OR Gate", 1, chip + "C"));
+        hints.add(new LayoutHint(g + "x", stage, 0, k, null));
+        hints.add(new LayoutHint(g + "d", stage, 0, k, null));
+        hints.add(new LayoutHint(g + "na", stage, 0, k, null));
+        hints.add(new LayoutHint(g + "bo", stage, 0, k, null));
+        hints.add(new LayoutHint(g + "b1", stage, 0, k, null));
+        hints.add(new LayoutHint(g + "b2", stage, 0, k, null));
+        hints.add(new LayoutHint(g + "b3", stage, 0, k, null));
+        String bSig = k < bits ? ("b" + k) : "gnd";
+        nets.add(net("dv_xa" + seq, e(cand[k], 0), e(g + "x", 1), e(g + "na", 1)));
+        nets.add(net("dv_xb" + seq, e(bSig, 0), e(g + "x", 2), e(g + "bo", 1), e(g + "b2", 1)));
+        nets.add(net("dv_dx" + seq, e(g + "x", 0), e(g + "d", 1)));
+        nets.add(net("dv_di" + seq, e(bin, 0), e(g + "d", 2)));
+        diff[k] = g + "d";
+        nets.add(net("dv_bo2" + seq, e(bin, 0), e(g + "bo", 2)));
+        nets.add(net("dv_b1a" + seq, e(g + "na", 0), e(g + "b1", 1)));
+        nets.add(net("dv_b1b" + seq, e(g + "bo", 0), e(g + "b1", 2)));
+        nets.add(net("dv_b2b" + seq, e(bin, 0), e(g + "b2", 2)));
+        nets.add(net("dv_b3a" + seq, e(g + "b1", 0), e(g + "b3", 1)));
+        nets.add(net("dv_b3b" + seq, e(g + "b2", 0), e(g + "b3", 2)));
+        bin = g + "b3";
+        seq++;
+      }
+      // q_i = NOT borrow (borrow=0 means candidate >= B, subtract).
+      String qNot = "dv" + seq + "_q";
+      components.add(new ComponentSpec(qNot, "Gates", "NOT Gate", 1, "DVQ" + (seq + 1)));
+      hints.add(new LayoutHint(qNot, stage, 0, bits, null));
+      nets.add(net("dv_qin" + seq, e(bin, 0), e(qNot, 1)));
+      nets.add(net("dv_qout" + seq, e(qNot, 0), e("q" + i, 0)));
+      // Mux result bits 0..N-1: rNext[j] = (diff[j] & q) | (cand[j] & borrow).
+      String[] rNext = new String[bits];
+      for (int j = 0; j < bits; j++) {
+        String g = "dv" + seq + "_m";
+        String chip = "DVM" + seq;
+        components.add(new ComponentSpec(g + "1", "Gates", "AND Gate", 1, chip + "1"));
+        components.add(new ComponentSpec(g + "2", "Gates", "AND Gate", 1, chip + "2"));
+        components.add(new ComponentSpec(g + "o", "Gates", "OR Gate", 1, chip + "O"));
+        hints.add(new LayoutHint(g + "1", stage, 0, j, null));
+        hints.add(new LayoutHint(g + "2", stage, 0, j, null));
+        hints.add(new LayoutHint(g + "o", stage, 0, j, null));
+        nets.add(net("dv_m1a" + seq, e(diff[j], 0), e(g + "1", 1)));
+        nets.add(net("dv_m1b" + seq, e(qNot, 0), e(g + "1", 2)));
+        nets.add(net("dv_m2a" + seq, e(cand[j], 0), e(g + "2", 1)));
+        nets.add(net("dv_m2b" + seq, e(bin, 0), e(g + "2", 2)));
+        nets.add(net("dv_mo1" + seq, e(g + "1", 0), e(g + "o", 1)));
+        nets.add(net("dv_mo2" + seq, e(g + "2", 0), e(g + "o", 2)));
+        rNext[j] = g + "o";
+        seq++;
+      }
+      rPrev = rNext;
+    }
+    for (int j = 0; j < bits; j++) {
+      nets.add(net("dv_rout" + j, e(rPrev[j], 0), e("r" + j, 0)));
+    }
+
+    return new CircuitSpec("divider_" + bits + "x" + bits, components, ports, nets, hints);
+  }
+
+  /**
    * BCD adder: 4-bit binary add A+B+Cin, then add 6 when the sum exceeds 9 or
    * carries out (correction). Outputs S0..S3 (BCD) and Cout. A shared GND
    * input pin ("Z", constant 0) supplies the correction-off lanes.
@@ -2929,7 +4761,6 @@ public final class StructuralCircuitTemplates {
     List<ExternalPort> ports = new ArrayList<>();
     List<NetSpec> nets = new ArrayList<>();
     List<LayoutHint> hints = new ArrayList<>();
-    int seq = 0;
 
     for (int i = 0; i < 4; i++) {
       addInput(ports, "a" + i, "A" + i, "bcdadd_x0");
@@ -2943,111 +4774,635 @@ public final class StructuralCircuitTemplates {
     addOutput(ports, "s3", "S3", "bcdadd_x0");
     addOutput(ports, "cout", "Cout", "bcdadd_x0");
 
+    int[] seqRef = {0};
+    String[] aSig = new String[4];
+    String[] bSig = new String[4];
+    for (int i = 0; i < 4; i++) {
+      aSig[i] = "a" + i;
+      bSig[i] = "b" + i;
+    }
+    String[] out = emitBcdDigit(components, nets, hints, seqRef, "bcdadd", aSig, bSig, "cin", "z");
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("bcdadd_sout" + i, e(out[i], 0), e("s" + i, 0)));
+    }
+    nets.add(net("bcdadd_cout", e(out[4], 0), e("cout", 0)));
+
+    return new CircuitSpec("bcd_adder", components, ports, nets, hints);
+  }
+
+  /**
+   * 2-digit BCD adder: A1A0 + B1B0 + Cin → S1S0 (BCD) + Cout. Two
+   * {@link #emitBcdDigit} digits chained; digit 1's carry-in is digit 0's
+   * carry-out. Outputs S0..S7 (S0..S3 low digit, S4..S7 high digit) and Cout.
+   * A shared GND input pin ("Z") supplies the correction-off lanes.
+   */
+  static CircuitSpec buildBcdAdder2Digit() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < 8; i++) {
+      addInput(ports, "a" + i, "A" + i, "bcd0_x0");
+      addInput(ports, "b" + i, "B" + i, "bcd0_x0");
+    }
+    addInput(ports, "cin", "Cin", "bcd0_x0");
+    addInput(ports, "z", "Z", "bcd0_x0");
+    for (int i = 0; i < 8; i++) {
+      addOutput(ports, "s" + i, "S" + i, "bcd0_x0");
+    }
+    addOutput(ports, "cout", "Cout", "bcd0_x0");
+
+    int[] seqRef = {0};
+    String[] aLow = new String[4];
+    String[] bLow = new String[4];
+    String[] aHigh = new String[4];
+    String[] bHigh = new String[4];
+    for (int i = 0; i < 4; i++) {
+      aLow[i] = "a" + i;
+      bLow[i] = "b" + i;
+      aHigh[i] = "a" + (4 + i);
+      bHigh[i] = "b" + (4 + i);
+    }
+    String[] low = emitBcdDigit(components, nets, hints, seqRef, "bcd0", aLow, bLow, "cin", "z");
+    String[] high = emitBcdDigit(components, nets, hints, seqRef, "bcd1", aHigh, bHigh, low[4], "z");
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("bcd0_sout" + i, e(low[i], 0), e("s" + i, 0)));
+      nets.add(net("bcd1_sout" + i, e(high[i], 0), e("s" + (4 + i), 0)));
+    }
+    nets.add(net("bcd2_cout", e(high[4], 0), e("cout", 0)));
+
+    return new CircuitSpec("bcd_adder_2digit", components, ports, nets, hints);
+  }
+
+  /**
+   * Emits one 4-bit BCD adder digit into the shared component/net/hint lists.
+   *
+   * @param aSig/bSig/cinSig/zSig signal names (external port ids or internal
+   *     gate outputs) for the digit's operands, carry-in and constant-0 lane
+   * @return {S0, S1, S2, S3, Cout} gate-output signal names
+   */
+  private static String[] emitBcdDigit(
+      List<ComponentSpec> components, List<NetSpec> nets, List<LayoutHint> hints,
+      int[] seqRef, String prefix, String[] aSig, String[] bSig, String cinSig, String zSig) {
+    int seq = seqRef[0];
+
     // stage 0: A + B + Cin -> S (4 bits) + c4
     String[] sum0 = new String[4];
-    String c = "cin";
+    String c = cinSig;
     for (int i = 0; i < 4; i++) {
-      String x = "bcdadd_x" + seq;
+      String x = prefix + "_x" + seq;
       components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "BXA" + (seq + 1)));
       hints.add(new LayoutHint(x, 0, 0, i, null));
-      String s = "bcdadd_s" + seq;
+      String s = prefix + "_s" + seq;
       components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "BXS" + (seq + 1)));
       hints.add(new LayoutHint(s, 0, 0, i, null));
-      String fa = "bcdadd_a" + seq;
+      String fa = prefix + "_a" + seq;
       components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "BAA" + (seq + 1)));
       hints.add(new LayoutHint(fa, 0, 0, i, null));
-      String fb = "bcdadd_b" + seq;
+      String fb = prefix + "_b" + seq;
       components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "BAB" + (seq + 1)));
       hints.add(new LayoutHint(fb, 0, 0, i, null));
-      String fo = "bcdadd_o" + seq;
+      String fo = prefix + "_o" + seq;
       components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "BAO" + (seq + 1)));
       hints.add(new LayoutHint(fo, 0, 0, i, null));
-      String fg = "bcdadd_g" + seq;
+      String fg = prefix + "_g" + seq;
       components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "BAG" + (seq + 1)));
       hints.add(new LayoutHint(fg, 0, 0, i, null));
       seq++;
-      nets.add(net("bcdadd_xa" + seq, e("a" + i, 0), e(x, 1)));
-      nets.add(net("bcdadd_xb" + seq, e("b" + i, 0), e(x, 2)));
-      nets.add(net("bcdadd_sa" + seq, e(x, 0), e(s, 1)));
-      nets.add(net("bcdadd_sb" + seq, e(c, 0), e(s, 2)));
-      nets.add(net("bcdadd_fa" + seq, e("a" + i, 0), e(fa, 1)));
-      nets.add(net("bcdadd_fb" + seq, e("b" + i, 0), e(fa, 2)));
-      nets.add(net("bcdadd_ga" + seq, e(c, 0), e(fb, 1)));
-      nets.add(net("bcdadd_gb" + seq, e(x, 0), e(fb, 2)));
-      nets.add(net("bcdadd_o1" + seq, e(fa, 0), e(fo, 1)));
-      nets.add(net("bcdadd_o2" + seq, e(fb, 0), e(fo, 2)));
-      nets.add(net("bcdadd_g1" + seq, e(fo, 0), e(fg, 1)));
-      nets.add(net("bcdadd_g2" + seq, e("z", 0), e(fg, 2)));
+      nets.add(net(prefix + "_xa" + seq, e(aSig[i], 0), e(x, 1)));
+      nets.add(net(prefix + "_xb" + seq, e(bSig[i], 0), e(x, 2)));
+      nets.add(net(prefix + "_sa" + seq, e(x, 0), e(s, 1)));
+      nets.add(net(prefix + "_sb" + seq, e(c, 0), e(s, 2)));
+      nets.add(net(prefix + "_fa" + seq, e(aSig[i], 0), e(fa, 1)));
+      nets.add(net(prefix + "_fb" + seq, e(bSig[i], 0), e(fa, 2)));
+      nets.add(net(prefix + "_ga" + seq, e(c, 0), e(fb, 1)));
+      nets.add(net(prefix + "_gb" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net(prefix + "_o1" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net(prefix + "_o2" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net(prefix + "_g1" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net(prefix + "_g2" + seq, e(zSig, 0), e(fg, 2)));
       sum0[i] = s;
       c = fg;
     }
     String c4 = c;
 
     // correction detect: adj = c4 or (S3 and (S2 or S1))
-    String o1 = "bcdadd_adj" + seq;
+    String o1 = prefix + "_adj" + seq;
     components.add(new ComponentSpec(o1, "Gates", "OR Gate", 1, "BAJ" + (seq + 1)));
     hints.add(new LayoutHint(o1, 1, 0, 0, null));
-    String a1 = "bcdadd_adj2" + seq;
+    String a1 = prefix + "_adj2" + seq;
     components.add(new ComponentSpec(a1, "Gates", "AND Gate", 1, "BAK" + (seq + 1)));
     hints.add(new LayoutHint(a1, 1, 0, 1, null));
-    String g1 = "bcdadd_adj3" + seq;
+    String g1 = prefix + "_adj3" + seq;
     components.add(new ComponentSpec(g1, "Gates", "OR Gate", 1, "BAL" + (seq + 1)));
     hints.add(new LayoutHint(g1, 1, 0, 2, null));
     seq++;
-    nets.add(net("bcdadd_s2s1" + seq, e(sum0[2], 0), e(g1, 1)));
-    nets.add(net("bcdadd_s1s" + seq, e(sum0[1], 0), e(g1, 2)));
-    nets.add(net("bcdadd_adj_a" + seq, e(g1, 0), e(a1, 1)));
-    nets.add(net("bcdadd_adj_s3" + seq, e(sum0[3], 0), e(a1, 2)));
-    nets.add(net("bcdadd_adj_or1" + seq, e(c4, 0), e(o1, 1)));
-    nets.add(net("bcdadd_adj_or2" + seq, e(a1, 0), e(o1, 2)));
+    nets.add(net(prefix + "_s2s1" + seq, e(sum0[2], 0), e(g1, 1)));
+    nets.add(net(prefix + "_s1s" + seq, e(sum0[1], 0), e(g1, 2)));
+    nets.add(net(prefix + "_adj_a" + seq, e(g1, 0), e(a1, 1)));
+    nets.add(net(prefix + "_adj_s3" + seq, e(sum0[3], 0), e(a1, 2)));
+    nets.add(net(prefix + "_adj_or1" + seq, e(c4, 0), e(o1, 1)));
+    nets.add(net(prefix + "_adj_or2" + seq, e(a1, 0), e(o1, 2)));
     String adj = o1;
 
     // stage 1: sum0 + (adj ? 6 : 0); bit0 adds 0, bits1..3 add adj
     String[] sumOut = new String[4];
-    String cIn2 = "z";
+    String cIn2 = zSig;
     for (int i = 0; i < 4; i++) {
-      String bSig = (i == 0 || i == 3) ? "z" : adj;
-      String x = "bcdadd_x2_" + seq;
+      String bS = (i == 0 || i == 3) ? zSig : adj;
+      String x = prefix + "_x2_" + seq;
       components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "BX2" + (seq + 1)));
       hints.add(new LayoutHint(x, 2, 0, i, null));
-      String s = "bcdadd_s2_" + seq;
+      String s = prefix + "_s2_" + seq;
       components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "BX3" + (seq + 1)));
       hints.add(new LayoutHint(s, 2, 0, i, null));
-      String fa = "bcdadd_a2_" + seq;
+      String fa = prefix + "_a2_" + seq;
       components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "BA2" + (seq + 1)));
       hints.add(new LayoutHint(fa, 2, 0, i, null));
-      String fb = "bcdadd_b2_" + seq;
+      String fb = prefix + "_b2_" + seq;
       components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "BB2" + (seq + 1)));
       hints.add(new LayoutHint(fb, 2, 0, i, null));
-      String fo = "bcdadd_o2_" + seq;
+      String fo = prefix + "_o2_" + seq;
       components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "BO2" + (seq + 1)));
       hints.add(new LayoutHint(fo, 2, 0, i, null));
-      String fg = "bcdadd_g2_" + seq;
+      String fg = prefix + "_g2_" + seq;
       components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "BG2" + (seq + 1)));
       hints.add(new LayoutHint(fg, 2, 0, i, null));
       seq++;
-      nets.add(net("bcdadd_x2a" + seq, e(sum0[i], 0), e(x, 1)));
-      nets.add(net("bcdadd_x2b" + seq, e(bSig, 0), e(x, 2)));
-      nets.add(net("bcdadd_s2a" + seq, e(x, 0), e(s, 1)));
-      nets.add(net("bcdadd_s2b" + seq, e(cIn2, 0), e(s, 2)));
-      nets.add(net("bcdadd_f2a" + seq, e(sum0[i], 0), e(fa, 1)));
-      nets.add(net("bcdadd_f2b" + seq, e(bSig, 0), e(fa, 2)));
-      nets.add(net("bcdadd_g2a" + seq, e(cIn2, 0), e(fb, 1)));
-      nets.add(net("bcdadd_g2b" + seq, e(x, 0), e(fb, 2)));
-      nets.add(net("bcdadd_o21" + seq, e(fa, 0), e(fo, 1)));
-      nets.add(net("bcdadd_o22" + seq, e(fb, 0), e(fo, 2)));
-      nets.add(net("bcdadd_g21" + seq, e(fo, 0), e(fg, 1)));
-      nets.add(net("bcdadd_g22" + seq, e("z", 0), e(fg, 2)));
+      nets.add(net(prefix + "_x2a" + seq, e(sum0[i], 0), e(x, 1)));
+      nets.add(net(prefix + "_x2b" + seq, e(bS, 0), e(x, 2)));
+      nets.add(net(prefix + "_s2a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net(prefix + "_s2b" + seq, e(cIn2, 0), e(s, 2)));
+      nets.add(net(prefix + "_f2a" + seq, e(sum0[i], 0), e(fa, 1)));
+      nets.add(net(prefix + "_f2b" + seq, e(bS, 0), e(fa, 2)));
+      nets.add(net(prefix + "_g2a" + seq, e(cIn2, 0), e(fb, 1)));
+      nets.add(net(prefix + "_g2b" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net(prefix + "_o21" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net(prefix + "_o22" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net(prefix + "_g21" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net(prefix + "_g22" + seq, e(zSig, 0), e(fg, 2)));
       sumOut[i] = s;
       cIn2 = fg;
     }
-    nets.add(net("bcdadd_sout0", e(sumOut[0], 0), e("s0", 0)));
-    nets.add(net("bcdadd_sout1", e(sumOut[1], 0), e("s1", 0)));
-    nets.add(net("bcdadd_sout2", e(sumOut[2], 0), e("s2", 0)));
-    nets.add(net("bcdadd_sout3", e(sumOut[3], 0), e("s3", 0)));
-    nets.add(net("bcdadd_cout", e(adj, 0), e("cout", 0)));
+    seqRef[0] = seq;
+    return new String[] {sumOut[0], sumOut[1], sumOut[2], sumOut[3], adj};
+  }
 
-    return new CircuitSpec("bcd_adder", components, ports, nets, hints);
+  /**
+   * 1-digit BCD subtractor: D = A - B (mod 10). Algorithm:
+   *   Stage 1: T = A + 9's-complement(B) via a BCD adder (Cin=0);
+   *   Stage 2: D = T + 1 via a BCD adder (Cin=1)  → A + 10 - B.
+   *   Borrow = NOT(Stage2 carry-out): carry 1 means the sum reached 10 (A>=B)
+   *   and the correction yields A-B; no carry means A<B and D = A-B+10 (the
+   *   mod-10 difference), borrow 1.
+   * Outputs D0..D3 (BCD), Borrow. All gates 2-input.
+   */
+  static CircuitSpec buildBcdSubtractor() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    int seq = 0;
+
+    for (int i = 0; i < 4; i++) {
+      addInput(ports, "a" + i, "A" + i, "bs_n0");
+      addInput(ports, "b" + i, "B" + i, "bs_n0");
+    }
+    for (int i = 0; i < 4; i++) {
+      addOutput(ports, "d" + i, "D" + i, "bs_s4_" + i);
+    }
+    addOutput(ports, "borrow", "Borrow", "bs_nb");
+
+    // 9's complement of B (b9_0=¬b0, b9_1=b1, b9_2=b2⊕b1, b9_3=¬(b3⊕(b2∨b1))).
+    components.add(new ComponentSpec("bs_n0", "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec("bs_x2", "Gates", "XOR Gate", 1, "X2"));
+    components.add(new ComponentSpec("bs_o", "Gates", "OR Gate", 1, "O1"));
+    components.add(new ComponentSpec("bs_x3", "Gates", "XOR Gate", 1, "X3"));
+    components.add(new ComponentSpec("bs_n3", "Gates", "NOT Gate", 1, "N2"));
+    hints.add(new LayoutHint("bs_n0", 0, 0, 0, null));
+    hints.add(new LayoutHint("bs_x2", 0, 0, 1, null));
+    hints.add(new LayoutHint("bs_o", 0, 0, 2, null));
+    hints.add(new LayoutHint("bs_x3", 0, 0, 3, null));
+    hints.add(new LayoutHint("bs_n3", 0, 0, 4, null));
+    nets.add(net("bs_n0_in", e("b0", 0), e("bs_n0", 1)));
+    nets.add(net("bs_x2_x", e("b2", 0), e("bs_x2", 1)));
+    nets.add(net("bs_x2_y", e("b1", 0), e("bs_x2", 2)));
+    nets.add(net("bs_o_x", e("b2", 0), e("bs_o", 1)));
+    nets.add(net("bs_o_y", e("b1", 0), e("bs_o", 2)));
+    nets.add(net("bs_x3_w", e("b3", 0), e("bs_x3", 1)));
+    nets.add(net("bs_x3_b", e("bs_o", 0), e("bs_x3", 2)));
+    nets.add(net("bs_n3_in", e("bs_x3", 0), e("bs_n3", 1)));
+    String[] b9 = {"bs_n0", "b1", "bs_x2", "bs_n3"};
+
+    // Stage 1: plain 4-bit ripple add T = A + B9 (no BCD correction yet — the
+    // +6 correction happens once on the final A+B9+1 sum so the >=10 decision
+    // for borrow stays correct). Outputs t0..t3, tCarry.
+    String[] t = new String[4];
+    // constant-0 pin for unused carry lanes and the correction-off lanes
+    addInput(ports, "gnd", "GND", "bs_x1_0");
+    String c = "gnd";
+    for (int i = 0; i < 4; i++) {
+      String x = "bs_x1_" + i;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "X1" + (i + 1)));
+      hints.add(new LayoutHint(x, 1, 0, i, null));
+      String s = "bs_s1_" + i;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "S1" + (i + 1)));
+      hints.add(new LayoutHint(s, 1, 0, i, null));
+      String fa = "bs_f1_" + i;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "A1" + (i + 1)));
+      hints.add(new LayoutHint(fa, 1, 0, i, null));
+      String fb = "bs_b1_" + i;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "B1" + (i + 1)));
+      hints.add(new LayoutHint(fb, 1, 0, i, null));
+      String fo = "bs_o1_" + i;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "C1" + (i + 1)));
+      hints.add(new LayoutHint(fo, 1, 0, i, null));
+      String fg = "bs_g1_" + i;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "G1" + (i + 1)));
+      hints.add(new LayoutHint(fg, 1, 0, i, null));
+      String cinSig = c;
+      nets.add(net("bs_x1a" + seq, e("a" + i, 0), e(x, 1)));
+      nets.add(net("bs_x1b" + seq, e(b9[i], 0), e(x, 2)));
+      nets.add(net("bs_s1a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("bs_s1b" + seq, e(cinSig, 0), e(s, 2)));
+      t[i] = s;
+      nets.add(net("bs_f1a" + seq, e("a" + i, 0), e(fa, 1)));
+      nets.add(net("bs_f1b" + seq, e(b9[i], 0), e(fa, 2)));
+      nets.add(net("bs_b1a" + seq, e(cinSig, 0), e(fb, 1)));
+      nets.add(net("bs_b1b" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("bs_o11" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("bs_o12" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("bs_g11" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("bs_g12" + seq, e("gnd", 0), e(fg, 2)));
+      c = fg;
+      seq++;
+    }
+    String tCarry = c;
+
+    // BCD addition D = A + B9 + 1 (bit0's bSig=ONE implements the +1; the
+    // carry chain starts at 0), then a single +6 correction when the sum
+    // exceeds 9 (adj = carry or (d3 & (d2|d1))).
+    String[] d = new String[4];
+    addInput(ports, "one", "ONE", "bs_x3_0");
+    String c3 = "gnd";
+    for (int i = 0; i < 4; i++) {
+      String x = "bs_x3_" + i;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "X3" + (i + 1)));
+      hints.add(new LayoutHint(x, 4, 0, i, null));
+      String s = "bs_s3_" + i;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "S3" + (i + 1)));
+      hints.add(new LayoutHint(s, 4, 0, i, null));
+      String fa = "bs_f3_" + i;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "A3" + (i + 1)));
+      hints.add(new LayoutHint(fa, 4, 0, i, null));
+      String fb = "bs_b3_" + i;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "B3" + (i + 1)));
+      hints.add(new LayoutHint(fb, 4, 0, i, null));
+      String fo = "bs_o3_" + i;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "C3" + (i + 1)));
+      hints.add(new LayoutHint(fo, 4, 0, i, null));
+      String fg = "bs_g3_" + i;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "G3" + (i + 1)));
+      hints.add(new LayoutHint(fg, 4, 0, i, null));
+      String bSig = (i == 0) ? "one" : "gnd";
+      nets.add(net("bs_x3a" + seq, e(t[i], 0), e(x, 1)));
+      nets.add(net("bs_x3b" + seq, e(bSig, 0), e(x, 2)));
+      nets.add(net("bs_s3a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("bs_s3b" + seq, e(c3, 0), e(s, 2)));
+      d[i] = s;
+      nets.add(net("bs_f3a" + seq, e(t[i], 0), e(fa, 1)));
+      nets.add(net("bs_f3b" + seq, e(bSig, 0), e(fa, 2)));
+      nets.add(net("bs_b3a" + seq, e(c3, 0), e(fb, 1)));
+      nets.add(net("bs_b3b" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("bs_o31" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("bs_o32" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("bs_g31" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("bs_g32" + seq, e("gnd", 0), e(fg, 2)));
+      c3 = fg;
+      seq++;
+    }
+    String dCarry = c3;
+
+    // correction detect: adj = dCarry or (d3 and (d2 or d1))
+    String go = "bs_adj2_o" + seq;
+    components.add(new ComponentSpec(go, "Gates", "OR Gate", 1, "B2J" + (seq + 1)));
+    hints.add(new LayoutHint(go, 5, 0, 0, null));
+    String ga = "bs_adj2_a" + seq;
+    components.add(new ComponentSpec(ga, "Gates", "AND Gate", 1, "B2K" + (seq + 1)));
+    hints.add(new LayoutHint(ga, 5, 0, 1, null));
+    String gg = "bs_adj2_g" + seq;
+    components.add(new ComponentSpec(gg, "Gates", "OR Gate", 1, "B2L" + (seq + 1)));
+    hints.add(new LayoutHint(gg, 5, 0, 2, null));
+    seq++;
+    nets.add(net("bs_adj2_g1", e(d[2], 0), e(gg, 1)));
+    nets.add(net("bs_adj2_g2", e(d[1], 0), e(gg, 2)));
+    nets.add(net("bs_adj2_a1", e(gg, 0), e(ga, 1)));
+    nets.add(net("bs_adj2_a2", e(d[3], 0), e(ga, 2)));
+    // adj = (tCarry or dCarry) or (d3 and (d2 or d1)).
+    // tCarry (A+B9 >= 16) also means D = A+10-B >= 10, so it must feed adj.
+    String tc = "bs_adj2_tc" + seq;
+    components.add(new ComponentSpec(tc, "Gates", "OR Gate", 1, "B2T" + (seq + 1)));
+    hints.add(new LayoutHint(tc, 5, 0, 3, null));
+    seq++;
+    nets.add(net("bs_adj2_tc1", e(tCarry, 0), e(tc, 1)));
+    nets.add(net("bs_adj2_tc2", e(dCarry, 0), e(tc, 2)));
+    nets.add(net("bs_adj2_o1", e(tc, 0), e(go, 1)));
+    nets.add(net("bs_adj2_o2", e(ga, 0), e(go, 2)));
+    String adj2 = go;
+    String[] dFinal = new String[4];
+    String c4 = "gnd";
+    for (int i = 0; i < 4; i++) {
+      String bSig = (i == 0 || i == 3) ? "gnd" : adj2;
+      String x = "bs_x4_" + i;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "X4" + (i + 1)));
+      hints.add(new LayoutHint(x, 5, 0, i, null));
+      String s = "bs_s4_" + i;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "S4" + (i + 1)));
+      hints.add(new LayoutHint(s, 5, 0, i, null));
+      String fa = "bs_f4_" + i;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "A4" + (i + 1)));
+      hints.add(new LayoutHint(fa, 5, 0, i, null));
+      String fb = "bs_b4_" + i;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "B4" + (i + 1)));
+      hints.add(new LayoutHint(fb, 5, 0, i, null));
+      String fo = "bs_o4_" + i;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "C4" + (i + 1)));
+      hints.add(new LayoutHint(fo, 5, 0, i, null));
+      String fg = "bs_g4_" + i;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "G4" + (i + 1)));
+      hints.add(new LayoutHint(fg, 5, 0, i, null));
+      nets.add(net("bs_x4a" + seq, e(d[i], 0), e(x, 1)));
+      nets.add(net("bs_x4b" + seq, e(bSig, 0), e(x, 2)));
+      nets.add(net("bs_s4a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net("bs_s4b" + seq, e(c4, 0), e(s, 2)));
+      dFinal[i] = s;
+      nets.add(net("bs_f4a" + seq, e(d[i], 0), e(fa, 1)));
+      nets.add(net("bs_f4b" + seq, e(bSig, 0), e(fa, 2)));
+      nets.add(net("bs_b4a" + seq, e(c4, 0), e(fb, 1)));
+      nets.add(net("bs_b4b" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net("bs_o41" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net("bs_o42" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net("bs_g41" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net("bs_g42" + seq, e("gnd", 0), e(fg, 2)));
+      c4 = fg;
+      seq++;
+    }
+
+    // outputs: D_i from dFinal, Borrow = NOT(adj2) (A<B detection)
+    components.add(new ComponentSpec("bs_nb", "Gates", "NOT Gate", 1, "NB"));
+    hints.add(new LayoutHint("bs_nb", 6, 0, 0, null));
+    nets.add(net("bs_nb_in", e(adj2, 0), e("bs_nb", 1)));
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("bs_dout" + i, e(dFinal[i], 0), e("d" + i, 0)));
+    }
+    nets.add(net("bs_borrow", e("bs_nb", 0), e("borrow", 0)));
+
+    return new CircuitSpec("bcd_subtractor", components, ports, nets, hints);
+  }
+
+  /**
+   * 2-digit BCD subtractor: A1A0 - B1B0 - Bin → D1D0 (BCD) + Borrow. Two
+   * {@link #emitBcdSubDigit} digits chained; digit 0's borrow-out feeds digit
+   * 1's borrow-in. Result D = (A - B - Bin) mod 100, Borrow = (A < B + Bin).
+   * A shared GND input pin supplies the constant-0 lanes.
+   */
+  static CircuitSpec buildBcdSubtractor2Digit() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+
+    for (int i = 0; i < 8; i++) {
+      addInput(ports, "a" + i, "A" + i, "bcds0_n0");
+      addInput(ports, "b" + i, "B" + i, "bcds0_n0");
+    }
+    addInput(ports, "bin", "Bin", "bcds0_n0");
+    addInput(ports, "gnd", "GND", "bcds0_n0");
+    for (int i = 0; i < 8; i++) {
+      addOutput(ports, "d" + i, "D" + i, "bcds0_n0");
+    }
+    addOutput(ports, "borrow", "Borrow", "bcds0_n0");
+
+    int[] seqRef = {0};
+    String[] aLow = new String[4];
+    String[] bLow = new String[4];
+    String[] aHigh = new String[4];
+    String[] bHigh = new String[4];
+    for (int i = 0; i < 4; i++) {
+      aLow[i] = "a" + i;
+      bLow[i] = "b" + i;
+      aHigh[i] = "a" + (4 + i);
+      bHigh[i] = "b" + (4 + i);
+    }
+    String[] low = emitBcdSubDigit(components, nets, hints, seqRef, "bcds0", aLow, bLow, "bin", "gnd");
+    String[] high = emitBcdSubDigit(components, nets, hints, seqRef, "bcds1", aHigh, bHigh, low[4], "gnd");
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("bcds0_dout" + i, e(low[i], 0), e("d" + i, 0)));
+      nets.add(net("bcds1_dout" + i, e(high[i], 0), e("d" + (4 + i), 0)));
+    }
+    nets.add(net("bcds2_borrow", e(high[4], 0), e("borrow", 0)));
+
+    return new CircuitSpec("bcd_subtractor_2digit", components, ports, nets, hints);
+  }
+
+  /**
+   * Emits one BCD subtractor digit (D = A - B - Bin mod 10, borrow-out =
+   * A < B + Bin) into the shared lists. Algorithm per digit: T = A + 9's(B);
+   * S = T + (1 - Bin) (bit0 addend = NOT Bin); adj = (tCarry|dCarry) |
+   * (S3&(S2|S1)); D = S + 6·adj mod 16; borrow = NOT adj.
+   *
+   * @return {D0, D1, D2, D3, borrowOut} gate-output signal names
+   */
+  private static String[] emitBcdSubDigit(
+      List<ComponentSpec> components, List<NetSpec> nets, List<LayoutHint> hints,
+      int[] seqRef, String prefix, String[] aSig, String[] bSig, String binSig, String gndSig) {
+    int seq = seqRef[0];
+
+    // 9's complement of B: b9_0=¬b0, b9_1=b1, b9_2=b2⊕b1, b9_3=¬(b3⊕(b2∨b1)).
+    String n0 = prefix + "_n0";
+    String x2 = prefix + "_x2";
+    String o = prefix + "_o";
+    String x3 = prefix + "_x3";
+    String n3 = prefix + "_n3";
+    components.add(new ComponentSpec(n0, "Gates", "NOT Gate", 1, "N1"));
+    components.add(new ComponentSpec(x2, "Gates", "XOR Gate", 1, "X2"));
+    components.add(new ComponentSpec(o, "Gates", "OR Gate", 1, "O1"));
+    components.add(new ComponentSpec(x3, "Gates", "XOR Gate", 1, "X3"));
+    components.add(new ComponentSpec(n3, "Gates", "NOT Gate", 1, "N2"));
+    hints.add(new LayoutHint(n0, 0, 0, 0, null));
+    hints.add(new LayoutHint(x2, 0, 0, 1, null));
+    hints.add(new LayoutHint(o, 0, 0, 2, null));
+    hints.add(new LayoutHint(x3, 0, 0, 3, null));
+    hints.add(new LayoutHint(n3, 0, 0, 4, null));
+    nets.add(net(prefix + "_n0_in", e(bSig[0], 0), e(n0, 1)));
+    nets.add(net(prefix + "_x2_x", e(bSig[2], 0), e(x2, 1)));
+    nets.add(net(prefix + "_x2_y", e(bSig[1], 0), e(x2, 2)));
+    nets.add(net(prefix + "_o_x", e(bSig[2], 0), e(o, 1)));
+    nets.add(net(prefix + "_o_y", e(bSig[1], 0), e(o, 2)));
+    nets.add(net(prefix + "_x3_w", e(bSig[3], 0), e(x3, 1)));
+    nets.add(net(prefix + "_x3_b", e(o, 0), e(x3, 2)));
+    nets.add(net(prefix + "_n3_in", e(x3, 0), e(n3, 1)));
+    String[] b9 = {n0, bSig[1], x2, n3};
+
+    // Stage 1: T = A + b9 (plain ripple, no correction yet).
+    String[] t = new String[4];
+    String c = gndSig;
+    for (int i = 0; i < 4; i++) {
+      String x = prefix + "_x1_" + i;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "X1" + (i + 1)));
+      hints.add(new LayoutHint(x, 1, 0, i, null));
+      String s = prefix + "_s1_" + i;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "S1" + (i + 1)));
+      hints.add(new LayoutHint(s, 1, 0, i, null));
+      String fa = prefix + "_f1_" + i;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "A1" + (i + 1)));
+      hints.add(new LayoutHint(fa, 1, 0, i, null));
+      String fb = prefix + "_b1_" + i;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "B1" + (i + 1)));
+      hints.add(new LayoutHint(fb, 1, 0, i, null));
+      String fo = prefix + "_o1_" + i;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "C1" + (i + 1)));
+      hints.add(new LayoutHint(fo, 1, 0, i, null));
+      String fg = prefix + "_g1_" + i;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "G1" + (i + 1)));
+      hints.add(new LayoutHint(fg, 1, 0, i, null));
+      nets.add(net(prefix + "_x1a" + seq, e(aSig[i], 0), e(x, 1)));
+      nets.add(net(prefix + "_x1b" + seq, e(b9[i], 0), e(x, 2)));
+      nets.add(net(prefix + "_s1a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net(prefix + "_s1b" + seq, e(c, 0), e(s, 2)));
+      t[i] = s;
+      nets.add(net(prefix + "_f1a" + seq, e(aSig[i], 0), e(fa, 1)));
+      nets.add(net(prefix + "_f1b" + seq, e(b9[i], 0), e(fa, 2)));
+      nets.add(net(prefix + "_b1a" + seq, e(c, 0), e(fb, 1)));
+      nets.add(net(prefix + "_b1b" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net(prefix + "_o11" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net(prefix + "_o12" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net(prefix + "_g11" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net(prefix + "_g12" + seq, e(gndSig, 0), e(fg, 2)));
+      c = fg;
+      seq++;
+    }
+    String tCarry = c;
+
+    // NOT Bin: bit0's stage-3 addend = (1 - Bin).
+    String nbin = prefix + "_nbin";
+    components.add(new ComponentSpec(nbin, "Gates", "NOT Gate", 1, "NBIN"));
+    hints.add(new LayoutHint(nbin, 2, 0, 0, null));
+    nets.add(net(prefix + "_nbin_in", e(binSig, 0), e(nbin, 1)));
+
+    // Stage 3: S = T + (1 - Bin); carry chain from 0.
+    String[] d = new String[4];
+    String c3 = gndSig;
+    for (int i = 0; i < 4; i++) {
+      String x = prefix + "_x3_" + i;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "X3" + (i + 1)));
+      hints.add(new LayoutHint(x, 4, 0, i, null));
+      String s = prefix + "_s3_" + i;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "S3" + (i + 1)));
+      hints.add(new LayoutHint(s, 4, 0, i, null));
+      String fa = prefix + "_f3_" + i;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "A3" + (i + 1)));
+      hints.add(new LayoutHint(fa, 4, 0, i, null));
+      String fb = prefix + "_b3_" + i;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "B3" + (i + 1)));
+      hints.add(new LayoutHint(fb, 4, 0, i, null));
+      String fo = prefix + "_o3_" + i;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "C3" + (i + 1)));
+      hints.add(new LayoutHint(fo, 4, 0, i, null));
+      String fg = prefix + "_g3_" + i;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "G3" + (i + 1)));
+      hints.add(new LayoutHint(fg, 4, 0, i, null));
+      String bS = (i == 0) ? nbin : gndSig;
+      nets.add(net(prefix + "_x3a" + seq, e(t[i], 0), e(x, 1)));
+      nets.add(net(prefix + "_x3b" + seq, e(bS, 0), e(x, 2)));
+      nets.add(net(prefix + "_s3a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net(prefix + "_s3b" + seq, e(c3, 0), e(s, 2)));
+      d[i] = s;
+      nets.add(net(prefix + "_f3a" + seq, e(t[i], 0), e(fa, 1)));
+      nets.add(net(prefix + "_f3b" + seq, e(bS, 0), e(fa, 2)));
+      nets.add(net(prefix + "_b3a" + seq, e(c3, 0), e(fb, 1)));
+      nets.add(net(prefix + "_b3b" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net(prefix + "_o31" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net(prefix + "_o32" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net(prefix + "_g31" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net(prefix + "_g32" + seq, e(gndSig, 0), e(fg, 2)));
+      c3 = fg;
+      seq++;
+    }
+    String dCarry = c3;
+
+    // adj = (tCarry | dCarry) | (d3 & (d2 | d1))
+    String go = prefix + "_adj2_o" + seq;
+    components.add(new ComponentSpec(go, "Gates", "OR Gate", 1, "B2J" + (seq + 1)));
+    hints.add(new LayoutHint(go, 5, 0, 0, null));
+    String ga = prefix + "_adj2_a" + seq;
+    components.add(new ComponentSpec(ga, "Gates", "AND Gate", 1, "B2K" + (seq + 1)));
+    hints.add(new LayoutHint(ga, 5, 0, 1, null));
+    String gg = prefix + "_adj2_g" + seq;
+    components.add(new ComponentSpec(gg, "Gates", "OR Gate", 1, "B2L" + (seq + 1)));
+    hints.add(new LayoutHint(gg, 5, 0, 2, null));
+    String tc = prefix + "_adj2_tc" + seq;
+    components.add(new ComponentSpec(tc, "Gates", "OR Gate", 1, "B2T" + (seq + 1)));
+    hints.add(new LayoutHint(tc, 5, 0, 3, null));
+    seq++;
+    nets.add(net(prefix + "_adj2_g1", e(d[2], 0), e(gg, 1)));
+    nets.add(net(prefix + "_adj2_g2", e(d[1], 0), e(gg, 2)));
+    nets.add(net(prefix + "_adj2_a1", e(gg, 0), e(ga, 1)));
+    nets.add(net(prefix + "_adj2_a2", e(d[3], 0), e(ga, 2)));
+    nets.add(net(prefix + "_adj2_tc1", e(tCarry, 0), e(tc, 1)));
+    nets.add(net(prefix + "_adj2_tc2", e(dCarry, 0), e(tc, 2)));
+    nets.add(net(prefix + "_adj2_o1", e(tc, 0), e(go, 1)));
+    nets.add(net(prefix + "_adj2_o2", e(ga, 0), e(go, 2)));
+    String adj2 = go;
+
+    // Stage 4: D = d + adj2*6 mod 16 (bits1..3 add adj2).
+    String[] dFinal = new String[4];
+    String c4 = gndSig;
+    for (int i = 0; i < 4; i++) {
+      String x = prefix + "_x4_" + i;
+      components.add(new ComponentSpec(x, "Gates", "XOR Gate", 1, "X4" + (i + 1)));
+      hints.add(new LayoutHint(x, 5, 0, i, null));
+      String s = prefix + "_s4_" + i;
+      components.add(new ComponentSpec(s, "Gates", "XOR Gate", 1, "S4" + (i + 1)));
+      hints.add(new LayoutHint(s, 5, 0, i, null));
+      String fa = prefix + "_f4_" + i;
+      components.add(new ComponentSpec(fa, "Gates", "AND Gate", 1, "A4" + (i + 1)));
+      hints.add(new LayoutHint(fa, 5, 0, i, null));
+      String fb = prefix + "_b4_" + i;
+      components.add(new ComponentSpec(fb, "Gates", "AND Gate", 1, "B4" + (i + 1)));
+      hints.add(new LayoutHint(fb, 5, 0, i, null));
+      String fo = prefix + "_o4_" + i;
+      components.add(new ComponentSpec(fo, "Gates", "OR Gate", 1, "C4" + (i + 1)));
+      hints.add(new LayoutHint(fo, 5, 0, i, null));
+      String fg = prefix + "_g4_" + i;
+      components.add(new ComponentSpec(fg, "Gates", "OR Gate", 1, "G4" + (i + 1)));
+      hints.add(new LayoutHint(fg, 5, 0, i, null));
+      String bS = (i == 0 || i == 3) ? gndSig : adj2;
+      nets.add(net(prefix + "_x4a" + seq, e(d[i], 0), e(x, 1)));
+      nets.add(net(prefix + "_x4b" + seq, e(bS, 0), e(x, 2)));
+      nets.add(net(prefix + "_s4a" + seq, e(x, 0), e(s, 1)));
+      nets.add(net(prefix + "_s4b" + seq, e(c4, 0), e(s, 2)));
+      dFinal[i] = s;
+      nets.add(net(prefix + "_f4a" + seq, e(d[i], 0), e(fa, 1)));
+      nets.add(net(prefix + "_f4b" + seq, e(bS, 0), e(fa, 2)));
+      nets.add(net(prefix + "_b4a" + seq, e(c4, 0), e(fb, 1)));
+      nets.add(net(prefix + "_b4b" + seq, e(x, 0), e(fb, 2)));
+      nets.add(net(prefix + "_o41" + seq, e(fa, 0), e(fo, 1)));
+      nets.add(net(prefix + "_o42" + seq, e(fb, 0), e(fo, 2)));
+      nets.add(net(prefix + "_g41" + seq, e(fo, 0), e(fg, 1)));
+      nets.add(net(prefix + "_g42" + seq, e(gndSig, 0), e(fg, 2)));
+      c4 = fg;
+      seq++;
+    }
+
+    // borrow out = NOT adj2
+    String nb = prefix + "_nb";
+    components.add(new ComponentSpec(nb, "Gates", "NOT Gate", 1, "NB"));
+    hints.add(new LayoutHint(nb, 6, 0, 0, null));
+    nets.add(net(prefix + "_nb_in", e(adj2, 0), e(nb, 1)));
+    seqRef[0] = seq;
+    return new String[] {dFinal[0], dFinal[1], dFinal[2], dFinal[3], nb};
   }
   private static void addInput(
       List<ExternalPort> ports, String id, String label, String target) {

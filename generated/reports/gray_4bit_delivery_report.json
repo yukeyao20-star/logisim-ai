@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "4 bit gray code",
+  "request": "gray code",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",
@@ -14,9 +14,9 @@
   "summaryJsonPath": "generated\\reports\\gray_4bit_generation_summary.json",
   "manifestPath": "generated\\reports\\gray_4bit_circuit_manifest.md",
   "manifestJsonPath": "generated\\reports\\gray_4bit_circuit_manifest.json",
-  "complete": null,
-  "manifestCheckCount": null,
-  "manifestIssueCount": null,
+  "complete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
   "layoutClean": false,
   "layoutIssueCount": 6,
   "layoutScore": 0,
@@ -36,16 +36,20 @@
   "layoutRepairPlans": [{"action": "reroute_wires", "targetType": "WIRE_RISK", "severity": "ERROR", "suggestion": "Reroute risky wires through tunnels or move boundary wire lanes away from external input rows.", "parameters": "kind=boundary_vertical;circuit=gray_4bit;x1=110;y1=90;x2=110;y2=150"}, {"action": "reroute_wires", "targetType": "WIRE_RISK", "severity": "ERROR", "suggestion": "Reroute risky wires through tunnels or move boundary wire lanes away from external input rows.", "parameters": "kind=boundary_vertical;circuit=gray_4bit;x1=160;y1=80;x2=160;y2=200"}, {"action": "reroute_wires", "targetType": "WIRE_RISK", "severity": "ERROR", "suggestion": "Reroute risky wires through tunnels or move boundary wire lanes away from external input rows.", "parameters": "kind=boundary_vertical;circuit=gray_4bit;x1=210;y1=110;x2=210;y2=250"}, {"action": "avoid_reserved_areas", "targetType": "RESERVED_AREA_INTRUSION", "severity": "WARNING", "suggestion": "Move wires, tunnels, or labels away from reserved component visual areas.", "parameters": "kind=reserved_area_intrusion;circuit=gray_4bit;component=Pin;label=G0;anchorX=1280;anchorY=100;left=1266;top=86;right=1294;bottom=114;connectionPoints=1;x1=110;y1=90;x2=1600;y2=90"}, {"action": "avoid_reserved_areas", "targetType": "RESERVED_AREA_INTRUSION", "severity": "WARNING", "suggestion": "Move wires, tunnels, or labels away from reserved component visual areas.", "parameters": "kind=reserved_area_intrusion;circuit=gray_4bit;component=Pin;label=G0;anchorX=1280;anchorY=100;left=1266;top=86;right=1294;bottom=114;connectionPoints=1;x1=210;y1=110;x2=1720;y2=110"}, {"action": "avoid_reserved_areas", "targetType": "RESERVED_AREA_INTRUSION", "severity": "WARNING", "suggestion": "Move wires, tunnels, or labels away from reserved component visual areas.", "parameters": "kind=reserved_area_intrusion;circuit=gray_4bit;component=Pin;label=G1;anchorX=1230;anchorY=150;left=1216;top=136;right=1244;bottom=164;connectionPoints=1;x1=600;y1=140;x2=1650;y2=140"}],
   "layoutAutoRepairApplied": false,
   "layoutAutoRepairResults": [],
-  "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit", "fix_layout", "regenerate_layout"],
-  "artifactCount": 8,
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table", "fix_layout", "regenerate_layout"],
+  "artifactCount": 12,
   "artifacts": [
     {"kind": "circuit", "path": "generated\\circ\\gray_4bit.circ", "exists": true},
-    {"kind": "manifest_json", "path": "generated\\reports\\gray_4bit_circuit_manifest.json", "exists": false},
-    {"kind": "manifest_markdown", "path": "generated\\reports\\gray_4bit_circuit_manifest.md", "exists": false},
+    {"kind": "manifest_json", "path": "generated\\reports\\gray_4bit_circuit_manifest.json", "exists": true},
+    {"kind": "manifest_markdown", "path": "generated\\reports\\gray_4bit_circuit_manifest.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated\\reports\\gray_4bit_circuit_truth_table.json", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated\\reports\\gray_4bit_circuit_truth_table.md", "exists": true},
     {"kind": "delivery_json", "path": "generated\\reports\\gray_4bit_delivery_report.json", "exists": true},
     {"kind": "delivery_markdown", "path": "generated\\reports\\gray_4bit_delivery_report.md", "exists": true},
     {"kind": "summary_json", "path": "generated\\reports\\gray_4bit_generation_summary.json", "exists": true},
     {"kind": "summary_markdown", "path": "generated\\reports\\gray_4bit_generation_summary.md", "exists": true},
-    {"kind": "artifact", "path": "generated\\reports\\gray_4bit_multichip.md", "exists": true}
+    {"kind": "artifact", "path": "generated\\reports\\gray_4bit_multichip.md", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\gray_4bit_official_simulation.json", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\gray_4bit_official_simulation.md", "exists": true}
   ]
 }

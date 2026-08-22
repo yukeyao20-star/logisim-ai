@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "4 bit gray to binary",
+  "request": "格雷码转二进制",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",
@@ -37,7 +37,7 @@
   "layoutAutoRepairApplied": false,
   "layoutAutoRepairResults": [],
   "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit", "fix_layout", "regenerate_layout"],
-  "artifactCount": 8,
+  "artifactCount": 10,
   "artifacts": [
     {"kind": "circuit", "path": "generated\\circ\\gray2bin_4bit.circ", "exists": true},
     {"kind": "manifest_json", "path": "generated\\reports\\gray2bin_4bit_circuit_manifest.json", "exists": false},
@@ -46,6 +46,8 @@
     {"kind": "delivery_markdown", "path": "generated\\reports\\gray2bin_4bit_delivery_report.md", "exists": true},
     {"kind": "summary_json", "path": "generated\\reports\\gray2bin_4bit_generation_summary.json", "exists": true},
     {"kind": "summary_markdown", "path": "generated\\reports\\gray2bin_4bit_generation_summary.md", "exists": true},
-    {"kind": "artifact", "path": "generated\\reports\\gray2bin_4bit_multichip.md", "exists": true}
+    {"kind": "artifact", "path": "generated\\reports\\gray2bin_4bit_multichip.md", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\gray2bin_4bit_official_simulation.json", "exists": true},
+    {"kind": "artifact", "path": "generated\\reports\\gray2bin_4bit_official_simulation.md", "exists": true}
   ]
 }

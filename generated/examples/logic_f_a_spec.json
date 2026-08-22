@@ -1,0 +1,20 @@
+{
+  "name": "logic_f_a",
+  "components": [
+    {"id": "not_a1", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": ""},
+    {"id": "not2", "library": "Gates", "factory": "NOT Gate", "bitWidth": 1, "label": ""}
+  ],
+  "externalPorts": [
+    {"id": "a", "label": "A", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "not_a1", "targetEndIndex": 1},
+    {"id": "f", "label": "F", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "not2", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "net_a", "endpoints": [{"componentId": "a", "endIndex": 0}, {"componentId": "not_a1", "endIndex": 1}]},
+    {"id": "net_i1", "endpoints": [{"componentId": "not_a1", "endIndex": 0}, {"componentId": "not2", "endIndex": 1}]},
+    {"id": "net_i2", "endpoints": [{"componentId": "not2", "endIndex": 0}, {"componentId": "f", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "not_a1", "rank": 1, "column": 1, "row": 0, "side": null},
+    {"componentId": "not2", "rank": 2, "column": 2, "row": 1, "side": null}
+  ]
+}

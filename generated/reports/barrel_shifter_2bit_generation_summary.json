@@ -1,0 +1,31 @@
+{
+  "requestKind": "natural_language",
+  "request": "2 bit barrel shifter",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "barrel_shifter_2bit",
+  "circuitPath": "generated\\circ\\barrel_shifter_2bit.circ",
+  "manifestPath": "generated\\reports\\barrel_shifter_2bit_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 6,
+  "artifacts": [
+    {"path": "generated\\circ\\barrel_shifter_2bit.circ", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_2bit_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_2bit_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_2bit_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_2bit_circuit_truth_table.md", "exists": true},
+    {"path": "generated\\reports\\barrel_shifter_2bit_multichip.md", "exists": true}
+  ]
+}

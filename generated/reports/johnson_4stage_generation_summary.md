@@ -1,7 +1,7 @@
 # Generation summary for johnson_4stage
 
 - Request kind: natural_language
-- Request: 4 bit johnson counter
+- Request: 约翰逊计数器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,11 +17,13 @@
 - Manifest complete: unknown
 - Manifest check count: unknown
 - Manifest issue count: unknown
-- Artifact count: 2
+- Artifact count: 4
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\johnson_4stage.circ | true |
+| generated\reports\johnson_4stage_generation_summary.json | true |
+| generated\reports\johnson_4stage_generation_summary.md | true |
 | generated\reports\johnson_4stage_multichip.md | true |

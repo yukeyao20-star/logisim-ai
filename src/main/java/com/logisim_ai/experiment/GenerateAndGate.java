@@ -264,6 +264,68 @@ public final class GenerateAndGate {
   }
 
   /**
+   * True when a spec belongs to a structural template family, which routes
+   * through {@link com.logisim_ai.compiler.DirectMultiChipCompiler} (no
+   * Tunnels): reliable wiring for dense fan-out circuits, and every gate sits
+   * in its own slot so the layout stays readable.
+   */
+  public static boolean usesDirectCompiler(com.logisim_ai.ir.CircuitSpec spec) {
+    return spec.name().startsWith("adder_")
+        || spec.name().startsWith("satadd_")
+        || spec.name().startsWith("subtractor_")
+        || spec.name().startsWith("comparator_")
+        || spec.name().startsWith("mux_")
+        || spec.name().startsWith("decoder_")
+        || spec.name().startsWith("parity_")
+        || spec.name().startsWith("encoder_8to3")
+        || spec.name().startsWith("bcd7seg")
+        || spec.name().startsWith("hex7seg")
+        || spec.name().startsWith("squarer_")
+        || spec.name().startsWith("accumulator_")
+        || spec.name().startsWith("mac_")
+        || spec.name().startsWith("multiplier_")
+        || spec.name().startsWith("bcd_adder")
+        || spec.name().startsWith("counter_")
+        || spec.name().startsWith("dff")
+        || spec.name().startsWith("jkff")
+        || spec.name().startsWith("tff")
+        || spec.name().startsWith("register_")
+        || spec.name().startsWith("shiftreg_")
+        || spec.name().startsWith("srlatch")
+        || spec.name().startsWith("divider_")
+        || spec.name().startsWith("johnson_")
+        || spec.name().startsWith("dlatch")
+        || spec.name().startsWith("gray_")
+        || spec.name().startsWith("graycnt_")
+        || spec.name().startsWith("gray2bin_")
+        || spec.name().startsWith("excess3")
+        || spec.name().equals("excess3_adder")
+        || spec.name().startsWith("twoscomp_")
+        || spec.name().equals("traffic_light")
+        || spec.name().equals("edge_detector")
+        || spec.name().equals("debouncer")
+        || spec.name().startsWith("oneshot_")
+        || spec.name().startsWith("seqdet_")
+        || spec.name().startsWith("bidirsreg_")
+        || spec.name().equals("bcd_counter")
+        || spec.name().startsWith("updown_counter_")
+        || spec.name().startsWith("lfsr_")
+        || spec.name().startsWith("demux_")
+        || spec.name().matches("mod\\d+_counter")
+        || spec.name().startsWith("bcd2bin_")
+        || spec.name().startsWith("bin2bcd")
+        || spec.name().equals("tristate_buffer")
+        || spec.name().startsWith("ring_")
+        || spec.name().startsWith("nine_")
+        || spec.name().startsWith("alu_")
+        || spec.name().startsWith("bcd_subtractor")
+        || spec.name().startsWith("barrel_shifter_")
+        || spec.name().startsWith("rotate_shifter_")
+        || spec.name().startsWith("shift_right_")
+        || spec.name().startsWith("sar_");
+  }
+
+  /**
    * Run natural-language circuit generation.
    *
    * <p>Uses {@link com.logisim_ai.ai.NaturalLanguageCircuitPlanner} to convert
@@ -296,42 +358,7 @@ public final class GenerateAndGate {
 
       // Compile
       File outputFile = new File("generated/circ/" + spec.name() + ".circ");
-      boolean structural = spec.name().startsWith("adder_")
-          || spec.name().startsWith("comparator_")
-          || spec.name().startsWith("mux_")
-          || spec.name().startsWith("decoder_")
-          || spec.name().startsWith("parity_")
-          || spec.name().startsWith("encoder_8to3")
-          || spec.name().startsWith("bcd7seg")
-          || spec.name().startsWith("multiplier_")
-          || spec.name().startsWith("bcd_adder")
-          || spec.name().startsWith("counter_")
-          || spec.name().startsWith("dff")
-          || spec.name().startsWith("jkff")
-          || spec.name().startsWith("tff")
-          || spec.name().startsWith("register_")
-          || spec.name().startsWith("shiftreg_")
-          || spec.name().startsWith("srlatch")
-          || spec.name().startsWith("divider_")
-          || spec.name().startsWith("johnson_")
-          || spec.name().startsWith("dlatch")
-          || spec.name().startsWith("gray_")
-          || spec.name().startsWith("gray2bin_")
-          || spec.name().startsWith("excess3")
-          || spec.name().startsWith("twoscomp_")
-          || spec.name().equals("traffic_light")
-          || spec.name().startsWith("seqdet_")
-          || spec.name().startsWith("bidirsreg_")
-          || spec.name().equals("bcd_counter")
-          || spec.name().startsWith("updown_counter_")
-          || spec.name().startsWith("lfsr_")
-          || spec.name().startsWith("demux_")
-          || spec.name().matches("mod\\d+_counter")
-          || spec.name().startsWith("bcd2bin_")
-          || spec.name().startsWith("bin2bcd")
-          || spec.name().equals("tristate_buffer")
-          || spec.name().startsWith("ring_")
-          || spec.name().startsWith("nine_");
+      boolean structural = usesDirectCompiler(spec);
       if (structural) {
         // Structural templates route directly (no Tunnels): reliable wiring for
         // dense fan-out circuits like decoders, and every gate sits in its own
@@ -345,6 +372,7 @@ public final class GenerateAndGate {
       persistSpecJson(spec);
       writeTtlReportsIfPresent(spec);
       System.out.println("[OK] " + spec.name() + ".circ generated via NL path");
+      com.logisim_ai.validation.CircuitArtifactManifest.writeReports(spec, outputFile);
       printCircuitManifestPath(outputFile);
       Path summaryPath = com.logisim_ai.validation.GenerationSummary.writeCircuitSummary(
           "natural_language",
@@ -472,6 +500,7 @@ public final class GenerateAndGate {
         com.logisim_ai.compiler.LogisimCompiler.compileSingleComponent(spec, outputFile);
       }
       System.out.println("[OK] " + outputFile.getPath() + " generated via JSON path");
+      com.logisim_ai.validation.CircuitArtifactManifest.writeReports(spec, outputFile);
       printCircuitManifestPath(outputFile);
       Path summaryPath = com.logisim_ai.validation.GenerationSummary.writeCircuitSummary(
           "json",

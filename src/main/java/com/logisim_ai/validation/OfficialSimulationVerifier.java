@@ -60,6 +60,28 @@ public final class OfficialSimulationVerifier {
       return Report.skipped(circFile, "too many inputs for exhaustive official simulation: "
           + inputs.size());
     }
+    // Sequential circuits (flip-flops, latches, RAM) have no combinational
+    // truth table; their behavior is verified via clock-pulse vectors instead
+    // (clock-sequence regression). Exhaustive -tty table would report only the
+    // initial state, which is not evidence of correct behavior.
+    boolean sequential = spec.components().stream()
+        .anyMatch(c -> c.libraryName().equals("Memory"));
+    // srlatch / dlatch are built purely from gates (cross-coupled feedback, no
+    // Memory component), but are equally sequential: their outputs depend on
+    // history and exhaustive enumeration reports unresolved/illegal states.
+    if (spec.name().equals("srlatch") || spec.name().equals("dlatch")) {
+      sequential = true;
+    }
+    // Sequential TTL chips (counters, registers, flip-flops): exhaustive
+    // tables only see the initial state and cannot exercise clock behavior.
+    if (spec.components().stream()
+        .anyMatch(c -> isSequentialTtl(c.factoryName()))) {
+      sequential = true;
+    }
+    if (sequential) {
+      return Report.skipped(circFile,
+          "sequential circuit (Memory/feedback); verify with clock-pulse vectors");
+    }
 
     String jar = locateLogisimJar();
     if (jar == null) {
@@ -238,6 +260,34 @@ public final class OfficialSimulationVerifier {
             default -> true;
           };
         });
+  }
+
+  /**
+   * True for TTL chips whose outputs depend on clock/state history (counters,
+   * registers, flip-flops, shift registers). Exhaustive truth tables on these
+   * only see the initial state; the clock-sequence regression covers them.
+   * Explicit allow-list: combination chips (74151 mux, 74138 decoder, 7485
+   * comparator, 74283 adder, 74181 ALU, 7486 XOR, ...) keep exhaustive tables.
+   */
+  private static boolean isSequentialTtl(String factory) {
+    if (factory == null) {
+      return false;
+    }
+    return switch (factory) {
+      // Counters
+      case "74160", "74161", "74162", "74163", "74190", "74191", "74192", "74193",
+          "74393", "744020", "744040", "744060",
+          // Registers & latches
+          "74173", "74273", "74373", "74374", "74377", "74378", "74379",
+          // Flip-flops
+          "7473", "7474", "7476", "7477", "7478", "74107", "74109", "74112", "74113",
+          "74114", "74116", "74117",
+          // Shift registers
+          "74164", "74165", "74166", "74174", "74175", "74194", "74195", "74198",
+          "74199", "74590", "74591", "74594", "74595", "74596", "74597", "74670",
+          "74671", "74672", "74673" -> true;
+      default -> false;
+    };
   }
 
   private static String outputStem(File circFile) {

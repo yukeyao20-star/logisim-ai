@@ -1,8 +1,8 @@
 # Generation summary for half_adder
 
 - Request kind: natural_language
-- Request: 生成一个半加器
-- Description: Matched verified JSON template: 半加器
+- Request: half adder described
+- Description: Matched verified JSON template: half adder
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
 - Implementation level: GATE_LEVEL
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 7
+- Artifact count: 9
 
 ## Artifacts
 
@@ -28,5 +28,7 @@
 | generated\reports\half_adder_circuit_manifest.md | true |
 | generated\reports\half_adder_circuit_truth_table.json | true |
 | generated\reports\half_adder_circuit_truth_table.md | true |
+| generated\reports\half_adder_generation_summary.json | true |
+| generated\reports\half_adder_generation_summary.md | true |
 | generated\reports\half_adder_official_simulation.json | true |
 | generated\reports\half_adder_official_simulation.md | true |

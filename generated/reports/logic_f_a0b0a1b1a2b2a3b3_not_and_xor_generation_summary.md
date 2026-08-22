@@ -1,7 +1,7 @@
 # Generation summary for logic_f_a0b0a1b1a2b2a3b3_not_and_xor
 
 - Request kind: natural_language
-- Request: 密码锁
+- Request: keypad lock
 - Description: Synthesized Boolean function into CircuitSpec
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

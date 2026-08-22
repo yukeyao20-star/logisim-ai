@@ -1,7 +1,7 @@
 # Generation delivery report for updown_counter_4bit
 
 - Request kind: natural_language
-- Request: 4 bit up down counter
+- Request: 可逆计数器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 

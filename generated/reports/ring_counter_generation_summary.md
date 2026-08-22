@@ -17,11 +17,13 @@
 - Manifest complete: unknown
 - Manifest check count: unknown
 - Manifest issue count: unknown
-- Artifact count: 2
+- Artifact count: 4
 
 ## Artifacts
 
 | Path | Exists |
 | --- | --- |
 | generated\circ\ring_counter.circ | true |
+| generated\reports\ring_counter_generation_summary.json | true |
+| generated\reports\ring_counter_generation_summary.md | true |
 | generated\reports\ring_counter_multichip.md | true |
