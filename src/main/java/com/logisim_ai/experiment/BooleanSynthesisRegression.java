@@ -697,6 +697,7 @@ public final class BooleanSynthesisRegression {
         {"tff", "tff.vec", "9", "0"},
         {"register_4bit", "reg4.vec", "7", "0"},
         {"shiftreg_4bit", "shreg.vec", "11", "0"},
+        {"piso_4bit", "piso.vec", "11", "0"},
         {"srlatch", "srl.vec", "4", "0"},
         {"divider_4stage", "div4.vec", "33", "0"},
         {"johnson_4stage", "john4.vec", "17", "0"},

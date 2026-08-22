@@ -291,6 +291,7 @@ public final class GenerateAndGate {
         || spec.name().startsWith("tff")
         || spec.name().startsWith("register_")
         || spec.name().startsWith("shiftreg_")
+        || spec.name().startsWith("piso_")
         || spec.name().startsWith("srlatch")
         || spec.name().startsWith("divider_")
         || spec.name().startsWith("johnson_")

@@ -190,6 +190,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:移位寄存器|移位寄存器|串行寄存器|shift寄存器)");
   private static final Pattern SHIFTREG_ZH_BARE =
       Pattern.compile("(?:移位寄存器|移位寄存器)");
+  public static final Pattern PISO_ZH =
+      Pattern.compile("(?:并入串出|并行装入串行输出|并行输入串行输出|并转串|并入串)\\s*(?:移位寄存器|寄存器)?");
+  public static final Pattern PISO_EN =
+      Pattern.compile("(?:parallel\\s+in\\s+serial\\s+out|piso)", Pattern.CASE_INSENSITIVE);
   private static final Pattern SHIFTREG_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:shift\\s*register|sipo|piso)|shift\\s*register", Pattern.CASE_INSENSITIVE);
   private static final Pattern SR_ZH =
@@ -383,6 +387,7 @@ public final class StructuralCircuitTemplates {
         "Register 寄存器 (N-bit)",
         "Shift register 移位寄存器 (N-bit)",
         "Bidirectional shift register 双向移位寄存器",
+        "PISO shift register 并入串出移位寄存器 (LOAD/SHIFT, SO)",
         "Frequency divider 分频器 (N-stage)",
         "BCD counter 十进制计数器",
         "Johnson counter 约翰逊计数器",
@@ -957,6 +962,9 @@ public final class StructuralCircuitTemplates {
         return Optional.of(buildShiftRegister(Integer.parseInt(shren.group(1))));
       }
       return Optional.of(buildShiftRegister(4));
+    }
+    if (PISO_ZH.matcher(t).find() || PISO_EN.matcher(t).find()) {
+      return Optional.of(buildPisoShiftRegister(4));
     }
     if (SHIFTREG_ZH_BARE.matcher(t).find()) {
       return Optional.of(buildShiftRegister(4));
@@ -2016,6 +2024,66 @@ public final class StructuralCircuitTemplates {
       nets.add(net("sr_q" + i, e(g, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("shiftreg_" + bits + "bit", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit parallel-in serial-out shift register (并入串出). LOAD=1 on the clock
+   * edge latches D0..D_{n-1}; LOAD=0 shifts right each edge (SO streams the LSB
+   * out first), with the top stage fed from SI. Each stage's D is a 2:1 select
+   * D_i = (LOAD·D_i) ∨ (¬LOAD·next_i), next_i = Q_{i+1}, next_{n-1} = SI.
+   * D-FF port map: end0=D, end1=CLK, end2=Q, end4=reset (high-active).
+   */
+  static CircuitSpec buildPisoShiftRegister(int bits) {
+    if (bits < 1 || bits > 16) {
+      throw new IllegalArgumentException("PISO width must be 1..16, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "pso_ff0");
+    addInput(ports, "load", "LOAD", "pso_nl");
+    addInput(ports, "rst", "RST", "pso_ff0");
+    addInput(ports, "si", "SI", "pso_a2_" + (bits - 1));
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "d" + i, "D" + i, "pso_a1_" + i);
+    }
+    addOutput(ports, "so", "SO", "pso_ff0");
+    for (int i = 0; i < bits; i++) {
+      addOutput(ports, "q" + i, "Q" + i, "pso_ff" + i);
+    }
+    String nl = "pso_nl";
+    components.add(new ComponentSpec(nl, "Gates", "NOT Gate", 1, "PISOL"));
+    hints.add(new LayoutHint(nl, 0, 0, 0, null));
+    nets.add(net("pso_nl_in", e("load", 0), e(nl, 1)));
+    for (int i = 0; i < bits; i++) {
+      String a1 = "pso_a1_" + i;
+      String a2 = "pso_a2_" + i;
+      String o = "pso_o_" + i;
+      String ff = "pso_ff" + i;
+      components.add(new ComponentSpec(a1, "Gates", "AND Gate", 1, "PISOA" + i));
+      components.add(new ComponentSpec(a2, "Gates", "AND Gate", 1, "PISOB" + i));
+      components.add(new ComponentSpec(o, "Gates", "OR Gate", 1, "PISOM" + i));
+      components.add(new ComponentSpec(ff, "Memory", "D Flip-Flop", 1, "PISO" + (i + 1)));
+      hints.add(new LayoutHint(a1, i + 1, 0, 2 * i, null));
+      hints.add(new LayoutHint(a2, i + 1, 0, 2 * i + 1, null));
+      hints.add(new LayoutHint(o, i + 1, 0, 2 * i + 2, null));
+      hints.add(new LayoutHint(ff, i + 1, 0, 2 * i + 3, null));
+      nets.add(net("pso_a1" + i + "x", e("load", 0), e(a1, 1)));
+      nets.add(net("pso_a1" + i + "y", e("d" + i, 0), e(a1, 2)));
+      nets.add(net("pso_a2" + i + "x", e(nl, 0), e(a2, 1)));
+      String nextSrc = (i == bits - 1) ? "si" : "pso_ff" + (i + 1);
+      nets.add(net("pso_a2" + i + "y",
+          e(nextSrc, i == bits - 1 ? 0 : 2), e(a2, 2)));
+      nets.add(net("pso_o" + i + "x", e(a1, 0), e(o, 1)));
+      nets.add(net("pso_o" + i + "y", e(a2, 0), e(o, 2)));
+      nets.add(net("pso_d" + i, e(o, 0), e(ff, 0)));
+      nets.add(net("pso_clk" + i, e("clk", 0), e(ff, 1)));
+      nets.add(net("pso_rst" + i, e("rst", 0), e(ff, 4)));
+      nets.add(net("pso_q" + i, e(ff, 2), e("q" + i, 0)));
+    }
+    nets.add(net("pso_so", e("pso_ff0", 2), e("so", 0)));
+    return new CircuitSpec("piso_" + bits + "bit", components, ports, nets, hints);
   }
 
   /**

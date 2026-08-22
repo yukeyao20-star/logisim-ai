@@ -1,0 +1,29 @@
+{
+  "requestKind": "natural_language",
+  "request": "并行输入串行输出移位寄存器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "piso_4bit",
+  "circuitPath": "generated\\circ\\piso_4bit.circ",
+  "manifestPath": "generated\\reports\\piso_4bit_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 4,
+  "artifacts": [
+    {"path": "generated\\circ\\piso_4bit.circ", "exists": true},
+    {"path": "generated\\reports\\piso_4bit_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\piso_4bit_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\piso_4bit_multichip.md", "exists": true}
+  ]
+}
