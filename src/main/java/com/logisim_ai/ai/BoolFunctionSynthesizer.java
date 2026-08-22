@@ -142,7 +142,7 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=A xor B");
     }
     // 1-bit magnitude comparator (three outputs)
-    if (containsAny(t, "谁大", "谁小", "哪个大", "大于", "小于", "compare two", "comparison", "比较两个",
+    if (containsAny(t, "谁大", "谁小", "哪个大", "哪个数大", "谁比较大", "大于", "小于", "compare two", "comparison", "比较两个",
         "which is bigger", "which is larger", "which is smaller")) {
       return Optional.of(
           "F_GT=A and not B; F_EQ=not (A xor B); F_LT=not A and B");
@@ -370,11 +370,11 @@ public final class BoolFunctionSynthesizer {
     if (containsAny(t, "或门", "or gate")) {
       return Optional.of("F=A or B");
     }
-    if (containsAny(t, "非门", "反相器", "not gate", "inverter", "取反", "无信号")) {
+    if (containsAny(t, "非门", "反相器", "not gate", "inverter", "取反", "无信号", "非运算", "取非")) {
       return Optional.of("F=not A");
     }
     // Max/min of two 1-bit numbers: max = OR, min = AND.
-    if (containsAny(t, "求最大", "最大值", "取大", "max of", "maximum of", "find the maximum", "find maximum")) {
+    if (containsAny(t, "求最大", "最大值", "取大", "中较大", "取较大", "max of", "maximum of", "find the maximum", "find maximum")) {
       return Optional.of("F=A or B");
     }
     if (containsAny(t, "求最小", "最小值", "取小", "min of", "minimum of", "find the minimum", "find minimum")) {

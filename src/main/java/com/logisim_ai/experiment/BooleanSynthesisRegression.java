@@ -414,7 +414,17 @@ public final class BooleanSynthesisRegression {
             "求积",
             List.of("a", "b"),
             "p",
-            values -> values.get("a") && values.get("b")));
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "非运算",
+            List.of("a"),
+            "f",
+            values -> !values.get("a")),
+        new Case(
+            "取非",
+            List.of("a"),
+            "f",
+            values -> !values.get("a")));
 
     for (Case testCase : cases) {
       runCase(testCase);
