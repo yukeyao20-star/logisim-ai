@@ -496,9 +496,11 @@ public final class BooleanSynthesisRegression {
     runRotateShifterRegression();
     runRightShiftRegression();
     runDividerRegression();
+    runMultiplierRegression();
     runBcd2Regression();
     runBcdSub2Regression();
     runHex7SegRegression();
+    runBcd7SegRegression();
     runSquarerRegression();
     runExcess3AdderRegression();
     runSaturatingAdderRegression();
@@ -1239,6 +1241,41 @@ public final class BooleanSynthesisRegression {
     System.out.println("[OK] " + query + " truth table passed: 256 A×B combos (B=0 → Q=15,R=A)");
   }
 
+  /** 4x4 multiplier ("4 bit multiplier"): full in-process sweep, p == a*b for all 256. */
+  private static void runMultiplierRegression() {
+    String query = "4 bit multiplier";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("multiplier_4x4")) {
+      throw new IllegalStateException("Multiplier name mismatch: " + spec.name());
+    }
+    for (int a = 0; a < 16; a++) {
+      for (int b = 0; b < 16; b++) {
+        Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+        for (int i = 0; i < 4; i++) {
+          values.put("a" + i, ((a >> i) & 1) == 1);
+          values.put("b" + i, ((b >> i) & 1) == 1);
+        }
+        values.put("gnd", false);
+        Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+        int expected = a * b;
+        int p = 0;
+        for (int i = 0; i < 8; i++) {
+          if (Boolean.TRUE.equals(outputs.get("p" + i))) p |= (1 << i);
+        }
+        if (p != expected) {
+          throw new IllegalStateException("Multiplier mismatch A=" + a + " B=" + b
+              + " p=" + p + " (expected " + expected + ")");
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 256 A×B combos");
+  }
+
   /** 2-digit BCD adder ("两位BCD加法器"): full in-process sweep of valid BCD digits. */
   private static void runBcd2Regression() {
     String query = "两位BCD加法器";
@@ -1383,6 +1420,51 @@ public final class BooleanSynthesisRegression {
         Boolean actual = outputs.get("seg" + s);
         if (actual == null || actual != expected) {
           throw new IllegalStateException("hex7seg mismatch value=" + v + " seg=" + s
+              + " expected=" + expected + " actual=" + actual);
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 16 values × 7 segments");
+  }
+
+  /** BCD 7-segment decoder: 16 values × 7 segments (values 10..15 all-off). */
+  private static void runBcd7SegRegression() {
+    String query = "bcd to 7 segment";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("bcd7seg")) {
+      throw new IllegalStateException("bcd7seg name mismatch: " + spec.name());
+    }
+    int[][] segs = {
+      {0, 2, 3, 5, 6, 7, 8, 9},
+      {0, 1, 2, 3, 4, 7, 8, 9},
+      {0, 1, 3, 4, 5, 6, 7, 8, 9},
+      {0, 2, 3, 5, 6, 8, 9},
+      {0, 2, 6, 8},
+      {0, 4, 5, 6, 8, 9},
+      {2, 3, 4, 5, 6, 8, 9},
+    };
+    for (int v = 0; v < 16; v++) {
+      Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+      for (int i = 0; i < 4; i++) {
+        values.put("b" + i, ((v >> i) & 1) == 1);
+      }
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      for (int s = 0; s < 7; s++) {
+        boolean expected = false;
+        for (int m : segs[s]) {
+          if (m == v) {
+            expected = true;
+            break;
+          }
+        }
+        Boolean actual = outputs.get("seg" + s);
+        if (actual == null || actual != expected) {
+          throw new IllegalStateException("bcd7seg mismatch value=" + v + " seg=" + s
               + " expected=" + expected + " actual=" + actual);
         }
       }
