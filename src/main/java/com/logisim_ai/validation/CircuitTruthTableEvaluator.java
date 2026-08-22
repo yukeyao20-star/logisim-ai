@@ -138,6 +138,7 @@ public final class CircuitTruthTableEvaluator {
       case "AND Gate" -> inputs.stream().allMatch(Boolean::booleanValue);
       case "OR Gate" -> inputs.stream().anyMatch(Boolean::booleanValue);
       case "XOR Gate" -> inputs.stream().filter(Boolean::booleanValue).count() % 2 == 1;
+      case "XNOR Gate" -> inputs.stream().filter(Boolean::booleanValue).count() % 2 == 0;
       case "NAND Gate" -> !inputs.stream().allMatch(Boolean::booleanValue);
       case "NOR Gate" -> !inputs.stream().anyMatch(Boolean::booleanValue);
       default -> throw new IllegalArgumentException("Unsupported gate: " + factory);
@@ -149,6 +150,7 @@ public final class CircuitTruthTableEvaluator {
     return factory.equals("AND Gate")
         || factory.equals("OR Gate")
         || factory.equals("XOR Gate")
+        || factory.equals("XNOR Gate")
         || factory.equals("NAND Gate")
         || factory.equals("NOR Gate");
   }

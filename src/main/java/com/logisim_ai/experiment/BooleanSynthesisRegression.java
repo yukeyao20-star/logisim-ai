@@ -529,6 +529,7 @@ public final class BooleanSynthesisRegression {
     runMultiOutputFullAdder();
     runFunctionalMultiOutput();
     runEncoderPriorityRegression();
+    runStructuralComparatorRegression();
     runAluTruthTable();
     runMagnitudeComparatorRegression();
     runPasswordLockRegression();
@@ -1093,6 +1094,42 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] " + query + " truth table passed (GT/EQ/LT)");
+  }
+
+  /** Exhaustive structural 4-bit magnitude comparator (in-process): every
+   *  A×B pair (65536 combos) checks GT/EQ/LT against integer ordering. Requires
+   *  XNOR evaluation, which the in-process evaluator now supports; previously
+   *  comparator_4bit only had JAR-gated .vec evidence. */
+  private static void runStructuralComparatorRegression() {
+    String query = "4 bit comparator";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    List<String> inputs = List.of("a0", "a1", "a2", "a3", "b0", "b1", "b2", "b3");
+    for (int a = 0; a < 16; a++) {
+      for (int b = 0; b < 16; b++) {
+        Map<String, Boolean> values = new java.util.HashMap<>();
+        for (int i = 0; i < 4; i++) {
+          values.put("a" + i, ((a >> i) & 1) == 1);
+          values.put("b" + i, ((b >> i) & 1) == 1);
+        }
+        Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+        if (outputs.get("gt") != (a > b)) {
+          throw new IllegalStateException(query + " GT mismatch A=" + a + " B=" + b
+              + " outputs=" + outputs + " expected gt=" + (a > b));
+        }
+        if (outputs.get("eq") != (a == b)) {
+          throw new IllegalStateException(query + " EQ mismatch A=" + a + " B=" + b);
+        }
+        if (outputs.get("lt") != (a < b)) {
+          throw new IllegalStateException(query + " LT mismatch A=" + a + " B=" + b);
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 65536 combos (GT/EQ/LT)");
   }
 
   /** 4-bit password/keypad lock ("开锁/密码"): F=1 exactly when A==B on all 4 bits. */
