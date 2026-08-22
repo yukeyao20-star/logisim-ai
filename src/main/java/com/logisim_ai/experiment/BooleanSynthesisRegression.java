@@ -431,6 +431,32 @@ public final class BooleanSynthesisRegression {
             "f",
             values -> values.get("a") ^ values.get("b")),
         new Case(
+            "两个信号不同",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") ^ values.get("b")),
+        // 8-to-1 mux (structural): 2048 combinations, OR-chain + shared not-S fan-out.
+        new Case(
+            "8 to 1 mux",
+            List.of("d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "s0", "s1", "s2"),
+            "y",
+            values -> {
+              int select = (values.get("s0") ? 1 : 0)
+                  + (values.get("s1") ? 2 : 0)
+                  + (values.get("s2") ? 4 : 0);
+              return switch (select) {
+                case 0 -> values.get("d0");
+                case 1 -> values.get("d1");
+                case 2 -> values.get("d2");
+                case 3 -> values.get("d3");
+                case 4 -> values.get("d4");
+                case 5 -> values.get("d5");
+                case 6 -> values.get("d6");
+                case 7 -> values.get("d7");
+                default -> throw new IllegalStateException("Invalid select: " + select);
+              };
+            }),
+        new Case(
             "开关量",
             List.of("a"),
             "f",
@@ -497,6 +523,8 @@ public final class BooleanSynthesisRegression {
     runRightShiftRegression();
     runDividerRegression();
     runMultiplierRegression();
+    runBcd1Regression();
+    runParityRegression();
     runBcd2Regression();
     runBcdSub2Regression();
     runHex7SegRegression();
@@ -1274,6 +1302,75 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] " + query + " truth table passed: 256 A×B combos");
+  }
+
+  /** 1-digit BCD adder: exhaustive A,B in 0..9 and cin in {0,1}, z=false. */
+  private static void runBcd1Regression() {
+    String query = "BCD加法器";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("bcd_adder")) {
+      throw new IllegalStateException("bcd_adder name mismatch: " + spec.name());
+    }
+    for (int a = 0; a < 10; a++) {
+      for (int b = 0; b < 10; b++) {
+        for (int cin = 0; cin <= 1; cin++) {
+          Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+          for (int i = 0; i < 4; i++) {
+            values.put("a" + i, ((a >> i) & 1) == 1);
+            values.put("b" + i, ((b >> i) & 1) == 1);
+          }
+          values.put("cin", cin == 1);
+          values.put("z", false);
+          Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+          int total = a + b + cin;
+          int expectedS = total <= 9 ? total : total - 10;
+          boolean expectedCout = total > 9;
+          int s = 0;
+          for (int i = 0; i < 4; i++) {
+            if (Boolean.TRUE.equals(outputs.get("s" + i))) s |= (1 << i);
+          }
+          if (s != expectedS || !Boolean.valueOf(expectedCout).equals(outputs.get("cout"))) {
+            throw new IllegalStateException("bcd_adder mismatch A=" + a + " B=" + b + " Cin=" + cin
+                + " s=" + s + " (expected " + expectedS + ") cout=" + outputs.get("cout")
+                + " (expected " + expectedCout + ")");
+          }
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 200 A×B×Cin combos");
+  }
+
+  /** N-bit parity ("4 bit parity"): XOR-cascade accumulator, p = XOR of D0..D3. */
+  private static void runParityRegression() {
+    String query = "4 bit parity";
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    if (!spec.name().equals("parity_4bit")) {
+      throw new IllegalStateException("parity name mismatch: " + spec.name());
+    }
+    for (int mask = 0; mask < 16; mask++) {
+      Map<String, Boolean> values = new java.util.LinkedHashMap<>();
+      boolean expected = false;
+      for (int i = 0; i < 4; i++) {
+        boolean bit = ((mask >> i) & 1) == 1;
+        values.put("d" + i, bit);
+        expected ^= bit;
+      }
+      Map<String, Boolean> outputs = CircuitTruthTableEvaluator.evaluate(spec, values);
+      if (!Boolean.valueOf(expected).equals(outputs.get("p"))) {
+        throw new IllegalStateException("parity mismatch mask=" + mask + " outputs=" + outputs);
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: 16 combos");
   }
 
   /** 2-digit BCD adder ("两位BCD加法器"): full in-process sweep of valid BCD digits. */
