@@ -252,7 +252,8 @@ public final class BoolFunctionSynthesizer {
     }
     // Staircase / two-way light switch: F = A xor B
     if (containsAny(t, "楼梯灯", "两个开关", "双控", "开关控制", "双联", "staircase light", "two-way switch",
-        "two switches control", "control one light", "light switch")) {
+        "two switches control", "control one light", "light switch",
+        "两个地点控制灯", "两地控制灯", "楼上楼下", "上下楼开关", "两个位置", "两地灯")) {
       return Optional.of("F=A xor B");
     }
     // Bare single gates (order matters: 三输入与非 before 与非门; 三输入或非
@@ -381,7 +382,7 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=A and B");
     }
     // A single light switch: the switch directly drives the lamp.
-    if (containsAny(t, "灯的开关", "开关灯", "灯开关", "有信号")) {
+    if (containsAny(t, "灯的开关", "开关灯", "灯开关", "有信号", "开关量", "数字量")) {
       return Optional.of("F=A");
     }
     // 4-to-1 data selector described functionally
@@ -451,6 +452,11 @@ public final class BoolFunctionSynthesizer {
   /** Rewrites colloquial Chinese connectives into the parser's operator set. */
   private static String normalizeConnectives(String s) {
     return s
+        // 「A或者非B」/「A或非B」 is colloquial "A or not B", NOT a NOR gate. Split
+        // 非 off before the plain 或者->或 / bare 或 rewrites, so the parser sees
+        // "A 或 非B" instead of the 2-char NOR token.
+        .replaceAll("([A-Za-z0-9])\\s*(?:或者|或是?|还是)\\s*非\\s*([A-Za-z])", "$1 或 非$2")
+        .replaceAll("([A-Za-z0-9])\\s*或非\\s*([A-Za-z])", "$1 或 非$2")
         // 「A和B不同」 is a two-variable comparison, not a three-term chain:
         // collapse it before the plain 和->与 rewrite would break the phrase.
         .replaceAll("([A-Za-z0-9]+)\\s*和\\s*([A-Za-z0-9]+)\\s*(?:不同|不相同|不一致)", "$1 异或 $2")

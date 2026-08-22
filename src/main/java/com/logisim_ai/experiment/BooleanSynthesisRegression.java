@@ -424,13 +424,70 @@ public final class BooleanSynthesisRegression {
             "取非",
             List.of("a"),
             "f",
-            values -> !values.get("a")));
+            values -> !values.get("a")),
+        new Case(
+            "两个地点控制灯",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") ^ values.get("b")),
+        new Case(
+            "开关量",
+            List.of("a"),
+            "f",
+            values -> values.get("a")),
+        // Conditional-sentence fallback (当/如果...则) — exercises the
+        // extraction regex + normalizeConnectives + parse path.
+        new Case(
+            "当A与B时输出1",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") && values.get("b")),
+        new Case(
+            "如果A和B不同时输出1",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") ^ values.get("b")),
+        new Case(
+            "如果非A则报警",
+            List.of("a"),
+            "f",
+            values -> !values.get("a")),
+        // "A或者非B" must parse as A OR (NOT B), not the NOR token (guarded fix
+        // in normalizeConnectives).
+        new Case(
+            "如果A或者非B则报警",
+            List.of("a", "b"),
+            "f",
+            values -> values.get("a") || !values.get("b")),
+        // Generic N-input gate builder — N>3 and non-NAND variants.
+        new Case(
+            "四输入异或",
+            List.of("a", "b", "c", "d"),
+            "f",
+            values -> values.get("a") ^ values.get("b") ^ values.get("c") ^ values.get("d")),
+        new Case(
+            "三输入或非",
+            List.of("a", "b", "c"),
+            "f",
+            values -> !(values.get("a") || values.get("b") || values.get("c"))),
+        new Case(
+            "四输入与非",
+            List.of("a", "b", "c", "d"),
+            "f",
+            values -> !(values.get("a") && values.get("b") && values.get("c") && values.get("d"))),
+        // 不一致: true unless all three inputs agree.
+        new Case(
+            "不一致",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") ^ values.get("b")) || (values.get("a") ^ values.get("c"))));
 
     for (Case testCase : cases) {
       runCase(testCase);
     }
     runMultiOutputHalfAdder();
     runMultiOutputFullAdder();
+    runFunctionalMultiOutput();
     runAluTruthTable();
     runMagnitudeComparatorRegression();
     runPasswordLockRegression();
@@ -624,6 +681,14 @@ public final class BooleanSynthesisRegression {
         {"ring_counter", "ring.vec", "11", "0"},
         {"nine_complement", "ninecomp.vec", "10", "0"},
         {"seqdet_1101", "seqdet1101.vec", "19", "0"},
+        // Wide combinational circuits whose prepared vectors were previously
+        // orphaned (present on disk but bound to no regression row).
+        {"bcd_adder", "bcdadd.vec", "6", "0"},
+        {"comparator_4bit", "cmp4.vec", "6", "0"},
+        {"subtractor_4bit", "sub4.vec", "6", "0"},
+        {"decoder_4to16", "dec416.vec", "7", "0"},
+        {"mux_8to1", "mux8.vec", "5", "0"},
+        {"parity_8bit", "par8.vec", "6", "0"},
     };
     java.io.File jarProbe = new java.io.File(
         System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
@@ -737,6 +802,47 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] " + testCase.query() + " truth table passed");
+  }
+
+  /** Functional-phrase multi-output: 求差 (D/BOUT) and 求和 (SUM/CARRY). */
+  private static void runFunctionalMultiOutput() {
+    NaturalLanguageCircuitPlanner.PlanResult sub = NaturalLanguageCircuitPlanner.plan("求差");
+    if (sub == null) {
+      throw new IllegalStateException("Planner did not match query: 求差");
+    }
+    CircuitSpec subSpec = sub.spec();
+    CircuitSemanticValidator.requireValid(subSpec);
+    List<String> subInputs = List.of("a", "b");
+    for (int mask = 0; mask < (1 << subInputs.size()); mask++) {
+      Map<String, Boolean> values = valuesFor(subInputs, mask);
+      Map<String, Boolean> out = CircuitTruthTableEvaluator.evaluate(subSpec, values);
+      boolean a = values.get("a"), b = values.get("b");
+      if (out.get("d") != (a ^ b) || out.get("bout") != (!a && b)) {
+        throw new IllegalStateException("求差 mismatch outputs=" + out + " expected d=" + (a ^ b)
+            + " bout=" + (!a && b));
+      }
+    }
+    System.out.println("[OK] 求差 truth table passed");
+
+    NaturalLanguageCircuitPlanner.PlanResult add = NaturalLanguageCircuitPlanner.plan("求和");
+    if (add == null) {
+      throw new IllegalStateException("Planner did not match query: 求和");
+    }
+    CircuitSpec addSpec = add.spec();
+    CircuitSemanticValidator.requireValid(addSpec);
+    List<String> addInputs = List.of("a", "b", "cin");
+    for (int mask = 0; mask < (1 << addInputs.size()); mask++) {
+      Map<String, Boolean> values = valuesFor(addInputs, mask);
+      Map<String, Boolean> out = CircuitTruthTableEvaluator.evaluate(addSpec, values);
+      boolean a = values.get("a"), b = values.get("b"), cin = values.get("cin");
+      boolean sum = a ^ b ^ cin;
+      boolean carry = (a && b) || (cin && (a ^ b));
+      if (out.get("sum") != sum || out.get("carry") != carry) {
+        throw new IllegalStateException("求和 mismatch outputs=" + out + " expected sum=" + sum
+            + " carry=" + carry);
+      }
+    }
+    System.out.println("[OK] 求和 truth table passed");
   }
 
   private static void runMultiOutputHalfAdder() {
