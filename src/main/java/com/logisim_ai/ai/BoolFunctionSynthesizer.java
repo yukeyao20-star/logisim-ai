@@ -226,7 +226,7 @@ public final class BoolFunctionSynthesizer {
     }
     // At least two of three = majority.
     if (containsAny(t, "至少两个开关", "至少2个开关", "至少两个闭合", "至少两个为真", "at least two of three",
-        "at least 2 of 3", "2 of 3")) {
+        "at least 2 of 3", "2 of 3", "至少两个", "至少2个", "三个开关至少2个", "三个开关至少两个", "两个及以上")) {
       return Optional.of("F=(A and B) or (A and C) or (B and C)");
     }
     // Exactly two of three closed.
@@ -235,7 +235,7 @@ public final class BoolFunctionSynthesizer {
       return Optional.of("F=(A and B and not C) or (A and not B and C) or (not A and B and C)");
     }
     // Exactly one of three closed.
-    if (containsAny(t, "恰好一个开关", "仅一个开关", "只有一个开关闭合", "恰好一个为真", "仅一个为真", "只有一个为真",
+    if (containsAny(t, "恰好一个开关", "仅一个开关", "只有一个开关闭合", "只要一个开关闭合", "恰好一个为真", "仅一个为真", "只有一个为真",
         "exactly one of three", "exactly 1 of 3", "only one of three")) {
       return Optional.of("F=(A and not B and not C) or (not A and B and not C) or (not A and not B and C)");
     }

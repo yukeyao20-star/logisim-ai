@@ -39,7 +39,7 @@ public final class StructuralCircuitTemplates {
   private static final Pattern MUX_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*选[1一]\\s*(?:多路选择器|多路复用器|选择器|多路开关)?");
   private static final Pattern MUX_LU =
-      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:路|位)\\s*(?:选择器|多路选择器|多路复用器)");
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:路|位|输入)\\s*(?:选择器|多路选择器|多路复用器)");
   private static final Pattern MUX_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?to\\s*-?1\\s*(?:mux|multiplexer)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DECODER_ZH =

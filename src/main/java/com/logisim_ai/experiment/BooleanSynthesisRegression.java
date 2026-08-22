@@ -435,6 +435,20 @@ public final class BooleanSynthesisRegression {
             List.of("a", "b"),
             "f",
             values -> values.get("a") ^ values.get("b")),
+        new Case(
+            "三个开关至少2个",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && values.get("b"))
+                || (values.get("a") && values.get("c"))
+                || (values.get("b") && values.get("c"))),
+        new Case(
+            "只要一个开关闭合灯亮",
+            List.of("a", "b", "c"),
+            "f",
+            values -> (values.get("a") && !values.get("b") && !values.get("c"))
+                || (!values.get("a") && values.get("b") && !values.get("c"))
+                || (!values.get("a") && !values.get("b") && values.get("c"))),
         // 8-to-1 mux (structural): 2048 combinations, OR-chain + shared not-S fan-out.
         new Case(
             "8 to 1 mux",
