@@ -82,6 +82,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:8[\\s\\-－]*3|83|八三|八选三|八输入三输出|8输入3输出)\\s*(?:优先编码器|编码器)");
   private static final Pattern ENCODER8_EN =
       Pattern.compile("8[- ]to[- ]3\\s*(?:priority\\s+)?encoder", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ENCODER4_ZH =
+      Pattern.compile("(?<!8)(?:4[\\s\\-－]*[2二]|4线2线|四线二线|四输入两输出|4输入2输出|4位2位|四选二)\\s*(?:优先编码器|编码器)");
+  private static final Pattern ENCODER4_EN =
+      Pattern.compile("4[- ]to[- ]2\\s*(?:priority\\s+)?encoder", Pattern.CASE_INSENSITIVE);
   private static final Pattern BCD7_ZH =
       Pattern.compile("(?:bcd|二十进制|8421码|8421)\\s*(?:转|到|[-])?\\s*(?:7段|七段|七段数码管|七段显示|数码管)\\s*(?:译码器|解码器|驱动器)?");
   private static final Pattern BCD7_EN =
@@ -362,6 +366,7 @@ public final class StructuralCircuitTemplates {
         "MUX 多路选择器 (N-to-1)",
         "Decoder 译码器 (N-to-2^N)",
         "Priority encoder 优先编码器 (8-to-3)",
+        "Priority encoder 优先编码器 (4-to-2)",
         "Parity 奇偶校验器 (N-bit)",
         "BCD 7-segment 七段显示",
         "Hex 7-segment 十六进制转七段 (0-9,A-F)",
@@ -786,6 +791,9 @@ public final class StructuralCircuitTemplates {
     if (ENCODER8_ZH.matcher(t).find() || ENCODER8_EN.matcher(t).find()) {
       return Optional.of(buildEncoder8to3());
     }
+    if (ENCODER4_ZH.matcher(t).find() || ENCODER4_EN.matcher(t).find()) {
+      return Optional.of(buildEncoder4to2());
+    }
     // Bare "优先编码器" without an 8-3 spec defaults to the 8-to-3 encoder.
     if ((t.contains("优先") && t.contains("编码")) || t.contains("priority encoder")) {
       return Optional.of(buildEncoder8to3());
@@ -1182,34 +1190,132 @@ public final class StructuralCircuitTemplates {
   }
 
   /**
-   * 8-to-3 priority encoder: two 74148? No - single 74148 already is 8-to-3;
-   * this template exposes it with proper input/output pins (ends 0..7 = I0..I7,
-   * end8 = nEI, end9 = nGS, end10 = nEO, end11..13 = A0..A2).
+   * 8-to-3 priority encoder as pure logic gates (high-active). I7 has highest
+   * priority; when I_k is the highest asserted input, Y2Y1Y0 = k in binary and
+   * G is 1. All gates are native, so the in-process truth-table evaluator and
+   * the official Logisim JAR both verify it (the previous 74148 chip template
+   * exposed active-low nEI/nGS/nEO ports and could never be asserted).
    */
   static CircuitSpec buildEncoder8to3() {
-    List<ComponentSpec> components = List.of(new ComponentSpec("enc", "TTL", "74148", 1, "U1"));
+    List<ComponentSpec> components = new ArrayList<>();
     List<ExternalPort> ports = new ArrayList<>();
     List<NetSpec> nets = new ArrayList<>();
-    List<LayoutHint> hints = List.of(new LayoutHint("enc", 0, 0, 0, null));
+    List<LayoutHint> hints = new ArrayList<>();
+    // Column-0 left-associative G chain doubles as the anchor layer: each input
+    // pin (except I6/I7 on the innermost gate) targets a gate on its own row,
+    // so pin wires are short horizontal stubs instead of long boundary-lane
+    // verticals. G = (((((((I6|I7)|I5)|I4)|I3)|I2)|I1)|I0).
+    addInput(ports, "i6", "I6", "enc_g_o1");
+    addInput(ports, "i7", "I7", "enc_g_o1");
+    addInput(ports, "i5", "I5", "enc_g_o2");
+    addInput(ports, "i4", "I4", "enc_g_o3");
+    addInput(ports, "i3", "I3", "enc_g_o4");
+    addInput(ports, "i2", "I2", "enc_g_o5");
+    addInput(ports, "i1", "I1", "enc_g_o6");
+    addInput(ports, "i0", "I0", "enc_g_o7");
+    addOutput(ports, "y2", "Y2", "enc_y2_o3");
+    addOutput(ports, "y1", "Y1", "enc_y1_o1");
+    addOutput(ports, "y0", "Y0", "enc_y0c_o1");
+    addOutput(ports, "g", "G", "enc_g_o7");
 
-    for (int i = 0; i < 8; i++) {
-      addInput(ports, "i" + i, "I" + i, "enc");
-      nets.add(net("i" + i, e("i" + i, 0), e("enc", i)));
-    }
-    addInput(ports, "nei", "nEI", "enc");
-    nets.add(net("nei", e("nei", 0), e("enc", 8)));
-    addOutput(ports, "a0", "A0", "enc");
-    addOutput(ports, "a1", "A1", "enc");
-    addOutput(ports, "a2", "A2", "enc");
-    addOutput(ports, "ngs", "nGS", "enc");
-    addOutput(ports, "neo", "nEO", "enc");
-    nets.add(net("a0", e("enc", 11), e("a0", 0)));
-    nets.add(net("a1", e("enc", 12), e("a1", 0)));
-    nets.add(net("a2", e("enc", 13), e("a2", 0)));
-    nets.add(net("ngs", e("enc", 9), e("ngs", 0)));
-    nets.add(net("neo", e("enc", 10), e("neo", 0)));
+    String g = orCombine("enc_g", 0, 0, components, hints, nets,
+        List.of("i6", "i7", "i5", "i4", "i3", "i2", "i1", "i0"));
+    // Y2 = I4|I5|I6|I7 : whenever any top-half input is set, the highest
+    // asserted bit lies in 4..7, so bit-2 needs no masking.
+    String y2 = orCombine("enc_y2", 3, 0, components, hints, nets, List.of("i4", "i5", "i6", "i7"));
+    // Y1 = (I6|I7)  OR  ( !(I4|I5) AND (I3|I2) ).
+    String r67 = orCombine("enc_r67", 4, 0, components, hints, nets, List.of("i6", "i7"));
+    String r45 = orCombine("enc_r45", 4, 1, components, hints, nets, List.of("i4", "i5"));
+    String n45 = encNot("enc_n45", 4, 2, components, hints, nets, r45);
+    String r23 = orCombine("enc_r23", 4, 3, components, hints, nets, List.of("i3", "i2"));
+    String y1a = encAnd("enc_y1a", 4, 4, components, hints, nets, n45, r23);
+    String y1 = orCombine("enc_y1", 4, 5, components, hints, nets, List.of(r67, y1a));
+    // Y0 = I7 | (!I6&I5) | (!I4&!I5&!I6&I3) | (!I2&!I3&!I4&!I5&!I6&I1).
+    String n6 = encNot("enc_n6", 5, 0, components, hints, nets, "i6");
+    String t5 = encAnd("enc_t5", 5, 1, components, hints, nets, n6, "i5");
+    String t3a = encAnd("enc_t3a", 5, 2, components, hints, nets, n45, n6);
+    String t3b = encAnd("enc_t3b", 5, 3, components, hints, nets, t3a, "i3");
+    String n2 = encNot("enc_n2", 5, 4, components, hints, nets, "i2");
+    String n3 = encNot("enc_n3", 5, 5, components, hints, nets, "i3");
+    String n23 = encAnd("enc_n23", 5, 6, components, hints, nets, n2, n3);
+    String t1a = encAnd("enc_t1a", 5, 7, components, hints, nets, n23, n45);
+    String t1b = encAnd("enc_t1b", 5, 8, components, hints, nets, t1a, n6);
+    String t1c = encAnd("enc_t1c", 5, 9, components, hints, nets, t1b, "i1");
+    String y0a = orCombine("enc_y0a", 5, 10, components, hints, nets, List.of("i7", t5));
+    String y0b = orCombine("enc_y0b", 5, 11, components, hints, nets, List.of(y0a, t3b));
+    String y0 = orCombine("enc_y0c", 5, 12, components, hints, nets, List.of(y0b, t1c));
+    nets.add(net("enc_y2o", e(y2, 0), e("y2", 0)));
+    nets.add(net("enc_y1o", e(y1, 0), e("y1", 0)));
+    nets.add(net("enc_y0o", e(y0, 0), e("y0", 0)));
+    nets.add(net("enc_go", e(g, 0), e("g", 0)));
 
     return new CircuitSpec("encoder_8to3", components, ports, nets, hints);
+  }
+
+  /** 4-to-2 priority encoder as logic gates. I3 has highest priority;
+   *  Y1 = I3|I2, Y0 = I3 | (I1 & !I2), G = I0|I1|I2|I3. */
+  static CircuitSpec buildEncoder4to2() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    // Column-0 G chain anchors every pin to a gate on its own row (I2/I3 pair
+    // on the innermost gate). Y1 = I2|I3 reuses that innermost gate.
+    addInput(ports, "i2", "I2", "enc4_g_o1");
+    addInput(ports, "i3", "I3", "enc4_g_o1");
+    addInput(ports, "i1", "I1", "enc4_g_o2");
+    addInput(ports, "i0", "I0", "enc4_g_o3");
+    addOutput(ports, "y1", "Y1", "enc4_g_o1");
+    addOutput(ports, "y0", "Y0", "enc4_y0_o1");
+    addOutput(ports, "g", "G", "enc4_g_o3");
+    String g = orCombine("enc4_g", 0, 0, components, hints, nets,
+        List.of("i2", "i3", "i1", "i0"));
+    String n2 = encNot("enc4_n2", 1, 3, components, hints, nets, "i2");
+    String p0 = encAnd("enc4_p0", 1, 4, components, hints, nets, "i1", n2);
+    String y0 = orCombine("enc4_y0", 1, 5, components, hints, nets, List.of("i3", p0));
+    nets.add(net("enc4_y1o", e("enc4_g_o1", 0), e("y1", 0)));
+    nets.add(net("enc4_y0o", e(y0, 0), e("y0", 0)));
+    nets.add(net("enc4_go", e(g, 0), e("g", 0)));
+
+    return new CircuitSpec("encoder_4to2", components, ports, nets, hints);
+  }
+
+  /** Single NOT gate (input=end1, output=end0). Label = component id, so each
+   *  gate carries a unique label (the direct compiler emits each label once). */
+  private static String encNot(String id, int col, int row, List<ComponentSpec> components,
+      List<LayoutHint> hints, List<NetSpec> nets, String in) {
+    components.add(new ComponentSpec(id, "Gates", "NOT Gate", 1, id));
+    hints.add(new LayoutHint(id, col, 0, row, null));
+    nets.add(net(id + "_i", e(in, 0), e(id, 1)));
+    return id;
+  }
+
+  /** Single 2-input AND gate. */
+  private static String encAnd(String id, int col, int row, List<ComponentSpec> components,
+      List<LayoutHint> hints, List<NetSpec> nets, String a, String b) {
+    components.add(new ComponentSpec(id, "Gates", "AND Gate", 1, id));
+    hints.add(new LayoutHint(id, col, 0, row, null));
+    nets.add(net(id + "_a", e(a, 0), e(id, 1)));
+    nets.add(net(id + "_b", e(b, 0), e(id, 2)));
+    return id;
+  }
+
+  /** Chain of 2-input OR gates OR-ing `srcs` (size ≥ 2); gate k sits at column
+   *  `col`, row `row + k - 1`, labelled by its unique id. Returns the trailing
+   *  gate id, whose output (end 0) the caller nets to an output pin or a
+   *  later-stage input. */
+  private static String orCombine(String prefix, int col, int row, List<ComponentSpec> components,
+      List<LayoutHint> hints, List<NetSpec> nets, List<String> srcs) {
+    String acc = srcs.get(0);
+    for (int k = 1; k < srcs.size(); k++) {
+      String gate = prefix + "_o" + k;
+      components.add(new ComponentSpec(gate, "Gates", "OR Gate", 1, gate));
+      hints.add(new LayoutHint(gate, col, 0, row + k - 1, null));
+      nets.add(net(prefix + "_a" + k, e(acc, 0), e(gate, 1)));
+      nets.add(net(prefix + "_b" + k, e(srcs.get(k), 0), e(gate, 2)));
+      acc = gate;
+    }
+    return acc;
   }
 
   /**

@@ -528,6 +528,7 @@ public final class BooleanSynthesisRegression {
     runMultiOutputHalfAdder();
     runMultiOutputFullAdder();
     runFunctionalMultiOutput();
+    runEncoderPriorityRegression();
     runAluTruthTable();
     runMagnitudeComparatorRegression();
     runPasswordLockRegression();
@@ -733,6 +734,8 @@ public final class BooleanSynthesisRegression {
         {"decoder_4to16", "dec416.vec", "7", "0"},
         {"mux_8to1", "mux8.vec", "5", "0"},
         {"parity_8bit", "par8.vec", "6", "0"},
+        {"encoder_8to3", "enc83.vec", "11", "0"},
+        {"encoder_4to2", "enc42.vec", "7", "0"},
     };
     java.io.File jarProbe = new java.io.File(
         System.getenv().getOrDefault("CIRCUITARIUM_LOGISIM_JAR",
@@ -887,6 +890,52 @@ public final class BooleanSynthesisRegression {
       }
     }
     System.out.println("[OK] 求和 truth table passed");
+  }
+
+  /** Exhaustive 4→2 and 8→3 priority-encoder truth tables (in-process).
+   *  Verifies the highest-priority asserted input is encoded on Y0..Yk and that
+   *  G flags any assertion, over every input combination. */
+  private static void runEncoderPriorityRegression() {
+    checkPriorityEncoder("4 to 2 priority encoder", List.of("i0", "i1", "i2", "i3"),
+        "y0", "y1", "g");
+    checkPriorityEncoder("8 to 3 priority encoder",
+        List.of("i0", "i1", "i2", "i3", "i4", "i5", "i6", "i7"), "y0", "y1", "y2", "g");
+  }
+
+  private static void checkPriorityEncoder(String query, List<String> inputs,
+      String... ysAndG) {
+    NaturalLanguageCircuitPlanner.PlanResult result = NaturalLanguageCircuitPlanner.plan(query);
+    if (result == null) {
+      throw new IllegalStateException("Planner did not match query: " + query);
+    }
+    CircuitSpec spec = result.spec();
+    CircuitSemanticValidator.requireValid(spec);
+    int n = inputs.size();
+    int gIdx = ysAndG.length - 1;
+    for (int mask = 0; mask < (1 << n); mask++) {
+      Map<String, Boolean> values = valuesFor(inputs, mask);
+      Map<String, Boolean> out = CircuitTruthTableEvaluator.evaluate(spec, values);
+      int hi = -1;
+      for (int k = 0; k < n; k++) {
+        if (values.get(inputs.get(k))) {
+          hi = k;
+        }
+      }
+      boolean g = hi >= 0;
+      if (out.get(ysAndG[gIdx]) != g) {
+        throw new IllegalStateException(query + " G mismatch inputs=" + values
+            + " outputs=" + out + " expected G=" + g);
+      }
+      int enc = Math.max(hi, 0);
+      for (int bit = 0; bit < gIdx; bit++) {
+        boolean expected = ((enc >> bit) & 1) == 1;
+        if (out.get(ysAndG[bit]) != expected) {
+          throw new IllegalStateException(query + " " + ysAndG[bit] + " mismatch inputs=" + values
+              + " outputs=" + out + " expected=" + expected);
+        }
+      }
+    }
+    System.out.println("[OK] " + query + " truth table passed: " + (1 << n) + " combos");
   }
 
   private static void runMultiOutputHalfAdder() {

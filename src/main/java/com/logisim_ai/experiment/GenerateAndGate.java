@@ -277,7 +277,7 @@ public final class GenerateAndGate {
         || spec.name().startsWith("mux_")
         || spec.name().startsWith("decoder_")
         || spec.name().startsWith("parity_")
-        || spec.name().startsWith("encoder_8to3")
+        || spec.name().matches("encoder_(8to3|4to2)")
         || spec.name().startsWith("bcd7seg")
         || spec.name().startsWith("hex7seg")
         || spec.name().startsWith("squarer_")

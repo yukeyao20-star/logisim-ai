@@ -1,7 +1,7 @@
 # Generation summary for encoder_8to3
 
 - Request kind: natural_language
-- Request: priority encoder
+- Request: 8 to 3 priority encoder
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 6
+- Artifact count: 10
 
 ## Artifacts
 
@@ -26,6 +26,10 @@
 | generated\circ\encoder_8to3.circ | true |
 | generated\reports\encoder_8to3_circuit_manifest.json | true |
 | generated\reports\encoder_8to3_circuit_manifest.md | true |
+| generated\reports\encoder_8to3_circuit_truth_table.json | true |
+| generated\reports\encoder_8to3_circuit_truth_table.md | true |
 | generated\reports\encoder_8to3_generation_summary.json | true |
 | generated\reports\encoder_8to3_generation_summary.md | true |
 | generated\reports\encoder_8to3_multichip.md | true |
+| generated\reports\encoder_8to3_official_simulation.json | true |
+| generated\reports\encoder_8to3_official_simulation.md | true |

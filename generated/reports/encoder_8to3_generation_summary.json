@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "priority encoder",
+  "request": "8 to 3 priority encoder",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,13 +19,17 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 6,
+  "artifactCount": 10,
   "artifacts": [
     {"path": "generated\\circ\\encoder_8to3.circ", "exists": true},
     {"path": "generated\\reports\\encoder_8to3_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\encoder_8to3_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_circuit_truth_table.json", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_circuit_truth_table.md", "exists": true},
     {"path": "generated\\reports\\encoder_8to3_generation_summary.json", "exists": true},
     {"path": "generated\\reports\\encoder_8to3_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\encoder_8to3_multichip.md", "exists": true}
+    {"path": "generated\\reports\\encoder_8to3_multichip.md", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\encoder_8to3_official_simulation.md", "exists": true}
   ]
 }
