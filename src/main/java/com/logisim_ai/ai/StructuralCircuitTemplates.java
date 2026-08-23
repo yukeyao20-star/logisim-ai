@@ -759,13 +759,13 @@ public final class StructuralCircuitTemplates {
     Matcher divnen = DIVN_EN.matcher(t);
     if (divnzh.find() && divnzh.group(1) != null) {
       Integer n = chineseToInt(divnzh.group(1));
-      if (n != null && n >= 2 && n <= 16) {
+      if (n != null && n >= 2 && n <= 256) {
         return Optional.of(buildModCounter(n));
       }
     }
     if (divnen.find()) {
       int n = Integer.parseInt(divnen.group(1));
-      if (n >= 2 && n <= 16) {
+      if (n >= 2 && n <= 256) {
         return Optional.of(buildModCounter(n));
       }
     }
@@ -2330,8 +2330,12 @@ public final class StructuralCircuitTemplates {
    * AND/OR end0=out/end1/end2=in.
    */
   static CircuitSpec buildModCounter(int n) {
-    if (n < 2 || n > 16) {
-      throw new IllegalArgumentException("Mod-N counter N must be 2..16, got " + n);
+    if (n < 2 || n > 256) {
+      throw new IllegalArgumentException("Mod-N counter N must be 2..256, got " + n);
+    }
+    int bits = 1;
+    while ((1 << bits) < n) {
+      bits++;
     }
     int nMinus1 = n - 1;
     List<ComponentSpec> components = new ArrayList<>();
@@ -2340,18 +2344,17 @@ public final class StructuralCircuitTemplates {
     List<LayoutHint> hints = new ArrayList<>();
     addClockInput(ports, "clk", "CLK", "mc0");
     addInput(ports, "rst", "RST", "mc0");
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < bits; i++) {
       addOutput(ports, "q" + i, "Q" + i, "mc" + i);
       components.add(new ComponentSpec("mc" + i, "Memory", "T Flip-Flop", 1, "U" + (i + 1)));
       hints.add(new LayoutHint("mc" + i, i, 0, 0, null));
     }
-    // TC pulses once per N clock cycles at count N-1, turning the mod-N counter
-    // into a divide-by-N. The final minterm gate is always "mc_at3" (j=3 runs).
-    addOutput(ports, "tc", "TC", "mc_at3");
-    // atN = minterm detecting N-1 over Q3..Q0
+    // atN = minterm detecting N-1 over Q[bits-1]..Q0; its final gate feeds TC,
+    // turning the counter into a divide-by-N (one pulse per N clocks).
     String atN = null;
     int atNEnd = 0;
-    for (int j = 0; j < 4; j++) {
+    String tcGate = null;
+    for (int j = 0; j < bits; j++) {
       boolean one = ((nMinus1 >> j) & 1) == 1;
       String lit;
       int litEnd;
@@ -2362,7 +2365,7 @@ public final class StructuralCircuitTemplates {
         lit = "mcn" + j; // NOT gate output is end0
         litEnd = 0;
         components.add(new ComponentSpec(lit, "Gates", "NOT Gate", 1, "N" + (j + 1)));
-        hints.add(new LayoutHint(lit, 4, 0, j, null));
+        hints.add(new LayoutHint(lit, bits, 0, j, null));
         nets.add(net("mcn" + j + "_in", e("mc" + j, 2), e(lit, 1)));
       }
       if (atN == null) {
@@ -2371,21 +2374,28 @@ public final class StructuralCircuitTemplates {
       } else {
         String gate = "mc_at" + j;
         components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "AT" + (j + 1)));
-        hints.add(new LayoutHint(gate, 4, 0, 4 + j, null));
+        hints.add(new LayoutHint(gate, bits, 0, bits + j, null));
         nets.add(net("mc_at" + j + "_a", e(atN, atNEnd), e(gate, 1)));
         nets.add(net("mc_at" + j + "_b", e(lit, litEnd), e(gate, 2)));
         atN = gate;
         atNEnd = 0;
+        tcGate = gate;
       }
     }
-    nets.add(net("mc_tc", e("mc_at3", 0), e("tc", 0)));
+    if (tcGate == null) {
+      // n = 2: single literal (¬Q0) IS the terminal count.
+      tcGate = atN;
+      atNEnd = atNEnd;
+    }
+    addOutput(ports, "tc", "TC", tcGate);
+    nets.add(net("mc_tc", e(tcGate, atNEnd), e("tc", 0)));
     String notAt = "mc_notat";
     components.add(new ComponentSpec(notAt, "Gates", "NOT Gate", 1, "NA"));
-    hints.add(new LayoutHint(notAt, 4, 0, 8, null));
-    nets.add(net("mc_notat_in", e(atN, 0), e(notAt, 1)));
+    hints.add(new LayoutHint(notAt, bits, 0, 2 * bits, null));
+    nets.add(net("mc_notat_in", e(atN, atNEnd), e(notAt, 1)));
     String normSrc = "mc0";
     int normEnd = 2;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < bits; i++) {
       boolean bitOne = ((nMinus1 >> i) & 1) == 1;
       if (i == 0) {
         if (bitOne) {
@@ -2393,7 +2403,7 @@ public final class StructuralCircuitTemplates {
           components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "T0"));
           hints.add(new LayoutHint(or, 0, 0, 1, null));
           nets.add(net("mc_t0_a", e(notAt, 0), e(or, 1)));
-          nets.add(net("mc_t0_b", e(atN, 0), e(or, 2)));
+          nets.add(net("mc_t0_b", e(atN, atNEnd), e(or, 2)));
           nets.add(net("mc_t0_out", e(or, 0), e("mc0", 0)));
         } else {
           nets.add(net("mc_t0", e(notAt, 0), e("mc0", 0)));
@@ -2418,14 +2428,14 @@ public final class StructuralCircuitTemplates {
           components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "TO" + i));
           hints.add(new LayoutHint(or, i, 0, 3, null));
           nets.add(net("mc_t" + i + "_m", e(main, 0), e(or, 1)));
-          nets.add(net("mc_t" + i + "_at", e(atN, 0), e(or, 2)));
+          nets.add(net("mc_t" + i + "_at", e(atN, atNEnd), e(or, 2)));
           nets.add(net("mc_t" + i + "_out", e(or, 0), e("mc" + i, 0)));
         } else {
           nets.add(net("mc_t" + i, e(main, 0), e("mc" + i, 0)));
         }
       }
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < bits; i++) {
       nets.add(net("mc_clk" + i, e("clk", 0), e("mc" + i, 1)));
       nets.add(net("mc_rst" + i, e("rst", 0), e("mc" + i, 4)));
       nets.add(net("mc_q" + i, e("mc" + i, 2), e("q" + i, 0)));
@@ -3838,7 +3848,7 @@ public final class StructuralCircuitTemplates {
     if (s.matches("\\d+")) {
       return Integer.parseInt(s);
     }
-    return switch (s) {
+    Integer simple = switch (s) {
       case "一" -> 1;
       case "二", "两" -> 2;
       case "三" -> 3;
@@ -3857,6 +3867,47 @@ public final class StructuralCircuitTemplates {
       case "十六" -> 16;
       default -> null;
     };
+    if (simple != null) {
+      return simple;
+    }
+    // Two-digit composition: 三十=30, 四十五=45, 九十九=99 (up to 99).
+    java.util.regex.Matcher tens =
+        java.util.regex.Pattern.compile("^([一二两三四五六七八九])十([一二三四五六七八九]?)$")
+            .matcher(s);
+    if (tens.matches()) {
+      Integer t = switch (tens.group(1)) {
+        case "一" -> 10;
+        case "二", "两" -> 20;
+        case "三" -> 30;
+        case "四" -> 40;
+        case "五" -> 50;
+        case "六" -> 60;
+        case "七" -> 70;
+        case "八" -> 80;
+        case "九" -> 90;
+        default -> null;
+      };
+      if (t == null) {
+        return null;
+      }
+      if (tens.group(2).isEmpty()) {
+        return t;
+      }
+      Integer u = switch (tens.group(2)) {
+        case "一" -> 1;
+        case "二" -> 2;
+        case "三" -> 3;
+        case "四" -> 4;
+        case "五" -> 5;
+        case "六" -> 6;
+        case "七" -> 7;
+        case "八" -> 8;
+        case "九" -> 9;
+        default -> null;
+      };
+      return u == null ? null : t + u;
+    }
+    return null;
   }
 
   /**
