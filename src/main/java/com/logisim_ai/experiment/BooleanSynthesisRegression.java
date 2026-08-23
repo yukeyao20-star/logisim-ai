@@ -725,6 +725,7 @@ public final class BooleanSynthesisRegression {
         {"mod10_counter", "mod10.vec", "21", "0"},
         {"mod60_counter", "mod60.vec", "121", "0"},
         {"digital_clock", "digclock.vec", "264", "0"},
+        {"countdown_timer", "countdown.vec", "16", "0"},
         {"bcd2bin_2digit", "b2b.vec", "12", "0"},
         {"bin2bcd_4bit", "binbcd.vec", "16", "0"},
         {"tristate_buffer", "tristate.vec", "2", "0"},

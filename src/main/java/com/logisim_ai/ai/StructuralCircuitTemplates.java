@@ -289,9 +289,17 @@ public final class StructuralCircuitTemplates {
   private static final Pattern TRAFFIC_EN =
       Pattern.compile("traffic light|traffic signal|stop light", Pattern.CASE_INSENSITIVE);
   private static final Pattern DIGCLOCK_ZH =
-      Pattern.compile("数字钟|数字时钟|电子钟|二十四小时?时钟?|24小时(?:制)?时钟?");
+      Pattern.compile("数字钟|数字时钟|数显钟|电子钟|二十四小时?时钟?|24小时(?:制)?时钟?");
   private static final Pattern DIGCLOCK_EN =
       Pattern.compile("digital\\s+clock|24[- ]hour\\s+clock", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LAMPLIGHT_ZH =
+      Pattern.compile("流水灯|彩灯控制器?|循环灯");
+  private static final Pattern LAMPLIGHT_EN =
+      Pattern.compile("(?:running|chase|flow)ing?\\s+light|led\\s+chaser", Pattern.CASE_INSENSITIVE);
+  private static final Pattern COUNTDOWN_ZH =
+      Pattern.compile("倒计时|定时器|减法计数器|递减计数器|倒数计数器");
+  private static final Pattern COUNTDOWN_EN =
+      Pattern.compile("countdown(?:\\s+timer)?|down\\s+counter|timer", Pattern.CASE_INSENSITIVE);
   private static final Pattern SEQDET_ZH =
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
@@ -787,6 +795,13 @@ public final class StructuralCircuitTemplates {
     }
     if (DIGCLOCK_ZH.matcher(t).find() || DIGCLOCK_EN.matcher(t).find()) {
       return Optional.of(buildDigitalClock());
+    }
+    // 流水灯/彩灯 = ring counter (single circulating 1 lights one lamp at a time).
+    if (LAMPLIGHT_ZH.matcher(t).find() || LAMPLIGHT_EN.matcher(t).find()) {
+      return Optional.of(buildRingCounter());
+    }
+    if (COUNTDOWN_ZH.matcher(t).find() || COUNTDOWN_EN.matcher(t).find()) {
+      return Optional.of(buildCountdownTimer());
     }
     Matcher johnzh = JOHNSON_ZH.matcher(t);
     Matcher johnen = JOHNSON_EN.matcher(t);
@@ -3085,6 +3100,104 @@ public final class StructuralCircuitTemplates {
       nets.add(net("l_q" + i, e("l" + i, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("lfsr_4bit", components, ports, nets, hints);
+  }
+
+  /**
+   * 4-bit countdown timer (倒计时/定时器): LOAD=1 latches D0..D3 on the clock
+   * edge; otherwise the counter decrements each edge (bit i toggles when all
+   * lower bits are 0). ZERO fires whenever the count is 0 — including the wrap
+   * through 0 (…001 → 000 → 111 …), which the caller can use to stop/reload.
+   * T_i = LOAD ? D_i : ¬(Q0..Q_{i-1}). Port maps: D-FF end0=D, end1=CLK,
+   * end2=Q, end4=reset; 2-input gates end0=out, end1/end2=in.
+   */
+  static CircuitSpec buildCountdownTimer() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "ctd_ff0");
+    addInput(ports, "load", "LOAD", "ctd_nl");
+    addInput(ports, "rst", "RST", "ctd_ff0");
+    for (int i = 0; i < 4; i++) {
+      addInput(ports, "d" + i, "D" + i, "ctd_a1_" + i);
+      addOutput(ports, "q" + i, "Q" + i, "ctd_ff" + i);
+    }
+    addOutput(ports, "zero", "ZERO", "ctd_za3");
+    String nl = "ctd_nl";
+    components.add(new ComponentSpec(nl, "Gates", "NOT Gate", 1, "CTDL"));
+    hints.add(new LayoutHint(nl, 0, 0, 8, null));
+    nets.add(net("ctd_nl_in", e("load", 0), e(nl, 1)));
+    // zero = NOR of all Q (chain of NOR? use AND of NOTs)
+    String zeroAcc = null;
+    int zeroEnd = 0;
+    for (int i = 0; i < 4; i++) {
+      String nq = "ctd_nq" + i;
+      components.add(new ComponentSpec(nq, "Gates", "NOT Gate", 1, "CTDN" + i));
+      hints.add(new LayoutHint(nq, 5, 0, i, null));
+      nets.add(net("ctd_nq" + i + "_in", e("ctd_ff" + i, 2), e(nq, 1)));
+      if (zeroAcc == null) {
+        zeroAcc = nq;
+        zeroEnd = 0;
+      } else {
+        String za = "ctd_za" + i;
+        components.add(new ComponentSpec(za, "Gates", "AND Gate", 1, "CTDZ" + i));
+        hints.add(new LayoutHint(za, 5, 0, 4 + i, null));
+        nets.add(net("ctd_za" + i + "_a", e(zeroAcc, zeroEnd), e(za, 1)));
+        nets.add(net("ctd_za" + i + "_b", e(nq, 0), e(za, 2)));
+        zeroAcc = za;
+        zeroEnd = 0;
+      }
+    }
+    nets.add(net("ctd_z", e(zeroAcc, zeroEnd), e("zero", 0)));
+    for (int i = 0; i < 4; i++) {
+      // D_i = (load·d_i) ∨ (¬load·(Q_i ⊕ borrow_i)): load writes the parallel
+      // value directly; counting conditionally toggles each bit (decrement).
+      String a1 = "ctd_a1_" + i;
+      String a2 = "ctd_a2_" + i;
+      String o = "ctd_o_" + i;
+      String xr = "ctd_xr_" + i;
+      String ff = "ctd_ff" + i;
+      components.add(new ComponentSpec(a1, "Gates", "AND Gate", 1, "CTDA" + i));
+      components.add(new ComponentSpec(a2, "Gates", "AND Gate", 1, "CTDB" + i));
+      components.add(new ComponentSpec(o, "Gates", "OR Gate", 1, "CTDM" + i));
+      components.add(new ComponentSpec(xr, "Gates", "XOR Gate", 1, "CTDX" + i));
+      components.add(new ComponentSpec(ff, "Memory", "D Flip-Flop", 1, "CTDF" + i));
+      hints.add(new LayoutHint(a1, i + 1, 0, 0, null));
+      hints.add(new LayoutHint(a2, i + 1, 0, 1, null));
+      hints.add(new LayoutHint(xr, i + 1, 0, 4, null));
+      hints.add(new LayoutHint(o, i + 1, 0, 2, null));
+      hints.add(new LayoutHint(ff, i + 1, 0, 3, null));
+      nets.add(net("ctd_a1_" + i + "x", e("load", 0), e(a1, 1)));
+      nets.add(net("ctd_a1_" + i + "y", e("d" + i, 0), e(a1, 2)));
+      nets.add(net("ctd_a2_" + i + "x", e(nl, 0), e(a2, 1)));
+      nets.add(net("ctd_o_" + i + "x", e(a1, 0), e(o, 1)));
+      nets.add(net("ctd_o_" + i + "y", e(a2, 0), e(o, 2)));
+      nets.add(net("ctd_d" + i, e(o, 0), e(ff, 0)));
+      nets.add(net("ctd_clk" + i, e("clk", 0), e(ff, 1)));
+      nets.add(net("ctd_rst" + i, e("rst", 0), e(ff, 4)));
+      nets.add(net("ctd_q" + i, e(ff, 2), e("q" + i, 0)));
+    }
+    // Decrement path: borrow_0 = ¬load… no — borrow_0 = 1 (bit 0 always
+    // toggles when counting); the ¬load gating lives in a2. borrow_i =
+    // ¬Q0·…·¬Q_{i-1}; XOR_i combines Q_i with its toggle condition.
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("ctd_xr_" + i + "_q", e("ctd_ff" + i, 2), e("ctd_xr_" + i, 1)));
+      nets.add(net("ctd_xr_" + i + "_a2", e("ctd_xr_" + i, 0), e("ctd_a2_" + i, 2)));
+    }
+    nets.add(net("ctd_b0", e(nl, 0), e("ctd_xr_0", 2)));
+    String decChain = "ctd_nq0";
+    for (int i = 1; i < 4; i++) {
+      if (i >= 2) {
+        String dc = "ctd_dc" + i;
+        components.add(new ComponentSpec(dc, "Gates", "AND Gate", 1, "CTDC" + i));
+        hints.add(new LayoutHint(dc, 5, 0, 8 + i, null));
+        nets.add(net("ctd_dc" + i + "_a", e(decChain, 0), e(dc, 1)));
+        nets.add(net("ctd_dc" + i + "_b", e("ctd_nq" + (i - 1), 0), e(dc, 2)));
+        decChain = dc;
+      }
+      nets.add(net("ctd_b" + i, e(decChain, 0), e("ctd_xr_" + i, 2)));
+    }
+    return new CircuitSpec("countdown_timer", components, ports, nets, hints);
   }
 
   /**
