@@ -300,6 +300,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("倒计时|定时器|减法计数器|递减计数器|倒数计数器");
   private static final Pattern COUNTDOWN_EN =
       Pattern.compile("countdown(?:\\s+timer)?|down\\s+counter|timer", Pattern.CASE_INSENSITIVE);
+  private static final Pattern FREQM_ZH =
+      Pattern.compile("频率计|频率计数器|测频(?:仪|器)?|频率测量");
+  private static final Pattern FREQM_EN =
+      Pattern.compile("frequency\\s*(?:meter|counter)", Pattern.CASE_INSENSITIVE);
   private static final Pattern SEQDET_ZH =
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
@@ -802,6 +806,9 @@ public final class StructuralCircuitTemplates {
     }
     if (COUNTDOWN_ZH.matcher(t).find() || COUNTDOWN_EN.matcher(t).find()) {
       return Optional.of(buildCountdownTimer());
+    }
+    if (FREQM_ZH.matcher(t).find() || FREQM_EN.matcher(t).find()) {
+      return Optional.of(buildFrequencyMeter());
     }
     Matcher johnzh = JOHNSON_ZH.matcher(t);
     Matcher johnen = JOHNSON_EN.matcher(t);
@@ -3198,6 +3205,183 @@ public final class StructuralCircuitTemplates {
       nets.add(net("ctd_b" + i, e(decChain, 0), e("ctd_xr_" + i, 2)));
     }
     return new CircuitSpec("countdown_timer", components, ports, nets, hints);
+  }
+
+
+  /**
+   * Frequency meter (频率计): counts SIG rising edges inside an 8-cycle gate
+   * window. A free-running 3-bit divider W wraps every 8 clocks (TC = W==7)
+   * and toggles the WINDOW FF, so WIN is high for exactly 8 edges at a time.
+   * SIG is sampled by SP; RISE = SIG∧¬SP; EN = WIN∧RISE increments CNT whose
+   * D_i = WIN·(Q_i⊕t_i) clears it while WIN=0. One edge after the window
+   * closes (LEN = ¬WIN∧WIND, WIND delays WIN by one cycle) the OUT register
+   * latches CNT — at that same edge CNT's D is 0, and both FF banks sample
+   * pre-edge values, so the final measurement survives the simultaneous clear.
+   * Ports: in CLK/SIG/RST, out F0..F3 (latched count) and WIN (gate window).
+   * D-FF end0=D, end1=CLK, end2=Q, end4=reset; 2-input gates end0=out.
+   */
+  static CircuitSpec buildFrequencyMeter() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "fm_wc0");
+    addInput(ports, "sig", "SIG", "fm_sp");
+    addInput(ports, "rst", "RST", "fm_wc0");
+    for (int i = 0; i < 4; i++) {
+      addOutput(ports, "f" + i, "F" + i, "fm_lo" + i);
+    }
+    addOutput(ports, "win", "WIN", "fm_win");
+
+    // Window divider: 3-bit free-running counter, D0=¬Q0, D1=Q1⊕Q0,
+    // D2=Q2⊕(Q0·Q1), terminal count TC = Q0·Q1·Q2.
+    String w01 = "fm_w01";
+    components.add(new ComponentSpec(w01, "Gates", "AND Gate", 1, "FW1"));
+    hints.add(new LayoutHint(w01, 1, 0, 0, null));
+    String wtc = "fm_wtc";
+    components.add(new ComponentSpec(wtc, "Gates", "AND Gate", 1, "FW2"));
+    hints.add(new LayoutHint(wtc, 1, 0, 1, null));
+    for (int i = 0; i < 3; i++) {
+      String ff = "fm_wc" + i;
+      components.add(new ComponentSpec(ff, "Memory", "D Flip-Flop", 1, "FWC" + i));
+      hints.add(new LayoutHint(ff, 0, 0, i, null));
+      nets.add(net("fm_wc" + i + "_clk", e("clk", 0), e(ff, 1)));
+      nets.add(net("fm_wc" + i + "_rst", e("rst", 0), e(ff, 4)));
+    }
+    String w0n = "fm_w0n";
+    components.add(new ComponentSpec(w0n, "Gates", "NOT Gate", 1, "FWN"));
+    hints.add(new LayoutHint(w0n, 1, 0, 2, null));
+    nets.add(net("fm_w0n_in", e("fm_wc0", 2), e(w0n, 1)));
+    nets.add(net("fm_wc0_d", e(w0n, 0), e("fm_wc0", 0)));
+    String w1x = "fm_w1x";
+    components.add(new ComponentSpec(w1x, "Gates", "XOR Gate", 1, "FWX1"));
+    hints.add(new LayoutHint(w1x, 1, 0, 3, null));
+    nets.add(net("fm_w1x_a", e("fm_wc1", 2), e(w1x, 1)));
+    nets.add(net("fm_w1x_b", e("fm_wc0", 2), e(w1x, 2)));
+    nets.add(net("fm_wc1_d", e(w1x, 0), e("fm_wc1", 0)));
+    String w2x = "fm_w2x";
+    components.add(new ComponentSpec(w2x, "Gates", "XOR Gate", 1, "FWX2"));
+    hints.add(new LayoutHint(w2x, 1, 0, 4, null));
+    nets.add(net("fm_w2x_a", e("fm_wc2", 2), e(w2x, 1)));
+    nets.add(net("fm_w2x_b", e(w01, 0), e(w2x, 2)));
+    nets.add(net("fm_wc2_d", e(w2x, 0), e("fm_wc2", 0)));
+    nets.add(net("fm_w01_a", e("fm_wc0", 2), e(w01, 1)));
+    nets.add(net("fm_w01_b", e("fm_wc1", 2), e(w01, 2)));
+    nets.add(net("fm_wtc_a", e(w01, 0), e(wtc, 1)));
+    nets.add(net("fm_wtc_b", e("fm_wc2", 2), e(wtc, 2)));
+
+    // WINDOW FF (D = WIN⊕TC) and its one-cycle delay WIND (D = WIN).
+    String win = "fm_win";
+    components.add(new ComponentSpec(win, "Memory", "D Flip-Flop", 1, "FWIN"));
+    hints.add(new LayoutHint(win, 0, 0, 3, null));
+    String winx = "fm_winx";
+    components.add(new ComponentSpec(winx, "Gates", "XOR Gate", 1, "FWNX"));
+    hints.add(new LayoutHint(winx, 1, 0, 5, null));
+    nets.add(net("fm_win_clk", e("clk", 0), e(win, 1)));
+    nets.add(net("fm_win_rst", e("rst", 0), e(win, 4)));
+    nets.add(net("fm_winx_a", e(win, 2), e(winx, 1)));
+    nets.add(net("fm_winx_b", e(wtc, 0), e(winx, 2)));
+    nets.add(net("fm_win_d", e(winx, 0), e(win, 0)));
+    nets.add(net("fm_win_o", e(win, 2), e("win", 0)));
+    String wind = "fm_wind";
+    components.add(new ComponentSpec(wind, "Memory", "D Flip-Flop", 1, "FWND"));
+    hints.add(new LayoutHint(wind, 0, 0, 4, null));
+    nets.add(net("fm_wind_clk", e("clk", 0), e(wind, 1)));
+    nets.add(net("fm_wind_rst", e("rst", 0), e(wind, 4)));
+    nets.add(net("fm_wind_d", e(win, 2), e(wind, 0)));
+
+    // SIG edge detect: SP samples SIG; RISE = SIG∧¬SP; EN = WIN∧RISE.
+    String sp = "fm_sp";
+    components.add(new ComponentSpec(sp, "Memory", "D Flip-Flop", 1, "FSP"));
+    hints.add(new LayoutHint(sp, 0, 0, 5, null));
+    nets.add(net("fm_sp_clk", e("clk", 0), e(sp, 1)));
+    nets.add(net("fm_sp_rst", e("rst", 0), e(sp, 4)));
+    nets.add(net("fm_sp_d", e("sig", 0), e(sp, 0)));
+    String spn = "fm_spn";
+    components.add(new ComponentSpec(spn, "Gates", "NOT Gate", 1, "FSPN"));
+    hints.add(new LayoutHint(spn, 1, 0, 6, null));
+    nets.add(net("fm_spn_in", e(sp, 2), e(spn, 1)));
+    String rise = "fm_rise";
+    components.add(new ComponentSpec(rise, "Gates", "AND Gate", 1, "FRIS"));
+    hints.add(new LayoutHint(rise, 1, 0, 7, null));
+    nets.add(net("fm_rise_a", e("sig", 0), e(rise, 1)));
+    nets.add(net("fm_rise_b", e(spn, 0), e(rise, 2)));
+    String en = "fm_en";
+    components.add(new ComponentSpec(en, "Gates", "AND Gate", 1, "FEN"));
+    hints.add(new LayoutHint(en, 1, 0, 8, null));
+    nets.add(net("fm_en_a", e(win, 2), e(en, 1)));
+    nets.add(net("fm_en_b", e(rise, 0), e(en, 2)));
+
+    // Pulse counter: D_i = WIN·(Q_i⊕t_i), t_0 = EN, t_i = EN·Q0·…·Q_{i-1}.
+    String carry = en;
+    int carryEnd = 0;
+    for (int i = 0; i < 4; i++) {
+      String ff = "fm_cc" + i;
+      components.add(new ComponentSpec(ff, "Memory", "D Flip-Flop", 1, "FCC" + i));
+      hints.add(new LayoutHint(ff, 2, 0, i, null));
+      nets.add(net("fm_cc" + i + "_clk", e("clk", 0), e(ff, 1)));
+      nets.add(net("fm_cc" + i + "_rst", e("rst", 0), e(ff, 4)));
+      String xr = "fm_cx" + i;
+      components.add(new ComponentSpec(xr, "Gates", "XOR Gate", 1, "FCX" + i));
+      hints.add(new LayoutHint(xr, 3, 0, i, null));
+      nets.add(net("fm_cx" + i + "_a", e(ff, 2), e(xr, 1)));
+      nets.add(net("fm_cx" + i + "_b", e(carry, carryEnd), e(xr, 2)));
+      String gw = "fm_cw" + i;
+      components.add(new ComponentSpec(gw, "Gates", "AND Gate", 1, "FCW" + i));
+      hints.add(new LayoutHint(gw, 3, 0, 4 + i, null));
+      nets.add(net("fm_cw" + i + "_a", e(win, 2), e(gw, 1)));
+      nets.add(net("fm_cw" + i + "_b", e(xr, 0), e(gw, 2)));
+      nets.add(net("fm_cc" + i + "_d", e(gw, 0), e(ff, 0)));
+      if (i < 3) {
+        String nc = "fm_cn" + i;
+        components.add(new ComponentSpec(nc, "Gates", "AND Gate", 1, "FCN" + i));
+        hints.add(new LayoutHint(nc, 3, 0, 8 + i, null));
+        nets.add(net("fm_cn" + i + "_a", e(carry, carryEnd), e(nc, 1)));
+        nets.add(net("fm_cn" + i + "_b", e(ff, 2), e(nc, 2)));
+        carry = nc;
+        carryEnd = 0;
+      }
+    }
+
+    // Output latch: LEN = ¬WIN∧WIND; O_i' = LEN ? CNT_i : O_i.
+    String nwin = "fm_nwin";
+    components.add(new ComponentSpec(nwin, "Gates", "NOT Gate", 1, "FNW"));
+    hints.add(new LayoutHint(nwin, 4, 0, 0, null));
+    nets.add(net("fm_nwin_in", e(win, 2), e(nwin, 1)));
+    String len = "fm_len";
+    components.add(new ComponentSpec(len, "Gates", "AND Gate", 1, "FLN"));
+    hints.add(new LayoutHint(len, 4, 0, 1, null));
+    nets.add(net("fm_len_a", e(nwin, 0), e(len, 1)));
+    nets.add(net("fm_len_b", e(wind, 2), e(len, 2)));
+    String nlen = "fm_nlen";
+    components.add(new ComponentSpec(nlen, "Gates", "NOT Gate", 1, "FNL"));
+    hints.add(new LayoutHint(nlen, 4, 0, 2, null));
+    nets.add(net("fm_nlen_in", e(len, 0), e(nlen, 1)));
+    for (int i = 0; i < 4; i++) {
+      String ff = "fm_lo" + i;
+      components.add(new ComponentSpec(ff, "Memory", "D Flip-Flop", 1, "FLO" + i));
+      hints.add(new LayoutHint(ff, 5, 0, i, null));
+      nets.add(net("fm_lo" + i + "_clk", e("clk", 0), e(ff, 1)));
+      nets.add(net("fm_lo" + i + "_rst", e("rst", 0), e(ff, 4)));
+      String la = "fm_la" + i;
+      components.add(new ComponentSpec(la, "Gates", "AND Gate", 1, "FLA" + i));
+      hints.add(new LayoutHint(la, 6, 0, i, null));
+      nets.add(net("fm_la" + i + "_a", e(len, 0), e(la, 1)));
+      nets.add(net("fm_la" + i + "_b", e("fm_cc" + i, 2), e(la, 2)));
+      String lb = "fm_lb" + i;
+      components.add(new ComponentSpec(lb, "Gates", "AND Gate", 1, "FLB" + i));
+      hints.add(new LayoutHint(lb, 6, 0, 4 + i, null));
+      nets.add(net("fm_lb" + i + "_a", e(nlen, 0), e(lb, 1)));
+      nets.add(net("fm_lb" + i + "_b", e(ff, 2), e(lb, 2)));
+      String lo = "fm_lor" + i;
+      components.add(new ComponentSpec(lo, "Gates", "OR Gate", 1, "FLR" + i));
+      hints.add(new LayoutHint(lo, 6, 0, 8 + i, null));
+      nets.add(net("fm_lor" + i + "_a", e(la, 0), e(lo, 1)));
+      nets.add(net("fm_lor" + i + "_b", e(lb, 0), e(lo, 2)));
+      nets.add(net("fm_lo" + i + "_d", e(lo, 0), e(ff, 0)));
+      nets.add(net("fm_f" + i, e(ff, 2), e("f" + i, 0)));
+    }
+    return new CircuitSpec("freq_meter", components, ports, nets, hints);
   }
 
   /**

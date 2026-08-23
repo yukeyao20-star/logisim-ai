@@ -315,6 +315,7 @@ public final class GenerateAndGate {
         || spec.name().matches("mod\\d+_counter")
         || spec.name().equals("digital_clock")
         || spec.name().equals("countdown_timer")
+        || spec.name().equals("freq_meter")
         || spec.name().startsWith("bcd2bin_")
         || spec.name().startsWith("bin2bcd")
         || spec.name().equals("tristate_buffer")
