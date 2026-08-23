@@ -300,6 +300,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("倒计时|定时器|减法计数器|递减计数器|倒数计数器");
   private static final Pattern COUNTDOWN_EN =
       Pattern.compile("countdown(?:\\s+timer)?|down\\s+counter|timer", Pattern.CASE_INSENSITIVE);
+  private static final Pattern STOPWATCH_ZH =
+      Pattern.compile("秒表|停表");
+  private static final Pattern STOPWATCH_EN =
+      Pattern.compile("stopwatch", Pattern.CASE_INSENSITIVE);
   private static final Pattern FREQM_ZH =
       Pattern.compile("频率计|频率计数器|测频(?:仪|器)?|频率测量");
   private static final Pattern FREQM_EN =
@@ -804,8 +808,11 @@ public final class StructuralCircuitTemplates {
     if (LAMPLIGHT_ZH.matcher(t).find() || LAMPLIGHT_EN.matcher(t).find()) {
       return Optional.of(buildRingCounter());
     }
-    if (COUNTDOWN_ZH.matcher(t).find() || COUNTDOWN_EN.matcher(t).find()) {
+        if (COUNTDOWN_ZH.matcher(t).find() || COUNTDOWN_EN.matcher(t).find()) {
       return Optional.of(buildCountdownTimer());
+    }
+    if (STOPWATCH_ZH.matcher(t).find() || STOPWATCH_EN.matcher(t).find()) {
+      return Optional.of(buildStopwatch());
     }
     if (FREQM_ZH.matcher(t).find() || FREQM_EN.matcher(t).find()) {
       return Optional.of(buildFrequencyMeter());
@@ -3207,6 +3214,246 @@ public final class StructuralCircuitTemplates {
     return new CircuitSpec("countdown_timer", components, ports, nets, hints);
   }
 
+  /**
+   * Stopwatch (秒表): two synchronous digits counting seconds 00..59 — units
+   * digit mod-10 (Q0..Q3), tens digit mod-6 (Q4..Q6). All T-FFs share CLK;
+   * RUN gates every toggle so the count freezes while RUN=0. RST clears to 00.
+   * Per-bit T mirrors buildModCounter with atN→wrap: units T_i = enU·(ripple_i
+   * ·¬atN ∨ bitOne·atN) where enU = RUN; tens enable = RUN·unitsAt9.
+   */
+  static CircuitSpec buildStopwatch() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "sw_u0");
+    addInput(ports, "run", "RUN", "sw_ucnt");
+    addInput(ports, "rst", "RST", "sw_u0");
+    addOutput(ports, "q0", "Q0", "sw_u0");
+    addOutput(ports, "q1", "Q1", "sw_u1");
+    addOutput(ports, "q2", "Q2", "sw_u2");
+    addOutput(ports, "q3", "Q3", "sw_u3");
+    addOutput(ports, "q4", "Q4", "sw_t0");
+    addOutput(ports, "q5", "Q5", "sw_t1");
+    addOutput(ports, "q6", "Q6", "sw_t2");
+
+    // RUN inverter for the wrap gating: ¬RUN forces no toggling at all.
+    String runNot = "sw_rn";
+    components.add(new ComponentSpec(runNot, "Gates", "NOT Gate", 1, "SWRN"));
+    hints.add(new LayoutHint(runNot, 0, 0, 8, null));
+    nets.add(net("sw_rn_in", e("run", 0), e(runNot, 1)));
+
+    // 7 T flip-flops: units Q0..Q3 (sw_u0..3), tens Q4..Q6 (sw_t0..2).
+    for (int i = 0; i < 4; i++) {
+      components.add(new ComponentSpec("sw_u" + i, "Memory", "T Flip-Flop", 1,
+          "SWUF" + i));
+      hints.add(new LayoutHint("sw_u" + i, i, 0, 0, null));
+    }
+    for (int i = 0; i < 3; i++) {
+      components.add(new ComponentSpec("sw_t" + i, "Memory", "T Flip-Flop", 1,
+          "SWTF" + i));
+      hints.add(new LayoutHint("sw_t" + i, 7 + i, 0, 0, null));
+    }
+
+    // ---- units digit, mod-10, enable = RUN ----
+    int uTerm = 9;
+    String uAtN = null;
+    int uAtNEnd = 0;
+    for (int j = 0; j < 4; j++) {
+      boolean one = ((uTerm >> j) & 1) == 1;
+      String lit;
+      int litEnd;
+      if (one) {
+        lit = "sw_u" + j;
+        litEnd = 2;
+      } else {
+        lit = "sw_un" + j;
+        litEnd = 0;
+        components.add(new ComponentSpec(lit, "Gates", "NOT Gate", 1, "SWUN" + j));
+        hints.add(new LayoutHint(lit, 5, 0, j, null));
+        nets.add(net("sw_un" + j + "_in", e("sw_u" + j, 2), e(lit, 1)));
+      }
+      if (uAtN == null) {
+        uAtN = lit;
+        uAtNEnd = litEnd;
+      } else {
+        String gate = "sw_uat" + j;
+        components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "SWUA" + j));
+        hints.add(new LayoutHint(gate, 5, 0, 4 + j, null));
+        nets.add(net("sw_uat" + j + "_a", e(uAtN, uAtNEnd), e(gate, 1)));
+        nets.add(net("sw_uat" + j + "_b", e(lit, litEnd), e(gate, 2)));
+        uAtN = gate;
+        uAtNEnd = 0;
+      }
+    }
+    // units notAt gates normal counting; T_i = RUN·[(ripple·¬atN) ∨ (bitOne·atN)].
+    // uCnt = RUN is the per-digit enable; it ANDs into every T input.
+    String uNotAt = "sw_unat";
+    components.add(new ComponentSpec(uNotAt, "Gates", "NOT Gate", 1, "SWNA"));
+    hints.add(new LayoutHint(uNotAt, 5, 0, 8, null));
+    nets.add(net("sw_unat_in", e(uAtN, uAtNEnd), e(uNotAt, 1)));
+    String uCnt = "sw_ucnt";
+    components.add(new ComponentSpec(uCnt, "Gates", "AND Gate", 1, "SWUC"));
+    hints.add(new LayoutHint(uCnt, 5, 0, 9, null));
+    nets.add(net("sw_ucnt_a", e(uNotAt, 0), e(uCnt, 1)));
+    nets.add(net("sw_ucnt_b", e("run", 0), e(uCnt, 2)));
+    // wrap = RUN·atN gates the terminal toggles so the digit freezes at 9
+    // when RUN=0 instead of rolling over unclocked.
+    String uWrap = "sw_uwrap";
+    components.add(new ComponentSpec(uWrap, "Gates", "AND Gate", 1, "SWUW"));
+    hints.add(new LayoutHint(uWrap, 5, 0, 10, null));
+    nets.add(net("sw_uwrap_a", e(uAtN, uAtNEnd), e(uWrap, 1)));
+    nets.add(net("sw_uwrap_b", e("run", 0), e(uWrap, 2)));
+    // T_i = (RUN·¬atN·ripple_i) ∨ (RUN·atN·bitOne_i) where ripple_0 = 1,
+    // ripple_i = AND of lower Qs. uCnt = RUN·¬atN feeds the normal-count AND;
+    // uWrap = RUN·atN feeds the terminal OR.
+    String normSrc = "sw_u0";
+    int normEnd = 2;
+    for (int i = 0; i < 4; i++) {
+      boolean bitOne = ((uTerm >> i) & 1) == 1;
+      if (i == 0) {
+        if (bitOne) {
+          String or = "sw_ut0";
+          components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "SWT0"));
+          hints.add(new LayoutHint(or, 0, 0, 1, null));
+          nets.add(net("sw_ut0_a", e(uCnt, 0), e(or, 1)));
+          nets.add(net("sw_ut0_b", e(uWrap, 0), e(or, 2)));
+          nets.add(net("sw_ut0_out", e(or, 0), e("sw_u0", 0)));
+        } else {
+          nets.add(net("sw_ut0", e(uCnt, 0), e("sw_u0", 0)));
+        }
+      } else {
+        if (i >= 2) {
+          String ng = "sw_unorm" + i;
+          components.add(new ComponentSpec(ng, "Gates", "AND Gate", 1, "SWNR" + i));
+          hints.add(new LayoutHint(ng, i, 0, 1, null));
+          nets.add(net("sw_unorm" + i + "_a", e(normSrc, normEnd), e(ng, 1)));
+          nets.add(net("sw_unorm" + i + "_b", e("sw_u" + (i - 1), 2), e(ng, 2)));
+          normSrc = ng;
+          normEnd = 0;
+        }
+        String main = "sw_um" + i;
+        components.add(new ComponentSpec(main, "Gates", "AND Gate", 1, "SWUM" + i));
+        hints.add(new LayoutHint(main, i, 0, 2, null));
+        nets.add(net("sw_um" + i + "_n", e(normSrc, normEnd), e(main, 1)));
+        nets.add(net("sw_um" + i + "_na", e(uCnt, 0), e(main, 2)));
+        if (bitOne) {
+          String or = "sw_uo" + i;
+          components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "SWUO" + i));
+          hints.add(new LayoutHint(or, i, 0, 3, null));
+          nets.add(net("sw_uo" + i + "_m", e(main, 0), e(or, 1)));
+          nets.add(net("sw_uo" + i + "_at", e(uWrap, 0), e(or, 2)));
+          nets.add(net("sw_uo" + i + "_out", e(or, 0), e("sw_u" + i, 0)));
+        } else {
+          nets.add(net("sw_ut" + i, e(main, 0), e("sw_u" + i, 0)));
+        }
+      }
+    }
+
+    // ---- tens digit, mod-6 (term=101b → bitOne on bits 0 and 2), enable =
+    // RUN·unitsAt9. T_i = enT·[(ripple_i·¬tAt) ∨ (bitOne_i·tAt)] where the
+    // ripple uses tens Qs and tNot gates normal counting.
+    String tEn = "sw_ten";
+    components.add(new ComponentSpec(tEn, "Gates", "AND Gate", 1, "SWTE"));
+    hints.add(new LayoutHint(tEn, 6, 0, 0, null));
+    nets.add(net("sw_ten_a", e("run", 0), e(tEn, 1)));
+    nets.add(net("sw_ten_b", e(uAtN, uAtNEnd), e(tEn, 2)));
+    int tTerm = 5;
+    String tAtN = null;
+    int tAtNEnd = 0;
+    for (int j = 0; j < 3; j++) {
+      boolean one = ((tTerm >> j) & 1) == 1;
+      String lit;
+      int litEnd;
+      if (one) {
+        lit = "sw_t" + j;
+        litEnd = 2;
+      } else {
+        lit = "sw_tn" + j;
+        litEnd = 0;
+        components.add(new ComponentSpec(lit, "Gates", "NOT Gate", 1, "SWTN" + j));
+        hints.add(new LayoutHint(lit, 10, 0, j, null));
+        nets.add(net("sw_tn" + j + "_in", e("sw_t" + j, 2), e(lit, 1)));
+      }
+      if (tAtN == null) {
+        tAtN = lit;
+        tAtNEnd = litEnd;
+      } else {
+        String gate = "sw_tat" + j;
+        components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "SWTA" + j));
+        hints.add(new LayoutHint(gate, 10, 0, 3 + j, null));
+        nets.add(net("sw_tat" + j + "_a", e(tAtN, tAtNEnd), e(gate, 1)));
+        nets.add(net("sw_tat" + j + "_b", e(lit, litEnd), e(gate, 2)));
+        tAtN = gate;
+        tAtNEnd = 0;
+      }
+    }
+    String tNotAt = "sw_tnat";
+    components.add(new ComponentSpec(tNotAt, "Gates", "NOT Gate", 1, "SWNT"));
+    hints.add(new LayoutHint(tNotAt, 10, 0, 6, null));
+    nets.add(net("sw_tnat_in", e(tAtN, tAtNEnd), e(tNotAt, 1)));
+    // tens wrap gated by enable: tWrap = enT·atN so a stopped clock never rolls.
+    String tWrap = "sw_twrap";
+    components.add(new ComponentSpec(tWrap, "Gates", "AND Gate", 1, "SWTW"));
+    hints.add(new LayoutHint(tWrap, 10, 0, 7, null));
+    nets.add(net("sw_twrap_a", e(tEn, 0), e(tWrap, 1)));
+    nets.add(net("sw_twrap_b", e(tAtN, tAtNEnd), e(tWrap, 2)));
+    // normal-count gate: tCnt = enT·¬atN.
+    String tCnt = "sw_tcnt";
+    components.add(new ComponentSpec(tCnt, "Gates", "AND Gate", 1, "SWTC"));
+    hints.add(new LayoutHint(tCnt, 10, 0, 8, null));
+    nets.add(net("sw_tcnt_a", e(tEn, 0), e(tCnt, 1)));
+    nets.add(net("sw_tcnt_b", e(tNotAt, 0), e(tCnt, 2)));
+    // tens ripple: r_0 = 1 (use tEn as the always-toggle base)
+    String tNormSrc = "sw_t0";
+    int tNormEnd = 2;
+    for (int i = 0; i < 3; i++) {
+      boolean bitOne = ((tTerm >> i) & 1) == 1;
+      if (i == 0) {
+        // T_0 = enT·(¬tAt ∨ bitOne·tAt); term bit0 = 1 → OR(enT·¬tAt, enT·tAt)
+        // simplifies to enT.
+        nets.add(net("sw_tt0", e(tEn, 0), e("sw_t0", 0)));
+      } else {
+        if (i >= 2) {
+          String ng = "sw_tnorm" + i;
+          components.add(new ComponentSpec(ng, "Gates", "AND Gate", 1, "SWTN R".replace(" ", "") + i));
+          hints.add(new LayoutHint(ng, 7 + i, 0, 1, null));
+          nets.add(net("sw_tnorm" + i + "_a", e(tNormSrc, tNormEnd), e(ng, 1)));
+          nets.add(net("sw_tnorm" + i + "_b", e("sw_t" + (i - 1), 2), e(ng, 2)));
+          tNormSrc = ng;
+          tNormEnd = 0;
+        }
+        String main = "sw_tm" + i;
+        components.add(new ComponentSpec(main, "Gates", "AND Gate", 1, "SWTM" + i));
+        hints.add(new LayoutHint(main, 7 + i, 0, 2, null));
+        nets.add(net("sw_tm" + i + "_n", e(tNormSrc, tNormEnd), e(main, 1)));
+        nets.add(net("sw_tm" + i + "_na", e(tCnt, 0), e(main, 2)));
+        if (bitOne) {
+          String or = "sw_to" + i;
+          components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "SWTO" + i));
+          hints.add(new LayoutHint(or, 7 + i, 0, 3, null));
+          nets.add(net("sw_to" + i + "_m", e(main, 0), e(or, 1)));
+          nets.add(net("sw_to" + i + "_at", e(tWrap, 0), e(or, 2)));
+          nets.add(net("sw_to" + i + "_out", e(or, 0), e("sw_t" + i, 0)));
+        } else {
+          nets.add(net("sw_tt" + i, e(main, 0), e("sw_t" + i, 0)));
+        }
+      }
+    }
+
+    // clocks/resets
+    for (int i = 0; i < 4; i++) {
+      nets.add(net("sw_clk_u" + i, e("clk", 0), e("sw_u" + i, 1)));
+      nets.add(net("sw_rst_u" + i, e("rst", 0), e("sw_u" + i, 4)));
+      nets.add(net("sw_q_u" + i, e("sw_u" + i, 2), e("q" + i, 0)));
+    }
+    for (int i = 0; i < 3; i++) {
+      nets.add(net("sw_clk_t" + i, e("clk", 0), e("sw_t" + i, 1)));
+      nets.add(net("sw_rst_t" + i, e("rst", 0), e("sw_t" + i, 4)));
+      nets.add(net("sw_q_t" + i, e("sw_t" + i, 2), e("q" + (4 + i), 0)));
+    }
+    return new CircuitSpec("stopwatch", components, ports, nets, hints);
+  }
 
   /**
    * Frequency meter (频率计): counts SIG rising edges inside an 8-cycle gate
