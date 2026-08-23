@@ -722,6 +722,7 @@ public final class BooleanSynthesisRegression {
         {"lfsr_4bit", "lfsr.vec", "33", "0"},
         {"demux_4to1", "demux.vec", "8", "0"},
         {"mod7_counter", "mod7.vec", "17", "0"},
+        {"mod10_counter", "mod10.vec", "21", "0"},
         {"bcd2bin_2digit", "b2b.vec", "12", "0"},
         {"bin2bcd_4bit", "binbcd.vec", "16", "0"},
         {"tristate_buffer", "tristate.vec", "2", "0"},

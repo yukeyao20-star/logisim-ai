@@ -202,6 +202,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("抢答器|优先抢答|抢答电路|抢答");
   private static final Pattern DIVIDER_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:分频器|分频电路|频率分频器)");
+  private static final Pattern DIVN_ZH =
+      Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:分频|分之一|进制分频(?:器|电路)?)");
+  private static final Pattern DIVN_EN =
+      Pattern.compile("(?:divide|div)\\s+by\\s+(\\d{1,3})", Pattern.CASE_INSENSITIVE);
   private static final Pattern DIVIDER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:divider|frequency\\s+divider)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DIVIDER_ZH_BARE =
@@ -751,6 +755,20 @@ public final class StructuralCircuitTemplates {
     }
     Matcher divzh = DIVIDER_ZH.matcher(t);
     Matcher diven = DIVIDER_EN.matcher(t);
+    Matcher divnzh = DIVN_ZH.matcher(t);
+    Matcher divnen = DIVN_EN.matcher(t);
+    if (divnzh.find() && divnzh.group(1) != null) {
+      Integer n = chineseToInt(divnzh.group(1));
+      if (n != null && n >= 2 && n <= 16) {
+        return Optional.of(buildModCounter(n));
+      }
+    }
+    if (divnen.find()) {
+      int n = Integer.parseInt(divnen.group(1));
+      if (n >= 2 && n <= 16) {
+        return Optional.of(buildModCounter(n));
+      }
+    }
     if (divzh.find()) {
       Integer bits = chineseToInt(divzh.group(1));
       if (bits != null) {
@@ -2327,6 +2345,9 @@ public final class StructuralCircuitTemplates {
       components.add(new ComponentSpec("mc" + i, "Memory", "T Flip-Flop", 1, "U" + (i + 1)));
       hints.add(new LayoutHint("mc" + i, i, 0, 0, null));
     }
+    // TC pulses once per N clock cycles at count N-1, turning the mod-N counter
+    // into a divide-by-N. The final minterm gate is always "mc_at3" (j=3 runs).
+    addOutput(ports, "tc", "TC", "mc_at3");
     // atN = minterm detecting N-1 over Q3..Q0
     String atN = null;
     int atNEnd = 0;
@@ -2357,6 +2378,7 @@ public final class StructuralCircuitTemplates {
         atNEnd = 0;
       }
     }
+    nets.add(net("mc_tc", e("mc_at3", 0), e("tc", 0)));
     String notAt = "mc_notat";
     components.add(new ComponentSpec(notAt, "Gates", "NOT Gate", 1, "NA"));
     hints.add(new LayoutHint(notAt, 4, 0, 8, null));
