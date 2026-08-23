@@ -288,6 +288,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("交通灯|红绿灯|交通信号|交通灯控制");
   private static final Pattern TRAFFIC_EN =
       Pattern.compile("traffic light|traffic signal|stop light", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DIGCLOCK_ZH =
+      Pattern.compile("数字钟|数字时钟|电子钟|二十四小时?时钟?|24小时(?:制)?时钟?");
+  private static final Pattern DIGCLOCK_EN =
+      Pattern.compile("digital\\s+clock|24[- ]hour\\s+clock", Pattern.CASE_INSENSITIVE);
   private static final Pattern SEQDET_ZH =
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
@@ -780,6 +784,9 @@ public final class StructuralCircuitTemplates {
     }
     if (DIVIDER_ZH_BARE.matcher(t).find() || DIVIDER_EN_BARE.matcher(t).find()) {
       return Optional.of(buildDivider(4));
+    }
+    if (DIGCLOCK_ZH.matcher(t).find() || DIGCLOCK_EN.matcher(t).find()) {
+      return Optional.of(buildDigitalClock());
     }
     Matcher johnzh = JOHNSON_ZH.matcher(t);
     Matcher johnen = JOHNSON_EN.matcher(t);
@@ -2441,6 +2448,265 @@ public final class StructuralCircuitTemplates {
       nets.add(net("mc_q" + i, e("mc" + i, 2), e("q" + i, 0)));
     }
     return new CircuitSpec("mod" + n + "_counter", components, ports, nets, hints);
+  }
+
+  /**
+   * 24-hour digital clock core (数字钟): six synchronous digits — SS mod-10,
+   * SH mod-6, MM mod-10, MH mod-6 (minutes), HM/HH forming a combined mod-24
+   * hour counter. All flip-flops share CLK; digits advance via a combinational
+   * enable chain (a digit counts only when every lower digit sits at its
+   * terminal value) and clear synchronously at their own terminal count.
+   * Outputs Q0..Q5 = SS, Q6..Q9 = SH, Q10..Q13 = MM, Q14..Q17 = MH,
+   * Q18..Q21 = HM, Q22..Q23 = HH. RST clears everything to 00:00:00.
+   */
+  static CircuitSpec buildDigitalClock() {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    addClockInput(ports, "clk", "CLK", "dc_ss_ff0");
+    addInput(ports, "rst", "RST", "dc_ss_ff0");
+
+    // Digit descriptors in time order: [prefix, mod, bitWidth, colBase].
+    // Hours are a single mod-24 unit over 5 bits (HM=4 bits + HH=1 bit).
+    int[][] digitMods = {{10, 4}, {6, 3}, {10, 4}, {6, 3}};
+    String[] digitNames = {"ss", "sh", "mm", "mh"};
+    int qIndex = 0;
+    // enableChain tracks "all lower digits at terminal" (null = always count).
+    String enableChain = null;
+    int enableChainEnd = 0;
+    for (int d = 0; d < 4; d++) {
+      String pfx = "dc_" + digitNames[d];
+      int mod = digitMods[d][0];
+      int bits = digitMods[d][1];
+      int term = mod - 1;
+      // per-bit T-FFs
+      for (int i = 0; i < bits; i++) {
+        String ff = pfx + "_ff" + i;
+        components.add(new ComponentSpec(ff, "Memory", "T Flip-Flop", 1,
+            "D" + d + "F" + i));
+        hints.add(new LayoutHint(ff, d * 7, 0, i, null));
+        addOutput(ports, "q" + (qIndex++), "Q" + (qIndex - 1), ff);
+      }
+      // minterm at `term`
+      String atN = null;
+      int atNEnd = 0;
+      for (int j = 0; j < bits; j++) {
+        boolean one = ((term >> j) & 1) == 1;
+        String lit;
+        int litEnd;
+        if (one) {
+          lit = pfx + "_ff" + j;
+          litEnd = 2;
+        } else {
+          lit = pfx + "_n" + j;
+          litEnd = 0;
+          components.add(new ComponentSpec(lit, "Gates", "NOT Gate", 1, "D" + d + "N" + j));
+          hints.add(new LayoutHint(lit, d * 7 + 5, 0, j, null));
+          nets.add(net(pfx + "_n" + j + "_in", e(pfx + "_ff" + j, 2), e(lit, 1)));
+        }
+        if (atN == null) {
+          atN = lit;
+          atNEnd = litEnd;
+        } else {
+          String gate = pfx + "_at" + j;
+          components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "D" + d + "A" + j));
+          hints.add(new LayoutHint(gate, d * 7 + 5, 0, bits + j, null));
+          nets.add(net(pfx + "_at" + j + "_a", e(atN, atNEnd), e(gate, 1)));
+          nets.add(net(pfx + "_at" + j + "_b", e(lit, litEnd), e(gate, 2)));
+          atN = gate;
+          atNEnd = 0;
+        }
+      }
+      // digit enable = enableChain ANDed with nothing extra for this digit's
+      // counting; wrap = enableChain AND atN (this digit rolls over).
+      String wrapSrc = atN;
+      int wrapEnd = atNEnd;
+      String wrapId = pfx + "_wrap";
+      String wrapOut;
+      int wrapOutEnd;
+      if (enableChain == null) {
+        wrapOut = wrapSrc;
+        wrapOutEnd = wrapEnd;
+      } else {
+        components.add(new ComponentSpec(wrapId, "Gates", "AND Gate", 1, "D" + d + "W"));
+        hints.add(new LayoutHint(wrapId, d * 7 + 5, 0, 2 * bits + 1, null));
+        nets.add(net(pfx + "_wrap_a", e(enableChain, enableChainEnd), e(wrapId, 1)));
+        nets.add(net(pfx + "_wrap_b", e(wrapSrc, wrapEnd), e(wrapId, 2)));
+        wrapOut = wrapId;
+        wrapOutEnd = 0;
+      }
+      // notWrap gates normal counting. Per-bit T formula mirrors the verified
+      // buildModCounter with atN→wrap (= enable · terminal): T_i = (ripple_i ·
+      // ¬wrap) ∨ (bitOne_i · wrap). ripple_0 = this digit's enable (constant 1
+      // for the first digit), so T_0 = (en·¬wrap) ∨ (bitOne_0·wrap).
+      String notWrap = pfx + "_nw";
+      components.add(new ComponentSpec(notWrap, "Gates", "NOT Gate", 1, "D" + d + "NW"));
+      hints.add(new LayoutHint(notWrap, d * 7 + 5, 0, 2 * bits + 2, null));
+      nets.add(net(pfx + "_nw_in", e(wrapOut, wrapOutEnd), e(notWrap, 1)));
+      boolean firstDigit = enableChain == null;
+      String t0Src = notWrap;
+      int t0SrcEnd = 0;
+      if (!firstDigit) {
+        String t0e = pfx + "_t0e";
+        components.add(new ComponentSpec(t0e, "Gates", "AND Gate", 1, "D" + d + "TE"));
+        hints.add(new LayoutHint(t0e, d * 7 + 5, 0, 2 * bits + 3, null));
+        nets.add(net(pfx + "_t0e_a", e(enableChain, enableChainEnd), e(t0e, 1)));
+        nets.add(net(pfx + "_t0e_b", e(notWrap, 0), e(t0e, 2)));
+        t0Src = t0e;
+      }
+      if (((mod - 1) & 1) == 1) {
+        String or = pfx + "_t0";
+        components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "D" + d + "T0"));
+        hints.add(new LayoutHint(or, d * 7, 0, bits, null));
+        nets.add(net(pfx + "_t0_a", e(t0Src, t0SrcEnd), e(or, 1)));
+        nets.add(net(pfx + "_t0_b", e(wrapOut, wrapOutEnd), e(or, 2)));
+        nets.add(net(pfx + "_t0_out", e(or, 0), e(pfx + "_ff0", 0)));
+      } else {
+        nets.add(net(pfx + "_t0", e(t0Src, t0SrcEnd), e(pfx + "_ff0", 0)));
+      }
+      String normSrc = pfx + "_ff0";
+      int normEnd = 2;
+      for (int i = 1; i < bits; i++) {
+        boolean bitOne = ((term >> i) & 1) == 1;
+        if (i >= 2) {
+            String ng = pfx + "_norm" + i;
+            components.add(new ComponentSpec(ng, "Gates", "AND Gate", 1, "D" + d + "R" + i));
+            hints.add(new LayoutHint(ng, d * 7 + i, 0, bits + 1, null));
+            nets.add(net(pfx + "_norm" + i + "_a", e(normSrc, normEnd), e(ng, 1)));
+            nets.add(net(pfx + "_norm" + i + "_b", e(pfx + "_ff" + (i - 1), 2), e(ng, 2)));
+            normSrc = ng;
+            normEnd = 0;
+          }
+          String main = pfx + "_t" + i + "m";
+          components.add(new ComponentSpec(main, "Gates", "AND Gate", 1, "D" + d + "M" + i));
+          hints.add(new LayoutHint(main, d * 7 + i, 0, bits + 2, null));
+          nets.add(net(pfx + "_t" + i + "m_n", e(normSrc, normEnd), e(main, 1)));
+          nets.add(net(pfx + "_t" + i + "m_na", e(t0Src, t0SrcEnd), e(main, 2)));
+          if (bitOne) {
+            String or = pfx + "_t" + i;
+            components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "D" + d + "O" + i));
+            hints.add(new LayoutHint(or, d * 7 + i, 0, bits + 3, null));
+            nets.add(net(pfx + "_t" + i + "_m", e(main, 0), e(or, 1)));
+            nets.add(net(pfx + "_t" + i + "_at", e(wrapOut, wrapOutEnd), e(or, 2)));
+            nets.add(net(pfx + "_t" + i + "_out", e(or, 0), e(pfx + "_ff" + i, 0)));
+          } else {
+            nets.add(net(pfx + "_t" + i, e(main, 0), e(pfx + "_ff" + i, 0)));
+          }
+      }
+      for (int i = 0; i < bits; i++) {
+        nets.add(net(pfx + "_clk" + i, e("clk", 0), e(pfx + "_ff" + i, 1)));
+        nets.add(net(pfx + "_rst" + i, e("rst", 0), e(pfx + "_ff" + i, 4)));
+        nets.add(net(pfx + "_q" + i, e(pfx + "_ff" + i, 2), e("q" + (qIndex - bits + i), 0)));
+      }
+      // extend the enable chain with this digit's wrap
+      if (enableChain == null) {
+        enableChain = wrapOut;
+        enableChainEnd = wrapOutEnd;
+      } else {
+        String nextEn = pfx + "_ench";
+        components.add(new ComponentSpec(nextEn, "Gates", "AND Gate", 1, "D" + d + "EC"));
+        hints.add(new LayoutHint(nextEn, d * 7 + 6, 0, 0, null));
+        nets.add(net(pfx + "_ench_a", e(enableChain, enableChainEnd), e(nextEn, 1)));
+        nets.add(net(pfx + "_ench_b", e(wrapOut, wrapOutEnd), e(nextEn, 2)));
+        enableChain = nextEn;
+        enableChainEnd = 0;
+      }
+    }
+
+    // Hours: mod-24 over 5 bits (HM 4 bits low, HH 1 bit high). Counts when
+    // minutes wrapped (59→00 edge produces a one-cycle enable pulse).
+    String hp = "dc_hm";
+    int hBits = 5;
+    int hTerm = 23;
+    for (int i = 0; i < hBits; i++) {
+      String ff = hp + "_ff" + i;
+      components.add(new ComponentSpec(ff, "Memory", "T Flip-Flop", 1, "DH F".substring(0, 2).replace(" ", "") + i));
+      hints.add(new LayoutHint(ff, 28 + i, 0, i, null));
+      addOutput(ports, "q" + (18 + i), "Q" + (18 + i), ff);
+    }
+    String hAtN = null;
+    int hAtNEnd = 0;
+    for (int j = 0; j < hBits; j++) {
+      boolean one = ((hTerm >> j) & 1) == 1;
+      String lit;
+      int litEnd;
+      if (one) {
+        lit = hp + "_ff" + j;
+        litEnd = 2;
+      } else {
+        lit = hp + "_n" + j;
+        litEnd = 0;
+        components.add(new ComponentSpec(lit, "Gates", "NOT Gate", 1, "HN" + j));
+        hints.add(new LayoutHint(lit, 33, 0, j, null));
+        nets.add(net(hp + "_n" + j + "_in", e(hp + "_ff" + j, 2), e(lit, 1)));
+      }
+      if (hAtN == null) {
+        hAtN = lit;
+        hAtNEnd = litEnd;
+      } else {
+        String gate = hp + "_at" + j;
+        components.add(new ComponentSpec(gate, "Gates", "AND Gate", 1, "HA" + j));
+        hints.add(new LayoutHint(gate, 33, 0, hBits + j, null));
+        nets.add(net(hp + "_at" + j + "_a", e(hAtN, hAtNEnd), e(gate, 1)));
+        nets.add(net(hp + "_at" + j + "_b", e(lit, litEnd), e(gate, 2)));
+        hAtN = gate;
+        hAtNEnd = 0;
+      }
+    }
+    // hour enable = minute-wrap chain; hour wrap = enable AND at-23.
+    String hEn = enableChain;
+    int hEnEnd = enableChainEnd;
+    String hWrap = hp + "_wrap";
+    components.add(new ComponentSpec(hWrap, "Gates", "AND Gate", 1, "HW"));
+    hints.add(new LayoutHint(hWrap, 33, 0, 2 * hBits + 1, null));
+    nets.add(net(hp + "_wrap_a", e(hEn, hEnEnd), e(hWrap, 1)));
+    nets.add(net(hp + "_wrap_b", e(hAtN, hAtNEnd), e(hWrap, 2)));
+    String hNotWrap = hp + "_nw";
+    components.add(new ComponentSpec(hNotWrap, "Gates", "NOT Gate", 1, "HNW"));
+    hints.add(new LayoutHint(hNotWrap, 33, 0, 2 * hBits + 2, null));
+    nets.add(net(hp + "_nw_in", e(hWrap, 0), e(hNotWrap, 1)));
+    // hour T inputs: ripple_0 = 1 so T_0 = hEn (toggle whenever the minute
+    // chain enables); T_i = (hEn·¬hWrap·ripple_i) ∨ (bitOne_i·hWrap). At wrap
+    // (23 + enable) bitOne bits toggle back to 0 and the others hold.
+    nets.add(net(hp + "_t0", e(hEn, hEnEnd), e(hp + "_ff0", 0)));
+    String hNormSrc = hp + "_ff0";
+    int hNormEnd = 2;
+    for (int i = 1; i < hBits; i++) {
+      boolean bitOne = ((hTerm >> i) & 1) == 1;
+      {
+        if (i >= 2) {
+          String ng = hp + "_norm" + i;
+          components.add(new ComponentSpec(ng, "Gates", "AND Gate", 1, "HR" + i));
+          hints.add(new LayoutHint(ng, 28 + i, 0, hBits + 1, null));
+          nets.add(net(hp + "_norm" + i + "_a", e(hNormSrc, hNormEnd), e(ng, 1)));
+          nets.add(net(hp + "_norm" + i + "_b", e(hp + "_ff" + (i - 1), 2), e(ng, 2)));
+          hNormSrc = ng;
+          hNormEnd = 0;
+        }
+        String main = hp + "_t" + i + "m";
+        components.add(new ComponentSpec(main, "Gates", "AND Gate", 1, "HM" + i));
+        hints.add(new LayoutHint(main, 28 + i, 0, hBits + 2, null));
+        nets.add(net(hp + "_t" + i + "m_n", e(hNormSrc, hNormEnd), e(main, 1)));
+        nets.add(net(hp + "_t" + i + "m_e", e(hNotWrap, 0), e(main, 2)));
+        if (bitOne) {
+          String or = hp + "_tw" + i;
+          components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "HO" + i));
+          hints.add(new LayoutHint(or, 28 + i, 0, hBits + 3, null));
+          nets.add(net(hp + "_t" + i + "w_m", e(main, 0), e(or, 1)));
+          nets.add(net(hp + "_t" + i + "w_w", e(hWrap, 0), e(or, 2)));
+          nets.add(net(hp + "_t" + i + "_out", e(or, 0), e(hp + "_ff" + i, 0)));
+        } else {
+          nets.add(net(hp + "_t" + i, e(main, 0), e(hp + "_ff" + i, 0)));
+        }
+      }
+      }
+    for (int i = 0; i < hBits; i++) {
+      nets.add(net(hp + "_clk" + i, e("clk", 0), e(hp + "_ff" + i, 1)));
+      nets.add(net(hp + "_rst" + i, e("rst", 0), e(hp + "_ff" + i, 4)));
+      nets.add(net(hp + "_q" + i, e(hp + "_ff" + i, 2), e("q" + (18 + i), 0)));
+    }
+    return new CircuitSpec("digital_clock", components, ports, nets, hints);
   }
 
   /**

@@ -313,6 +313,7 @@ public final class GenerateAndGate {
         || spec.name().startsWith("lfsr_")
         || spec.name().startsWith("demux_")
         || spec.name().matches("mod\\d+_counter")
+        || spec.name().equals("digital_clock")
         || spec.name().startsWith("bcd2bin_")
         || spec.name().startsWith("bin2bcd")
         || spec.name().equals("tristate_buffer")
