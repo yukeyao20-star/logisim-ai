@@ -1,0 +1,29 @@
+{
+  "requestKind": "natural_language",
+  "request": "六十分频",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "mod60_counter",
+  "circuitPath": "generated\\circ\\mod60_counter.circ",
+  "manifestPath": "generated\\reports\\mod60_counter_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 4,
+  "artifacts": [
+    {"path": "generated\\circ\\mod60_counter.circ", "exists": true},
+    {"path": "generated\\reports\\mod60_counter_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\mod60_counter_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\mod60_counter_multichip.md", "exists": true}
+  ]
+}

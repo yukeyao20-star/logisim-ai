@@ -1,0 +1,19 @@
+{
+  "circuitName": "mod60_counter",
+  "complete": true,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=23509"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] mod60_counter.circ round-trip loaded with main circuit mod60_counter"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] mod60_counter.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] mod60_counter.circ\n - Vertical wire in left boundary lane can short external inputs: (110,-510) -> (110,150)\n - Wire crosses reserved area of Pin Q2 in circuit mod60_counter: (2060,190) -> (5330,190)\n - Wire crosses reserved area of Pin Q1 in circuit mod60_counter: (2250,160) -> (5340,160)\n - Wire crosses reserved area of Pin Q1 in circuit mod60_counter: (2300,140) -> (5370,140)\n - Wire crosses reserved area of Pin Q0 in circuit mod60_counter: (2490,110) -> (5400,110)\n - Wire crosses reserved area of Pin Q0 in circuit mod60_counter: (2540,90) -> (5410,90)\n - Wire crosses reserved area of Pin TC in circuit mod60_counter: (3390,410) -> (5520,410)\n - Wire crosses reserved area of Pin TC in circuit mod60_counter: (3510,390) -> (5530,390)\n - Wire crosses reserved area of Pin Q5 in circuit mod60_counter: (3560,340) -> (5580,340)\n - Wire crosses reserved area of Pin Q5 in circuit mod60_counter: (3800,360) -> (5560,360)\n - Wire crosses reserved area of Pin Q3 in circuit mod60_counter: (3870,240) -> (5600,240)\n - Wire crosses reserved area of Pin Q2 in circuit mod60_counter: (4040,210) -> (5610,210)\n - Wire crosses reserved area of Pin Q4 in circuit mod60_counter: (4750,290) -> (5320,290)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\mod60_counter.circ", "exists": true}
+  ],
+  "issues": []
+}

@@ -1,0 +1,19 @@
+{
+  "circuitName": "countdown_timer",
+  "complete": true,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=24900"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] countdown_timer.circ round-trip loaded with main circuit countdown_timer"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] countdown_timer.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] countdown_timer.circ\n - Vertical wire in left boundary lane can short external inputs: (110,-140) -> (110,150)\n - Vertical wire in left boundary lane can short external inputs: (160,-220) -> (160,200)\n - Vertical wire in left boundary lane can short external inputs: (210,120) -> (210,250)\n - Vertical wire in left boundary lane can short external inputs: (260,60) -> (260,300)\n - Wire crosses reserved area of Pin Q2 in circuit countdown_timer: (1100,190) -> (5400,190)\n - Wire crosses reserved area of Pin Q1 in circuit countdown_timer: (1290,160) -> (5410,160)\n - Wire crosses reserved area of Pin ZERO in circuit countdown_timer: (1290,310) -> (5430,310)\n - Wire crosses reserved area of Pin Q1 in circuit countdown_timer: (1340,140) -> (5440,140)\n - Wire crosses reserved area of Pin Q0 in circuit countdown_timer: (1460,110) -> (5480,110)\n - Wire crosses reserved area of Pin Q0 in circuit countdown_timer: (1650,90) -> (5490,90)\n - Wire crosses reserved area of Pin ZERO in circuit countdown_timer: (2210,290) -> (5730,290)\n - Wire crosses reserved area of Pin Q3 in circuit countdown_timer: (3690,260) -> (5750,260)\n - Wire crosses reserved area of Pin Q3 in circuit countdown_timer: (3740,240) -> (5780,240)\n - Wire crosses reserved area of Pin Q2 in circuit countdown_timer: (860,210) -> (5380,210)"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated\\circ\\countdown_timer.circ", "exists": true}
+  ],
+  "issues": []
+}
