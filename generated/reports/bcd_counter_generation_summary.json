@@ -10,20 +10,24 @@
     "packagePrimitive": false,
     "routingPrimitive": "primitive_gates"
   },
-  "recommendedNextAction": "Open the manifest first and fix its issues before trusting the circuit artifact.",
-  "recommendedActions": ["review_manifest", "fix_manifest_issues", "regenerate_circuit"],
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
   "sourceJson": "",
   "circuitName": "bcd_counter",
   "circuitPath": "generated\\circ\\bcd_counter.circ",
   "manifestPath": "generated\\reports\\bcd_counter_circuit_manifest.md",
-  "manifestComplete": null,
-  "manifestCheckCount": null,
-  "manifestIssueCount": null,
-  "artifactCount": 4,
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 8,
   "artifacts": [
     {"path": "generated\\circ\\bcd_counter.circ", "exists": true},
+    {"path": "generated\\reports\\bcd_counter_circuit_manifest.json", "exists": true},
+    {"path": "generated\\reports\\bcd_counter_circuit_manifest.md", "exists": true},
     {"path": "generated\\reports\\bcd_counter_generation_summary.json", "exists": true},
     {"path": "generated\\reports\\bcd_counter_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\bcd_counter_multichip.md", "exists": true}
+    {"path": "generated\\reports\\bcd_counter_multichip.md", "exists": true},
+    {"path": "generated\\reports\\bcd_counter_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\bcd_counter_official_simulation.md", "exists": true}
   ]
 }

@@ -1,7 +1,7 @@
 # Generation summary for mod60_counter
 
 - Request kind: natural_language
-- Request: 六十分频
+- Request: mod 60 counter
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 4
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,4 +26,6 @@
 | generated\circ\mod60_counter.circ | true |
 | generated\reports\mod60_counter_circuit_manifest.json | true |
 | generated\reports\mod60_counter_circuit_manifest.md | true |
+| generated\reports\mod60_counter_generation_summary.json | true |
+| generated\reports\mod60_counter_generation_summary.md | true |
 | generated\reports\mod60_counter_multichip.md | true |

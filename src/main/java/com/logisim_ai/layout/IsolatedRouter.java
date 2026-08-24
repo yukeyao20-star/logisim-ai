@@ -2,7 +2,10 @@ package com.logisim_ai.layout;
 
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.Wire;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Tunnel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,12 +37,29 @@ import java.util.Set;
  *       net's own lane; a foreign wire would need the same x and y in range to
  *       catch an endpoint, which the disjoint invariants prevent.</li>
  * </ul>
+ *
+ * <p>Hybrid routing: nets whose leftmost port sits farther than
+ * {@link #PHYSICAL_REACH} from the trunk bank (all trunks live right of the
+ * whole circuit, so their stub horizontal would cross every component
+ * reserved area in the row) are connected with same-label Tunnels placed on
+ * their port points instead of wires. This adds no wires, so the physical
+ * invariants above are unaffected.
  */
 public final class IsolatedRouter {
   private IsolatedRouter() {}
 
   private static final int STUB_LENGTH = 40;
   private static final int ROUTING_MARGIN = 300;
+  /**
+   * Physical reach of a stub-row horizontal. The trunk bank always sits right
+   * of the whole circuit, so a net whose leftmost port is farther than this
+   * from the bank would need a full-width horizontal that crosses every
+   * component reserved area in its row. Such nets are connected with same-label
+   * Tunnel components placed exactly on their port points instead — no wires,
+   * so the WireRepair isolation invariants of the physically-routed nets are
+   * untouched.
+   */
+  private static final int PHYSICAL_REACH = 2500;
 
   public record EndpointRef(String componentId, int endIndex) {}
 
@@ -49,6 +69,27 @@ public final class IsolatedRouter {
       CircuitMutation mutation,
       List<NetWire> nets,
       Map<String, Location> endpointLocs) {
+    wire(mutation, nets, endpointLocs, Map.of(), Set.of());
+  }
+
+  /**
+   * Full routing entry. {@code tunnelOffsets} maps endpoint keys
+   * ({@code componentId#endIndex}) to a vertical offset for their tunnel:
+   * absent/0 = tunnel directly on the port point; negative = place the tunnel
+   * that many pixels above the port and connect it with a short vertical wire
+   * (used for ports that coincide with their component anchor, where an
+   * on-port tunnel would trigger exact-overlap). {@code pinEndpointKeys}
+   * lists external-pin endpoints: nets touching a pin are always tunneled —
+   * pins share a column (inputs) or a diagonal band (outputs), and a physical
+   * stub vertical at a pin's x crosses or merges with neighbouring pins' stub
+   * verticals (WireRepair then shorts them).
+   */
+  public static void wire(
+      CircuitMutation mutation,
+      List<NetWire> nets,
+      Map<String, Location> endpointLocs,
+      Map<String, Integer> tunnelOffsets,
+      Set<String> pinEndpointKeys) {
     // Fan-out roots: a driving port (e.g. a D-FF's Q) legitimately appears in
     // several spec nets (Q->gate1, Q->gate2, Q->output pin). The router's
     // contract is "one net per port" -- otherwise each net gives the same port
@@ -65,6 +106,38 @@ public final class IsolatedRouter {
     }
     int firstTrunkX = maxX + ROUTING_MARGIN;
     int firstLaneY = maxY + ROUTING_MARGIN;
+
+    // Hybrid routing: nets whose leftmost port lies beyond PHYSICAL_REACH of
+    // the trunk bank are tunneled (their stub horizontal would cross the whole
+    // circuit); the rest keep the provably-isolated physical route.
+    List<NetWire> physical = new ArrayList<>();
+    List<NetWire> tunneled = new ArrayList<>();
+    for (NetWire net : nets) {
+      List<EndpointRef> refs = net.endpoints();
+      if (refs.size() < 2) {
+        physical.add(net);
+        continue;
+      }
+      int minPortX = Integer.MAX_VALUE;
+      boolean allKnown = true;
+      boolean touchesPin = false;
+      for (EndpointRef ref : refs) {
+        String k = key(ref);
+        Location loc = endpointLocs.get(k);
+        if (loc == null) {
+          allKnown = false;
+          break;
+        }
+        minPortX = Math.min(minPortX, loc.getX());
+        touchesPin |= pinEndpointKeys.contains(k);
+      }
+      if (allKnown && (touchesPin || firstTrunkX - minPortX > PHYSICAL_REACH)) {
+        tunneled.add(net);
+      } else {
+        physical.add(net);
+      }
+    }
+    nets = physical;
 
     List<String> portKeys = new ArrayList<>();
     for (NetWire net : nets) {
@@ -86,25 +159,22 @@ public final class IsolatedRouter {
       int row = down
           ? loc.getY() + STUB_LENGTH + 10 * downSeq++
           : loc.getY() - STUB_LENGTH - 10 * upSeq++;
-      while (stubY.containsValue(row) || isPortY(endpointLocs, row)
+      while (stubY.containsValue(row) || isNearPortY(endpointLocs, row)
           || sameXStubRangeHits(endpointLocs, stubY, loc.getX(), row)) {
         row += down ? 10 : -10;
       }
       stubY.put(key, row);
     }
 
+    // Tunnels for the long nets, now that the physical stub rows are known
+    // (vertical tunnel risers must not terminate on a foreign stub row).
+    emitTunnels(mutation, tunneled, endpointLocs, tunnelOffsets, stubY);
+
     // Stub segments (one per port).
-    int stubCount = 0;
     for (String key : portKeys) {
       Location loc = endpointLocs.get(key);
-      if (loc.getX() == 1180 || key.contains("n_gsh") || key.contains("z0")
-          || key.contains("enc1#9")) {
-        System.err.println("[stub-dbg] " + key + " loc=" + loc + " row=" + stubY.get(key));
-      }
       add(mutation, loc, Location.create(loc.getX(), stubY.get(key), true));
-      stubCount++;
     }
-    System.err.println("[router] ports=" + portKeys.size() + " stubs=" + stubCount);
 
     // Lane rows start above every stub row so lanes never collide with stubs.
     int maxStub = 0;
@@ -168,6 +238,62 @@ public final class IsolatedRouter {
             Location.create(t[0], plan.laneY, true));
         add(mutation, Location.create(t[0], plan.laneY, true),
             Location.create(t[0], t[1], true));
+      }
+    }
+  }
+
+  /**
+   * Connect the given nets with same-label Tunnels. Each endpoint normally
+   * gets its tunnel exactly on its port point (zero wires, so the physical
+   * nets' WireRepair isolation invariants are untouched); endpoints listed in
+   * {@code tunnelOffsets} instead get the tunnel that many pixels above the
+   * port, joined by a short vertical riser whose far end must not land on a
+   * physical stub row (a wire endpoint on a foreign horizontal would be split
+   * into a junction by WireRepair) — candidates walk upward until clear.
+   *
+   * <p>Labels are short circuit-local ids ("TQ0".."TQzz", base-36) to stay
+   * under the layout inspector's tunnel-label-length threshold, and the
+   * structure inspector recognises the prefix as the hybrid-router contract.
+   */
+  private static void emitTunnels(
+      CircuitMutation mutation,
+      List<NetWire> tunneled,
+      Map<String, Location> endpointLocs,
+      Map<String, Integer> tunnelOffsets,
+      Map<String, Integer> stubY) {
+    int seq = 0;
+    Set<Location> usedTunnelPoints = new HashSet<>();
+    for (NetWire net : tunneled) {
+      String label = "TQ" + java.lang.Integer.toString(seq++, 36);
+      for (EndpointRef ref : net.endpoints()) {
+        Location loc = endpointLocs.get(key(ref));
+        if (loc == null) {
+          continue;
+        }
+        Integer offset = tunnelOffsets.get(key(ref));
+        Location tunnelLoc = loc;
+        if (offset != null && offset != 0) {
+          int ty = loc.getY() + offset;
+          // Walk clear of physical stub rows (a wire endpoint on a foreign
+          // horizontal would be split into a junction), foreign port points,
+          // and tunnels already placed — two tunnels on one point short
+          // their nets.
+          Location candidate = Location.create(loc.getX(), ty, true);
+          while (stubY.containsValue(ty) || isPortY(endpointLocs, ty)
+              || usedTunnelPoints.contains(candidate)) {
+            ty -= 10;
+            candidate = Location.create(loc.getX(), ty, true);
+          }
+          usedTunnelPoints.add(candidate);
+          tunnelLoc = candidate;
+          add(mutation, loc, tunnelLoc);
+        } else {
+          usedTunnelPoints.add(loc);
+        }
+        var attrs = Tunnel.FACTORY.createAttributeSet();
+        attrs.setValue(StdAttr.LABEL, label);
+        attrs.setValue(StdAttr.FACING, Direction.WEST);
+        mutation.add(Tunnel.FACTORY.createComponent(tunnelLoc, attrs));
       }
     }
   }
@@ -315,6 +441,21 @@ public final class IsolatedRouter {
   private static boolean isPortY(Map<String, Location> locs, int y) {
     for (Location l : locs.values()) {
       if (l.getY() == y) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * A stub row must clear not just foreign port y points but their whole
+   * reserved boxes (pin boxes are 28px tall, gate boxes 40px) — a stub-row
+   * horizontal grazing a box is a RESERVED_AREA_INTRUSION warning. A 24px
+   * keep-out on each side covers both.
+   */
+  private static boolean isNearPortY(Map<String, Location> locs, int y) {
+    for (Location l : locs.values()) {
+      if (Math.abs(l.getY() - y) <= 24) {
         return true;
       }
     }

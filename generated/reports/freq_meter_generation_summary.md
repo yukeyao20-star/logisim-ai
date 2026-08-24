@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 4
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,4 +26,6 @@
 | generated\circ\freq_meter.circ | true |
 | generated\reports\freq_meter_circuit_manifest.json | true |
 | generated\reports\freq_meter_circuit_manifest.md | true |
+| generated\reports\freq_meter_generation_summary.json | true |
+| generated\reports\freq_meter_generation_summary.md | true |
 | generated\reports\freq_meter_multichip.md | true |

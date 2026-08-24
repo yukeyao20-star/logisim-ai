@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 4
+- Artifact count: 8
 
 ## Artifacts
 
@@ -26,4 +26,8 @@
 | generated\circ\multiplier_8x8.circ | true |
 | generated\reports\multiplier_8x8_circuit_manifest.json | true |
 | generated\reports\multiplier_8x8_circuit_manifest.md | true |
+| generated\reports\multiplier_8x8_generation_summary.json | true |
+| generated\reports\multiplier_8x8_generation_summary.md | true |
 | generated\reports\multiplier_8x8_multichip.md | true |
+| generated\reports\multiplier_8x8_official_simulation.json | true |
+| generated\reports\multiplier_8x8_official_simulation.md | true |

@@ -80,26 +80,57 @@ public final class CircuitLayoutInspector {
         CircuitXmlEditor.ParsedComponent a = components.get(i);
         for (int j = i + 1; j < components.size(); j++) {
           CircuitXmlEditor.ParsedComponent b = components.get(j);
-          if (a.x() == b.x() && a.y() == b.y()) {
+          // A Tunnel placed on a port point (hybrid router idiom) shares the
+          // coordinates of the hosted component on purpose; that is an
+          // electrical connection, not an accidental overlap.
+          boolean tunnelInvolved = a.name().equals("Tunnel") || b.name().equals("Tunnel");
+          if (a.x() == b.x() && a.y() == b.y() && !tunnelInvolved) {
             issues.add(new LayoutIssue(
                 LayoutIssueType.OVERLAP,
                 LayoutIssueSeverity.ERROR,
                 "Components overlap exactly in circuit " + circuit.name()
-                    + " at (" + a.x() + "," + a.y() + "): " + a.name() + " and " + b.name()));
+                + " at (" + a.x() + "," + a.y() + "): " + a.name() + " and " + b.name()));
           }
           if (isSmallVisualComponent(a) && isSmallVisualComponent(b)
-              && Math.abs(a.x() - b.x()) < SMALL_COMPONENT_CLEARANCE_X
-              && Math.abs(a.y() - b.y()) < SMALL_COMPONENT_CLEARANCE_Y) {
+              && !smallComponentsClear(a, b)) {
             issues.add(new LayoutIssue(
                 LayoutIssueType.OVERLAP,
                 LayoutIssueSeverity.WARNING,
                 "Small components are too close in circuit " + circuit.name()
-                    + " at (" + a.x() + "," + a.y() + ") and (" + b.x() + "," + b.y() + "): "
-                    + a.name() + " and " + b.name()));
+                + " at (" + a.x() + "," + a.y() + ") and (" + b.x() + "," + b.y() + "): "
+                + a.name() + " and " + b.name()));
           }
         }
       }
     }
+  }
+
+  /**
+   * Proximity clearance for small visual components. Tunnels placed by the
+   * hybrid router (short "TQ&lt;base36&gt;" labels) sit exactly on component
+   * port points, so their pairwise spacing is dictated by port geometry
+   * (flip-flop port pairs are 20px apart) rather than by placement choices —
+   * proximity between two such tunnels is not actionable. Netlist-path
+   * tunnels (any other label) keep the full (60,40) clearance.
+   */
+  private static boolean smallComponentsClear(
+      CircuitXmlEditor.ParsedComponent a, CircuitXmlEditor.ParsedComponent b) {
+    // On-port tunnel idiom: a Tunnel sharing its point with a component
+    // (its port) is an intentional connection, not a proximity problem.
+    if (a.x() == b.x() && a.y() == b.y()
+        && (a.name().equals("Tunnel") || b.name().equals("Tunnel"))) {
+      return true;
+    }
+    if (a.name().equals("Tunnel") && b.name().equals("Tunnel")
+        && isHybridRouterTunnel(a.label()) && isHybridRouterTunnel(b.label())) {
+      return true;
+    }
+    return Math.abs(a.x() - b.x()) >= SMALL_COMPONENT_CLEARANCE_X
+        || Math.abs(a.y() - b.y()) >= SMALL_COMPONENT_CLEARANCE_Y;
+  }
+
+  private static boolean isHybridRouterTunnel(String label) {
+    return label != null && label.matches("TQ[0-9a-z]+");
   }
 
   private static boolean isSmallVisualComponent(CircuitXmlEditor.ParsedComponent component) {
@@ -163,6 +194,11 @@ public final class CircuitLayoutInspector {
             Location.create(wire.x1(), wire.y1(), true),
             Location.create(wire.x2(), wire.y2(), true));
         for (FootprintPolicy.ReservedArea area : areas) {
+          // Hybrid-router tunnels sit on port points where wires legitimately
+          // run; their small label boxes are not visual bodies to keep clear.
+          if ("Tunnel".equals(area.kind()) && isHybridRouterTunnel(area.label())) {
+            continue;
+          }
           if (area.crossesInterior(segment)) {
             issues.add(new LayoutIssue(
                 LayoutIssueType.RESERVED_AREA_INTRUSION,

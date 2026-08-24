@@ -19,11 +19,15 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 4,
+  "artifactCount": 8,
   "artifacts": [
     {"path": "generated\\circ\\multiplier_8x8.circ", "exists": true},
     {"path": "generated\\reports\\multiplier_8x8_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\multiplier_8x8_circuit_manifest.md", "exists": true},
-    {"path": "generated\\reports\\multiplier_8x8_multichip.md", "exists": true}
+    {"path": "generated\\reports\\multiplier_8x8_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\multiplier_8x8_generation_summary.md", "exists": true},
+    {"path": "generated\\reports\\multiplier_8x8_multichip.md", "exists": true},
+    {"path": "generated\\reports\\multiplier_8x8_official_simulation.json", "exists": true},
+    {"path": "generated\\reports\\multiplier_8x8_official_simulation.md", "exists": true}
   ]
 }

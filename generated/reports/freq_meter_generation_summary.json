@@ -19,11 +19,13 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 4,
+  "artifactCount": 6,
   "artifacts": [
     {"path": "generated\\circ\\freq_meter.circ", "exists": true},
     {"path": "generated\\reports\\freq_meter_circuit_manifest.json", "exists": true},
     {"path": "generated\\reports\\freq_meter_circuit_manifest.md", "exists": true},
+    {"path": "generated\\reports\\freq_meter_generation_summary.json", "exists": true},
+    {"path": "generated\\reports\\freq_meter_generation_summary.md", "exists": true},
     {"path": "generated\\reports\\freq_meter_multichip.md", "exists": true}
   ]
 }

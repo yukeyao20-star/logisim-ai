@@ -1,7 +1,7 @@
 # Generation summary for mac_4bit
 
 - Request kind: natural_language
-- Request: 4位乘累加器
+- Request: 4 bit multiply accumulate
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 4
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,4 +26,6 @@
 | generated\circ\mac_4bit.circ | true |
 | generated\reports\mac_4bit_circuit_manifest.json | true |
 | generated\reports\mac_4bit_circuit_manifest.md | true |
+| generated\reports\mac_4bit_generation_summary.json | true |
+| generated\reports\mac_4bit_generation_summary.md | true |
 | generated\reports\mac_4bit_multichip.md | true |

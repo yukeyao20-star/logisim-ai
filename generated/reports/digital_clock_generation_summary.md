@@ -1,7 +1,7 @@
 # Generation summary for digital_clock
 
 - Request kind: natural_language
-- Request: 数显钟
+- Request: 数字钟
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

@@ -129,10 +129,12 @@ public final class DirectMultiChipCompiler {
       for (ExternalPort port : spec.externalPorts()) {
         boolean output = port.direction() == PortDirection.OUTPUT;
         Direction facing = output ? Direction.WEST : Direction.EAST;
+        // Inputs form one vertical column at x=310: past the left boundary
+        // lane (x 80..300, where a >=40px vertical is a WIRE_RISK) and clear
+        // of the first gate column. Outputs keep the diagonal (70px x pitch)
+        // at the right edge of the component area.
         int pinY = 100 + (output ? rightIndex : leftIndex) * 50;
-        // Unique x per pin: inputs spread from x=60 rightward, outputs from the
-        // right edge of the component area leftward.
-        int pinX = output ? componentRightX - rightIndex * 50 : 60 + leftIndex * 50;
+        int pinX = output ? componentRightX - rightIndex * 70 : 310;
         Component pin = createPin(port, output, facing, pinX, pinY);
         pinMap.put(port.id(), pin);
         mutation.add(pin);
@@ -162,7 +164,29 @@ public final class DirectMultiChipCompiler {
         }
         routerNets.add(new com.logisim_ai.layout.IsolatedRouter.NetWire(net.id(), refs));
       }
-      com.logisim_ai.layout.IsolatedRouter.wire(mutation, routerNets, endpointLocs);
+      // Hybrid-tunnel placement offsets: a port that coincides with its
+      // component anchor (gate outputs, classic D-FF Q) cannot host an on-port
+      // tunnel (exact-overlap with the component), so its tunnel rises 80px
+      // with a short vertical wire. Everything else — inputs and external
+      // pins — tunnels directly on its port point (the pin-tunnel proximity
+      // rule only fires for 0 < dx < 150 on the same row, so dx=0 is clean).
+      java.util.Map<String, Integer> tunnelOffsets = new java.util.HashMap<>();
+      java.util.Set<String> pinEndpointKeys = new java.util.HashSet<>();
+      for (java.util.Map.Entry<String, Component> entry : positioned.entrySet()) {
+        Component comp = entry.getValue();
+        for (int i = 0; i < comp.getEnds().size(); i++) {
+          if (comp.getEnd(i).getLocation().equals(comp.getLocation())) {
+            tunnelOffsets.put(entry.getKey() + "#" + i, -80);
+          }
+        }
+      }
+      for (java.util.Map.Entry<String, Component> entry : pinMap.entrySet()) {
+        for (int i = 0; i < entry.getValue().getEnds().size(); i++) {
+          pinEndpointKeys.add(entry.getKey() + "#" + i);
+        }
+      }
+      com.logisim_ai.layout.IsolatedRouter.wire(
+          mutation, routerNets, endpointLocs, tunnelOffsets, pinEndpointKeys);
       System.out.println("[direct-multichip] executing mutation");
       mutation.execute();
 

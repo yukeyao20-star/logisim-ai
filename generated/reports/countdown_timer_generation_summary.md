@@ -1,7 +1,7 @@
 # Generation summary for countdown_timer
 
 - Request kind: natural_language
-- Request: 定时器
+- Request: 倒计时
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.

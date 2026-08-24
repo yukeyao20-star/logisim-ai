@@ -59,7 +59,9 @@ public final class StructuralCircuitTemplates {
   private static final Pattern COUNTER_EN =
       Pattern.compile("(\\d{1,2})\\s*[- ]?bit\\s*(?:binary\\s+)?counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern BCDCNT_ZH_BARE =
-      Pattern.compile("bcd计数器|十进制计数器|模10计数器|模十计数器|8421计数器");
+      // (?<!numeral) keeps e.g. 六十进制计数器 (mod-60) from matching the
+      // 十进制计数器 substring and being swallowed by the BCD template.
+      Pattern.compile("bcd计数器|(?<![0-9一二三四五六七八九两])十进制计数器|模10计数器|模十计数器|8421计数器");
   private static final Pattern BCDCNT_EN_BARE =
       Pattern.compile("bcd\\s*counter|decade\\s*counter|mod[- ]?10\\s*counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern UDCNT_ZH =

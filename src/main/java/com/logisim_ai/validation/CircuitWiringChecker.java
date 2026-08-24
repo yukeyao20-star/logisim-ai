@@ -233,6 +233,26 @@ public final class CircuitWiringChecker {
       adj.computeIfAbsent(w.getEnd0(), k -> new ArrayList<>()).add(w.getEnd1());
       adj.computeIfAbsent(w.getEnd1(), k -> new ArrayList<>()).add(w.getEnd0());
     }
+    // Tunnels connect same-label points without any wire (netlist compiler
+    // and hybrid router idiom), so each label group is one electrical node:
+    // star-link the group's connection points into the adjacency.
+    Map<String, List<Location>> tunnelNodes = new HashMap<>();
+    for (Component c : circuit.getNonWires()) {
+      if (c.getFactory().getName().equals("Tunnel")) {
+        String label = c.getAttributeSet().getValue(com.cburch.logisim.instance.StdAttr.LABEL);
+        if (label != null && !c.getEnds().isEmpty()) {
+          tunnelNodes.computeIfAbsent(label, k -> new ArrayList<>())
+              .add(c.getEnd(0).getLocation());
+        }
+      }
+    }
+    for (List<Location> group : tunnelNodes.values()) {
+      Location first = group.get(0);
+      for (int i = 1; i < group.size(); i++) {
+        adj.computeIfAbsent(first, k -> new ArrayList<>()).add(group.get(i));
+        adj.computeIfAbsent(group.get(i), k -> new ArrayList<>()).add(first);
+      }
+    }
     // intended net id -> endpoint locations; output-endpoint locations -> owner
     Map<String, List<Location>> netEndpoints = new HashMap<>();
     Map<Location, String> outputOwner = new HashMap<>();

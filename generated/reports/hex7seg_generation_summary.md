@@ -1,7 +1,7 @@
 # Generation summary for hex7seg
 
 - Request kind: natural_language
-- Request: 十六进制转七段
+- Request: hex to 7 segment
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 6
+- Artifact count: 10
 
 ## Artifacts
 
@@ -28,4 +28,8 @@
 | generated\reports\hex7seg_circuit_manifest.md | true |
 | generated\reports\hex7seg_circuit_truth_table.json | true |
 | generated\reports\hex7seg_circuit_truth_table.md | true |
+| generated\reports\hex7seg_generation_summary.json | true |
+| generated\reports\hex7seg_generation_summary.md | true |
 | generated\reports\hex7seg_multichip.md | true |
+| generated\reports\hex7seg_official_simulation.json | true |
+| generated\reports\hex7seg_official_simulation.md | true |
