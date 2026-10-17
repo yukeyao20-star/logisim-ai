@@ -1,0 +1,232 @@
+# Generation delivery report for stepper_motor
+
+- Request kind: natural_language
+- Request: 步进电机控制器
+- Intent: GATE_LEVEL_CIRCUIT
+- Implementation level: GATE_LEVEL
+- Target package: 
+- Package primitive: false
+- Routing primitive: primitive_gates
+- Circuit: generated/circ/stepper_motor.circ
+- Summary: generated/reports/stepper_motor_generation_summary.md
+- Manifest: generated/reports/stepper_motor_circuit_manifest.md
+- Complete: true
+- Manifest check count: 7
+- Manifest issue count: 0
+- Layout clean: false
+- Layout issue count: 121
+- Layout score: 0
+- Layout risk level: high
+- Layout unresolved tool count: 0
+- Layout overlap count: 61
+- Layout wire risk count: 0
+- Layout pin facing issue count: 0
+- Layout pin/tunnel proximity count: 0
+- Layout label risk count: 0
+- Layout reserved area intrusion count: 60
+- Layout inspection failure count: 0
+- Layout other issue count: 0
+- Layout repair suggestions: Increase grid spacing, reassign crowded component rows, or rerun layout with wider component clearance. | Move wires, tunnels, or labels away from reserved component visual areas.
+- Layout auto repair applied: false
+- Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
+- Artifact count: 7
+
+## Layout Issues
+
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1030,130) and (1050,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1030,130) and (990,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1030,130) and (990,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1110,130) and (1130,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1130,120) and (1170,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1170,130) and (1190,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1190,120) and (1230,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1230,130) and (1250,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,120) and (1290,100): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,120) and (1290,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,120) and (1290,140): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,290) and (1290,270): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,290) and (1290,310): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,460) and (1290,440): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,460) and (1290,480): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,630) and (1290,610): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1250,630) and (1290,650): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,100) and (1290,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,100) and (1310,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,130) and (1290,140): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,130) and (1310,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,140) and (1310,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,270) and (1310,290): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,310) and (1310,290): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,440) and (1310,460): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,480) and (1310,460): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,610) and (1310,630): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1290,650) and (1310,630): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1310,120) and (1350,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1350,130) and (1370,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1430,120) and (1450,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1430,290) and (1450,290): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1430,460) and (1450,460): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1430,630) and (1450,630): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1450,120) and (1490,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1450,290) and (1490,290): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1450,460) and (1490,460): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1450,630) and (1490,630): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1610,100) and (1610,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1610,120) and (1610,140): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1610,270) and (1610,290): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (1610,290) and (1610,310): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (370,170) and (400,180): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (430,130) and (480,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (480,130) and (490,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (690,170) and (720,180): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (730,130) and (750,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (750,130) and (790,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (750,130) and (800,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (790,130) and (800,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (790,130) and (810,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (800,130) and (810,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (800,130) and (850,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (810,130) and (850,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (850,130) and (870,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (870,130) and (910,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (910,130) and (930,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (930,130) and (970,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (970,130) and (990,120): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (970,130) and (990,130): Tunnel and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit stepper_motor at (990,120) and (990,130): Tunnel and Tunnel
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate N1 in circuit stepper_motor: (1030,130) -> (1050,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n107 in circuit stepper_motor: (1040,100) -> (1040,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n82 in circuit stepper_motor: (1040,100) -> (1040,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n107 in circuit stepper_motor: (1040,120) -> (1130,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n82 in circuit stepper_motor: (1040,120) -> (1130,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n88 in circuit stepper_motor: (1040,120) -> (1130,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n107 in circuit stepper_motor: (1050,130) -> (1110,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate N1 in circuit stepper_motor: (1050,130) -> (1110,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n9 in circuit stepper_motor: (1110,130) -> (1170,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n90 in circuit stepper_motor: (1130,120) -> (1190,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n11 in circuit stepper_motor: (1170,130) -> (1230,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n96 in circuit stepper_motor: (1190,120) -> (1250,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n17 in circuit stepper_motor: (1230,130) -> (1290,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n10 in circuit stepper_motor: (1230,130) -> (1290,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n102 in circuit stepper_motor: (1250,120) -> (1310,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n10 in circuit stepper_motor: (1290,130) -> (1350,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n23 in circuit stepper_motor: (1290,130) -> (1350,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate M0 in circuit stepper_motor: (1290,130) -> (1350,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n102 in circuit stepper_motor: (1290,140) -> (1310,140)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n102 in circuit stepper_motor: (1310,100) -> (1310,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n102 in circuit stepper_motor: (1310,120) -> (1360,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n108 in circuit stepper_motor: (1310,120) -> (1360,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n29 in circuit stepper_motor: (1310,120) -> (1360,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n30 in circuit stepper_motor: (1310,290) -> (1360,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n68 in circuit stepper_motor: (1310,460) -> (1360,460)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n66 in circuit stepper_motor: (1310,630) -> (1360,630)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n108 in circuit stepper_motor: (1360,120) -> (1370,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n108 in circuit stepper_motor: (1370,120) -> (1430,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n143 in circuit stepper_motor: (1370,120) -> (1430,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate M0 in circuit stepper_motor: (1370,120) -> (1430,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n144 in circuit stepper_motor: (1370,290) -> (1430,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate M13 in circuit stepper_motor: (1370,290) -> (1430,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n145 in circuit stepper_motor: (1370,460) -> (1430,460)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate M26 in circuit stepper_motor: (1370,460) -> (1430,460)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n146 in circuit stepper_motor: (1370,630) -> (1430,630)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate M39 in circuit stepper_motor: (1370,630) -> (1430,630)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n144 in circuit stepper_motor: (1430,160) -> (1430,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n145 in circuit stepper_motor: (1430,330) -> (1430,460)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n146 in circuit stepper_motor: (1430,500) -> (1430,630)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n143 in circuit stepper_motor: (1430,80) -> (1430,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate A8 in circuit stepper_motor: (1610,120) -> (1670,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of AND Gate A16 in circuit stepper_motor: (1610,290) -> (1670,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n81 in circuit stepper_motor: (1680,120) -> (1770,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n56 in circuit stepper_motor: (1680,290) -> (1770,290)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n2 in circuit stepper_motor: (370,170) -> (390,170)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n35 in circuit stepper_motor: (450,130) -> (480,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n127 in circuit stepper_motor: (490,130) -> (550,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n4 in circuit stepper_motor: (690,170) -> (710,170)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n142 in circuit stepper_motor: (770,130) -> (790,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n142 in circuit stepper_motor: (790,110) -> (790,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n62 in circuit stepper_motor: (790,130) -> (800,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n87 in circuit stepper_motor: (800,130) -> (810,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n142 in circuit stepper_motor: (810,130) -> (850,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n5 in circuit stepper_motor: (970,130) -> (990,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n107 in circuit stepper_motor: (990,120) -> (1010,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n101 in circuit stepper_motor: (990,120) -> (1010,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n76 in circuit stepper_motor: (990,120) -> (1010,120)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n101 in circuit stepper_motor: (990,130) -> (1030,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Tunnel n5 in circuit stepper_motor: (990,130) -> (1030,130)
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of NOT Gate N1 in circuit stepper_motor: (990,130) -> (1030,130)
+
+## Layout Repair Suggestions
+
+- [increase_spacing/OVERLAP] Increase grid spacing, reassign crowded component rows, or rerun layout with wider component clearance. (minClearanceX=80;minClearanceY=50)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=NOT Gate;label=N1;anchorX=1040;anchorY=120;left=1019;top=104;right=1061;bottom=136;connectionPoints=2;x1=1030;y1=130;x2=1050;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n107;anchorX=1030;anchorY=130;left=1009;top=118;right=1051;bottom=142;connectionPoints=1;x1=1040;y1=100;x2=1040;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n82;anchorX=1050;anchorY=130;left=1033;top=118;right=1067;bottom=142;connectionPoints=1;x1=1040;y1=100;x2=1040;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n107;anchorX=1030;anchorY=130;left=1009;top=118;right=1051;bottom=142;connectionPoints=1;x1=1040;y1=120;x2=1130;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n82;anchorX=1050;anchorY=130;left=1033;top=118;right=1067;bottom=142;connectionPoints=1;x1=1040;y1=120;x2=1130;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n88;anchorX=1110;anchorY=130;left=1093;top=118;right=1127;bottom=142;connectionPoints=1;x1=1040;y1=120;x2=1130;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n107;anchorX=1030;anchorY=130;left=1009;top=118;right=1051;bottom=142;connectionPoints=1;x1=1050;y1=130;x2=1110;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=NOT Gate;label=N1;anchorX=1040;anchorY=120;left=1019;top=104;right=1061;bottom=136;connectionPoints=2;x1=1050;y1=130;x2=1110;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n9;anchorX=1130;anchorY=120;left=1117;top=108;right=1143;bottom=132;connectionPoints=1;x1=1110;y1=130;x2=1170;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n90;anchorX=1170;anchorY=130;left=1153;top=118;right=1187;bottom=142;connectionPoints=1;x1=1130;y1=120;x2=1190;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n11;anchorX=1190;anchorY=120;left=1173;top=108;right=1207;bottom=132;connectionPoints=1;x1=1170;y1=130;x2=1230;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n96;anchorX=1230;anchorY=130;left=1213;top=118;right=1247;bottom=142;connectionPoints=1;x1=1190;y1=120;x2=1250;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n17;anchorX=1250;anchorY=120;left=1233;top=108;right=1267;bottom=132;connectionPoints=1;x1=1230;y1=130;x2=1290;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n10;anchorX=1290;anchorY=140;left=1273;top=128;right=1307;bottom=152;connectionPoints=1;x1=1230;y1=130;x2=1290;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n102;anchorX=1290;anchorY=130;left=1269;top=118;right=1311;bottom=142;connectionPoints=1;x1=1250;y1=120;x2=1310;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n10;anchorX=1290;anchorY=140;left=1273;top=128;right=1307;bottom=152;connectionPoints=1;x1=1290;y1=130;x2=1350;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n23;anchorX=1310;anchorY=120;left=1293;top=108;right=1327;bottom=132;connectionPoints=1;x1=1290;y1=130;x2=1350;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=AND Gate;label=M0;anchorX=1360;anchorY=120;left=1324;top=91;right=1396;bottom=149;connectionPoints=3;x1=1290;y1=130;x2=1350;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n102;anchorX=1290;anchorY=130;left=1269;top=118;right=1311;bottom=142;connectionPoints=1;x1=1290;y1=140;x2=1310;y2=140)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n102;anchorX=1290;anchorY=130;left=1269;top=118;right=1311;bottom=142;connectionPoints=1;x1=1310;y1=100;x2=1310;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n102;anchorX=1290;anchorY=130;left=1269;top=118;right=1311;bottom=142;connectionPoints=1;x1=1310;y1=120;x2=1360;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n108;anchorX=1350;anchorY=130;left=1329;top=118;right=1371;bottom=142;connectionPoints=1;x1=1310;y1=120;x2=1360;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n29;anchorX=1370;anchorY=120;left=1353;top=108;right=1387;bottom=132;connectionPoints=1;x1=1310;y1=120;x2=1360;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n30;anchorX=1370;anchorY=290;left=1353;top=278;right=1387;bottom=302;connectionPoints=1;x1=1310;y1=290;x2=1360;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n68;anchorX=1370;anchorY=460;left=1353;top=448;right=1387;bottom=472;connectionPoints=1;x1=1310;y1=460;x2=1360;y2=460)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n66;anchorX=1370;anchorY=630;left=1353;top=618;right=1387;bottom=642;connectionPoints=1;x1=1310;y1=630;x2=1360;y2=630)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n108;anchorX=1350;anchorY=130;left=1329;top=118;right=1371;bottom=142;connectionPoints=1;x1=1360;y1=120;x2=1370;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n108;anchorX=1350;anchorY=130;left=1329;top=118;right=1371;bottom=142;connectionPoints=1;x1=1370;y1=120;x2=1430;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n143;anchorX=1450;anchorY=120;left=1429;top=108;right=1471;bottom=132;connectionPoints=1;x1=1370;y1=120;x2=1430;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=AND Gate;label=M0;anchorX=1360;anchorY=120;left=1324;top=91;right=1396;bottom=149;connectionPoints=3;x1=1370;y1=120;x2=1430;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n144;anchorX=1450;anchorY=290;left=1429;top=278;right=1471;bottom=302;connectionPoints=1;x1=1370;y1=290;x2=1430;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=AND Gate;label=M13;anchorX=1360;anchorY=290;left=1324;top=261;right=1396;bottom=319;connectionPoints=3;x1=1370;y1=290;x2=1430;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n145;anchorX=1450;anchorY=460;left=1429;top=448;right=1471;bottom=472;connectionPoints=1;x1=1370;y1=460;x2=1430;y2=460)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=AND Gate;label=M26;anchorX=1360;anchorY=460;left=1324;top=431;right=1396;bottom=489;connectionPoints=3;x1=1370;y1=460;x2=1430;y2=460)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n146;anchorX=1450;anchorY=630;left=1429;top=618;right=1471;bottom=642;connectionPoints=1;x1=1370;y1=630;x2=1430;y2=630)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=AND Gate;label=M39;anchorX=1360;anchorY=630;left=1324;top=601;right=1396;bottom=659;connectionPoints=3;x1=1370;y1=630;x2=1430;y2=630)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n144;anchorX=1450;anchorY=290;left=1429;top=278;right=1471;bottom=302;connectionPoints=1;x1=1430;y1=160;x2=1430;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n145;anchorX=1450;anchorY=460;left=1429;top=448;right=1471;bottom=472;connectionPoints=1;x1=1430;y1=330;x2=1430;y2=460)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n146;anchorX=1450;anchorY=630;left=1429;top=618;right=1471;bottom=642;connectionPoints=1;x1=1430;y1=500;x2=1430;y2=630)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n143;anchorX=1450;anchorY=120;left=1429;top=108;right=1471;bottom=132;connectionPoints=1;x1=1430;y1=80;x2=1430;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=AND Gate;label=A8;anchorX=1680;anchorY=120;left=1644;top=91;right=1716;bottom=149;connectionPoints=3;x1=1610;y1=120;x2=1670;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=AND Gate;label=A16;anchorX=1680;anchorY=290;left=1644;top=261;right=1716;bottom=319;connectionPoints=3;x1=1610;y1=290;x2=1670;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n81;anchorX=1670;anchorY=120;left=1653;top=108;right=1687;bottom=132;connectionPoints=1;x1=1680;y1=120;x2=1770;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n56;anchorX=1670;anchorY=290;left=1653;top=278;right=1687;bottom=302;connectionPoints=1;x1=1680;y1=290;x2=1770;y2=290)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n2;anchorX=400;anchorY=180;left=387;top=168;right=413;bottom=192;connectionPoints=1;x1=370;y1=170;x2=390;y2=170)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n35;anchorX=490;anchorY=130;left=473;top=118;right=507;bottom=142;connectionPoints=1;x1=450;y1=130;x2=480;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n127;anchorX=480;anchorY=130;left=459;top=118;right=501;bottom=142;connectionPoints=1;x1=490;y1=130;x2=550;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n4;anchorX=720;anchorY=180;left=707;top=168;right=733;bottom=192;connectionPoints=1;x1=690;y1=170;x2=710;y2=170)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n142;anchorX=800;anchorY=130;left=779;top=118;right=821;bottom=142;connectionPoints=1;x1=770;y1=130;x2=790;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n142;anchorX=800;anchorY=130;left=779;top=118;right=821;bottom=142;connectionPoints=1;x1=790;y1=110;x2=790;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n62;anchorX=810;anchorY=130;left=793;top=118;right=827;bottom=142;connectionPoints=1;x1=790;y1=130;x2=800;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n87;anchorX=790;anchorY=130;left=773;top=118;right=807;bottom=142;connectionPoints=1;x1=800;y1=130;x2=810;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n142;anchorX=800;anchorY=130;left=779;top=118;right=821;bottom=142;connectionPoints=1;x1=810;y1=130;x2=850;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n5;anchorX=990;anchorY=120;left=977;top=108;right=1003;bottom=132;connectionPoints=1;x1=970;y1=130;x2=990;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n107;anchorX=1030;anchorY=130;left=1009;top=118;right=1051;bottom=142;connectionPoints=1;x1=990;y1=120;x2=1010;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n101;anchorX=970;anchorY=130;left=949;top=118;right=991;bottom=142;connectionPoints=1;x1=990;y1=120;x2=1010;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n76;anchorX=990;anchorY=130;left=973;top=118;right=1007;bottom=142;connectionPoints=1;x1=990;y1=120;x2=1010;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n101;anchorX=970;anchorY=130;left=949;top=118;right=991;bottom=142;connectionPoints=1;x1=990;y1=130;x2=1030;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=Tunnel;label=n5;anchorX=990;anchorY=120;left=977;top=108;right=1003;bottom=132;connectionPoints=1;x1=990;y1=130;x2=1030;y2=130)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=stepper_motor;component=NOT Gate;label=N1;anchorX=1040;anchorY=120;left=1019;top=104;right=1061;bottom=136;connectionPoints=2;x1=990;y1=130;x2=1030;y2=130)
+
+## Artifacts
+
+| Kind | Path | Exists |
+| --- | --- | --- |
+| circuit | generated/circ/stepper_motor.circ | true |
+| manifest_json | generated/reports/stepper_motor_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/stepper_motor_circuit_manifest.md | true |
+| delivery_json | generated/reports/stepper_motor_delivery_report.json | true |
+| delivery_markdown | generated/reports/stepper_motor_delivery_report.md | true |
+| summary_json | generated/reports/stepper_motor_generation_summary.json | true |
+| summary_markdown | generated/reports/stepper_motor_generation_summary.md | true |

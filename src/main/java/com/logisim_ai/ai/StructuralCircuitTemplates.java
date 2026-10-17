@@ -11,6 +11,7 @@ import com.logisim_ai.layout.PortSide;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -310,6 +311,18 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("频率计|频率计数器|测频(?:仪|器)?|频率测量");
   private static final Pattern FREQM_EN =
       Pattern.compile("frequency\\s*(?:meter|counter)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern VENDING_ZH =
+      Pattern.compile("售货机|贩卖机|自动售卖");
+  private static final Pattern VENDING_EN =
+      Pattern.compile("vending\\s*machine|soda\\s*machine", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ELEVATOR_ZH =
+      Pattern.compile("电梯控制|电梯(?:的)?状态机|两层电梯");
+  private static final Pattern ELEVATOR_EN =
+      Pattern.compile("elevator\\s*controller|elevator\\s*control", Pattern.CASE_INSENSITIVE);
+  private static final Pattern STEPPER_ZH =
+      Pattern.compile("步进电机");
+  private static final Pattern STEPPER_EN =
+      Pattern.compile("stepper\\s*motor", Pattern.CASE_INSENSITIVE);
   private static final Pattern SEQDET_ZH =
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
@@ -425,6 +438,9 @@ public final class StructuralCircuitTemplates {
         "Two's complement 补码器 (N-bit)",
         "Nine's complement 9的补码",
         "Traffic light 交通灯控制器",
+        "Vending machine 自动售货机 (投币计数/出货/找零 FSM)",
+        "Elevator controller 两层电梯控制器 (上/下呼 FSM)",
+        "Stepper motor 步进电机控制器 (四相八拍/保持/正反转 FSM)",
         "101 sequence detector 101序列检测器",
         "1101 sequence detector 1101序列检测器",
         "LFSR 线性反馈移位寄存器/伪随机数",
@@ -818,6 +834,16 @@ public final class StructuralCircuitTemplates {
     }
     if (FREQM_ZH.matcher(t).find() || FREQM_EN.matcher(t).find()) {
       return Optional.of(buildFrequencyMeter());
+    }
+    // FSM-based controllers route through the generic FsmSynthesizer.
+    if (VENDING_ZH.matcher(t).find() || VENDING_EN.matcher(t).find()) {
+      return Optional.of(buildVendingMachine());
+    }
+    if (ELEVATOR_ZH.matcher(t).find() || ELEVATOR_EN.matcher(t).find()) {
+      return Optional.of(buildElevatorController());
+    }
+    if (STEPPER_ZH.matcher(t).find() || STEPPER_EN.matcher(t).find()) {
+      return Optional.of(buildStepperMotor());
     }
     Matcher johnzh = JOHNSON_ZH.matcher(t);
     Matcher johnen = JOHNSON_EN.matcher(t);
@@ -4657,6 +4683,9 @@ public final class StructuralCircuitTemplates {
   }
 
   private static Integer chineseToInt(String s) {
+    if (s == null) {
+      return null;
+    }
     if (s.matches("\\d+")) {
       return Integer.parseInt(s);
     }
@@ -6463,6 +6492,126 @@ public final class StructuralCircuitTemplates {
     seqRef[0] = seq;
     return new String[] {dFinal[0], dFinal[1], dFinal[2], dFinal[3], nb};
   }
+  // ------------------------------------------------------------------
+  // Generic-FSM controllers (synthesized by FsmSynthesizer).
+  // ------------------------------------------------------------------
+
+  /**
+   * Automatic vending machine (自动售货机): sells a 1.5-yuan item. Inputs
+   * A (0.5-yuan coin) and B (1-yuan coin); MOORE outputs: IDLE/HALF/FULL/
+   * CHANGE state lights and DONE (dispense). Encoded 3-bit, 6 states:
+   * 0=idle, 1=0.5y, 2=1.0y, 3=1.5y dispense, 4=2.0y dispense+change,
+   * 5=return-to-idle after dispense. Simplified table (DONE in states 3/4;
+   * from 3/4 any input returns to 0):
+   *   s0: 00->0, 10->1(A), 01->2(B), 11->2
+   *   s1: 00->1, 10->2, 01->3, 11->3
+   *   s2: 00->2, 10->3, 01->4, 11->4
+   *   s3: any -> 0 (dispense DONE=1)
+   *   s4: any -> 0 (dispense+change DONE=1)
+   *   s5: unused (kept out of the table; reset state is 0)
+   */
+  static CircuitSpec buildVendingMachine() {
+    var def = new FsmSynthesizer.Definition(
+        "vending_machine",
+        List.of("a", "b"),
+        List.of(new FsmSynthesizer.Output("done", List.of(3, 4))),
+        List.of(
+            new FsmSynthesizer.Transition(0, Map.of("a", false, "b", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("a", true, "b", false), 1),
+            new FsmSynthesizer.Transition(0, Map.of("a", false, "b", true), 2),
+            new FsmSynthesizer.Transition(0, Map.of("a", true, "b", true), 2),
+            new FsmSynthesizer.Transition(1, Map.of("a", false, "b", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("a", true, "b", false), 2),
+            new FsmSynthesizer.Transition(1, Map.of("a", false, "b", true), 3),
+            new FsmSynthesizer.Transition(1, Map.of("a", true, "b", true), 3),
+            new FsmSynthesizer.Transition(2, Map.of("a", false, "b", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("a", true, "b", false), 3),
+            new FsmSynthesizer.Transition(2, Map.of("a", false, "b", true), 4),
+            new FsmSynthesizer.Transition(2, Map.of("a", true, "b", true), 4),
+            new FsmSynthesizer.Transition(3, Map.of("a", false, "b", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("a", true, "b", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("a", false, "b", true), 0),
+            new FsmSynthesizer.Transition(3, Map.of("a", true, "b", true), 0),
+            new FsmSynthesizer.Transition(4, Map.of("a", false, "b", false), 0),
+            new FsmSynthesizer.Transition(4, Map.of("a", true, "b", false), 0),
+            new FsmSynthesizer.Transition(4, Map.of("a", false, "b", true), 0),
+            new FsmSynthesizer.Transition(4, Map.of("a", true, "b", true), 0)),
+        5);
+    return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * Two-story elevator controller (两层电梯控制器): inputs UP (hall call
+   * going up / floor-1 button) and DN (floor-2 button); MOORE outputs D1
+   * (car at floor 1) and D2 (car at floor 2). 4 states:
+   * 0=floor1 idle, 1=floor1 leaving (count to floor2), 2=floor2 idle,
+   * 3=floor2 leaving. UP at floor 1 starts the move; arriving is the
+   * transition into the other floor's idle state.
+   *   s0: UP=1 -> 1; else stay 0 (D1)
+   *   s1: -> 2 always (one-clock travel)
+   *   s2: DN=1 -> 3; else stay 2 (D2)
+   *   s3: -> 0 always (one-clock travel)
+   */
+  static CircuitSpec buildElevatorController() {
+    var def = new FsmSynthesizer.Definition(
+        "elevator_controller",
+        List.of("up", "dn"),
+        List.of(new FsmSynthesizer.Output("d1", List.of(0)),
+            new FsmSynthesizer.Output("d2", List.of(2))),
+        List.of(
+            new FsmSynthesizer.Transition(0, Map.of("up", false, "dn", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("up", true, "dn", false), 1),
+            new FsmSynthesizer.Transition(0, Map.of("up", false, "dn", true), 0),
+            new FsmSynthesizer.Transition(0, Map.of("up", true, "dn", true), 1),
+            new FsmSynthesizer.Transition(1, Map.of("up", false, "dn", false), 2),
+            new FsmSynthesizer.Transition(1, Map.of("up", true, "dn", false), 2),
+            new FsmSynthesizer.Transition(1, Map.of("up", false, "dn", true), 2),
+            new FsmSynthesizer.Transition(1, Map.of("up", true, "dn", true), 2),
+            new FsmSynthesizer.Transition(2, Map.of("up", false, "dn", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("up", true, "dn", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("up", false, "dn", true), 3),
+            new FsmSynthesizer.Transition(2, Map.of("up", true, "dn", true), 3),
+            new FsmSynthesizer.Transition(3, Map.of("up", false, "dn", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("up", true, "dn", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("up", false, "dn", true), 0),
+            new FsmSynthesizer.Transition(3, Map.of("up", true, "dn", true), 0)),
+        4);
+    return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * Four-phase stepper motor controller (步进电机控制器): DIR (direction)
+   * and EN (enable) inputs; MOORE outputs the 4 coil phases P0..P3 as one
+   * hot. State = current phase (0..3, 2 bits, one-hot decoded by the FSM
+   * minterms). EN=1 steps DIR-wise; EN=0 holds. Full-step sequence
+   * forward: 0->1->2->3->0; reverse: 0->3->2->1->0.
+   */
+  static CircuitSpec buildStepperMotor() {
+    java.util.List<FsmSynthesizer.Transition> transitions = new ArrayList<>();
+    for (int s = 0; s < 4; s++) {
+      int fwd = (s + 1) & 3;
+      int rev = (s + 3) & 3;
+      transitions.add(new FsmSynthesizer.Transition(s,
+          Map.of("en", false, "dir", false), s));
+      transitions.add(new FsmSynthesizer.Transition(s,
+          Map.of("en", false, "dir", true), s));
+      transitions.add(new FsmSynthesizer.Transition(s,
+          Map.of("en", true, "dir", false), rev));
+      transitions.add(new FsmSynthesizer.Transition(s,
+          Map.of("en", true, "dir", true), fwd));
+    }
+    var def = new FsmSynthesizer.Definition(
+        "stepper_motor",
+        List.of("en", "dir"),
+        List.of(new FsmSynthesizer.Output("p0", List.of(0)),
+            new FsmSynthesizer.Output("p1", List.of(1)),
+            new FsmSynthesizer.Output("p2", List.of(2)),
+            new FsmSynthesizer.Output("p3", List.of(3))),
+        transitions,
+        4);
+    return FsmSynthesizer.synthesize(def);
+  }
+
   private static void addInput(
       List<ExternalPort> ports, String id, String label, String target) {
     ports.add(new ExternalPort(id, label, 1, PortDirection.INPUT, PortSide.LEFT, target, 0));

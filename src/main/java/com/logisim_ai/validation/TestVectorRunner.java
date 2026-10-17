@@ -39,7 +39,9 @@ public final class TestVectorRunner {
       throw new IllegalStateException(
           "official Logisim JAR not found; set CIRCUITARIUM_LOGISIM_JAR");
     }
-    String javaBin = Path.of(System.getProperty("java.home"), "bin", "java.exe").toString();
+    String javaExe = System.getProperty("os.name", "").toLowerCase().contains("win")
+        ? "java.exe" : "java";
+    String javaBin = Path.of(System.getProperty("java.home"), "bin", javaExe).toString();
     List<String> command = List.of(
         javaBin, "-jar", jar, "-w", circuitName, vecFile.getPath(), circFile.getPath());
     ProcessBuilder builder = new ProcessBuilder(command);

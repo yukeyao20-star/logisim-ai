@@ -30,7 +30,8 @@ public final class OfficialSimulationVerifier {
 
   /** Default location of the pinned official Logisim-evolution 4.1.0 all-JAR. */
   public static final String DEFAULT_LOGISIM_JAR =
-      System.getProperty("user.home") + "\\.cache\\logisim\\logisim-evolution-4.1.0-all.jar";
+      System.getProperty("user.home") + File.separator + ".cache" + File.separator
+          + "logisim" + File.separator + "logisim-evolution-4.1.0-all.jar";
 
   public static Path markdownPath(File circFile) {
     return Path.of("generated", "reports", outputStem(circFile) + "_official_simulation.md");
@@ -196,7 +197,9 @@ public final class OfficialSimulationVerifier {
   }
 
   private static String runTtyTable(String jar, File circFile) throws Exception {
-    String javaBin = Path.of(System.getProperty("java.home"), "bin", "java.exe").toString();
+    String javaExe = System.getProperty("os.name", "").toLowerCase().contains("win")
+        ? "java.exe" : "java";
+    String javaBin = Path.of(System.getProperty("java.home"), "bin", javaExe).toString();
     List<String> command = List.of(javaBin, "-jar", jar, "-tty", "table", circFile.getPath());
     ProcessBuilder builder = new ProcessBuilder(command);
     builder.redirectErrorStream(true);
