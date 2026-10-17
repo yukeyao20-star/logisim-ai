@@ -1,0 +1,28 @@
+{
+  "requestKind": "natural_language",
+  "request": "洗衣机控制器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "washing_machine",
+  "circuitPath": "generated/circ/washing_machine.circ",
+  "manifestPath": "generated/reports/washing_machine_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 3,
+  "artifacts": [
+    {"path": "generated/circ/washing_machine.circ", "exists": true},
+    {"path": "generated/reports/washing_machine_circuit_manifest.json", "exists": true},
+    {"path": "generated/reports/washing_machine_circuit_manifest.md", "exists": true}
+  ]
+}

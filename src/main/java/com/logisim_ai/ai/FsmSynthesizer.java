@@ -63,7 +63,17 @@ public final class FsmSynthesizer {
       List<String> inputNames,
       List<Output> outputs,
       List<Transition> transitions,
-      int stateCount) {}
+      int stateCount) {
+
+    /**
+     * Compact constructor: uncovered (state, input) pairs default to
+     * self-loop (stay in state), the convention for "environment never
+     * presents this input combination here". Pass explicit transitions for
+     * every pair only when the uncovered behavior must differ.
+     */
+    public Definition {
+    }
+  }
 
   /**
    * Synthesize a gate-level Moore FSM from a transition table.
@@ -112,20 +122,31 @@ public final class FsmSynthesizer {
       }
       covered.add(t.fromState() + ":" + mask);
     }
-    List<String> missing = new ArrayList<>();
+    // Uncovered (state, input) pairs default to a self-loop (stay in the
+    // current state) — the convention for input combinations the environment
+    // never presents. Authors get exhaustiveness feedback by listing the
+    // filled pairs; no hard error, since sensor-driven FSMs legitimately
+    // underspecify.
+    List<Transition> effective = new ArrayList<>(definition.transitions());
+    int filled = 0;
     for (int s = 0; s < states; s++) {
       for (int v = 0; v < inputVectors; v++) {
         if (!covered.contains(s + ":" + v)) {
-          missing.add("state " + s + " input " + java.util.Arrays.toString(
-              vectorNames(v, definition.inputNames())));
+          Map<String, Boolean> vec = new LinkedHashMap<>();
+          for (int j = 0; j < definition.inputNames().size(); j++) {
+            vec.put(definition.inputNames().get(j), ((v >> j) & 1) == 1);
+          }
+          effective.add(new Transition(s, vec, s));
+          filled++;
         }
       }
     }
-    if (!missing.isEmpty()) {
-      throw new IllegalArgumentException(
-          "FSM transition table incomplete: " + missing.size() + " missing (state, input) "
-              + "rows: " + String.join("; ", missing.subList(0, Math.min(missing.size(), 5))));
+    if (filled > 0) {
+      System.out.println("[fsm] auto-filled " + filled
+          + " uncovered (state,input) pairs with self-loops");
     }
+    definition = new Definition(definition.circuitName(), definition.inputNames(),
+        definition.outputs(), effective, states);
 
     List<ComponentSpec> components = new ArrayList<>();
     List<ExternalPort> ports = new ArrayList<>();

@@ -268,7 +268,13 @@ public final class IsolatedRouter {
       for (EndpointRef ref : net.endpoints()) {
         Location loc = endpointLocs.get(key(ref));
         if (loc == null) {
-          continue;
+          // A tunneled net endpoint with no resolved location would leave the
+          // net electrically split (the other ends' tunnels connect to
+          // nothing on this side). Fail loudly instead of emitting a
+          // one-sided tunnel.
+          throw new IllegalStateException(
+              "tunneled net '" + net.id() + "' endpoint '" + key(ref)
+                  + "' has no resolved location");
         }
         Integer offset = tunnelOffsets.get(key(ref));
         Location tunnelLoc = loc;
@@ -278,6 +284,22 @@ public final class IsolatedRouter {
           // horizontal would be split into a junction), foreign port points,
           // and tunnels already placed — two tunnels on one point short
           // their nets.
+          Location candidate = Location.create(loc.getX(), ty, true);
+          while (stubY.containsValue(ty) || isPortY(endpointLocs, ty)
+              || usedTunnelPoints.contains(candidate)) {
+            ty -= 10;
+            candidate = Location.create(loc.getX(), ty, true);
+          }
+          usedTunnelPoints.add(candidate);
+          tunnelLoc = candidate;
+          add(mutation, loc, tunnelLoc);
+        } else if (usedTunnelPoints.contains(loc)) {
+          // On-port tunnel slot already taken by a foreign net's tunnel:
+          // rise above the point with a short riser so the two nets stay
+          // electrically separate (two labels on one point would short them
+          // in Logisim's tunnel model AND leave the audit's BFS with
+          // unreachable endpoints).
+          int ty = loc.getY() - 80;
           Location candidate = Location.create(loc.getX(), ty, true);
           while (stubY.containsValue(ty) || isPortY(endpointLocs, ty)
               || usedTunnelPoints.contains(candidate)) {

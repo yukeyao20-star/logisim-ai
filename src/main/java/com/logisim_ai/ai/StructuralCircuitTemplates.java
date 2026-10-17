@@ -340,6 +340,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("步进电机");
   private static final Pattern STEPPER_EN =
       Pattern.compile("stepper\\s*motor", Pattern.CASE_INSENSITIVE);
+  private static final Pattern WASHING_ZH =
+      Pattern.compile("洗衣机控制|洗衣(?:机)?状态机");
+  private static final Pattern WASHING_EN =
+      Pattern.compile("washing\\s*machine\\s*controller|washing\\s*machine", Pattern.CASE_INSENSITIVE);
+  private static final Pattern AUTODOOR_ZH =
+      Pattern.compile("自动门控制|自动门");
+  private static final Pattern AUTODOOR_EN =
+      Pattern.compile("automatic\\s*door", Pattern.CASE_INSENSITIVE);
   private static final Pattern SEQDET_ZH =
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
@@ -458,6 +466,8 @@ public final class StructuralCircuitTemplates {
         "Vending machine 自动售货机 (投币计数/出货/找零 FSM)",
         "Elevator controller 两层电梯控制器 (上/下呼 FSM)",
         "Stepper motor 步进电机控制器 (四相八拍/保持/正反转 FSM)",
+        "Washing machine 洗衣机控制器 (注水/搅拌/排水/脱水 FSM)",
+        "Automatic door 自动门控制器 (感应/开/保持/关 FSM)",
         "101 sequence detector 101序列检测器",
         "1101 sequence detector 1101序列检测器",
         "LFSR 线性反馈移位寄存器/伪随机数",
@@ -862,6 +872,12 @@ public final class StructuralCircuitTemplates {
     }
     if (STEPPER_ZH.matcher(t).find() || STEPPER_EN.matcher(t).find()) {
       return Optional.of(buildStepperMotor());
+    }
+    if (WASHING_ZH.matcher(t).find() || WASHING_EN.matcher(t).find()) {
+      return Optional.of(buildWashingMachine());
+    }
+    if (AUTODOOR_ZH.matcher(t).find() || AUTODOOR_EN.matcher(t).find()) {
+      return Optional.of(buildAutomaticDoor());
     }
     Matcher johnzh = JOHNSON_ZH.matcher(t);
     Matcher johnen = JOHNSON_EN.matcher(t);
@@ -6597,6 +6613,81 @@ public final class StructuralCircuitTemplates {
   // ------------------------------------------------------------------
   // Generic-FSM controllers (synthesized by FsmSynthesizer).
   // ------------------------------------------------------------------
+
+  /**
+   * Washing machine controller (洗衣机控制器): 5 states over START input,
+   * sensors FILL (water full) and EMPTY (tub empty). MOORE outputs: FILLV
+   * (fill valve), AGIT, DRAINV (drain valve), SPIN.
+   * Cycle: 0 idle → (START) 1 filling (FILLV until FILL) → 2 agitating
+   * (AGIT, fixed 4 cycles) → 3 draining (DRAINV until EMPTY) → 4 spinning
+   * (SPIN, fixed 4 cycles) → 0 idle. Timers need counters, so agitate/spin
+   * use internal timing inputs AG4/SP4 (terminal count pulses from two
+   * mod-4 windows) — here modeled as extra inputs so the FSM stays pure.
+   *   s0: START=1 → 1 else 0
+   *   s1: FILL=1 → 2 else 1
+   *   s2: AG4=1 → 3 else 2
+   *   s3: EMPTY=1 → 4 else 3
+   *   s4: SP4=1 → 0 else 4
+   */
+  static CircuitSpec buildWashingMachine() {
+    var def = new FsmSynthesizer.Definition(
+        "washing_machine",
+        List.of("start", "fill", "empty", "ag4", "sp4"),
+        List.of(new FsmSynthesizer.Output("fillv", List.of(1)),
+            new FsmSynthesizer.Output("agit", List.of(2)),
+            new FsmSynthesizer.Output("drainv", List.of(3)),
+            new FsmSynthesizer.Output("spin", List.of(4))),
+        java.util.List.of(
+            new FsmSynthesizer.Transition(0, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("start", true, "fill", false, "empty", false, "ag4", false, "sp4", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("start", false, "fill", true, "empty", false, "ag4", false, "sp4", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("start", false, "fill", false, "empty", false, "ag4", true, "sp4", false), 3),
+            new FsmSynthesizer.Transition(3, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 3),
+            new FsmSynthesizer.Transition(3, Map.of("start", false, "fill", false, "empty", true, "ag4", false, "sp4", false), 4),
+            new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 4),
+            new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", true), 0)),
+        5);
+    return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * Automatic door controller (自动门控制器): 4 states over SENSOR (motion
+   * detected) and LIM (door fully open limit). MOORE outputs: OPENV (drive
+   * open), HOLDD (hold open), CLOSEV (drive close).
+   *   s0 closed: SENSOR=1 → 1 opening
+   *   s1 opening: LIM=1 → 2 hold; SENSOR or not → 2 only on LIM, else 1
+   *   s2 hold: SENSOR=1 → stay 2; SENSOR=0 → 3 closing (timeout)
+   *   s3 closing: LIM... door closes until closed — use SENSOR reopen mid-close:
+   *   s3: SENSOR=1 → 1 reopen; else stay 3; return to 0 when CLOSED input=1.
+   * Simplified with CLOSED limit input:
+   *   s0: SENSOR=1→1 else 0 (state 0 = closed)
+   *   s1: LIM=1→2 else 1
+   *   s2: SENSOR=0→3 else 2
+   *   s3: CLOSED=1→0; SENSOR=1→1; else 3
+   */
+  static CircuitSpec buildAutomaticDoor() {
+    var def = new FsmSynthesizer.Definition(
+        "automatic_door",
+        List.of("sensor", "lim", "closed"),
+        List.of(new FsmSynthesizer.Output("openv", List.of(1)),
+            new FsmSynthesizer.Output("hold", List.of(2)),
+            new FsmSynthesizer.Output("closev", List.of(3))),
+        java.util.List.of(
+            new FsmSynthesizer.Transition(0, Map.of("sensor", false, "lim", false, "closed", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("sensor", true, "lim", false, "closed", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("sensor", false, "lim", false, "closed", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("sensor", false, "lim", true, "closed", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("sensor", false, "lim", false, "closed", false), 3),
+            new FsmSynthesizer.Transition(2, Map.of("sensor", true, "lim", false, "closed", false), 2),
+            new FsmSynthesizer.Transition(3, Map.of("sensor", false, "lim", false, "closed", false), 3),
+            new FsmSynthesizer.Transition(3, Map.of("sensor", false, "lim", false, "closed", true), 0),
+            new FsmSynthesizer.Transition(3, Map.of("sensor", true, "lim", false, "closed", false), 1)),
+        4);
+    return FsmSynthesizer.synthesize(def);
+  }
+
 
   /**
    * Automatic vending machine (自动售货机): sells a 1.5-yuan item. Inputs
