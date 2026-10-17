@@ -1,0 +1,31 @@
+{
+  "requestKind": "natural_language",
+  "request": "烘干机控制器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "dryer_controller",
+  "circuitPath": "generated/circ/dryer_controller.circ",
+  "manifestPath": "generated/reports/dryer_controller_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 6,
+  "artifacts": [
+    {"path": "generated/circ/dryer_controller.circ", "exists": true},
+    {"path": "generated/reports/dryer_controller_circuit_manifest.json", "exists": true},
+    {"path": "generated/reports/dryer_controller_circuit_manifest.md", "exists": true},
+    {"path": "generated/reports/dryer_controller_generation_summary.json", "exists": true},
+    {"path": "generated/reports/dryer_controller_generation_summary.md", "exists": true},
+    {"path": "generated/reports/dryer_controller_multichip.md", "exists": true}
+  ]
+}

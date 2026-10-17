@@ -352,6 +352,14 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("水位控制|水位状态机|水箱控制");
   private static final Pattern WATER_EN =
       Pattern.compile("water\\s*level\\s*controller|water\\s*tank", Pattern.CASE_INSENSITIVE);
+  private static final Pattern DRYER_ZH =
+      Pattern.compile("烘干机控制|烘干(?:机)?状态机");
+  private static final Pattern DRYER_EN =
+      Pattern.compile("dryer\\s*controller|clothes\\s*dryer", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PINGPONG_ZH =
+      Pattern.compile("乒乓球(?:游戏机|比赛|裁判|练习机)?控制|乒乓球游戏");
+  private static final Pattern PINGPONG_EN =
+      Pattern.compile("ping[- ]?pong|table[- ]tennis", Pattern.CASE_INSENSITIVE);
   private static final Pattern SEQDET_ZH =
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
@@ -473,6 +481,8 @@ public final class StructuralCircuitTemplates {
         "Washing machine 洗衣机控制器 (注水/搅拌/排水/脱水 FSM)",
         "Automatic door 自动门控制器 (感应/开/保持/关 FSM)",
         "Water level controller 水位控制器 (注水/满/排水 FSM)",
+        "Clothes dryer 烘干机控制器 (加热/滚筒/冷却 FSM)",
+        "Ping-pong machine 乒乓球游戏机 (发球/回球/失误判分 FSM)",
         "101 sequence detector 101序列检测器",
         "1101 sequence detector 1101序列检测器",
         "LFSR 线性反馈移位寄存器/伪随机数",
@@ -886,6 +896,12 @@ public final class StructuralCircuitTemplates {
     }
     if (WATER_ZH.matcher(t).find() || WATER_EN.matcher(t).find()) {
       return Optional.of(buildWaterLevelController());
+    }
+    if (DRYER_ZH.matcher(t).find() || DRYER_EN.matcher(t).find()) {
+      return Optional.of(buildDryerController());
+    }
+    if (PINGPONG_ZH.matcher(t).find() || PINGPONG_EN.matcher(t).find()) {
+      return Optional.of(buildPingPongMachine());
     }
     Matcher johnzh = JOHNSON_ZH.matcher(t);
     Matcher johnen = JOHNSON_EN.matcher(t);
@@ -6656,6 +6672,81 @@ public final class StructuralCircuitTemplates {
             new FsmSynthesizer.Transition(3, Map.of("start", false, "fill", false, "empty", true, "ag4", false, "sp4", false), 4),
             new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 4),
             new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", true), 0)),
+        5);
+    return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * Clothes dryer controller (烘干机控制器): 4 states over START (button)
+   * and TMR (cycle timer terminal count). MOORE outputs: HEAT, TUMBLE, DONE.
+   *   s0 idle: START=1 → s1
+   *   s1 heating (HEAT+TUMBLE): TMR=1 → s2 cooldown; else stay
+   *   s2 cooldown (TUMBLE only): TMR=1 → s3 done; else stay
+   *   s3 done (DONE): START=0 → s0; START=1 stays (button held)
+   */
+  static CircuitSpec buildDryerController() {
+    var def = new FsmSynthesizer.Definition(
+        "dryer_controller",
+        List.of("start", "tmr"),
+        List.of(new FsmSynthesizer.Output("heat", List.of(1)),
+            new FsmSynthesizer.Output("tumble", List.of(1, 2)),
+            new FsmSynthesizer.Output("done", List.of(3))),
+        java.util.List.of(
+            new FsmSynthesizer.Transition(0, Map.of("start", false, "tmr", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("start", true, "tmr", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("start", false, "tmr", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("start", false, "tmr", true), 2),
+            new FsmSynthesizer.Transition(2, Map.of("start", false, "tmr", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("start", false, "tmr", true), 3),
+            new FsmSynthesizer.Transition(3, Map.of("start", false, "tmr", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("start", true, "tmr", false), 3)),
+        4);
+    return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * Ping-pong game machine (乒乓球游戏机): two-player rally referee. Inputs
+   * L (left paddle hit) and R (right paddle hit). MOORE outputs: LL (left
+   * scores), RL (right scores), in-play BL (ball toward left) / BR (ball
+   * toward right). 6 states:
+   *   0 idle/serve-left: L=1 → BR (ball moves right); R=1 → BL
+   *   1 ball-right (BR): R=1 → BL (return); L=1 → RL? no — L is left paddle,
+   *     ball moving right can only be hit by R. L=1 in BR state = miss? The
+   *     referee awards on MISS: ball moving right passes right player →
+   *     left scores (LL). Model miss as the opponent's paddle input absent:
+   *     use a MISS input pulse from the game timer instead. Simplified:
+   *   1 BR: R=1 → BL; MISS=1 → LL (left scores)
+   *   2 BL: L=1 → BR; MISS=1 → RL (right scores)
+   *   3 LL score shown: any → 0
+   *   4 RL score shown: any → 0
+   *   5 unused
+   */
+  static CircuitSpec buildPingPongMachine() {
+    var def = new FsmSynthesizer.Definition(
+        "pingpong_machine",
+        List.of("l", "r", "miss"),
+        List.of(new FsmSynthesizer.Output("ll", List.of(3)),
+            new FsmSynthesizer.Output("rl", List.of(4)),
+            new FsmSynthesizer.Output("bl", List.of(2)),
+            new FsmSynthesizer.Output("br", List.of(1))),
+        java.util.List.of(
+            new FsmSynthesizer.Transition(0, Map.of("l", false, "r", false, "miss", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("l", true, "r", false, "miss", false), 1),
+            new FsmSynthesizer.Transition(0, Map.of("l", false, "r", true, "miss", false), 2),
+            new FsmSynthesizer.Transition(1, Map.of("l", false, "r", false, "miss", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("l", false, "r", true, "miss", false), 2),
+            new FsmSynthesizer.Transition(1, Map.of("l", false, "r", false, "miss", true), 3),
+            new FsmSynthesizer.Transition(2, Map.of("l", false, "r", false, "miss", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("l", true, "r", false, "miss", false), 1),
+            new FsmSynthesizer.Transition(2, Map.of("l", false, "r", false, "miss", true), 4),
+            new FsmSynthesizer.Transition(3, Map.of("l", false, "r", false, "miss", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("l", true, "r", false, "miss", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("l", false, "r", true, "miss", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("l", false, "r", false, "miss", true), 0),
+            new FsmSynthesizer.Transition(4, Map.of("l", false, "r", false, "miss", false), 0),
+            new FsmSynthesizer.Transition(4, Map.of("l", true, "r", false, "miss", false), 0),
+            new FsmSynthesizer.Transition(4, Map.of("l", false, "r", true, "miss", false), 0),
+            new FsmSynthesizer.Transition(4, Map.of("l", false, "r", false, "miss", true), 0)),
         5);
     return FsmSynthesizer.synthesize(def);
   }
