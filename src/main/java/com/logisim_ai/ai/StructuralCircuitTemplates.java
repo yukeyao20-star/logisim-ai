@@ -348,6 +348,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("自动门控制|自动门");
   private static final Pattern AUTODOOR_EN =
       Pattern.compile("automatic\\s*door", Pattern.CASE_INSENSITIVE);
+  private static final Pattern WATER_ZH =
+      Pattern.compile("水位控制|水位状态机|水箱控制");
+  private static final Pattern WATER_EN =
+      Pattern.compile("water\\s*level\\s*controller|water\\s*tank", Pattern.CASE_INSENSITIVE);
   private static final Pattern SEQDET_ZH =
       Pattern.compile("序列检测器|101序列检测|101检测|串行检测器");
   private static final Pattern SEQDET_EN =
@@ -468,6 +472,7 @@ public final class StructuralCircuitTemplates {
         "Stepper motor 步进电机控制器 (四相八拍/保持/正反转 FSM)",
         "Washing machine 洗衣机控制器 (注水/搅拌/排水/脱水 FSM)",
         "Automatic door 自动门控制器 (感应/开/保持/关 FSM)",
+        "Water level controller 水位控制器 (注水/满/排水 FSM)",
         "101 sequence detector 101序列检测器",
         "1101 sequence detector 1101序列检测器",
         "LFSR 线性反馈移位寄存器/伪随机数",
@@ -878,6 +883,9 @@ public final class StructuralCircuitTemplates {
     }
     if (AUTODOOR_ZH.matcher(t).find() || AUTODOOR_EN.matcher(t).find()) {
       return Optional.of(buildAutomaticDoor());
+    }
+    if (WATER_ZH.matcher(t).find() || WATER_EN.matcher(t).find()) {
+      return Optional.of(buildWaterLevelController());
     }
     Matcher johnzh = JOHNSON_ZH.matcher(t);
     Matcher johnen = JOHNSON_EN.matcher(t);
@@ -6649,6 +6657,34 @@ public final class StructuralCircuitTemplates {
             new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 4),
             new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", true), 0)),
         5);
+    return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * Water level controller (水位控制器): 4 states over sensors LOW (water
+   * below the low mark) and FULL (water at the high mark). MOORE outputs:
+   * PUMPIN (fill valve on), PUMPOUT (drain valve on).
+   *   s0 empty (PUMPIN): stay while LOW=0; LOW=1 → s1
+   *   s1 mid (idle): FULL=1 → s2; else stay
+   *   s2 full (PUMPOUT): FULL=0 → s3; else stay
+   *   s3 draining (PUMPOUT): LOW=0 → s0 (drained below low mark); else stay
+   */
+  static CircuitSpec buildWaterLevelController() {
+    var def = new FsmSynthesizer.Definition(
+        "water_level_controller",
+        List.of("low", "full"),
+        List.of(new FsmSynthesizer.Output("pumpin", List.of(0)),
+            new FsmSynthesizer.Output("pumpout", List.of(2, 3))),
+        java.util.List.of(
+            new FsmSynthesizer.Transition(0, Map.of("low", false, "full", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("low", true, "full", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("low", false, "full", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("low", false, "full", true), 2),
+            new FsmSynthesizer.Transition(2, Map.of("low", false, "full", true), 2),
+            new FsmSynthesizer.Transition(2, Map.of("low", false, "full", false), 3),
+            new FsmSynthesizer.Transition(3, Map.of("low", false, "full", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("low", true, "full", false), 3)),
+        4);
     return FsmSynthesizer.synthesize(def);
   }
 
