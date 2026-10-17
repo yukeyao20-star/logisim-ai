@@ -33,7 +33,23 @@ public final class ReadableChipLayout {
     placeSide(specs, placed, PortSide.RIGHT);
     placeSide(specs, placed, PortSide.TOP);
     placeSide(specs, placed, PortSide.BOTTOM);
-    return List.copyOf(placed);
+    // Return in the caller's spec order: LogisimCompiler aligns this list
+    // with spec.externalPorts() by index, and a side-grouped order scrambles
+    // that pairing whenever one side hosts more than one port.
+    List<PlacedPort> ordered = new ArrayList<>();
+    for (ExternalPortSpec spec : specs) {
+      boolean matched = false;
+      for (PlacedPort p : placed) {
+        if (!matched && p.label().equals(spec.label())) {
+          ordered.add(p);
+          matched = true;
+        }
+      }
+      if (!matched) {
+        throw new IllegalStateException("port not placed: " + spec.label());
+      }
+    }
+    return List.copyOf(ordered);
   }
 
   private void placeSide(List<ExternalPortSpec> specs, List<PlacedPort> placed, PortSide side) {

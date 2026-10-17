@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project source="4.2.0dev" version="1.0">
+<project source="4.1.0" version="1.0">
   This file is intended to be loaded by Logisim-evolution v4.2.0dev(https://github.com/logisim-evolution/).
 
   <lib desc="#Base" name="0"/>
@@ -52,49 +52,50 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="two_bit_ripple_adder"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(160,230)" name="Pin">
+    <comp lib="1" loc="(160,200)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="A[1:0]"/>
       <a name="width" val="2"/>
     </comp>
-    <comp lib="1" loc="(160,280)" name="Pin">
+    <comp lib="1" loc="(160,250)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="B[1:0]"/>
       <a name="width" val="2"/>
     </comp>
-    <comp lib="1" loc="(460,420)" name="Pin">
+    <comp lib="1" loc="(160,300)" name="Pin">
       <a name="appearance" val="classic"/>
-      <a name="facing" val="north"/>
-      <a name="label" val="Cout"/>
-      <a name="type" val="output"/>
-    </comp>
-    <comp lib="1" loc="(460,80)" name="Pin">
-      <a name="appearance" val="classic"/>
-      <a name="facing" val="south"/>
       <a name="label" val="Cin"/>
-      <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(760,250)" name="Pin">
+    <comp lib="1" loc="(760,230)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="S[1:0]"/>
+      <a name="type" val="output"/>
       <a name="width" val="2"/>
+    </comp>
+    <comp lib="1" loc="(760,280)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="Cout"/>
+      <a name="type" val="output"/>
     </comp>
     <comp lib="4" loc="(460,250)" name="Adder">
       <a name="width" val="2"/>
     </comp>
-    <wire from="(160,230)" to="(310,230)"/>
-    <wire from="(160,280)" to="(320,280)"/>
-    <wire from="(310,230)" to="(310,240)"/>
+    <wire from="(160,200)" to="(310,200)"/>
+    <wire from="(160,250)" to="(320,250)"/>
+    <wire from="(160,300)" to="(330,300)"/>
+    <wire from="(310,200)" to="(310,240)"/>
     <wire from="(310,240)" to="(420,240)"/>
-    <wire from="(320,260)" to="(320,280)"/>
+    <wire from="(320,250)" to="(320,260)"/>
     <wire from="(320,260)" to="(420,260)"/>
-    <wire from="(420,270)" to="(420,420)"/>
-    <wire from="(420,270)" to="(440,270)"/>
-    <wire from="(420,420)" to="(460,420)"/>
-    <wire from="(440,230)" to="(640,230)"/>
-    <wire from="(460,80)" to="(460,250)"/>
-    <wire from="(640,230)" to="(640,250)"/>
-    <wire from="(640,250)" to="(760,250)"/>
+    <wire from="(330,230)" to="(330,300)"/>
+    <wire from="(330,230)" to="(440,230)"/>
+    <wire from="(440,270)" to="(660,270)"/>
+    <wire from="(460,250)" to="(650,250)"/>
+    <wire from="(650,230)" to="(650,250)"/>
+    <wire from="(650,230)" to="(760,230)"/>
+    <wire from="(660,270)" to="(660,280)"/>
+    <wire from="(660,280)" to="(760,280)"/>
   </circuit>
 </project>

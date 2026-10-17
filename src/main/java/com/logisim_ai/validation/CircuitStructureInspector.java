@@ -53,6 +53,11 @@ public final class CircuitStructureInspector {
     return new Report(fileName, issues);
   }
 
+  /** Factories whose attribute sets expose no StdAttr.LABEL (label impossible). */
+  private static final java.util.Set<String> FACTORY_WITHOUT_LABEL = java.util.Set.of(
+      "Adder", "Subtractor", "Multiplier", "Divider", "Comparator",
+      "Bit Adder", "Full Adder", "Half Adder");
+
   private static void verifyComponentFactories(
       CircuitSpec spec,
       List<ParsedComp> comps,
@@ -74,6 +79,12 @@ public final class CircuitStructureInspector {
 
     for (ComponentSpec component : spec.components()) {
       if (component.label() == null || component.label().isBlank()) {
+        continue;
+      }
+      if (FACTORY_WITHOUT_LABEL.contains(component.factoryName())) {
+        // Arithmetic-family components expose no StdAttr.LABEL attribute, so
+        // the compiler's setIfPresent correctly skips the label and the XML
+        // can never carry it — not a spec violation.
         continue;
       }
       boolean labelFound = comps.stream()

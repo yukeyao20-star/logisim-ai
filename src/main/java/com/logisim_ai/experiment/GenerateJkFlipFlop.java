@@ -37,8 +37,8 @@ public final class GenerateJkFlipFlop {
               new ExternalPort("clk", "CLK", 1, PortDirection.INPUT, PortSide.LEFT, "jk", 2),
               new ExternalPort("q", "Q", 1, PortDirection.OUTPUT, PortSide.RIGHT, "jk", 3),
               new ExternalPort("qbar", "/Q", 1, PortDirection.OUTPUT, PortSide.RIGHT, "jk", 4),
-              new ExternalPort("clr", "CLR", 1, PortDirection.INPUT, PortSide.BOTTOM, "jk", 5),
-              new ExternalPort("pre", "PRE", 1, PortDirection.INPUT, PortSide.TOP, "jk", 6)));
+              new ExternalPort("clr", "CLR", 1, PortDirection.INPUT, PortSide.LEFT, "jk", 5),
+              new ExternalPort("pre", "PRE", 1, PortDirection.INPUT, PortSide.LEFT, "jk", 6)));
 
       CircuitSemanticValidator.requireValid(spec);
       LogisimCompiler.compileSingleComponent(spec, new File("generated/circ/jk_flipflop.circ"));
