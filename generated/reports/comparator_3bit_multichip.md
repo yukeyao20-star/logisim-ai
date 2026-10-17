@@ -1,6 +1,6 @@
 # Multi-chip circuit comparator_3bit
 
-- Circuit: generated\circ\comparator_3bit.circ
+- Circuit: generated/circ/comparator_3bit.circ
 - Components: 20
 - Nets: 37
 

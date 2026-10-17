@@ -1,6 +1,6 @@
 # Multi-chip circuit srlatch
 
-- Circuit: generated\circ\srlatch.circ
+- Circuit: generated/circ/srlatch.circ
 - Components: 2
 - Nets: 6
 

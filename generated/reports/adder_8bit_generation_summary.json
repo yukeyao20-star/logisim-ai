@@ -1,32 +1,33 @@
 {
-  "requestKind": "natural_language",
-  "request": "8 bit adder",
-  "description": "Generated parameterized structural circuit",
-  "intent": "GATE_LEVEL_CIRCUIT",
-  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "requestKind": "json",
+  "request": "generated/examples/adder_8bit_spec.json",
+  "description": "Parsed CircuitSpec JSON and compiled it",
+  "intent": "STRUCTURED_JSON",
+  "intentExplanation": "Compile the provided structured CircuitSpec JSON exactly through validation, layout, and manifest checks.",
   "implementationProfile": {
     "level": "GATE_LEVEL",
     "targetPackage": "",
     "packagePrimitive": false,
-    "routingPrimitive": "primitive_gates"
+    "routingPrimitive": "structured_circuit_spec"
   },
-  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
-  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
-  "sourceJson": "",
+  "recommendedNextAction": "Compare the source JSON with the generated .circ, then review the manifest and truth-table artifacts.",
+  "recommendedActions": ["compare_source_json", "open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "generated/examples/adder_8bit_spec.json",
   "circuitName": "adder_8bit",
-  "circuitPath": "generated\\circ\\adder_8bit.circ",
-  "manifestPath": "generated\\reports\\adder_8bit_circuit_manifest.md",
+  "circuitPath": "generated/circ/adder_8bit.circ",
+  "manifestPath": "generated/reports/adder_8bit_circuit_manifest.md",
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 7,
+  "artifactCount": 8,
   "artifacts": [
-    {"path": "generated\\circ\\adder_8bit.circ", "exists": true},
-    {"path": "generated\\reports\\adder_8bit_circuit_manifest.json", "exists": true},
-    {"path": "generated\\reports\\adder_8bit_circuit_manifest.md", "exists": true},
-    {"path": "generated\\reports\\adder_8bit_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\adder_8bit_multichip.md", "exists": true},
-    {"path": "generated\\reports\\adder_8bit_official_simulation.json", "exists": true},
-    {"path": "generated\\reports\\adder_8bit_official_simulation.md", "exists": true}
+    {"path": "generated/circ/adder_8bit.circ", "exists": true},
+    {"path": "generated/reports/adder_8bit_circuit_manifest.json", "exists": true},
+    {"path": "generated/reports/adder_8bit_circuit_manifest.md", "exists": true},
+    {"path": "generated/reports/adder_8bit_generation_summary.json", "exists": true},
+    {"path": "generated/reports/adder_8bit_generation_summary.md", "exists": true},
+    {"path": "generated/reports/adder_8bit_multichip.md", "exists": true},
+    {"path": "generated/reports/adder_8bit_official_simulation.json", "exists": true},
+    {"path": "generated/reports/adder_8bit_official_simulation.md", "exists": true}
   ]
 }

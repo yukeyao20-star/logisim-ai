@@ -1,5 +1,5 @@
 {
-  "circuitPath": "generated\\circ\\layout_repair_tunnel_label_regression.circ",
+  "circuitPath": "generated/circ/layout_repair_tunnel_label_regression.circ",
   "mappings": [
     {"circuit": "main", "originalLabel": "net_ab_xor", "shortLabel": "T01"},
     {"circuit": "main", "originalLabel": "net_sum", "shortLabel": "SUM"}

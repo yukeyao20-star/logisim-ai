@@ -1,6 +1,6 @@
 # Multi-chip circuit lfsr_4bit
 
-- Circuit: generated\circ\lfsr_4bit.circ
+- Circuit: generated/circ/lfsr_4bit.circ
 - Components: 6
 - Nets: 20
 

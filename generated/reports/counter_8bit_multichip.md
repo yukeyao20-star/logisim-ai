@@ -1,6 +1,6 @@
 # Multi-chip circuit counter_8bit
 
-- Circuit: generated\circ\counter_8bit.circ
+- Circuit: generated/circ/counter_8bit.circ
 - Components: 2
 - Nets: 27
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit alu_2bit
 
-- Circuit: generated\circ\alu_2bit.circ
+- Circuit: generated/circ/alu_2bit.circ
 - Components: 49
 - Nets: 72
 

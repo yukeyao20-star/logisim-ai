@@ -1,6 +1,6 @@
 # Multi-chip circuit alu_8bit
 
-- Circuit: generated\circ\alu_8bit.circ
+- Circuit: generated/circ/alu_8bit.circ
 - Components: 175
 - Nets: 246
 

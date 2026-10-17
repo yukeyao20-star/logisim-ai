@@ -3,9 +3,9 @@
 - Request kind: natural_language
 - Request: synthetic pin tunnel clearance regression
 - Intent: GATE_LEVEL_CIRCUIT
-- Circuit: generated\circ\custom_pin_tunnel_regression.circ
-- Summary: generated\reports\custom_summary_regression_generation_summary.md
-- Manifest: generated\reports\custom_summary_regression_circuit_manifest.md
+- Circuit: generated/circ/custom_pin_tunnel_regression.circ
+- Summary: generated/reports/custom_summary_regression_generation_summary.md
+- Manifest: generated/reports/custom_summary_regression_circuit_manifest.md
 - Complete: true
 - Manifest check count: 3
 - Manifest issue count: 0
@@ -35,11 +35,11 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\custom_pin_tunnel_regression.circ | true |
-| circuit | generated\circ\custom_summary_regression.circ | true |
-| delivery_json | generated\reports\custom_pin_tunnel_regression_delivery_report.json | true |
-| delivery_markdown | generated\reports\custom_pin_tunnel_regression_delivery_report.md | true |
-| manifest_json | generated\reports\custom_summary_regression_circuit_manifest.json | true |
-| manifest_markdown | generated\reports\custom_summary_regression_circuit_manifest.md | true |
-| summary_json | generated\reports\custom_summary_regression_generation_summary.json | false |
-| summary_markdown | generated\reports\custom_summary_regression_generation_summary.md | false |
+| circuit | generated/circ/custom_pin_tunnel_regression.circ | true |
+| circuit | generated/circ/custom_summary_regression.circ | true |
+| delivery_json | generated/reports/custom_pin_tunnel_regression_delivery_report.json | true |
+| delivery_markdown | generated/reports/custom_pin_tunnel_regression_delivery_report.md | true |
+| manifest_json | generated/reports/custom_summary_regression_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/custom_summary_regression_circuit_manifest.md | true |
+| summary_json | generated/reports/custom_summary_regression_generation_summary.json | false |
+| summary_markdown | generated/reports/custom_summary_regression_generation_summary.md | false |

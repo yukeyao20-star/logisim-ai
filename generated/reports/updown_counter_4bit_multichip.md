@@ -1,6 +1,6 @@
 # Multi-chip circuit updown_counter_4bit
 
-- Circuit: generated\circ\updown_counter_4bit.circ
+- Circuit: generated/circ/updown_counter_4bit.circ
 - Components: 19
 - Nets: 42
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit encoder_8to3
 
-- Circuit: generated\circ\encoder_8to3.circ
+- Circuit: generated/circ/encoder_8to3.circ
 - Components: 29
 - Nets: 58
 

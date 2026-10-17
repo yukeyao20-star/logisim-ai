@@ -1,6 +1,6 @@
 # Multi-chip circuit bcd_adder_2digit
 
-- Circuit: generated\circ\bcd_adder_2digit.circ
+- Circuit: generated/circ/bcd_adder_2digit.circ
 - Components: 102
 - Nets: 213
 

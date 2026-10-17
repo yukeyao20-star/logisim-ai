@@ -5,7 +5,7 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=6575"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=6402"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ round-trip loaded with main circuit logic_multi_sum_cout_abcin_xor_and_xor_or_ttl"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ structure matches CircuitSpec"},
@@ -13,9 +13,9 @@
     {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=8"}
   ],
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ", "exists": true},
-    {"kind": "truth_table_markdown", "path": "generated\\reports\\logic_multi_sum_cout_abcin_xor_and_xor_or_ttl_circuit_truth_table.md", "exists": true},
-    {"kind": "truth_table_json", "path": "generated\\reports\\logic_multi_sum_cout_abcin_xor_and_xor_or_ttl_circuit_truth_table.json", "exists": true}
+    {"kind": "circuit", "path": "generated/circ/logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated/reports/logic_multi_sum_cout_abcin_xor_and_xor_or_ttl_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated/reports/logic_multi_sum_cout_abcin_xor_and_xor_or_ttl_circuit_truth_table.json", "exists": true}
   ],
   "issues": []
 }

@@ -1,6 +1,6 @@
 # Multi-chip circuit decoder_2bit
 
-- Circuit: generated\circ\decoder_2bit.circ
+- Circuit: generated/circ/decoder_2bit.circ
 - Components: 6
 - Nets: 14
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit nine_complement
 
-- Circuit: generated\circ\nine_complement.circ
+- Circuit: generated/circ/nine_complement.circ
 - Components: 5
 - Nets: 12
 

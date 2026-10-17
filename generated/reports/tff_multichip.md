@@ -1,6 +1,6 @@
 # Multi-chip circuit tff
 
-- Circuit: generated\circ\tff.circ
+- Circuit: generated/circ/tff.circ
 - Components: 1
 - Nets: 5
 

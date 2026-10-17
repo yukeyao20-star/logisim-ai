@@ -1,5 +1,5 @@
 {
-  "circuitPath": "generated\\circ\\custom_tunnel_label_regression.circ",
+  "circuitPath": "generated/circ/custom_tunnel_label_regression.circ",
   "mappings": [
     {"circuit": "main", "originalLabel": "net_sum", "shortLabel": "SUM"}
   ]

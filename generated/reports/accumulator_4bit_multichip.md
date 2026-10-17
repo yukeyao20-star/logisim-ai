@@ -1,6 +1,6 @@
 # Multi-chip circuit accumulator_4bit
 
-- Circuit: generated\circ\accumulator_4bit.circ
+- Circuit: generated/circ/accumulator_4bit.circ
 - Components: 28
 - Nets: 64
 

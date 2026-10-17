@@ -1,6 +1,6 @@
 # Multi-chip circuit tristate_buffer
 
-- Circuit: generated\circ\tristate_buffer.circ
+- Circuit: generated/circ/tristate_buffer.circ
 - Components: 1
 - Nets: 3
 

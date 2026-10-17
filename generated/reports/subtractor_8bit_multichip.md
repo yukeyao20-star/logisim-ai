@@ -1,6 +1,6 @@
 # Multi-chip circuit subtractor_8bit
 
-- Circuit: generated\circ\subtractor_8bit.circ
+- Circuit: generated/circ/subtractor_8bit.circ
 - Components: 56
 - Nets: 89
 

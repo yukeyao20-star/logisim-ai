@@ -1,6 +1,6 @@
 # Multi-chip circuit hex7seg
 
-- Circuit: generated\circ\hex7seg.circ
+- Circuit: generated/circ/hex7seg.circ
 - Components: 313
 - Nets: 629
 

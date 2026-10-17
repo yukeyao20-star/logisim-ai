@@ -1,6 +1,6 @@
 # Multi-chip circuit seqdet_101
 
-- Circuit: generated\circ\seqdet_101.circ
+- Circuit: generated/circ/seqdet_101.circ
 - Components: 9
 - Nets: 19
 

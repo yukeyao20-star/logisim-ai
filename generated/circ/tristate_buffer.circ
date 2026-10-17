@@ -58,39 +58,34 @@
       <a name="label" val="Y"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(110,150)" name="Pin">
+    <comp lib="1" loc="(1060,100)" name="Tunnel">
+      <a name="label" val="TQ2"/>
+    </comp>
+    <comp lib="1" loc="(310,100)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="A"/>
+    </comp>
+    <comp lib="1" loc="(310,100)" name="Tunnel">
+      <a name="label" val="TQ1"/>
+    </comp>
+    <comp lib="1" loc="(310,150)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="nG"/>
     </comp>
-    <comp lib="1" loc="(60,100)" name="Pin">
-      <a name="appearance" val="classic"/>
-      <a name="label" val="A"/>
+    <comp lib="1" loc="(310,150)" name="Tunnel">
+      <a name="label" val="TQ0"/>
+    </comp>
+    <comp lib="1" loc="(510,280)" name="Tunnel">
+      <a name="label" val="TQ0"/>
+    </comp>
+    <comp lib="1" loc="(530,280)" name="Tunnel">
+      <a name="label" val="TQ1"/>
+    </comp>
+    <comp lib="1" loc="(550,280)" name="Tunnel">
+      <a name="label" val="TQ2"/>
     </comp>
     <comp lib="8" loc="(500,250)" name="74125">
       <a name="label" val="U1"/>
     </comp>
-    <wire from="(1060,10)" to="(1060,100)"/>
-    <wire from="(1060,10)" to="(1410,10)"/>
-    <wire from="(110,110)" to="(110,150)"/>
-    <wire from="(110,110)" to="(1360,110)"/>
-    <wire from="(1360,110)" to="(1360,580)"/>
-    <wire from="(1360,580)" to="(1370,580)"/>
-    <wire from="(1370,230)" to="(1370,580)"/>
-    <wire from="(1380,40)" to="(1380,590)"/>
-    <wire from="(1380,590)" to="(1390,590)"/>
-    <wire from="(1390,210)" to="(1390,590)"/>
-    <wire from="(1400,200)" to="(1400,600)"/>
-    <wire from="(1400,600)" to="(1410,600)"/>
-    <wire from="(1410,10)" to="(1410,600)"/>
-    <wire from="(510,230)" to="(1370,230)"/>
-    <wire from="(510,230)" to="(510,280)"/>
-    <wire from="(530,210)" to="(1390,210)"/>
-    <wire from="(530,210)" to="(530,220)"/>
-    <wire from="(530,220)" to="(530,280)"/>
-    <wire from="(550,200)" to="(1400,200)"/>
-    <wire from="(550,200)" to="(550,220)"/>
-    <wire from="(550,220)" to="(550,280)"/>
-    <wire from="(60,40)" to="(1380,40)"/>
-    <wire from="(60,40)" to="(60,100)"/>
   </circuit>
 </project>

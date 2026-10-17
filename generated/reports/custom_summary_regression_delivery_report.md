@@ -7,9 +7,9 @@
 - Target package: 
 - Package primitive: false
 - Routing primitive: primitive_gates
-- Circuit: generated\circ\custom_summary_regression.circ
-- Summary: generated\reports\custom_summary_regression_generation_summary.md
-- Manifest: generated\reports\custom_summary_regression_circuit_manifest.md
+- Circuit: generated/circ/custom_summary_regression.circ
+- Summary: generated/reports/custom_summary_regression_generation_summary.md
+- Manifest: generated/reports/custom_summary_regression_circuit_manifest.md
 - Complete: true
 - Manifest check count: 3
 - Manifest issue count: 0
@@ -39,10 +39,10 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\custom_summary_regression.circ | true |
-| manifest_json | generated\reports\custom_summary_regression_circuit_manifest.json | true |
-| manifest_markdown | generated\reports\custom_summary_regression_circuit_manifest.md | true |
-| delivery_json | generated\reports\custom_summary_regression_delivery_report.json | true |
-| delivery_markdown | generated\reports\custom_summary_regression_delivery_report.md | true |
-| summary_json | generated\reports\custom_summary_regression_generation_summary.json | false |
-| summary_markdown | generated\reports\custom_summary_regression_generation_summary.md | false |
+| circuit | generated/circ/custom_summary_regression.circ | true |
+| manifest_json | generated/reports/custom_summary_regression_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/custom_summary_regression_circuit_manifest.md | true |
+| delivery_json | generated/reports/custom_summary_regression_delivery_report.json | true |
+| delivery_markdown | generated/reports/custom_summary_regression_delivery_report.md | true |
+| summary_json | generated/reports/custom_summary_regression_generation_summary.json | false |
+| summary_markdown | generated/reports/custom_summary_regression_generation_summary.md | false |

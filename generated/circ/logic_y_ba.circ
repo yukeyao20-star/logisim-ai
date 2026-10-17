@@ -52,14 +52,14 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="logic_y_ba"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(1130,290)" name="Tunnel">
+    <comp lib="1" loc="(1130,120)" name="Tunnel">
       <a name="label" val="n4"/>
     </comp>
-    <comp lib="1" loc="(1500,290)" name="Tunnel">
+    <comp lib="1" loc="(1500,120)" name="Tunnel">
       <a name="facing" val="east"/>
       <a name="label" val="n4"/>
     </comp>
-    <comp lib="1" loc="(1680,290)" name="Pin">
+    <comp lib="1" loc="(1680,120)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="Y"/>
@@ -68,7 +68,7 @@
     <comp lib="1" loc="(260,120)" name="Tunnel">
       <a name="label" val="n1"/>
     </comp>
-    <comp lib="1" loc="(260,310)" name="Tunnel">
+    <comp lib="1" loc="(260,200)" name="Tunnel">
       <a name="label" val="n2"/>
     </comp>
     <comp lib="1" loc="(670,120)" name="Tunnel">
@@ -79,30 +79,30 @@
       <a name="appearance" val="classic"/>
       <a name="label" val="B"/>
     </comp>
-    <comp lib="1" loc="(80,310)" name="Pin">
+    <comp lib="1" loc="(80,200)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="A"/>
     </comp>
     <comp lib="1" loc="(810,120)" name="Tunnel">
       <a name="label" val="n3"/>
     </comp>
-    <comp lib="1" loc="(970,270)" name="Tunnel">
+    <comp lib="1" loc="(970,100)" name="Tunnel">
       <a name="facing" val="east"/>
       <a name="label" val="n3"/>
     </comp>
-    <comp lib="1" loc="(970,310)" name="Tunnel">
+    <comp lib="1" loc="(970,140)" name="Tunnel">
       <a name="facing" val="east"/>
       <a name="label" val="n2"/>
     </comp>
-    <comp lib="2" loc="(1040,290)" name="AND Gate"/>
+    <comp lib="2" loc="(1040,120)" name="AND Gate"/>
     <comp lib="2" loc="(720,120)" name="NOT Gate"/>
-    <wire from="(1040,290)" to="(1130,290)"/>
-    <wire from="(1500,290)" to="(1680,290)"/>
+    <wire from="(1040,120)" to="(1130,120)"/>
+    <wire from="(1500,120)" to="(1680,120)"/>
     <wire from="(670,120)" to="(690,120)"/>
     <wire from="(720,120)" to="(810,120)"/>
     <wire from="(80,120)" to="(260,120)"/>
-    <wire from="(80,310)" to="(260,310)"/>
-    <wire from="(970,270)" to="(990,270)"/>
-    <wire from="(970,310)" to="(990,310)"/>
+    <wire from="(80,200)" to="(260,200)"/>
+    <wire from="(970,100)" to="(990,100)"/>
+    <wire from="(970,140)" to="(990,140)"/>
   </circuit>
 </project>

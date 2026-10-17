@@ -1,6 +1,6 @@
 # Multi-chip circuit register_4bit
 
-- Circuit: generated\circ\register_4bit.circ
+- Circuit: generated/circ/register_4bit.circ
 - Components: 4
 - Nets: 16
 

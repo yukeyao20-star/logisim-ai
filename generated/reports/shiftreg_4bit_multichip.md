@@ -1,6 +1,6 @@
 # Multi-chip circuit shiftreg_4bit
 
-- Circuit: generated\circ\shiftreg_4bit.circ
+- Circuit: generated/circ/shiftreg_4bit.circ
 - Components: 4
 - Nets: 16
 

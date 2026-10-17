@@ -5,7 +5,7 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=10843"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=10557"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] logic_f_s0s1d0d2d1d3.circ round-trip loaded with main circuit logic_f_s0s1d0d2d1d3"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] logic_f_s0s1d0d2d1d3.circ structure matches CircuitSpec"},
@@ -13,9 +13,9 @@
     {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=64"}
   ],
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\logic_f_s0s1d0d2d1d3.circ", "exists": true},
-    {"kind": "truth_table_markdown", "path": "generated\\reports\\logic_f_s0s1d0d2d1d3_circuit_truth_table.md", "exists": true},
-    {"kind": "truth_table_json", "path": "generated\\reports\\logic_f_s0s1d0d2d1d3_circuit_truth_table.json", "exists": true}
+    {"kind": "circuit", "path": "generated/circ/logic_f_s0s1d0d2d1d3.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated/reports/logic_f_s0s1d0d2d1d3_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated/reports/logic_f_s0s1d0d2d1d3_circuit_truth_table.json", "exists": true}
   ],
   "issues": []
 }

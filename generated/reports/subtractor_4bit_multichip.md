@@ -1,6 +1,6 @@
 # Multi-chip circuit subtractor_4bit
 
-- Circuit: generated\circ\subtractor_4bit.circ
+- Circuit: generated/circ/subtractor_4bit.circ
 - Components: 28
 - Nets: 45
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit mac_4bit
 
-- Circuit: generated\circ\mac_4bit.circ
+- Circuit: generated/circ/mac_4bit.circ
 - Components: 180
 - Nets: 376
 

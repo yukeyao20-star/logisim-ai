@@ -1,6 +1,6 @@
 # Multi-chip circuit multiplier_2x2
 
-- Circuit: generated\circ\multiplier_2x2.circ
+- Circuit: generated/circ/multiplier_2x2.circ
 - Components: 22
 - Nets: 48
 

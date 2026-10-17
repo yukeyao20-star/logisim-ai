@@ -1,6 +1,6 @@
 # Multi-chip circuit demux_4to1
 
-- Circuit: generated\circ\demux_4to1.circ
+- Circuit: generated/circ/demux_4to1.circ
 - Components: 10
 - Nets: 22
 

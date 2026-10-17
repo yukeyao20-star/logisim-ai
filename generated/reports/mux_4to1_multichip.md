@@ -1,6 +1,6 @@
 # Multi-chip circuit mux_4to1
 
-- Circuit: generated\circ\mux_4to1.circ
+- Circuit: generated/circ/mux_4to1.circ
 - Components: 13
 - Nets: 25
 

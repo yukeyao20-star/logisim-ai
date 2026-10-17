@@ -1,6 +1,6 @@
 # Multi-chip circuit traffic_light
 
-- Circuit: generated\circ\traffic_light.circ
+- Circuit: generated/circ/traffic_light.circ
 - Components: 6
 - Nets: 15
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit mux_8to1
 
-- Circuit: generated\circ\mux_8to1.circ
+- Circuit: generated/circ/mux_8to1.circ
 - Components: 34
 - Nets: 66
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit sar_4bit
 
-- Circuit: generated\circ\sar_4bit.circ
+- Circuit: generated/circ/sar_4bit.circ
 - Components: 46
 - Nets: 94
 

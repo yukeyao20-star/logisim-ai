@@ -1,6 +1,6 @@
 # Multi-chip circuit ring_counter
 
-- Circuit: generated\circ\ring_counter.circ
+- Circuit: generated/circ/ring_counter.circ
 - Components: 5
 - Nets: 18
 

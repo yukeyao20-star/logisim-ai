@@ -1,6 +1,6 @@
 # Multi-chip circuit oneshot_4clk
 
-- Circuit: generated\circ\oneshot_4clk.circ
+- Circuit: generated/circ/oneshot_4clk.circ
 - Components: 15
 - Nets: 32
 

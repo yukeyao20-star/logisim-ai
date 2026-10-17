@@ -1,6 +1,6 @@
 # Multi-chip circuit decoder_3bit
 
-- Circuit: generated\circ\decoder_3bit.circ
+- Circuit: generated/circ/decoder_3bit.circ
 - Components: 19
 - Nets: 43
 

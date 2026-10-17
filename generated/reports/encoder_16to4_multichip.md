@@ -1,6 +1,6 @@
 # Multi-chip circuit encoder_16to4
 
-- Circuit: generated\circ\encoder_16to4.circ
+- Circuit: generated/circ/encoder_16to4.circ
 - Components: 20
 - Nets: 47
 

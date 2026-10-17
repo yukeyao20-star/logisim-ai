@@ -1,6 +1,6 @@
 # Multi-chip circuit parity_4bit
 
-- Circuit: generated\circ\parity_4bit.circ
+- Circuit: generated/circ/parity_4bit.circ
 - Components: 3
 - Nets: 7
 

@@ -111,7 +111,7 @@ public final class TtlNativeChipCompiler {
         // Route through a per-wire unique channel so no two wires share a column or
         // a closing row. This avoids the shorts that the shared-dogleg policy
         // introduces when many pins feed one chip.
-        int chanX = 250 + (wireSeq) * 10;
+        int chanX = 400 + (wireSeq) * 10;
         int chanY = 500 + (wireSeq) * 10;
         for (com.logisim_ai.layout.AutoLayoutPolicy.WireSegment segment
             : routeIsolated(pinPort, chipPort, chanX, chanY)) {

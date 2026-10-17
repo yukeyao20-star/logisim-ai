@@ -1,6 +1,6 @@
 # Multi-chip circuit counter_4bit
 
-- Circuit: generated\circ\counter_4bit.circ
+- Circuit: generated/circ/counter_4bit.circ
 - Components: 1
 - Nets: 14
 

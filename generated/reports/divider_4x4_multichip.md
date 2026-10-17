@@ -1,6 +1,6 @@
 # Multi-chip circuit divider_4x4
 
-- Circuit: generated\circ\divider_4x4.circ
+- Circuit: generated/circ/divider_4x4.circ
 - Components: 192
 - Nets: 308
 

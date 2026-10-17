@@ -52,69 +52,63 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="dff"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(1010,150)" name="Pin">
-      <a name="appearance" val="classic"/>
-      <a name="facing" val="west"/>
-      <a name="label" val="nQ"/>
-      <a name="type" val="output"/>
-    </comp>
     <comp lib="1" loc="(1060,100)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="Q"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(110,150)" name="Pin">
+    <comp lib="1" loc="(1060,100)" name="Tunnel">
+      <a name="label" val="TQ3"/>
+    </comp>
+    <comp lib="1" loc="(310,100)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="CLK"/>
+    </comp>
+    <comp lib="1" loc="(310,100)" name="Tunnel">
+      <a name="label" val="TQ1"/>
+    </comp>
+    <comp lib="1" loc="(310,150)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="D"/>
     </comp>
-    <comp lib="1" loc="(160,200)" name="Pin">
+    <comp lib="1" loc="(310,150)" name="Tunnel">
+      <a name="label" val="TQ0"/>
+    </comp>
+    <comp lib="1" loc="(310,200)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="RST"/>
     </comp>
-    <comp lib="1" loc="(60,100)" name="Pin">
+    <comp lib="1" loc="(310,200)" name="Tunnel">
+      <a name="label" val="TQ2"/>
+    </comp>
+    <comp lib="1" loc="(490,260)" name="Tunnel">
+      <a name="label" val="TQ0"/>
+    </comp>
+    <comp lib="1" loc="(490,300)" name="Tunnel">
+      <a name="label" val="TQ1"/>
+    </comp>
+    <comp lib="1" loc="(520,310)" name="Tunnel">
+      <a name="label" val="TQ2"/>
+    </comp>
+    <comp lib="1" loc="(550,260)" name="Tunnel">
+      <a name="label" val="TQ3"/>
+    </comp>
+    <comp lib="1" loc="(550,300)" name="Tunnel">
+      <a name="label" val="TQ4"/>
+    </comp>
+    <comp lib="1" loc="(990,150)" name="Pin">
       <a name="appearance" val="classic"/>
-      <a name="label" val="CLK"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="nQ"/>
+      <a name="type" val="output"/>
+    </comp>
+    <comp lib="1" loc="(990,150)" name="Tunnel">
+      <a name="label" val="TQ4"/>
     </comp>
     <comp lib="6" loc="(500,250)" name="D Flip-Flop">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="U1"/>
     </comp>
-    <wire from="(1010,30)" to="(1010,150)"/>
-    <wire from="(1010,30)" to="(1450,30)"/>
-    <wire from="(1060,0)" to="(1060,100)"/>
-    <wire from="(1060,0)" to="(1430,0)"/>
-    <wire from="(110,110)" to="(110,150)"/>
-    <wire from="(110,110)" to="(1360,110)"/>
-    <wire from="(1360,110)" to="(1360,610)"/>
-    <wire from="(1360,610)" to="(1370,610)"/>
-    <wire from="(1370,210)" to="(1370,610)"/>
-    <wire from="(1380,40)" to="(1380,620)"/>
-    <wire from="(1380,620)" to="(1390,620)"/>
-    <wire from="(1390,340)" to="(1390,620)"/>
-    <wire from="(1400,130)" to="(1400,630)"/>
-    <wire from="(1400,630)" to="(1410,630)"/>
-    <wire from="(1410,230)" to="(1410,630)"/>
-    <wire from="(1420,170)" to="(1420,640)"/>
-    <wire from="(1420,640)" to="(1430,640)"/>
-    <wire from="(1430,0)" to="(1430,640)"/>
-    <wire from="(1440,350)" to="(1440,650)"/>
-    <wire from="(1440,650)" to="(1450,650)"/>
-    <wire from="(1450,30)" to="(1450,650)"/>
-    <wire from="(160,130)" to="(1400,130)"/>
-    <wire from="(160,130)" to="(160,200)"/>
-    <wire from="(490,210)" to="(1370,210)"/>
-    <wire from="(490,210)" to="(490,260)"/>
-    <wire from="(490,300)" to="(490,340)"/>
-    <wire from="(490,340)" to="(1390,340)"/>
-    <wire from="(520,230)" to="(1410,230)"/>
-    <wire from="(520,230)" to="(520,250)"/>
-    <wire from="(520,250)" to="(520,310)"/>
-    <wire from="(550,170)" to="(1420,170)"/>
-    <wire from="(550,170)" to="(550,260)"/>
-    <wire from="(550,300)" to="(550,350)"/>
-    <wire from="(550,350)" to="(1440,350)"/>
-    <wire from="(60,40)" to="(1380,40)"/>
-    <wire from="(60,40)" to="(60,100)"/>
   </circuit>
 </project>

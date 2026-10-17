@@ -10,7 +10,7 @@
     {"id": "q0", "label": "Q0", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "div0", "targetEndIndex": 0}
   ],
   "nets": [
-    {"id": "div_t0", "endpoints": [{"componentId": "t", "endIndex": 2}, {"componentId": "div0", "endIndex": 0}]},
+    {"id": "div_t0", "endpoints": [{"componentId": "t", "endIndex": 0}, {"componentId": "div0", "endIndex": 0}]},
     {"id": "div_clk0", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "div0", "endIndex": 1}]},
     {"id": "div_rst0", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "div0", "endIndex": 4}]},
     {"id": "div_q0", "endpoints": [{"componentId": "div0", "endIndex": 2}, {"componentId": "q0", "endIndex": 0}]}

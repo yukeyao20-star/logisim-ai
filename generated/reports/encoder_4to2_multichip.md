@@ -1,6 +1,6 @@
 # Multi-chip circuit encoder_4to2
 
-- Circuit: generated\circ\encoder_4to2.circ
+- Circuit: generated/circ/encoder_4to2.circ
 - Components: 6
 - Nets: 14
 

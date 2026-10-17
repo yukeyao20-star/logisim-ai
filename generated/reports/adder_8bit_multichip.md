@@ -1,6 +1,6 @@
 # Multi-chip circuit adder_8bit
 
-- Circuit: generated\circ\adder_8bit.circ
+- Circuit: generated/circ/adder_8bit.circ
 - Components: 56
 - Nets: 73
 

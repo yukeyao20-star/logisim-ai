@@ -1,6 +1,6 @@
 # Multi-chip circuit johnson_4stage
 
-- Circuit: generated\circ\johnson_4stage.circ
+- Circuit: generated/circ/johnson_4stage.circ
 - Components: 5
 - Nets: 17
 

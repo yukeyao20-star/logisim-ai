@@ -1,6 +1,6 @@
 # Multi-chip circuit bcd2bin_2digit
 
-- Circuit: generated\circ\bcd2bin_2digit.circ
+- Circuit: generated/circ/bcd2bin_2digit.circ
 - Components: 27
 - Nets: 61
 

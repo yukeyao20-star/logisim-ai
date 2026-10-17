@@ -1,6 +1,6 @@
 # Multi-chip circuit countdown_timer
 
-- Circuit: generated\circ\countdown_timer.circ
+- Circuit: generated/circ/countdown_timer.circ
 - Components: 30
 - Nets: 64
 

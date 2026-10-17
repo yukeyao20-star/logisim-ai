@@ -1,6 +1,6 @@
 # TTL chip 7464
 
-- Circuit: generated\circ\ttl_7464.circ
+- Circuit: generated/circ/ttl_7464.circ
 - Port count: 12
 
 | # | Label | Direction | Width |

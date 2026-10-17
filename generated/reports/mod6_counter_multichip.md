@@ -1,6 +1,6 @@
 # Multi-chip circuit mod6_counter
 
-- Circuit: generated\circ\mod6_counter.circ
+- Circuit: generated/circ/mod6_counter.circ
 - Components: 17
 - Nets: 40
 

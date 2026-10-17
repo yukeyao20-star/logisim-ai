@@ -1,6 +1,6 @@
 # Multi-chip circuit decoder_4to16
 
-- Circuit: generated\circ\decoder_4to16.circ
+- Circuit: generated/circ/decoder_4to16.circ
 - Components: 3
 - Nets: 24
 

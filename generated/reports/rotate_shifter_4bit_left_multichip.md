@@ -1,6 +1,6 @@
 # Multi-chip circuit rotate_shifter_4bit_left
 
-- Circuit: generated\circ\rotate_shifter_4bit_left.circ
+- Circuit: generated/circ/rotate_shifter_4bit_left.circ
 - Components: 46
 - Nets: 94
 

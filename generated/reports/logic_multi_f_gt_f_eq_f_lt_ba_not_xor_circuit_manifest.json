@@ -5,7 +5,7 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=6447"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=6281"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] logic_multi_f_gt_f_eq_f_lt_ba_not_xor.circ round-trip loaded with main circuit logic_multi_f_gt_f_eq_f_lt_ba_not_xor"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] logic_multi_f_gt_f_eq_f_lt_ba_not_xor.circ structure matches CircuitSpec"},
@@ -13,9 +13,9 @@
     {"name": "truth_table_evidence", "passed": true, "detail": "[OK] exhaustive rows=4"}
   ],
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\logic_multi_f_gt_f_eq_f_lt_ba_not_xor.circ", "exists": true},
-    {"kind": "truth_table_markdown", "path": "generated\\reports\\logic_multi_f_gt_f_eq_f_lt_ba_not_xor_circuit_truth_table.md", "exists": true},
-    {"kind": "truth_table_json", "path": "generated\\reports\\logic_multi_f_gt_f_eq_f_lt_ba_not_xor_circuit_truth_table.json", "exists": true}
+    {"kind": "circuit", "path": "generated/circ/logic_multi_f_gt_f_eq_f_lt_ba_not_xor.circ", "exists": true},
+    {"kind": "truth_table_markdown", "path": "generated/reports/logic_multi_f_gt_f_eq_f_lt_ba_not_xor_circuit_truth_table.md", "exists": true},
+    {"kind": "truth_table_json", "path": "generated/reports/logic_multi_f_gt_f_eq_f_lt_ba_not_xor_circuit_truth_table.json", "exists": true}
   ],
   "issues": []
 }

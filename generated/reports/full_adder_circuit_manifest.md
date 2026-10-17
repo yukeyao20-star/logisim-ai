@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=6221 |
+| circuit_non_empty | true | bytes=6058 |
 | round_trip_loadable | true | [OK] full_adder.circ round-trip loaded with main circuit full_adder |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] full_adder.circ structure matches CircuitSpec |
@@ -20,6 +20,6 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\full_adder.circ | true |
-| truth_table_markdown | generated\reports\full_adder_circuit_truth_table.md | true |
-| truth_table_json | generated\reports\full_adder_circuit_truth_table.json | true |
+| circuit | generated/circ/full_adder.circ | true |
+| truth_table_markdown | generated/reports/full_adder_circuit_truth_table.md | true |
+| truth_table_json | generated/reports/full_adder_circuit_truth_table.json | true |

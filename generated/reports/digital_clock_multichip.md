@@ -1,6 +1,6 @@
 # Multi-chip circuit digital_clock
 
-- Circuit: generated\circ\digital_clock.circ
+- Circuit: generated/circ/digital_clock.circ
 - Components: 89
 - Nets: 204
 

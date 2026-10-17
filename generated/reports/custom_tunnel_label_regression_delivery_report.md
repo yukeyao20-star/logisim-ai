@@ -3,9 +3,9 @@
 - Request kind: natural_language
 - Request: synthetic tunnel label regression
 - Intent: GATE_LEVEL_CIRCUIT
-- Circuit: generated\circ\custom_tunnel_label_regression.circ
-- Summary: generated\reports\custom_summary_regression_generation_summary.md
-- Manifest: generated\reports\custom_summary_regression_circuit_manifest.md
+- Circuit: generated/circ/custom_tunnel_label_regression.circ
+- Summary: generated/reports/custom_summary_regression_generation_summary.md
+- Manifest: generated/reports/custom_summary_regression_circuit_manifest.md
 - Complete: true
 - Manifest check count: 3
 - Manifest issue count: 0
@@ -29,19 +29,19 @@
 
 ## Layout Repairs Applied
 
-- [applied/shorten_tunnel_labels/LABEL_RISK] shortened 1 tunnel label group(s); map=generated\reports\custom_tunnel_label_regression_tunnel_label_map.md
+- [applied/shorten_tunnel_labels/LABEL_RISK] shortened 1 tunnel label group(s); map=generated/reports/custom_tunnel_label_regression_tunnel_label_map.md
 
 ## Artifacts
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\custom_summary_regression.circ | true |
-| circuit | generated\circ\custom_tunnel_label_regression.circ | true |
-| manifest_json | generated\reports\custom_summary_regression_circuit_manifest.json | true |
-| manifest_markdown | generated\reports\custom_summary_regression_circuit_manifest.md | true |
-| summary_json | generated\reports\custom_summary_regression_generation_summary.json | false |
-| summary_markdown | generated\reports\custom_summary_regression_generation_summary.md | false |
-| delivery_json | generated\reports\custom_tunnel_label_regression_delivery_report.json | true |
-| delivery_markdown | generated\reports\custom_tunnel_label_regression_delivery_report.md | true |
-| tunnel_label_map_json | generated\reports\custom_tunnel_label_regression_tunnel_label_map.json | true |
-| tunnel_label_map_markdown | generated\reports\custom_tunnel_label_regression_tunnel_label_map.md | true |
+| circuit | generated/circ/custom_summary_regression.circ | true |
+| circuit | generated/circ/custom_tunnel_label_regression.circ | true |
+| manifest_json | generated/reports/custom_summary_regression_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/custom_summary_regression_circuit_manifest.md | true |
+| summary_json | generated/reports/custom_summary_regression_generation_summary.json | false |
+| summary_markdown | generated/reports/custom_summary_regression_generation_summary.md | false |
+| delivery_json | generated/reports/custom_tunnel_label_regression_delivery_report.json | true |
+| delivery_markdown | generated/reports/custom_tunnel_label_regression_delivery_report.md | true |
+| tunnel_label_map_json | generated/reports/custom_tunnel_label_regression_tunnel_label_map.json | true |
+| tunnel_label_map_markdown | generated/reports/custom_tunnel_label_regression_tunnel_label_map.md | true |

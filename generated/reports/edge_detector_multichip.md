@@ -1,6 +1,6 @@
 # Multi-chip circuit edge_detector
 
-- Circuit: generated\circ\edge_detector.circ
+- Circuit: generated/circ/edge_detector.circ
 - Components: 5
 - Nets: 11
 

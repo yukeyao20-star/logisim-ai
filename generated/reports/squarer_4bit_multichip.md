@@ -1,6 +1,6 @@
 # Multi-chip circuit squarer_4bit
 
-- Circuit: generated\circ\squarer_4bit.circ
+- Circuit: generated/circ/squarer_4bit.circ
 - Components: 124
 - Nets: 256
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit bcd_subtractor
 
-- Circuit: generated\circ\bcd_subtractor.circ
+- Circuit: generated/circ/bcd_subtractor.circ
 - Components: 82
 - Nets: 166
 

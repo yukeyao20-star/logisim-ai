@@ -1,6 +1,6 @@
 # Multi-chip circuit twoscomp_4bit
 
-- Circuit: generated\circ\twoscomp_4bit.circ
+- Circuit: generated/circ/twoscomp_4bit.circ
 - Components: 10
 - Nets: 20
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit divider_1stage
 
-- Circuit: generated\circ\divider_1stage.circ
+- Circuit: generated/circ/divider_1stage.circ
 - Components: 1
 - Nets: 4
 

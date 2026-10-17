@@ -1,6 +1,6 @@
 # Multi-chip circuit piso_4bit
 
-- Circuit: generated\circ\piso_4bit.circ
+- Circuit: generated/circ/piso_4bit.circ
 - Components: 17
 - Nets: 42
 

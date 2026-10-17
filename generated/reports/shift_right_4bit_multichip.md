@@ -1,6 +1,6 @@
 # Multi-chip circuit shift_right_4bit
 
-- Circuit: generated\circ\shift_right_4bit.circ
+- Circuit: generated/circ/shift_right_4bit.circ
 - Components: 46
 - Nets: 94
 

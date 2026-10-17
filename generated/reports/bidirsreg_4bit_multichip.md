@@ -1,6 +1,6 @@
 # Multi-chip circuit bidirsreg_4bit
 
-- Circuit: generated\circ\bidirsreg_4bit.circ
+- Circuit: generated/circ/bidirsreg_4bit.circ
 - Components: 17
 - Nets: 41
 

@@ -1,6 +1,6 @@
 # Multi-chip circuit parity_8bit
 
-- Circuit: generated\circ\parity_8bit.circ
+- Circuit: generated/circ/parity_8bit.circ
 - Components: 7
 - Nets: 15
 

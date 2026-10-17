@@ -1,0 +1,39 @@
+{
+  "name": "divider_3stage",
+  "components": [
+    {"id": "div0", "library": "Memory", "factory": "T Flip-Flop", "bitWidth": 1, "label": "U1"},
+    {"id": "div1", "library": "Memory", "factory": "T Flip-Flop", "bitWidth": 1, "label": "U2"},
+    {"id": "div2", "library": "Memory", "factory": "T Flip-Flop", "bitWidth": 1, "label": "U3"},
+    {"id": "divta2_1", "library": "Gates", "factory": "AND Gate", "bitWidth": 1, "label": "TA2_1"}
+  ],
+  "externalPorts": [
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "div0", "targetEndIndex": 0},
+    {"id": "t", "label": "T", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "div0", "targetEndIndex": 0},
+    {"id": "rst", "label": "RST", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "div0", "targetEndIndex": 0},
+    {"id": "q0", "label": "Q0", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "div0", "targetEndIndex": 0},
+    {"id": "q1", "label": "Q1", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "div1", "targetEndIndex": 0},
+    {"id": "q2", "label": "Q2", "bitWidth": 1, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "div2", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "div_t0", "endpoints": [{"componentId": "t", "endIndex": 0}, {"componentId": "div0", "endIndex": 0}]},
+    {"id": "div_clk0", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "div0", "endIndex": 1}]},
+    {"id": "div_rst0", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "div0", "endIndex": 4}]},
+    {"id": "div_q0", "endpoints": [{"componentId": "div0", "endIndex": 2}, {"componentId": "q0", "endIndex": 0}]},
+    {"id": "div_t1", "endpoints": [{"componentId": "div0", "endIndex": 2}, {"componentId": "div1", "endIndex": 0}]},
+    {"id": "div_clk1", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "div1", "endIndex": 1}]},
+    {"id": "div_rst1", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "div1", "endIndex": 4}]},
+    {"id": "div_q1", "endpoints": [{"componentId": "div1", "endIndex": 2}, {"componentId": "q1", "endIndex": 0}]},
+    {"id": "divta2_1x", "endpoints": [{"componentId": "div0", "endIndex": 2}, {"componentId": "divta2_1", "endIndex": 1}]},
+    {"id": "divta2_1y", "endpoints": [{"componentId": "div1", "endIndex": 2}, {"componentId": "divta2_1", "endIndex": 2}]},
+    {"id": "div_t2", "endpoints": [{"componentId": "divta2_1", "endIndex": 0}, {"componentId": "div2", "endIndex": 0}]},
+    {"id": "div_clk2", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "div2", "endIndex": 1}]},
+    {"id": "div_rst2", "endpoints": [{"componentId": "rst", "endIndex": 0}, {"componentId": "div2", "endIndex": 4}]},
+    {"id": "div_q2", "endpoints": [{"componentId": "div2", "endIndex": 2}, {"componentId": "q2", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "div0", "rank": 0, "column": 0, "row": 0, "side": null},
+    {"componentId": "div1", "rank": 1, "column": 0, "row": 0, "side": null},
+    {"componentId": "div2", "rank": 2, "column": 0, "row": 0, "side": null},
+    {"componentId": "divta2_1", "rank": 2, "column": 0, "row": 1, "side": null}
+  ]
+}

@@ -1,6 +1,6 @@
 # TTL chip 74151
 
-- Circuit: generated\circ\ttl_74151.circ
+- Circuit: generated/circ/ttl_74151.circ
 - Port count: 14
 
 | # | Label | Direction | Width |

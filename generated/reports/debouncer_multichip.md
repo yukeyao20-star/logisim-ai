@@ -1,6 +1,6 @@
 # Multi-chip circuit debouncer
 
-- Circuit: generated\circ\debouncer.circ
+- Circuit: generated/circ/debouncer.circ
 - Components: 8
 - Nets: 20
 

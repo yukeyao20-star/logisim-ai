@@ -9,11 +9,11 @@
     "routingPrimitive": "primitive_gates"
   },
   "circuitName": "summary_regression",
-  "circuitPath": "generated\\circ\\custom_summary_regression.circ",
-  "summaryPath": "generated\\reports\\custom_summary_regression_generation_summary.md",
-  "summaryJsonPath": "generated\\reports\\custom_summary_regression_generation_summary.json",
-  "manifestPath": "generated\\reports\\custom_summary_regression_circuit_manifest.md",
-  "manifestJsonPath": "generated\\reports\\custom_summary_regression_circuit_manifest.json",
+  "circuitPath": "generated/circ/custom_summary_regression.circ",
+  "summaryPath": "generated/reports/custom_summary_regression_generation_summary.md",
+  "summaryJsonPath": "generated/reports/custom_summary_regression_generation_summary.json",
+  "manifestPath": "generated/reports/custom_summary_regression_circuit_manifest.md",
+  "manifestJsonPath": "generated/reports/custom_summary_regression_circuit_manifest.json",
   "complete": true,
   "manifestCheckCount": 3,
   "manifestIssueCount": 0,
@@ -39,12 +39,12 @@
   "recommendedActions": ["open_circuit", "review_manifest"],
   "artifactCount": 7,
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\custom_summary_regression.circ", "exists": true},
-    {"kind": "manifest_json", "path": "generated\\reports\\custom_summary_regression_circuit_manifest.json", "exists": true},
-    {"kind": "manifest_markdown", "path": "generated\\reports\\custom_summary_regression_circuit_manifest.md", "exists": true},
-    {"kind": "delivery_json", "path": "generated\\reports\\custom_summary_regression_delivery_report.json", "exists": true},
-    {"kind": "delivery_markdown", "path": "generated\\reports\\custom_summary_regression_delivery_report.md", "exists": true},
-    {"kind": "summary_json", "path": "generated\\reports\\custom_summary_regression_generation_summary.json", "exists": false},
-    {"kind": "summary_markdown", "path": "generated\\reports\\custom_summary_regression_generation_summary.md", "exists": false}
+    {"kind": "circuit", "path": "generated/circ/custom_summary_regression.circ", "exists": true},
+    {"kind": "manifest_json", "path": "generated/reports/custom_summary_regression_circuit_manifest.json", "exists": true},
+    {"kind": "manifest_markdown", "path": "generated/reports/custom_summary_regression_circuit_manifest.md", "exists": true},
+    {"kind": "delivery_json", "path": "generated/reports/custom_summary_regression_delivery_report.json", "exists": true},
+    {"kind": "delivery_markdown", "path": "generated/reports/custom_summary_regression_delivery_report.md", "exists": true},
+    {"kind": "summary_json", "path": "generated/reports/custom_summary_regression_generation_summary.json", "exists": false},
+    {"kind": "summary_markdown", "path": "generated/reports/custom_summary_regression_generation_summary.md", "exists": false}
   ]
 }

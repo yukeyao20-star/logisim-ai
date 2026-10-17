@@ -1,6 +1,6 @@
 # Multi-chip circuit satadd_4bit
 
-- Circuit: generated\circ\satadd_4bit.circ
+- Circuit: generated/circ/satadd_4bit.circ
 - Components: 28
 - Nets: 60
 

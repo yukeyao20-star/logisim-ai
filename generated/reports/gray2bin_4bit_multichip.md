@@ -1,6 +1,6 @@
 # Multi-chip circuit gray2bin_4bit
 
-- Circuit: generated\circ\gray2bin_4bit.circ
+- Circuit: generated/circ/gray2bin_4bit.circ
 - Components: 3
 - Nets: 10
 

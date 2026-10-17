@@ -1,6 +1,6 @@
 # Multi-chip circuit dlatch
 
-- Circuit: generated\circ\dlatch.circ
+- Circuit: generated/circ/dlatch.circ
 - Components: 5
 - Nets: 11
 

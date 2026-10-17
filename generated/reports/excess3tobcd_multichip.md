@@ -1,6 +1,6 @@
 # Multi-chip circuit excess3tobcd
 
-- Circuit: generated\circ\excess3tobcd.circ
+- Circuit: generated/circ/excess3tobcd.circ
 - Components: 8
 - Nets: 17
 

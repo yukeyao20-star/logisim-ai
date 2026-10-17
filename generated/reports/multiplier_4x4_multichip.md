@@ -1,6 +1,6 @@
 # Multi-chip circuit multiplier_4x4
 
-- Circuit: generated\circ\multiplier_4x4.circ
+- Circuit: generated/circ/multiplier_4x4.circ
 - Components: 124
 - Nets: 256
 

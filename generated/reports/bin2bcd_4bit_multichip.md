@@ -1,6 +1,6 @@
 # Multi-chip circuit bin2bcd_4bit
 
-- Circuit: generated\circ\bin2bcd_4bit.circ
+- Circuit: generated/circ/bin2bcd_4bit.circ
 - Components: 16
 - Nets: 34
 

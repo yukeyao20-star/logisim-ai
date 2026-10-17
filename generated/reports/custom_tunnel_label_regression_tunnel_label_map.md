@@ -1,4 +1,4 @@
-# Tunnel label map for generated\circ\custom_tunnel_label_regression.circ
+# Tunnel label map for generated/circ/custom_tunnel_label_regression.circ
 
 | Circuit | Original label | Short label |
 | --- | --- | --- |

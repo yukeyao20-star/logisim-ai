@@ -1,6 +1,6 @@
 # Multi-chip circuit bcd_subtractor_2digit
 
-- Circuit: generated\circ\bcd_subtractor_2digit.circ
+- Circuit: generated/circ/bcd_subtractor_2digit.circ
 - Components: 166
 - Nets: 333
 

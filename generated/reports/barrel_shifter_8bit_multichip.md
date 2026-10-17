@@ -1,6 +1,6 @@
 # Multi-chip circuit barrel_shifter_8bit
 
-- Circuit: generated\circ\barrel_shifter_8bit.circ
+- Circuit: generated/circ/barrel_shifter_8bit.circ
 - Components: 251
 - Nets: 507
 

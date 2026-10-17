@@ -1,6 +1,6 @@
 # Multi-chip circuit jkff
 
-- Circuit: generated\circ\jkff.circ
+- Circuit: generated/circ/jkff.circ
 - Components: 5
 - Nets: 12
 

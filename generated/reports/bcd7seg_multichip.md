@@ -1,6 +1,6 @@
 # Multi-chip circuit bcd7seg
 
-- Circuit: generated\circ\bcd7seg.circ
+- Circuit: generated/circ/bcd7seg.circ
 - Components: 193
 - Nets: 389
 

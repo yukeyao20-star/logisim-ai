@@ -1,6 +1,6 @@
 # Multi-chip circuit barrel_shifter_2bit
 
-- Circuit: generated\circ\barrel_shifter_2bit.circ
+- Circuit: generated/circ/barrel_shifter_2bit.circ
 - Components: 7
 - Nets: 15
 

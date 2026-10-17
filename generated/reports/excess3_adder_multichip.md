@@ -1,6 +1,6 @@
 # Multi-chip circuit excess3_adder
 
-- Circuit: generated\circ\excess3_adder.circ
+- Circuit: generated/circ/excess3_adder.circ
 - Components: 49
 - Nets: 102
 

@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=3328 |
+| circuit_non_empty | true | bytes=3244 |
 | round_trip_loadable | true | [OK] logic_p_ab.circ round-trip loaded with main circuit logic_p_ab |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] logic_p_ab.circ structure matches CircuitSpec |
@@ -20,6 +20,6 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\logic_p_ab.circ | true |
-| truth_table_markdown | generated\reports\logic_p_ab_circuit_truth_table.md | true |
-| truth_table_json | generated\reports\logic_p_ab_circuit_truth_table.json | true |
+| circuit | generated/circ/logic_p_ab.circ | true |
+| truth_table_markdown | generated/reports/logic_p_ab_circuit_truth_table.md | true |
+| truth_table_json | generated/reports/logic_p_ab_circuit_truth_table.json | true |

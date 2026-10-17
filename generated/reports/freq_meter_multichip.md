@@ -1,6 +1,6 @@
 # Multi-chip circuit freq_meter
 
-- Circuit: generated\circ\freq_meter.circ
+- Circuit: generated/circ/freq_meter.circ
 - Components: 49
 - Nets: 113
 

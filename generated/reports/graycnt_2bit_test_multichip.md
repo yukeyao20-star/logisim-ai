@@ -1,6 +1,6 @@
 # Multi-chip circuit graycnt_2bit_test
 
-- Circuit: generated\circ\graycnt_2bit_test.circ
+- Circuit: generated/circ/graycnt_2bit_test.circ
 - Components: 5
 - Nets: 15
 

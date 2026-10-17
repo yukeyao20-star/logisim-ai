@@ -1,6 +1,6 @@
 # Multi-chip circuit comparator_8bit
 
-- Circuit: generated\circ\comparator_8bit.circ
+- Circuit: generated/circ/comparator_8bit.circ
 - Components: 55
 - Nets: 102
 

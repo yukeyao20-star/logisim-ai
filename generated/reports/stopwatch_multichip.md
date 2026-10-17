@@ -1,6 +1,6 @@
 # Multi-chip circuit stopwatch
 
-- Circuit: generated\circ\stopwatch.circ
+- Circuit: generated/circ/stopwatch.circ
 - Components: 34
 - Nets: 76
 

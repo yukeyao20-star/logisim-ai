@@ -1,6 +1,6 @@
 # Multi-chip circuit multiplier_8x8
 
-- Circuit: generated\circ\multiplier_8x8.circ
+- Circuit: generated/circ/multiplier_8x8.circ
 - Components: 568
 - Nets: 1152
 

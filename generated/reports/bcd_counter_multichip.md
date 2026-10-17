@@ -1,6 +1,6 @@
 # Multi-chip circuit bcd_counter
 
-- Circuit: generated\circ\bcd_counter.circ
+- Circuit: generated/circ/bcd_counter.circ
 - Components: 11
 - Nets: 29
 

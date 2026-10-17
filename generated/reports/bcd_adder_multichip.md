@@ -1,6 +1,6 @@
 # Multi-chip circuit bcd_adder
 
-- Circuit: generated\circ\bcd_adder.circ
+- Circuit: generated/circ/bcd_adder.circ
 - Components: 51
 - Nets: 107
 
