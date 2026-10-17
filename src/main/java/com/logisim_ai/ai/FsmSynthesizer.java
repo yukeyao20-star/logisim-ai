@@ -92,6 +92,40 @@ public final class FsmSynthesizer {
             "Transition input vector size mismatch: " + t.inputs());
       }
     }
+    // Reachability guard: every (state, input vector) pair the environment can
+    // present must have a transition row. A missing row leaves that D input
+    // with no term for the covered bits — the defect only surfaced at
+    // compile/simulation time before this check.
+    int inputVectors = 1 << definition.inputNames().size();
+    java.util.Set<String> covered = new java.util.HashSet<>();
+    for (Transition t : definition.transitions()) {
+      int mask = 0;
+      for (int j = 0; j < definition.inputNames().size(); j++) {
+        Boolean v = t.inputs().get(definition.inputNames().get(j));
+        if (v == null) {
+          throw new IllegalArgumentException(
+              "Transition missing input '" + definition.inputNames().get(j) + "': " + t);
+        }
+        if (v) {
+          mask |= 1 << j;
+        }
+      }
+      covered.add(t.fromState() + ":" + mask);
+    }
+    List<String> missing = new ArrayList<>();
+    for (int s = 0; s < states; s++) {
+      for (int v = 0; v < inputVectors; v++) {
+        if (!covered.contains(s + ":" + v)) {
+          missing.add("state " + s + " input " + java.util.Arrays.toString(
+              vectorNames(v, definition.inputNames())));
+        }
+      }
+    }
+    if (!missing.isEmpty()) {
+      throw new IllegalArgumentException(
+          "FSM transition table incomplete: " + missing.size() + " missing (state, input) "
+              + "rows: " + String.join("; ", missing.subList(0, Math.min(missing.size(), 5))));
+    }
 
     List<ComponentSpec> components = new ArrayList<>();
     List<ExternalPort> ports = new ArrayList<>();
@@ -319,6 +353,15 @@ public final class FsmSynthesizer {
       result.add(literal.get(one ? "q" + i : "nq" + i));
     }
     return result;
+  }
+
+  /** Input vector bitmask → readable names, e.g. mask=0b10 over [a,b] → [a=0, b=1] style. */
+  private static String[] vectorNames(int mask, List<String> inputNames) {
+    String[] names = new String[inputNames.size()];
+    for (int j = 0; j < inputNames.size(); j++) {
+      names[j] = inputNames.get(j) + "=" + ((mask >> j) & 1);
+    }
+    return names;
   }
 
   private static void addClockInput(

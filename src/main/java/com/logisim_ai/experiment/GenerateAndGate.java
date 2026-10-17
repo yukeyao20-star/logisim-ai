@@ -321,6 +321,7 @@ public final class GenerateAndGate {
         || spec.name().equals("elevator_controller")
         || spec.name().equals("stepper_motor")
         || spec.name().startsWith("fsmseq")
+        || spec.name().startsWith("signmag_")
         || spec.name().startsWith("bcd2bin_")
         || spec.name().startsWith("bin2bcd")
         || spec.name().equals("tristate_buffer")

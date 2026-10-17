@@ -138,6 +138,11 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("十六进制\\s*(?:转|到|至)?\\s*七段|十六进制\\s*显示|hex\\s*七段");
   private static final Pattern HEX7_EN =
       Pattern.compile("hex\\s*(?:to|->|-)?\\s*(?:7[- ]segment|seven[- ]segment|display)", Pattern.CASE_INSENSITIVE);
+  // "BCD转十六进制 / bcd to hex": BCD digit rendered as hex → hex 7-segment.
+  private static final Pattern BCD2HEX_ZH =
+      Pattern.compile("bcd\s*转\s*十六进制|8421\s*转\s*十六进制");
+  private static final Pattern BCD2HEX_EN =
+      Pattern.compile("bcd\s*to\s*hex", Pattern.CASE_INSENSITIVE);
   // N-bit squarer (平方器).
   private static final Pattern SQUARE_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(平方器|平方电路|平方运算|平方)");
@@ -203,6 +208,8 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("(?:sr|s-r|rs|r-s)\\s*(?:触发器|锁存器)|(?:sr|s-r|rs|r-s)\\s*latch", Pattern.CASE_INSENSITIVE);
   private static final Pattern BUZZER_ZH =
       Pattern.compile("抢答器|优先抢答|抢答电路|抢答");
+  private static final Pattern BUZZER_EN =
+      Pattern.compile("quiz\\s*buzzer|quiz\\s*button|buzzer\\s*contest|first\\s*press\\s*(?:lock|latch)", Pattern.CASE_INSENSITIVE);
   private static final Pattern DIVIDER_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:分频器|分频电路|频率分频器)");
   private static final Pattern DIVN_ZH =
@@ -257,6 +264,10 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("二进制转bcd|二进制转8421|二进制转二十进制|二进制转十进制|bin转bcd|二进制转bcd码");
   private static final Pattern BINBCD_EN_BARE =
       Pattern.compile("binary[- ]to[- ]bcd|bin[- ]to[- ]bcd|binary[- ]to[- ]8421", Pattern.CASE_INSENSITIVE);
+  // "binary to decimal" reads as binary→BCD (decimal digit display) here; the
+  // 4-bit double-dabble template is the only binary→decimal path we build.
+  private static final Pattern BINDEC_EN_BARE =
+      Pattern.compile("binary[- ]to[- ]decimal", Pattern.CASE_INSENSITIVE);
   private static final Pattern TSB_ZH =
       Pattern.compile("三态缓冲器|三态输出缓冲|三态门|三态缓冲门");
   private static final Pattern TSB_EN =
@@ -283,6 +294,12 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("补码器|求补|二进制补码");
   private static final Pattern TWOS_EN_BARE =
       Pattern.compile("two.?s?\\s*complement|2s\\s*complement", Pattern.CASE_INSENSITIVE);
+  // 补码转原码 (two's complement ↔ sign-magnitude converter): conditional
+  // negate — B = MSB ? (NOT A + 1) : A. Same circuit serves both directions.
+  private static final Pattern SIGNMAG_ZH =
+      Pattern.compile("补码转原码|原码转补码|补码原码转换|原码补码转换");
+  private static final Pattern SIGNMAG_EN =
+      Pattern.compile("two.?s?\\s*complement\\s*to\\s*sign|sign[- ]magnitude|sign\\s*mag", Pattern.CASE_INSENSITIVE);
   private static final Pattern NC_ZH =
       Pattern.compile("9的补码|九的补码|9的补数|九的补数|9补码");
   private static final Pattern NC_EN =
@@ -474,7 +491,8 @@ public final class StructuralCircuitTemplates {
     }
     // Hex 7-segment display (checked before the bare 七段 branch so "十六进制转七段"
     // builds the hex display, not the BCD one).
-    if (HEX7_ZH.matcher(t).find() || HEX7_EN.matcher(t).find()) {
+    if (HEX7_ZH.matcher(t).find() || HEX7_EN.matcher(t).find()
+        || BCD2HEX_ZH.matcher(t).find() || BCD2HEX_EN.matcher(t).find()) {
       return Optional.of(buildHex7Seg());
     }
     // N-bit squarer (平方器).
@@ -941,7 +959,8 @@ public final class StructuralCircuitTemplates {
     }
     // Binary → BCD (4-bit; double-dabble beyond 4 bits not built). This is the
     // reverse of bcd2bin; the guard above (转bcd/to bcd) skips these queries.
-    if (BINBCD_ZH_BARE.matcher(t).find() || BINBCD_EN_BARE.matcher(t).find()) {
+    if (BINBCD_ZH_BARE.matcher(t).find() || BINBCD_EN_BARE.matcher(t).find()
+        || BINDEC_EN_BARE.matcher(t).find()) {
       return Optional.of(buildBinToBcd4());
     }
     // Binary → Gray forward converter. Guard the inverse query text so a
@@ -990,6 +1009,11 @@ public final class StructuralCircuitTemplates {
     }
     if (TWOS_ZH_BARE.matcher(t).find() || TWOS_EN_BARE.matcher(t).find()) {
       return Optional.of(buildTwosComplement(4));
+    }
+    // 补码↔原码 converter (conditional negate) — must precede the bare
+    // 补码/求补 branch so "补码转原码" doesn't build the plain negate.
+    if (SIGNMAG_ZH.matcher(t).find() || SIGNMAG_EN.matcher(t).find()) {
+      return Optional.of(buildSignMagnitude(4));
     }
     // 9's complement of a BCD digit (BCD subtraction helper).
     if (NC_ZH.matcher(t).find() || NC_EN.matcher(t).find()) {
@@ -1064,7 +1088,8 @@ public final class StructuralCircuitTemplates {
     }
     // SR latch must precede the bare 锁存器 register fallback so "SR锁存器"
     // does not route to a register.
-    if (BUZZER_ZH.matcher(t).find() || SR_ZH.matcher(t).find()) {
+    if (BUZZER_ZH.matcher(t).find() || BUZZER_EN.matcher(t).find()
+        || SR_ZH.matcher(t).find()) {
       return Optional.of(buildSRLatch());
     }
     if (REG_ZH_BARE.matcher(t).find() && !t.contains("分配器")) {
@@ -4485,6 +4510,83 @@ public final class StructuralCircuitTemplates {
     nets.add(net("t_q", e("t0", 2), e("q", 0)));
     nets.add(net("t_nq", e("t0", 3), e("nq", 0)));
     return new CircuitSpec("tff", components, ports, nets, hints);
+  }
+
+  /**
+   * N-bit two's complement ↔ sign-magnitude converter (补码↔原码): conditional
+   * negate — B = A[n-1] ? (NOT A + 1) : A. Both directions share the circuit.
+   * Structure: NOT gates a'i; ripple XOR/AND carry chain from buildTwosComplement
+   * gives T = twoscomp(A); B_i = MSB ? T_i : A_i via 2:1 gates:
+   * B_i = (A[n-1] AND T_i) OR (¬A[n-1] AND A_i). B0..B[n-2] take T_i's shifted
+   * ripple output; the MSB output B[n-1] = A[n-1] (sign stays).
+   * Purely combinational. 2-input gates end0=out; NOT end0=out,end1=in.
+   */
+  static CircuitSpec buildSignMagnitude(int bits) {
+    if (bits < 2 || bits > 16) {
+      throw new IllegalArgumentException("Sign-magnitude width must be 2..16, got " + bits);
+    }
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    for (int i = 0; i < bits; i++) {
+      addInput(ports, "a" + i, "A" + i, "sm_n" + i);
+      addOutput(ports, "b" + i, "B" + i, "sm_n" + i);
+    }
+    // a'i = NOT a_i
+    for (int i = 0; i < bits; i++) {
+      String n = "sm_n" + i;
+      components.add(new ComponentSpec(n, "Gates", "NOT Gate", 1, "N" + (i + 1)));
+      hints.add(new LayoutHint(n, i, 0, 0, null));
+      nets.add(net("sm_not" + i, e("a" + i, 0), e(n, 1)));
+    }
+    // T = NOT A + 1 (ripple): t0 = a'0; c0 = a'0; for i≥1: t_i = a'i ⊕ c_{i-1},
+    // c_i = a'i ∧ c_{i-1}
+    String carry = "sm_n0";
+    for (int i = 1; i < bits; i++) {
+      String and = "sm_ca" + i;
+      String xr = "sm_tx" + i;
+      components.add(new ComponentSpec(and, "Gates", "AND Gate", 1, "CA" + i));
+      components.add(new ComponentSpec(xr, "Gates", "XOR Gate", 1, "TX" + i));
+      hints.add(new LayoutHint(and, i, 0, 1, null));
+      hints.add(new LayoutHint(xr, i, 0, 2, null));
+      nets.add(net("sm_ci" + i + "_a", e("sm_n" + i, 0), e(and, 1)));
+      nets.add(net("sm_ci" + i + "_c", e(carry, 0), e(and, 2)));
+      nets.add(net("sm_ti" + i + "_a", e("sm_n" + i, 0), e(xr, 1)));
+      nets.add(net("sm_ti" + i + "_c", e(carry, 0), e(xr, 2)));
+      carry = and;
+    }
+    // Conditional select per bit: B_i = S·T_i + ¬S·A_i for i < n-1, where
+    // T_0 = a'0, T_i = sm_tx_i for i ≥ 1. S = a_{n-1}.
+    int m = bits - 1;
+    for (int i = 0; i < m; i++) {
+      String tSrc = i == 0 ? "a0" : "sm_tx" + i;
+      String selT = "sm_st" + i;
+      String selA = "sm_sa" + i;
+      String or = "sm_o" + i;
+      String ns = "sm_ns";
+      if (i == 0) {
+        components.add(new ComponentSpec(ns, "Gates", "NOT Gate", 1, "NS"));
+        hints.add(new LayoutHint(ns, m, 0, 0, null));
+        nets.add(net("sm_ns_in", e("a" + m, 0), e(ns, 1)));
+      }
+      components.add(new ComponentSpec(selT, "Gates", "AND Gate", 1, "ST" + i));
+      components.add(new ComponentSpec(selA, "Gates", "AND Gate", 1, "SA" + i));
+      components.add(new ComponentSpec(or, "Gates", "OR Gate", 1, "OR" + i));
+      hints.add(new LayoutHint(selT, i + 1, 0, 3, null));
+      hints.add(new LayoutHint(selA, i + 1, 0, 4, null));
+      hints.add(new LayoutHint(or, i + 1, 0, 5, null));
+      nets.add(net("sm_st" + i + "_s", e("a" + m, 0), e(selT, 1)));
+      nets.add(net("sm_st" + i + "_t", e(tSrc, 0), e(selT, 2)));
+      nets.add(net("sm_sa" + i + "_s", e("sm_ns", 0), e(selA, 1)));
+      nets.add(net("sm_sa" + i + "_a", e("a" + i, 0), e(selA, 2)));
+      nets.add(net("sm_o" + i + "_t", e(selT, 0), e(or, 1)));
+      nets.add(net("sm_o" + i + "_a", e(selA, 0), e(or, 2)));
+      nets.add(net("sm_b" + i, e(or, 0), e("b" + i, 0)));
+    }
+    // B[n-1] = A[n-1] (sign bit unchanged) — direct wire.
+    nets.add(net("sm_bsig", e("a" + m, 0), e("b" + m, 0)));
+    return new CircuitSpec("signmag_" + bits + "bit", components, ports, nets, hints);
   }
 
   private static CircuitSpec buildFlipFlop(String factoryName, String specName, int numInputs) {
