@@ -1843,6 +1843,8 @@ public final class BooleanSynthesisRegression {
         "water tower control", "color light loop", "ward call system",
         "mod 128 counter", "100进制计数器", "十进制加法计数器",
         "state machine", "moore machine", "mealy state machine",
+        "divide by 60", "parity generator", "7447 decoder",
+        "seven segment driver", "LED loop",
         "two's complement to sign magnitude", "sign magnitude converter",
         "bcd to hex", "binary to decimal", "quiz buzzer",
         "binary to decimal converter",

@@ -414,6 +414,19 @@ public final class StructuralCircuitTemplates {
   // Bare 状态机/state machine → canonical generic FSM (a two-button walk
   // counter). Also covers moore/mealy phrasing (the synthesizer emits Moore;
   // Mealy requests get the closest gate-level machine).
+  // 除以N without 计数器 suffix (divide-by-60 as a phrase).
+  private static final Pattern DIVN_BARE_ZH =
+      Pattern.compile("除以([0-9一二三四五六七八九十百两]{1,4})|([0-9一二三四五六七八九十百两]{1,4})分频");
+  private static final Pattern PARITYGEN_ZH =
+      Pattern.compile("奇偶产生|奇偶发生|奇偶校验位产生");
+  private static final Pattern SEG7DRV_ZH =
+      Pattern.compile("7447|7段显示(?:器)?驱动|七段显示(?:器)?驱动|数码管驱动");
+  private static final Pattern SEG7DRV_EN =
+      Pattern.compile("7447|seven\\s*segment\\s*driver|7[- ]segment\\s*driver", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LEDLOOP_ZH =
+      Pattern.compile("led循环|led流水|循环led|led彩灯|led灯循环");
+  private static final Pattern LEDLOOP_EN =
+      Pattern.compile("led\\s*(?:loop|chase|cycle)", Pattern.CASE_INSENSITIVE);
   private static final Pattern FSM_ZH =
       Pattern.compile("状态机|状态转移电路|时序逻辑电路");
   private static final Pattern FSM_EN =
@@ -1013,6 +1026,25 @@ public final class StructuralCircuitTemplates {
     }
     if (FSM_ZH.matcher(t).find() || FSM_EN.matcher(t).find()) {
       return Optional.of(buildGenericFsm());
+    }
+    if (DIVN_BARE_ZH.matcher(t).find()) {
+      java.util.regex.Matcher dm = DIVN_BARE_ZH.matcher(t);
+      if (dm.find()) {
+        String g = dm.group(1) != null ? dm.group(1) : dm.group(2);
+        Integer n = chineseToInt(g);
+        if (n != null && n >= 2 && n <= 256) {
+          return Optional.of(buildModCounter(n));
+        }
+      }
+    }
+    if (PARITYGEN_ZH.matcher(t).find()) {
+      return Optional.of(buildParity(3));
+    }
+    if (SEG7DRV_ZH.matcher(t).find() || SEG7DRV_EN.matcher(t).find()) {
+      return Optional.of(buildBcd7Seg());
+    }
+    if (LEDLOOP_ZH.matcher(t).find() || LEDLOOP_EN.matcher(t).find()) {
+      return Optional.of(buildRingCounter());
     }
     if (ROM_ZH.matcher(t).find() || ROM_EN.matcher(t).find()) {
       return Optional.of(buildMemoryChip("rom"));
