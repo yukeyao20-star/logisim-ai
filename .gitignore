@@ -37,3 +37,4 @@ third_party/
 !generated/
 !generated/circ/
 !generated/circ/*.circ
+dist/
