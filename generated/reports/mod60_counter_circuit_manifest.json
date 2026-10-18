@@ -5,7 +5,7 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=18489"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=17999"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] mod60_counter.circ round-trip loaded with main circuit mod60_counter"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] mod60_counter.circ structure matches CircuitSpec"},
@@ -13,7 +13,7 @@
     {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
   ],
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\mod60_counter.circ", "exists": true}
+    {"kind": "circuit", "path": "generated/circ/mod60_counter.circ", "exists": true}
   ],
   "issues": []
 }

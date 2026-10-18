@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "mod 60 counter",
+  "request": "六十进制计数器",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -14,18 +14,18 @@
   "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
   "sourceJson": "",
   "circuitName": "mod60_counter",
-  "circuitPath": "generated\\circ\\mod60_counter.circ",
-  "manifestPath": "generated\\reports\\mod60_counter_circuit_manifest.md",
+  "circuitPath": "generated/circ/mod60_counter.circ",
+  "manifestPath": "generated/reports/mod60_counter_circuit_manifest.md",
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
   "artifactCount": 6,
   "artifacts": [
-    {"path": "generated\\circ\\mod60_counter.circ", "exists": true},
-    {"path": "generated\\reports\\mod60_counter_circuit_manifest.json", "exists": true},
-    {"path": "generated\\reports\\mod60_counter_circuit_manifest.md", "exists": true},
-    {"path": "generated\\reports\\mod60_counter_generation_summary.json", "exists": true},
-    {"path": "generated\\reports\\mod60_counter_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\mod60_counter_multichip.md", "exists": true}
+    {"path": "generated/circ/mod60_counter.circ", "exists": true},
+    {"path": "generated/reports/mod60_counter_circuit_manifest.json", "exists": true},
+    {"path": "generated/reports/mod60_counter_circuit_manifest.md", "exists": true},
+    {"path": "generated/reports/mod60_counter_generation_summary.json", "exists": true},
+    {"path": "generated/reports/mod60_counter_generation_summary.md", "exists": true},
+    {"path": "generated/reports/mod60_counter_multichip.md", "exists": true}
   ]
 }

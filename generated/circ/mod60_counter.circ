@@ -163,8 +163,8 @@
     <comp lib="1" loc="(3030,650)" name="Tunnel">
       <a name="label" val="TQd"/>
     </comp>
-    <comp lib="1" loc="(310,100)" name="Pin">
-      <a name="appearance" val="classic"/>
+    <comp lib="1" loc="(310,100)" name="Clock">
+      <a name="appearance" val="NewPins"/>
       <a name="label" val="CLK"/>
     </comp>
     <comp lib="1" loc="(310,100)" name="Tunnel">

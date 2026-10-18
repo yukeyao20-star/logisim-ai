@@ -1,15 +1,15 @@
 # Generation delivery report for mod60_counter
 
 - Request kind: natural_language
-- Request: mod 60 counter
+- Request: 六十进制计数器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
 - Package primitive: false
 - Routing primitive: primitive_gates
-- Circuit: generated\circ\mod60_counter.circ
-- Summary: generated\reports\mod60_counter_generation_summary.md
-- Manifest: generated\reports\mod60_counter_circuit_manifest.md
+- Circuit: generated/circ/mod60_counter.circ
+- Summary: generated/reports/mod60_counter_generation_summary.md
+- Manifest: generated/reports/mod60_counter_circuit_manifest.md
 - Complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
@@ -35,11 +35,11 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\mod60_counter.circ | true |
-| manifest_json | generated\reports\mod60_counter_circuit_manifest.json | true |
-| manifest_markdown | generated\reports\mod60_counter_circuit_manifest.md | true |
-| delivery_json | generated\reports\mod60_counter_delivery_report.json | true |
-| delivery_markdown | generated\reports\mod60_counter_delivery_report.md | true |
-| summary_json | generated\reports\mod60_counter_generation_summary.json | true |
-| summary_markdown | generated\reports\mod60_counter_generation_summary.md | true |
-| artifact | generated\reports\mod60_counter_multichip.md | true |
+| circuit | generated/circ/mod60_counter.circ | true |
+| manifest_json | generated/reports/mod60_counter_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/mod60_counter_circuit_manifest.md | true |
+| delivery_json | generated/reports/mod60_counter_delivery_report.json | true |
+| delivery_markdown | generated/reports/mod60_counter_delivery_report.md | true |
+| summary_json | generated/reports/mod60_counter_generation_summary.json | true |
+| summary_markdown | generated/reports/mod60_counter_generation_summary.md | true |
+| artifact | generated/reports/mod60_counter_multichip.md | true |

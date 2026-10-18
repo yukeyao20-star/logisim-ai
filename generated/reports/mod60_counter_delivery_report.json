@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "mod 60 counter",
+  "request": "六十进制计数器",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",
@@ -9,11 +9,11 @@
     "routingPrimitive": "primitive_gates"
   },
   "circuitName": "mod60_counter",
-  "circuitPath": "generated\\circ\\mod60_counter.circ",
-  "summaryPath": "generated\\reports\\mod60_counter_generation_summary.md",
-  "summaryJsonPath": "generated\\reports\\mod60_counter_generation_summary.json",
-  "manifestPath": "generated\\reports\\mod60_counter_circuit_manifest.md",
-  "manifestJsonPath": "generated\\reports\\mod60_counter_circuit_manifest.json",
+  "circuitPath": "generated/circ/mod60_counter.circ",
+  "summaryPath": "generated/reports/mod60_counter_generation_summary.md",
+  "summaryJsonPath": "generated/reports/mod60_counter_generation_summary.json",
+  "manifestPath": "generated/reports/mod60_counter_circuit_manifest.md",
+  "manifestJsonPath": "generated/reports/mod60_counter_circuit_manifest.json",
   "complete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
@@ -39,13 +39,13 @@
   "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
   "artifactCount": 8,
   "artifacts": [
-    {"kind": "circuit", "path": "generated\\circ\\mod60_counter.circ", "exists": true},
-    {"kind": "manifest_json", "path": "generated\\reports\\mod60_counter_circuit_manifest.json", "exists": true},
-    {"kind": "manifest_markdown", "path": "generated\\reports\\mod60_counter_circuit_manifest.md", "exists": true},
-    {"kind": "delivery_json", "path": "generated\\reports\\mod60_counter_delivery_report.json", "exists": true},
-    {"kind": "delivery_markdown", "path": "generated\\reports\\mod60_counter_delivery_report.md", "exists": true},
-    {"kind": "summary_json", "path": "generated\\reports\\mod60_counter_generation_summary.json", "exists": true},
-    {"kind": "summary_markdown", "path": "generated\\reports\\mod60_counter_generation_summary.md", "exists": true},
-    {"kind": "artifact", "path": "generated\\reports\\mod60_counter_multichip.md", "exists": true}
+    {"kind": "circuit", "path": "generated/circ/mod60_counter.circ", "exists": true},
+    {"kind": "manifest_json", "path": "generated/reports/mod60_counter_circuit_manifest.json", "exists": true},
+    {"kind": "manifest_markdown", "path": "generated/reports/mod60_counter_circuit_manifest.md", "exists": true},
+    {"kind": "delivery_json", "path": "generated/reports/mod60_counter_delivery_report.json", "exists": true},
+    {"kind": "delivery_markdown", "path": "generated/reports/mod60_counter_delivery_report.md", "exists": true},
+    {"kind": "summary_json", "path": "generated/reports/mod60_counter_generation_summary.json", "exists": true},
+    {"kind": "summary_markdown", "path": "generated/reports/mod60_counter_generation_summary.md", "exists": true},
+    {"kind": "artifact", "path": "generated/reports/mod60_counter_multichip.md", "exists": true}
   ]
 }
