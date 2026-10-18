@@ -36,6 +36,10 @@ java -cp "build/classes/java/main:third_party/logisim-evolution/build/libs/logis
 - `gradle.properties` pins JAVA_HOME and sets `org.gradle.daemon=false` — do not change.
 - `gradle.bat run --args="N"` also works (application.mainClass = `GenerateAndGate`), but is slow.
 
+## External integration
+
+**对外接入统一入口文档：`docs/80_接入指南.md`** — 两条接口（A: 本机 CLI/agent 直接跑 experiment 8；B: JSON IR 契约供无法访问文件系统的 AI 如 GPT 网页版，回本机跑 experiment 9）。按 agent 类型的接入矩阵、验证步骤都在该文件。
+
 ## Dispatcher (`experiment/GenerateAndGate.java`)
 
 | N | Mode |
