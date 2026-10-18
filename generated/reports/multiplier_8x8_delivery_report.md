@@ -13,23 +13,38 @@
 - Complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Layout clean: true
-- Layout issue count: 0
-- Layout score: 100
-- Layout risk level: low
+- Layout clean: false
+- Layout issue count: 6
+- Layout score: 0
+- Layout risk level: high
 - Layout unresolved tool count: 0
-- Layout overlap count: 0
+- Layout overlap count: 2
 - Layout wire risk count: 0
 - Layout pin facing issue count: 0
-- Layout pin/tunnel proximity count: 0
+- Layout pin/tunnel proximity count: 3
 - Layout label risk count: 0
-- Layout reserved area intrusion count: 0
+- Layout reserved area intrusion count: 1
 - Layout inspection failure count: 0
 - Layout other issue count: 0
-- Layout repair suggestions: 
+- Layout repair suggestions: Increase grid spacing, reassign crowded component rows, or rerun layout with wider component clearance. | Move wires, tunnels, or labels away from reserved component visual areas. | Move tunnels farther from external pins or increase the pin-to-tunnel clearance rule.
 - Layout auto repair applied: false
-- Recommended actions: open_circuit, review_manifest, review_truth_table
+- Recommended actions: open_circuit, review_manifest, review_truth_table, fix_layout, regenerate_layout
 - Artifact count: 10
+
+## Layout Issues
+
+- [WARNING/OVERLAP] Small components are too close in circuit multiplier_8x8 at (1400,700) and (1410,690): Pin and Tunnel
+- [WARNING/OVERLAP] Small components are too close in circuit multiplier_8x8 at (1540,600) and (1580,590): Pin and Tunnel
+- [WARNING/RESERVED_AREA_INTRUSION] Wire crosses reserved area of Pin P11 in circuit multiplier_8x8: (1460,590) -> (1460,670)
+- [WARNING/PIN_TUNNEL_PROXIMITY] Tunnel TQ26 is too close to external pin P11 on the same row: (1410,650) vs (1470,650)
+- [WARNING/PIN_TUNNEL_PROXIMITY] Tunnel TQ29 is too close to external pin P11 on the same row: (1530,650) vs (1470,650)
+- [WARNING/PIN_TUNNEL_PROXIMITY] Tunnel TQ26 is too close to external pin B3 on the same row: (450,650) vs (310,650)
+
+## Layout Repair Suggestions
+
+- [increase_spacing/OVERLAP] Increase grid spacing, reassign crowded component rows, or rerun layout with wider component clearance. (minClearanceX=80;minClearanceY=50)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=multiplier_8x8;component=Pin;label=P11;anchorX=1470;anchorY=650;left=1456;top=636;right=1484;bottom=664;connectionPoints=1;x1=1460;y1=590;x2=1460;y2=670)
+- [increase_pin_tunnel_clearance/PIN_TUNNEL_PROXIMITY] Move tunnels farther from external pins or increase the pin-to-tunnel clearance rule. (minClearance=150)
 
 ## Artifacts
 

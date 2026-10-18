@@ -90,6 +90,22 @@ public final class IsolatedRouter {
       Map<String, Location> endpointLocs,
       Map<String, Integer> tunnelOffsets,
       Set<String> pinEndpointKeys) {
+    wire(mutation, nets, endpointLocs, tunnelOffsets, pinEndpointKeys, false);
+  }
+
+  /**
+   * Full routing entry with explicit tunnel policy. {@code forceTunnels}
+   * tunnels every net regardless of reach — used for multi-row layouts
+   * where aligned rows would let short physical stubs cross other rows'
+   * components (square-layout experiment, round 67).
+   */
+  public static void wire(
+      CircuitMutation mutation,
+      List<NetWire> nets,
+      Map<String, Location> endpointLocs,
+      Map<String, Integer> tunnelOffsets,
+      Set<String> pinEndpointKeys,
+      boolean forceTunnels) {
     // Fan-out roots: a driving port (e.g. a D-FF's Q) legitimately appears in
     // several spec nets (Q->gate1, Q->gate2, Q->output pin). The router's
     // contract is "one net per port" -- otherwise each net gives the same port
@@ -131,7 +147,8 @@ public final class IsolatedRouter {
         minPortX = Math.min(minPortX, loc.getX());
         touchesPin |= pinEndpointKeys.contains(k);
       }
-      if (allKnown && (touchesPin || firstTrunkX - minPortX > PHYSICAL_REACH)) {
+      if (allKnown && (forceTunnels || touchesPin
+          || firstTrunkX - minPortX > PHYSICAL_REACH)) {
         tunneled.add(net);
       } else {
         physical.add(net);
@@ -168,7 +185,8 @@ public final class IsolatedRouter {
 
     // Tunnels for the long nets, now that the physical stub rows are known
     // (vertical tunnel risers must not terminate on a foreign stub row).
-    emitTunnels(mutation, tunneled, endpointLocs, tunnelOffsets, stubY);
+    emitTunnels(mutation, tunneled, endpointLocs, tunnelOffsets, stubY,
+        pinEndpointKeys);
 
     // Stub segments (one per port).
     for (String key : portKeys) {
@@ -260,9 +278,17 @@ public final class IsolatedRouter {
       List<NetWire> tunneled,
       Map<String, Location> endpointLocs,
       Map<String, Integer> tunnelOffsets,
-      Map<String, Integer> stubY) {
+      Map<String, Integer> stubY,
+      Set<String> pinEndpointKeys) {
     int seq = 0;
     Set<Location> usedTunnelPoints = new HashSet<>();
+    Set<Location> pinLocs = new HashSet<>();
+    for (String k : pinEndpointKeys) {
+      Location loc = endpointLocs.get(k);
+      if (loc != null) {
+        pinLocs.add(loc);
+      }
+    }
     for (NetWire net : tunneled) {
       String label = "TQ" + java.lang.Integer.toString(seq++, 36);
       for (EndpointRef ref : net.endpoints()) {
@@ -318,6 +344,17 @@ public final class IsolatedRouter {
         mutation.add(Tunnel.FACTORY.createComponent(tunnelLoc, attrs));
       }
     }
+  }
+
+  /** True when the point sits on a pin or within 150px of one on its row. */
+  private static boolean nearPin(Location candidate, Set<Location> pinLocs) {
+    for (Location p : pinLocs) {
+      if (p.getY() == candidate.getY()
+          && Math.abs(p.getX() - candidate.getX()) < 150) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

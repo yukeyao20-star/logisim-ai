@@ -97,7 +97,17 @@ public final class DirectMultiChipCompiler {
           // net; two OR outputs joined) — CircuitWiringChecker's
           // two-driver check detects exactly these. The stagger keeps row
           // x-ranges disjoint and the nets separate.
-          cursor = prevRowMaxX + ROW_GAP_X;
+          // Square-layout experiment (round 67): aligned rows reproduce the
+          // historical cross-row short even with the hybrid router — 656k
+          // foreign-driver audit hits, because short physical nets' stub
+          // horizontals cross other rows' component reserved areas and
+          // WireRepair merges them. A square layout needs per-row tunnel
+          // namespaces (row-prefixed TQ labels) or full-tunnel routing;
+          // staircase (each row past the previous) is the current router's
+          // correct partner.
+          // Square layout with forceTunnels: all nets tunnel, so aligned
+          // rows cannot cross-connect through physical stubs.
+          cursor = 500;
         }
         Library library = LogisimProjectSetup.addLibrary(loader, file, cs.libraryName());
         ComponentFactory factory = findFactory(library, cs.factoryName());
@@ -186,7 +196,8 @@ public final class DirectMultiChipCompiler {
         }
       }
       com.logisim_ai.layout.IsolatedRouter.wire(
-          mutation, routerNets, endpointLocs, tunnelOffsets, pinEndpointKeys);
+          mutation, routerNets, endpointLocs, tunnelOffsets, pinEndpointKeys,
+          rowCount > 1);
       System.out.println("[direct-multichip] executing mutation");
       mutation.execute();
 

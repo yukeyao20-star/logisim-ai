@@ -5,11 +5,11 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=267070"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=260960"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] multiplier_8x8.circ round-trip loaded with main circuit multiplier_8x8"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] multiplier_8x8.circ structure matches CircuitSpec"},
-    {"name": "layout_clean", "passed": true, "detail": "[OK] multiplier_8x8.circ static layout checks passed"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] multiplier_8x8.circ\n - Small components are too close in circuit multiplier_8x8 at (1400,700) and (1410,690): Pin and Tunnel\n - Small components are too close in circuit multiplier_8x8 at (1540,600) and (1580,590): Pin and Tunnel\n - Wire crosses reserved area of Pin P11 in circuit multiplier_8x8: (1460,590) -> (1460,670)\n - Tunnel TQ26 is too close to external pin P11 on the same row: (1410,650) vs (1470,650)\n - Tunnel TQ29 is too close to external pin P11 on the same row: (1530,650) vs (1470,650)\n - Tunnel TQ26 is too close to external pin B3 on the same row: (450,650) vs (310,650)"},
     {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] too many inputs for exhaustive evidence: 17"}
   ],
   "artifacts": [
