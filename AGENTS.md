@@ -8,18 +8,29 @@ All docs and round summaries are in **Chinese** (UTF-8). Code identifiers, comma
 
 ## Build & run
 
-There is **no `gradlew` wrapper**. Use the bundled Gradle + JDK:
+There is **no `gradlew` wrapper**. Use the bundled Gradle + a JDK 21.
+
+**Windows** (repo at `G:\logisim_ai`):
 
 ```powershell
 $env:JAVA_HOME='G:\logisim_ai\.jdks\jdk-21.0.11+10'
 $env:Path="$env:JAVA_HOME\bin;" + $env:Path
+# Compile: .gradle-local\gradle-9.6.0\bin\gradle.bat compileJava --no-daemon
+java -cp "build\classes\java\main;third_party\logisim-evolution\build\libs\logisim-evolution-4.2.0dev-all.jar" com.logisim_ai.experiment.GenerateAndGate <N> [args]
 ```
 
-- Compile: `.gradle-local\gradle-9.6.0\bin\gradle.bat compileJava --no-daemon`
-- Run any experiment directly (fast path used in all handoffs):
+**Ubuntu (dual-boot, same repo mounted at /media/yuke/新加卷/logisim_ai)**:
 
-```powershell
-java -cp "build\classes\java\main;third_party\logisim-evolution\build\libs\logisim-evolution-4.2.0dev-all.jar" com.logisim_ai.experiment.GenerateAndGate <N> [args]
+```bash
+export JAVA_HOME=~/.jdks/jdk-21.0.12.1+1   # Linux Temurin 21 (Windows .jdks are unusable here)
+export PATH="$JAVA_HOME/bin:$PATH"
+# Compile (override the Windows java.home pinned in gradle.properties):
+.gradle-local/gradle-9.6.0/bin/gradle -Dorg.gradle.java.home="$JAVA_HOME" compileJava --no-daemon
+# Classpath separator is ':' on Linux:
+java -cp "build/classes/java/main:third_party/logisim-evolution/build/libs/logisim-evolution-4.2.0dev-all.jar" \
+  -Djava.awt.headless=true com.logisim_ai.experiment.GenerateAndGate <N> [args]
+# Official JAR cached at ~/.cache/logisim/logisim-evolution-4.1.0-all.jar
+# (TestVectorRunner/OfficialSimulationVerifier are os.name-aware since round 59.)
 ```
 
 - `gradle.properties` pins JAVA_HOME and sets `org.gradle.daemon=false` — do not change.
