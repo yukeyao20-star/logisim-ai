@@ -1,0 +1,39 @@
+{
+  "circuitName": "logic_multi_sum_carry_abcin_xor_and_xor_or_ttl",
+  "complete": true,
+  "artifactCount": 23,
+  "checkCount": 5,
+  "checks": [
+    {"name": "artifacts_complete", "passed": true, "detail": "all expected artifacts exist"},
+    {"name": "layout_clean", "passed": true, "detail": "[OK] logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_dip_subckt.circ static layout checks passed"},
+    {"name": "structure_clean", "passed": true, "detail": "[OK] logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_dip_subckt.circ TTL DIP subcircuit structure checks passed"},
+    {"name": "pinmap_consistent", "passed": true, "detail": "[OK] generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip_subckt_pinmap.json TTL DIP pin map matches CircuitSpec"},
+    {"name": "behavior_evidence_clean", "passed": true, "detail": "[OK] logic_multi_sum_carry_abcin_xor_and_xor_or_ttl TTL DIP behavior evidence rows=8"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated/circ/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_dip_subckt.circ", "exists": true},
+    {"kind": "aggregate_bom_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_bom.md", "exists": true},
+    {"kind": "aggregate_bom_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_bom.json", "exists": true},
+    {"kind": "dip_wiring_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip.md", "exists": true},
+    {"kind": "dip_wiring_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip.json", "exists": true},
+    {"kind": "dip_layout_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip_layout.md", "exists": true},
+    {"kind": "dip_layout_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip_layout.json", "exists": true},
+    {"kind": "pinmap_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip_subckt_pinmap.md", "exists": true},
+    {"kind": "pinmap_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip_subckt_pinmap.json", "exists": true},
+    {"kind": "behavior_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip_subckt_behavior.md", "exists": true},
+    {"kind": "behavior_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_ttl_dip_subckt_behavior.json", "exists": true},
+    {"kind": "7486_mapping_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7486_mapping.md", "exists": true},
+    {"kind": "7486_mapping_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7486_mapping.json", "exists": true},
+    {"kind": "7486_bom_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7486_bom.md", "exists": true},
+    {"kind": "7486_bom_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7486_bom.json", "exists": true},
+    {"kind": "7408_mapping_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7408_mapping.md", "exists": true},
+    {"kind": "7408_mapping_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7408_mapping.json", "exists": true},
+    {"kind": "7408_bom_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7408_bom.md", "exists": true},
+    {"kind": "7408_bom_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7408_bom.json", "exists": true},
+    {"kind": "7432_mapping_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7432_mapping.md", "exists": true},
+    {"kind": "7432_mapping_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7432_mapping.json", "exists": true},
+    {"kind": "7432_bom_markdown", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7432_bom.md", "exists": true},
+    {"kind": "7432_bom_json", "path": "generated/reports/logic_multi_sum_carry_abcin_xor_and_xor_or_ttl_7432_bom.json", "exists": true}
+  ],
+  "issues": []
+}

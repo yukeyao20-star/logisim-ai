@@ -95,7 +95,11 @@ public final class FootprintPolicy {
       return reservedArea(componentName, label, anchor, TWO_INPUT_GATE_WIDTH, TWO_INPUT_GATE_HEIGHT)
           .withConnectionPoint(anchor)
           .withConnectionPoint(Location.create(anchor.getX() - 60, anchor.getY() - 20, true))
-          .withConnectionPoint(Location.create(anchor.getX() - 60, anchor.getY() + 20, true));
+          .withConnectionPoint(Location.create(anchor.getX() - 60, anchor.getY() + 20, true))
+          // The DIP-subcircuit compiler's gate input idiom uses a ±10 y
+          // offset; cover both conventions in the exemption whitelist.
+          .withConnectionPoint(Location.create(anchor.getX() - 60, anchor.getY() - 10, true))
+          .withConnectionPoint(Location.create(anchor.getX() - 60, anchor.getY() + 10, true));
     }
     return null;
   }

@@ -33,7 +33,7 @@
 
 ## Layout Repair Suggestions
 
-- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=main;component=AND Gate;label=;anchorX=400;anchorY=120;left=364;top=91;right=436;bottom=149;connectionPoints=3;x1=370;y1=120;x2=430;y2=120)
+- [avoid_reserved_areas/RESERVED_AREA_INTRUSION] Move wires, tunnels, or labels away from reserved component visual areas. (kind=reserved_area_intrusion;circuit=main;component=AND Gate;label=;anchorX=400;anchorY=120;left=364;top=91;right=436;bottom=149;connectionPoints=5;x1=370;y1=120;x2=430;y2=120)
 
 ## Artifacts
 

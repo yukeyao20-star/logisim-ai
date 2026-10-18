@@ -1,0 +1,37 @@
+{
+  "circuitName": "logic_multi_sum_carry_abcin_xor_and_xor_or_ttl",
+  "packageFamilyCount": 3,
+  "totalChipCount": 3,
+  "totalUsedGateCount": 5,
+  "totalGateCapacity": 12,
+  "totalUnusedGateCount": 7,
+  "items": [
+    {
+      "packageType": "7408",
+      "gateKind": "AND",
+      "chipCount": 1,
+      "usedGateCount": 2,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 2,
+      "unusedGateLabels": ["U2C", "U2D"]
+    },
+    {
+      "packageType": "7432",
+      "gateKind": "OR",
+      "chipCount": 1,
+      "usedGateCount": 1,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 3,
+      "unusedGateLabels": ["U3B", "U3C", "U3D"]
+    },
+    {
+      "packageType": "7486",
+      "gateKind": "XOR",
+      "chipCount": 1,
+      "usedGateCount": 2,
+      "totalGateCapacity": 4,
+      "unusedGateCount": 2,
+      "unusedGateLabels": ["U1C", "U1D"]
+    }
+  ]
+}

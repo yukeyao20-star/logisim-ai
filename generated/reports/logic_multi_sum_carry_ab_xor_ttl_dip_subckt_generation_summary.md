@@ -13,7 +13,7 @@
 - Manifest complete: true
 - Manifest check count: 5
 - Manifest issue count: 0
-- Artifact count: 29
+- Artifact count: 31
 
 ## Artifacts
 
@@ -32,6 +32,8 @@
 | generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_manifest.md | true |
 | generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_truth_table.json | true |
 | generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_truth_table.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_dip_subckt_generation_summary.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_dip_subckt_generation_summary.md | true |
 | generated/reports/logic_multi_sum_carry_ab_xor_ttl_generation_summary.json | true |
 | generated/reports/logic_multi_sum_carry_ab_xor_ttl_generation_summary.md | true |
 | generated/reports/logic_multi_sum_carry_ab_xor_ttl_official_simulation.json | true |

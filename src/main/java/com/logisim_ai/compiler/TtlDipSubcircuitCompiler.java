@@ -294,7 +294,10 @@ public final class TtlDipSubcircuitCompiler {
     var attrs = gateFactory.createAttributeSet();
     attrs.setValue(StdAttr.LABEL, gateKind + gateIndex);
     int x = 260;
-    int y = 110 + gateIndex * 65;
+    // 65px pitch put gate1's reserved area (y ±24) within the vertical
+    // riser of gate0's output routing — WireRepair-visible intrusions.
+    // 130px keeps a clear corridor between stacked gates.
+    int y = 110 + gateIndex * 130;
     return gateFactory.createComponent(Location.create(x, y, true), attrs);
   }
 

@@ -1,0 +1,25 @@
+{
+  "circuitName": "logic_multi_sum_carry_abcin_xor_and_xor_or_ttl",
+  "packageType": "7486",
+  "gateKind": "XOR",
+  "gateCount": 2,
+  "chipCount": 1,
+  "assignments": [
+    {
+      "componentId": "xor1",
+      "label": "U1A",
+      "chipId": "U1",
+      "gateName": "A",
+      "chipNumber": 1,
+      "gateIndex": 0
+    },
+    {
+      "componentId": "xor2",
+      "label": "U1B",
+      "chipId": "U1",
+      "gateName": "B",
+      "chipNumber": 1,
+      "gateIndex": 1
+    }
+  ]
+}

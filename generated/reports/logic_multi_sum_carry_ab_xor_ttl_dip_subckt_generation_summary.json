@@ -13,7 +13,7 @@
   "manifestComplete": true,
   "manifestCheckCount": 5,
   "manifestIssueCount": 0,
-  "artifactCount": 29,
+  "artifactCount": 31,
   "artifacts": [
     {"path": "generated/circ/logic_multi_sum_carry_ab_xor_ttl_dip_subckt.circ", "exists": true},
     {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_7408_bom.json", "exists": true},
@@ -28,6 +28,8 @@
     {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_manifest.md", "exists": true},
     {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_truth_table.json", "exists": true},
     {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_truth_table.md", "exists": true},
+    {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_dip_subckt_generation_summary.json", "exists": true},
+    {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_dip_subckt_generation_summary.md", "exists": true},
     {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_generation_summary.json", "exists": true},
     {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_generation_summary.md", "exists": true},
     {"path": "generated/reports/logic_multi_sum_carry_ab_xor_ttl_official_simulation.json", "exists": true},
