@@ -13,7 +13,7 @@
 | alu_2bit | 移位/ALU | spec ✓ | ✅ 0 警告 | [查看](../circ/alu_2bit.svg) |
 | alu_4bit | 移位/ALU | spec ✓ | ✅ 0 警告 | [查看](../circ/alu_4bit.svg) |
 | alu_8bit | 移位/ALU | spec ✓ | ✅ 0 警告 | [查看](../circ/alu_8bit.svg) |
-| and_gate | 其他 | — | ✅ 0 警告 | — |
+| and_gate | 基础门/触发器 | — | ✅ 0 警告 | — |
 | automatic_door | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/automatic_door.svg) |
 | barrel_shifter_2bit | 移位/ALU | spec ✓ | ✅ 0 警告 | [查看](../circ/barrel_shifter_2bit.svg) |
 | barrel_shifter_4bit | 移位/ALU | spec ✓ | ✅ 0 警告 | [查看](../circ/barrel_shifter_4bit.svg) |
@@ -33,20 +33,20 @@
 | countdown_timer | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/countdown_timer.svg) |
 | counter_4bit | 计数器 | spec ✓ | ⚠️ 1 警告 | [查看](../circ/counter_4bit.svg) |
 | counter_8bit | 计数器 | spec ✓ | ✅ 0 警告 | [查看](../circ/counter_8bit.svg) |
-| custom_gate_footprint_intrusion_regression | 其他 | — | ⚠️ 1 警告 | — |
-| custom_pin_facing_regression | 其他 | — | ✅ 0 警告 | — |
-| custom_pin_tunnel_regression | 其他 | — | ✅ 0 警告 | — |
-| custom_reserved_area_intrusion_regression | 其他 | — | ⚠️ 1 警告 | — |
-| custom_summary_regression | 其他 | — | ✅ 0 警告 | — |
-| custom_tunnel_label_regression | 其他 | — | ✅ 0 警告 | — |
-| custom_wire_risk_regression | 其他 | — | ⚠️ 2 警告 | — |
+| custom_gate_footprint_intrusion_regression | 测试夹具 | — | ⚠️ 1 警告 | — |
+| custom_pin_facing_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| custom_pin_tunnel_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| custom_reserved_area_intrusion_regression | 测试夹具 | — | ⚠️ 1 警告 | — |
+| custom_summary_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| custom_tunnel_label_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| custom_wire_risk_regression | 测试夹具 | — | ⚠️ 2 警告 | — |
 | debouncer | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/debouncer.svg) |
 | decoder_2bit | 选择/译码 | spec ✓ | ✅ 0 警告 | [查看](../circ/decoder_2bit.svg) |
 | decoder_3bit | 选择/译码 | spec ✓ | ✅ 0 警告 | [查看](../circ/decoder_3bit.svg) |
 | decoder_4to16 | 选择/译码 | — | ⚠️ 1 警告 | — |
 | demux_4to1 | 选择/译码 | spec ✓ | ✅ 0 警告 | [查看](../circ/demux_4to1.svg) |
 | dff | 寄存/触发 | spec ✓ | ✅ 0 警告 | [查看](../circ/dff.svg) |
-| digital_clock | 其他 | spec ✓ | ⚠️ 6 警告 | [查看](../circ/digital_clock.svg) |
+| digital_clock | 时钟/计时 | spec ✓ | ⚠️ 6 警告 | [查看](../circ/digital_clock.svg) |
 | divider_1stage | 运算 | spec ✓ | ✅ 0 警告 | [查看](../circ/divider_1stage.svg) |
 | divider_2stage | 运算 | spec ✓ | ✅ 0 警告 | [查看](../circ/divider_2stage.svg) |
 | divider_3stage | 运算 | spec ✓ | ✅ 0 警告 | [查看](../circ/divider_3stage.svg) |
@@ -79,19 +79,19 @@
 | graycnt_4bit_test | 计数器 | spec ✓ | ✅ 0 警告 | [查看](../circ/graycnt_4bit_test.svg) |
 | half_adder | 运算 | spec ✓ | ✅ 0 警告 | [查看](../circ/half_adder.svg) |
 | hex7seg | 显示 | spec ✓ | ✅ 0 警告 | [查看](../circ/hex7seg.svg) |
-| jk_flipflop | 其他 | — | ✅ 0 警告 | — |
+| jk_flipflop | 基础门/触发器 | — | ✅ 0 警告 | — |
 | jkff | 寄存/触发 | spec ✓ | ✅ 0 警告 | [查看](../circ/jkff.svg) |
 | johnson_4stage | 计数器 | spec ✓ | ✅ 0 警告 | [查看](../circ/johnson_4stage.svg) |
-| layout_gate_footprint_intrusion_regression | 其他 | — | ⚠️ 1 警告 | — |
-| layout_policy_inspector_boundary_regression | 其他 | — | ⚠️ 1 警告 | — |
-| layout_repair_boundary_wire_occupied_regression | 其他 | — | ⚠️ 1 警告 | — |
-| layout_repair_boundary_wire_regression | 其他 | — | ✅ 0 警告 | — |
-| layout_repair_pin_facing_regression | 其他 | — | ✅ 0 警告 | — |
-| layout_repair_pin_tunnel_regression | 其他 | — | ✅ 0 警告 | — |
-| layout_repair_toolbar_regression | 其他 | — | ✅ 0 警告 | — |
-| layout_repair_tunnel_label_regression | 其他 | — | ✅ 0 警告 | — |
-| layout_reserved_area_intrusion_regression | 其他 | — | ⚠️ 1 警告 | — |
-| layout_reserved_area_router_fixture | 其他 | — | ✅ 0 警告 | — |
+| layout_gate_footprint_intrusion_regression | 测试夹具 | — | ⚠️ 1 警告 | — |
+| layout_policy_inspector_boundary_regression | 测试夹具 | — | ⚠️ 1 警告 | — |
+| layout_repair_boundary_wire_occupied_regression | 测试夹具 | — | ⚠️ 1 警告 | — |
+| layout_repair_boundary_wire_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| layout_repair_pin_facing_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| layout_repair_pin_tunnel_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| layout_repair_toolbar_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| layout_repair_tunnel_label_regression | 测试夹具 | — | ✅ 0 警告 | — |
+| layout_reserved_area_intrusion_regression | 测试夹具 | — | ⚠️ 1 警告 | — |
+| layout_reserved_area_router_fixture | 测试夹具 | — | ✅ 0 警告 | — |
 | lfsr_4bit | 计数器 | spec ✓ | ✅ 0 警告 | [查看](../circ/lfsr_4bit.svg) |
 | logic_f_a | 综合逻辑 | spec ✓ | ✅ 0 警告 | [查看](../circ/logic_f_a.svg) |
 | logic_f_a0b0a1b1a2b2a3b3_not_and_xor | 综合逻辑 | spec ✓ | ✅ 0 警告 | [查看](../circ/logic_f_a0b0a1b1a2b2a3b3_not_and_xor.svg) |

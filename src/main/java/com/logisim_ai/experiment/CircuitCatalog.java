@@ -71,6 +71,17 @@ public final class CircuitCatalog {
         || stem.contains("sar") || stem.contains("alu")) {
       return "移位/ALU";
     }
+    if (stem.contains("regression") || stem.contains("fixture")
+        || stem.startsWith("custom_") || stem.startsWith("layout_")) {
+      return "测试夹具";
+    }
+    if (stem.contains("clock") || stem.contains("watch")) {
+      return "时钟/计时";
+    }
+    if (stem.equals("and_gate") || stem.equals("or_gate") || stem.equals("jk_flipflop")
+        || stem.equals("jkff") || stem.equals("tff") || stem.equals("dff")) {
+      return "基础门/触发器";
+    }
     return "其他";
   }
 
