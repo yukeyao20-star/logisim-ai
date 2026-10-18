@@ -32,16 +32,83 @@ public final class CircSvg {
 
   public static void main(String[] args) throws Exception {
     if (args.length < 1) {
-      System.err.println("usage: CircSvg <in.circ> [out.svg]");
+      System.err.println("usage: CircSvg <in.circ> [out.svg|out.png]");
       System.exit(2);
     }
     Path in = Path.of(args[0]);
+    boolean png = args.length > 1 && args[1].endsWith(".png");
     Path out = Path.of(args.length > 1 ? args[1]
         : in.toString().replaceAll("\\.circ$", "") + ".svg");
     String xml = Files.readString(in);
+    if (png) {
+      byte[] bytes = renderPng(xml);
+      Files.write(out, bytes);
+      System.out.println("[OK] " + out + " (" + bytes.length + " bytes)");
+    } else {
+      String svg = render(xml);
+      Files.writeString(out, svg);
+      System.out.println("[OK] " + out + " (" + svg.length() + " bytes)");
+    }
+  }
+
+  /** Rasterize the same shapes to PNG via Java2D (headless-safe). */
+  private static byte[] renderPng(String xml) throws Exception {
     String svg = render(xml);
-    Files.writeString(out, svg);
-    System.out.println("[OK] " + out + " (" + svg.length() + " bytes)");
+    // Rasterize by drawing the SVG's primitive set with Java2D.
+    int w = Integer.parseInt(regex1(svg, "width=\"(\\d+)\""));
+    int h = Integer.parseInt(regex1(svg, "height=\"(\\d+)\""));
+    var img = new java.awt.image.BufferedImage(w, h,
+        java.awt.image.BufferedImage.TYPE_INT_RGB);
+    var g = img.createGraphics();
+    g.setColor(java.awt.Color.WHITE);
+    g.fillRect(0, 0, w, h);
+    // viewBox offset
+    var vb = java.util.regex.Pattern.compile(
+        "viewBox=\"(-?\\d+) (-?\\d+) (\\d+) (\\d+)\"").matcher(svg);
+    vb.find();
+    int ox = Integer.parseInt(vb.group(1));
+    int oy = Integer.parseInt(vb.group(2));
+    g.translate(-ox, -oy);
+    // wires first
+    Matcher lw = Pattern.compile(
+        "<line x1=\"(-?\\d+)\" y1=\"(-?\\d+)\" x2=\"(-?\\d+)\" y2=\"(-?\\d+)\"").matcher(svg);
+    g.setColor(new java.awt.Color(0x1a7f37));
+    while (lw.find()) {
+      g.drawLine(Integer.parseInt(lw.group(1)), Integer.parseInt(lw.group(2)),
+          Integer.parseInt(lw.group(3)), Integer.parseInt(lw.group(4)));
+    }
+    // rects + labels
+    Matcher lr = Pattern.compile(
+        "<rect x=\"(-?\\d+)\" y=\"(-?\\d+)\" width=\"(\\d+)\" height=\"(\\d+)\" fill=\"(#[0-9a-f]+)([0-9a-f]{2})?\" stroke=\"(#[0-9a-f]+)\"").matcher(svg);
+    while (lr.find()) {
+      int rx = Integer.parseInt(lr.group(1));
+      int ry = Integer.parseInt(lr.group(2));
+      int rw = Integer.parseInt(lr.group(3));
+      int rh = Integer.parseInt(lr.group(4));
+      g.setColor(java.awt.Color.decode(lr.group(7)));
+      g.fillRect(rx, ry, rw, rh);
+      g.setColor(java.awt.Color.WHITE);
+      g.fillRect(rx + 1, ry + 1, rw - 2, rh - 2);
+      g.setColor(java.awt.Color.decode(lr.group(7)));
+      g.drawRect(rx, ry, rw, rh);
+    }
+    g.setColor(java.awt.Color.BLACK);
+    g.setFont(new java.awt.Font("monospace", java.awt.Font.PLAIN, 11));
+    Matcher lt = Pattern.compile(
+        "<text x=\"(-?\\d+)\" y=\"(-?\\d+)\"[^>]*>([^<]+)</text>").matcher(svg);
+    while (lt.find()) {
+      String t = lt.group(3).replace("&amp;", "&").replace("&lt;", "<");
+      g.drawString(t, Integer.parseInt(lt.group(1)) - 40, Integer.parseInt(lt.group(2)));
+    }
+    g.dispose();
+    var bos = new java.io.ByteArrayOutputStream();
+    javax.imageio.ImageIO.write(img, "png", bos);
+    return bos.toByteArray();
+  }
+
+  private static String regex1(String s, String pattern) {
+    Matcher m = Pattern.compile(pattern).matcher(s);
+    return m.find() ? m.group(1) : "0";
   }
 
   static String render(String xml) {
