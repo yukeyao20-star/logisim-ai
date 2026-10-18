@@ -1,6 +1,6 @@
 # Official Logisim simulation for jkff
 
-- Circuit: generated\circ\jkff.circ
+- Circuit: generated/circ/jkff.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

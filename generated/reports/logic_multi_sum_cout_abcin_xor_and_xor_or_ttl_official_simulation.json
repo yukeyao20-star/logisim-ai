@@ -1,6 +1,6 @@
 {
   "circuitName": "logic_multi_sum_cout_abcin_xor_and_xor_or_ttl",
-  "circuitPath": "generated\\circ\\logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ",
+  "circuitPath": "generated/circ/logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=8",
   "rowCount": 8,

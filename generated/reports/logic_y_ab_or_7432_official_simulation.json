@@ -1,6 +1,6 @@
 {
   "circuitName": "logic_y_ab_or_7432",
-  "circuitPath": "generated\\circ\\logic_y_ab_or_7432.circ",
+  "circuitPath": "generated/circ/logic_y_ab_or_7432.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=4",
   "rowCount": 4,

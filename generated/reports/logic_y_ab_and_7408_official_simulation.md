@@ -1,6 +1,6 @@
 # Official Logisim simulation for logic_y_ab_and_7408
 
-- Circuit: generated\circ\logic_y_ab_and_7408.circ
+- Circuit: generated/circ/logic_y_ab_and_7408.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=4
 

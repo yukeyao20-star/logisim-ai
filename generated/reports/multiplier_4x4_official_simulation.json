@@ -1,6 +1,6 @@
 {
   "circuitName": "multiplier_4x4",
-  "circuitPath": "generated\\circ\\multiplier_4x4.circ",
+  "circuitPath": "generated/circ/multiplier_4x4.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=512",
   "rowCount": 512,

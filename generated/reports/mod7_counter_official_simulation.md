@@ -1,6 +1,6 @@
 # Official Logisim simulation for mod7_counter
 
-- Circuit: generated\circ\mod7_counter.circ
+- Circuit: generated/circ/mod7_counter.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

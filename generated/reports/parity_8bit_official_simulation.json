@@ -1,6 +1,6 @@
 {
   "circuitName": "parity_8bit",
-  "circuitPath": "generated\\circ\\parity_8bit.circ",
+  "circuitPath": "generated/circ/parity_8bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=256",
   "rowCount": 256,

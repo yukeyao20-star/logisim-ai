@@ -1,0 +1,9 @@
+{
+  "circuitName": "vending_machine",
+  "circuitPath": "generated/circ/vending_machine.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

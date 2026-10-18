@@ -1,6 +1,6 @@
 {
   "circuitName": "mod5_counter",
-  "circuitPath": "generated\\circ\\mod5_counter.circ",
+  "circuitPath": "generated/circ/mod5_counter.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

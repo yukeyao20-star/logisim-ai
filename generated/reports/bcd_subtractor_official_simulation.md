@@ -1,6 +1,6 @@
 # Official Logisim simulation for bcd_subtractor
 
-- Circuit: generated\circ\bcd_subtractor.circ
+- Circuit: generated/circ/bcd_subtractor.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=1024
 

@@ -1,0 +1,9 @@
+{
+  "circuitName": "digital_clock",
+  "circuitPath": "generated/circ/digital_clock.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

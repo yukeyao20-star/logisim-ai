@@ -1,6 +1,6 @@
 # Official Logisim simulation for subtractor_1bit
 
-- Circuit: generated\circ\subtractor_1bit.circ
+- Circuit: generated/circ/subtractor_1bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=8
 

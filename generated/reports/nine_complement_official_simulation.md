@@ -1,6 +1,6 @@
 # Official Logisim simulation for nine_complement
 
-- Circuit: generated\circ\nine_complement.circ
+- Circuit: generated/circ/nine_complement.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=16
 

@@ -1,6 +1,6 @@
 # Official Logisim simulation for dff
 
-- Circuit: generated\circ\dff.circ
+- Circuit: generated/circ/dff.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

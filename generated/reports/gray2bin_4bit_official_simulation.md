@@ -1,6 +1,6 @@
 # Official Logisim simulation for gray2bin_4bit
 
-- Circuit: generated\circ\gray2bin_4bit.circ
+- Circuit: generated/circ/gray2bin_4bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=16
 

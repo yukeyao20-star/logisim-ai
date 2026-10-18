@@ -1,6 +1,6 @@
 # Official Logisim simulation for mux_4to1
 
-- Circuit: generated\circ\from_json_mux_4to1.circ
+- Circuit: generated/circ/from_json_mux_4to1.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=64
 

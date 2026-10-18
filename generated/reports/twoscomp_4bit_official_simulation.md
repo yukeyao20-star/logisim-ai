@@ -1,6 +1,6 @@
 # Official Logisim simulation for twoscomp_4bit
 
-- Circuit: generated\circ\twoscomp_4bit.circ
+- Circuit: generated/circ/twoscomp_4bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=16
 

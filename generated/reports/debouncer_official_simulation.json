@@ -1,0 +1,9 @@
+{
+  "circuitName": "debouncer",
+  "circuitPath": "generated/circ/debouncer.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

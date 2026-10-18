@@ -1,6 +1,6 @@
 {
   "circuitName": "tff",
-  "circuitPath": "generated\\circ\\tff.circ",
+  "circuitPath": "generated/circ/tff.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

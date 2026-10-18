@@ -1,0 +1,9 @@
+{
+  "circuitName": "mod128_counter",
+  "circuitPath": "generated/circ/mod128_counter.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

@@ -1,6 +1,6 @@
 # Official Logisim simulation for adder_8bit
 
-- Circuit: generated\circ\adder_8bit.circ
+- Circuit: generated/circ/adder_8bit.circ
 - Status: PASS
 - Detail: [SKIP] too many inputs for exhaustive official simulation: 17
 

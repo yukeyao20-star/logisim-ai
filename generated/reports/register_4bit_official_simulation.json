@@ -1,6 +1,6 @@
 {
   "circuitName": "register_4bit",
-  "circuitPath": "generated\\circ\\register_4bit.circ",
+  "circuitPath": "generated/circ/register_4bit.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

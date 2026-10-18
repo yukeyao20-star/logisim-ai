@@ -1,6 +1,6 @@
 # Official Logisim simulation for logic_f_abc
 
-- Circuit: generated\circ\logic_f_abc.circ
+- Circuit: generated/circ/logic_f_abc.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=8
 

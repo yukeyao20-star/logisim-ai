@@ -1,6 +1,6 @@
 {
   "circuitName": "logic_multi_sum_carry_ab_multi_ttl",
-  "circuitPath": "generated\\circ\\logic_multi_sum_carry_ab_multi_ttl.circ",
+  "circuitPath": "generated/circ/logic_multi_sum_carry_ab_multi_ttl.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=4",
   "rowCount": 4,

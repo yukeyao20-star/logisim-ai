@@ -1,6 +1,6 @@
 {
   "circuitName": "bcd2bin_2digit",
-  "circuitPath": "generated\\circ\\bcd2bin_2digit.circ",
+  "circuitPath": "generated/circ/bcd2bin_2digit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=256",
   "rowCount": 256,

@@ -1,6 +1,6 @@
 {
   "circuitName": "bcd_adder",
-  "circuitPath": "generated\\circ\\bcd_adder.circ",
+  "circuitPath": "generated/circ/bcd_adder.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=1024",
   "rowCount": 1024,

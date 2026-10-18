@@ -1,6 +1,6 @@
 {
   "circuitName": "johnson_4stage",
-  "circuitPath": "generated\\circ\\johnson_4stage.circ",
+  "circuitPath": "generated/circ/johnson_4stage.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

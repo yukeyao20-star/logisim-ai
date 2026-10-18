@@ -1,6 +1,6 @@
 # Official Logisim simulation for nand_xor3
 
-- Circuit: generated\circ\nand_xor3.circ
+- Circuit: generated/circ/nand_xor3.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=8
 

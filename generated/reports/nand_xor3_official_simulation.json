@@ -1,6 +1,6 @@
 {
   "circuitName": "nand_xor3",
-  "circuitPath": "generated\\circ\\nand_xor3.circ",
+  "circuitPath": "generated/circ/nand_xor3.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=8",
   "rowCount": 8,

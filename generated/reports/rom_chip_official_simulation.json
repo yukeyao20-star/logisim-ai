@@ -1,0 +1,9 @@
+{
+  "circuitName": "rom_chip",
+  "circuitPath": "generated/circ/rom_chip.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

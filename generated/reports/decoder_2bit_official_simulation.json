@@ -1,6 +1,6 @@
 {
   "circuitName": "decoder_2bit",
-  "circuitPath": "generated\\circ\\decoder_2bit.circ",
+  "circuitPath": "generated/circ/decoder_2bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=4",
   "rowCount": 4,

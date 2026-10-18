@@ -1,6 +1,6 @@
 # Official Logisim simulation for logic_y_ab_xor_nand_only
 
-- Circuit: generated\circ\logic_y_ab_xor_nand_only.circ
+- Circuit: generated/circ/logic_y_ab_xor_nand_only.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=4
 

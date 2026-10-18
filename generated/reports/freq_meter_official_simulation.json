@@ -1,0 +1,9 @@
+{
+  "circuitName": "freq_meter",
+  "circuitPath": "generated/circ/freq_meter.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

@@ -1,6 +1,6 @@
 # Official Logisim simulation for alu_8bit
 
-- Circuit: generated\circ\alu_8bit.circ
+- Circuit: generated/circ/alu_8bit.circ
 - Status: PASS
 - Detail: [SKIP] too many inputs for exhaustive official simulation: 19
 

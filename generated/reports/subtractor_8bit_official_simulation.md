@@ -1,6 +1,6 @@
 # Official Logisim simulation for subtractor_8bit
 
-- Circuit: generated\circ\subtractor_8bit.circ
+- Circuit: generated/circ/subtractor_8bit.circ
 - Status: PASS
 - Detail: [SKIP] too many inputs for exhaustive official simulation: 17
 

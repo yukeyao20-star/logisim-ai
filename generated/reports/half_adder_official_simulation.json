@@ -1,6 +1,6 @@
 {
   "circuitName": "half_adder",
-  "circuitPath": "generated\\circ\\half_adder.circ",
+  "circuitPath": "generated/circ/half_adder.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=4",
   "rowCount": 4,

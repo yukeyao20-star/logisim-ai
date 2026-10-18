@@ -1,6 +1,6 @@
 {
   "circuitName": "graycnt_3bit",
-  "circuitPath": "generated\\circ\\graycnt_3bit.circ",
+  "circuitPath": "generated/circ/graycnt_3bit.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

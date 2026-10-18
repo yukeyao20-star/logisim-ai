@@ -1,6 +1,6 @@
 # Official Logisim simulation for shift_right_4bit
 
-- Circuit: generated\circ\shift_right_4bit.circ
+- Circuit: generated/circ/shift_right_4bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=128
 

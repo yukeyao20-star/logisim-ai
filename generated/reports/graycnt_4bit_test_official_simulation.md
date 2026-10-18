@@ -1,6 +1,6 @@
 # Official Logisim simulation for graycnt_4bit_test
 
-- Circuit: generated\circ\graycnt_4bit_test.circ
+- Circuit: generated/circ/graycnt_4bit_test.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

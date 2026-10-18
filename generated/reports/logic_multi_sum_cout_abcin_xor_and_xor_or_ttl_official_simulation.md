@@ -1,6 +1,6 @@
 # Official Logisim simulation for logic_multi_sum_cout_abcin_xor_and_xor_or_ttl
 
-- Circuit: generated\circ\logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ
+- Circuit: generated/circ/logic_multi_sum_cout_abcin_xor_and_xor_or_ttl.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=8
 

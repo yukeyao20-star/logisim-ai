@@ -1,6 +1,6 @@
 # Official Logisim simulation for barrel_shifter_8bit
 
-- Circuit: generated\circ\barrel_shifter_8bit.circ
+- Circuit: generated/circ/barrel_shifter_8bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=4096
 

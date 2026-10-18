@@ -1,0 +1,9 @@
+{
+  "circuitName": "countdown_timer",
+  "circuitPath": "generated/circ/countdown_timer.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

@@ -1,6 +1,6 @@
 # Official Logisim simulation for squarer_4bit
 
-- Circuit: generated\circ\squarer_4bit.circ
+- Circuit: generated/circ/squarer_4bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=32
 

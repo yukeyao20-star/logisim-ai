@@ -1,6 +1,6 @@
 # Official Logisim simulation for ring_counter
 
-- Circuit: generated\circ\ring_counter.circ
+- Circuit: generated/circ/ring_counter.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

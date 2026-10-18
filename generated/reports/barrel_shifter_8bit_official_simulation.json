@@ -1,6 +1,6 @@
 {
   "circuitName": "barrel_shifter_8bit",
-  "circuitPath": "generated\\circ\\barrel_shifter_8bit.circ",
+  "circuitPath": "generated/circ/barrel_shifter_8bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=4096",
   "rowCount": 4096,

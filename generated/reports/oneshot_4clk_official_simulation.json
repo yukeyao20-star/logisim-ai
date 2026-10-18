@@ -1,0 +1,9 @@
+{
+  "circuitName": "oneshot_4clk",
+  "circuitPath": "generated/circ/oneshot_4clk.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

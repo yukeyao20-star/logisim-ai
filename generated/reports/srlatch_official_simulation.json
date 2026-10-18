@@ -1,6 +1,6 @@
 {
   "circuitName": "srlatch",
-  "circuitPath": "generated\\circ\\srlatch.circ",
+  "circuitPath": "generated/circ/srlatch.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

@@ -1,6 +1,6 @@
 # Official Logisim simulation for divider_4stage
 
-- Circuit: generated\circ\divider_4stage.circ
+- Circuit: generated/circ/divider_4stage.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

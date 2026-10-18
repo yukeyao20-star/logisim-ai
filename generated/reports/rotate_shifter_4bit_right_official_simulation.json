@@ -1,6 +1,6 @@
 {
   "circuitName": "rotate_shifter_4bit_right",
-  "circuitPath": "generated\\circ\\rotate_shifter_4bit_right.circ",
+  "circuitPath": "generated/circ/rotate_shifter_4bit_right.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=64",
   "rowCount": 64,

@@ -1,6 +1,6 @@
 # Official Logisim simulation for counter_8bit
 
-- Circuit: generated\circ\counter_8bit.circ
+- Circuit: generated/circ/counter_8bit.circ
 - Status: PASS
 - Detail: [SKIP] too many inputs for exhaustive official simulation: 13
 

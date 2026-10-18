@@ -1,6 +1,6 @@
 {
   "circuitName": "subtractor_8bit",
-  "circuitPath": "generated\\circ\\subtractor_8bit.circ",
+  "circuitPath": "generated/circ/subtractor_8bit.circ",
   "status": "PASS",
   "detail": "[SKIP] too many inputs for exhaustive official simulation: 17",
   "rowCount": 0,

@@ -1,6 +1,6 @@
 # Official Logisim simulation for srlatch
 
-- Circuit: generated\circ\srlatch.circ
+- Circuit: generated/circ/srlatch.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

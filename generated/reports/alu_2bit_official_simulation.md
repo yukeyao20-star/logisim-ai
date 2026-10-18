@@ -1,6 +1,6 @@
 # Official Logisim simulation for alu_2bit
 
-- Circuit: generated\circ\alu_2bit.circ
+- Circuit: generated/circ/alu_2bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=128
 

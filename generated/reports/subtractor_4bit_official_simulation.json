@@ -1,6 +1,6 @@
 {
   "circuitName": "subtractor_4bit",
-  "circuitPath": "generated\\circ\\subtractor_4bit.circ",
+  "circuitPath": "generated/circ/subtractor_4bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=512",
   "rowCount": 512,

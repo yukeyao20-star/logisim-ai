@@ -1,6 +1,6 @@
 # Official Logisim simulation for demux_4to1
 
-- Circuit: generated\circ\demux_4to1.circ
+- Circuit: generated/circ/demux_4to1.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=8
 

@@ -1,6 +1,6 @@
 {
   "circuitName": "adder_4bit",
-  "circuitPath": "generated\\circ\\adder_4bit.circ",
+  "circuitPath": "generated/circ/adder_4bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=512",
   "rowCount": 512,

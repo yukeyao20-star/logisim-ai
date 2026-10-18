@@ -1,6 +1,6 @@
 # Official Logisim simulation for logic_multi_sum_carry_ab_xor_ttl
 
-- Circuit: generated\circ\logic_multi_sum_carry_ab_xor_ttl.circ
+- Circuit: generated/circ/logic_multi_sum_carry_ab_xor_ttl.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=4
 

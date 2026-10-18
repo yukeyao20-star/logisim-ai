@@ -1,6 +1,6 @@
 # Official Logisim simulation for comparator_4bit
 
-- Circuit: generated\circ\comparator_4bit.circ
+- Circuit: generated/circ/comparator_4bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table completed for native chip: rows=256
 

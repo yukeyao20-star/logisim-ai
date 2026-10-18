@@ -1,6 +1,6 @@
 # Official Logisim simulation for half_adder
 
-- Circuit: generated\circ\from_json_half_adder.circ
+- Circuit: generated/circ/from_json_half_adder.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=4
 

@@ -1,6 +1,6 @@
 {
   "circuitName": "nine_complement",
-  "circuitPath": "generated\\circ\\nine_complement.circ",
+  "circuitPath": "generated/circ/nine_complement.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=16",
   "rowCount": 16,

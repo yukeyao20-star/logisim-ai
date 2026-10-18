@@ -1,6 +1,6 @@
 {
   "circuitName": "alu_1bit",
-  "circuitPath": "generated\\circ\\alu_1bit.circ",
+  "circuitPath": "generated/circ/alu_1bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=32",
   "rowCount": 32,

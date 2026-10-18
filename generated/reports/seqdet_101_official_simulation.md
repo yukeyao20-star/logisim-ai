@@ -1,6 +1,6 @@
 # Official Logisim simulation for seqdet_101
 
-- Circuit: generated\circ\seqdet_101.circ
+- Circuit: generated/circ/seqdet_101.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

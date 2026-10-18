@@ -1,6 +1,6 @@
 # Official Logisim simulation for multiplier_2x2
 
-- Circuit: generated\circ\multiplier_2x2.circ
+- Circuit: generated/circ/multiplier_2x2.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=32
 

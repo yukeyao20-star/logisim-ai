@@ -1,6 +1,6 @@
 # Official Logisim simulation for register_4bit
 
-- Circuit: generated\circ\register_4bit.circ
+- Circuit: generated/circ/register_4bit.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

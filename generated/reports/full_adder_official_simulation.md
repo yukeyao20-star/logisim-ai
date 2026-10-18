@@ -1,6 +1,6 @@
 # Official Logisim simulation for full_adder
 
-- Circuit: generated\circ\full_adder.circ
+- Circuit: generated/circ/full_adder.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=8
 

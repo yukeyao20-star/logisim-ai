@@ -1,6 +1,6 @@
 # Official Logisim simulation for parity_8bit
 
-- Circuit: generated\circ\parity_8bit.circ
+- Circuit: generated/circ/parity_8bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=256
 

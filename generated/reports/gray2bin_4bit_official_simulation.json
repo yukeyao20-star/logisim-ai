@@ -1,6 +1,6 @@
 {
   "circuitName": "gray2bin_4bit",
-  "circuitPath": "generated\\circ\\gray2bin_4bit.circ",
+  "circuitPath": "generated/circ/gray2bin_4bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=16",
   "rowCount": 16,

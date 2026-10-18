@@ -1,6 +1,6 @@
 # Official Logisim simulation for decoder_2bit
 
-- Circuit: generated\circ\decoder_2bit.circ
+- Circuit: generated/circ/decoder_2bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=4
 

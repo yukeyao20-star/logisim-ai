@@ -1,6 +1,6 @@
 {
   "circuitName": "bcd_counter",
-  "circuitPath": "generated\\circ\\bcd_counter.circ",
+  "circuitPath": "generated/circ/bcd_counter.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

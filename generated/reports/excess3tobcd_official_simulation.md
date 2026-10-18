@@ -1,6 +1,6 @@
 # Official Logisim simulation for excess3tobcd
 
-- Circuit: generated\circ\excess3tobcd.circ
+- Circuit: generated/circ/excess3tobcd.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=16
 

@@ -1,6 +1,6 @@
 # Official Logisim simulation for bcd7seg
 
-- Circuit: generated\circ\bcd7seg.circ
+- Circuit: generated/circ/bcd7seg.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=16
 

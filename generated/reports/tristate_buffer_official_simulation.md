@@ -1,6 +1,6 @@
 # Official Logisim simulation for tristate_buffer
 
-- Circuit: generated\circ\tristate_buffer.circ
+- Circuit: generated/circ/tristate_buffer.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table completed for native chip: rows=4
 

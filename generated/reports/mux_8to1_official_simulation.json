@@ -1,6 +1,6 @@
 {
   "circuitName": "mux_8to1",
-  "circuitPath": "generated\\circ\\mux_8to1.circ",
+  "circuitPath": "generated/circ/mux_8to1.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=2048",
   "rowCount": 2048,

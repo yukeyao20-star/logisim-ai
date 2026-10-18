@@ -1,6 +1,6 @@
 # Official Logisim simulation for logic_y_a_not_7404
 
-- Circuit: generated\circ\logic_y_a_not_7404.circ
+- Circuit: generated/circ/logic_y_a_not_7404.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=2
 

@@ -1,6 +1,6 @@
 {
   "circuitName": "alu_8bit",
-  "circuitPath": "generated\\circ\\alu_8bit.circ",
+  "circuitPath": "generated/circ/alu_8bit.circ",
   "status": "PASS",
   "detail": "[SKIP] too many inputs for exhaustive official simulation: 19",
   "rowCount": 0,

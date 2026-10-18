@@ -1,6 +1,6 @@
 {
   "circuitName": "logic_f_abcd",
-  "circuitPath": "generated\\circ\\logic_f_abcd.circ",
+  "circuitPath": "generated/circ/logic_f_abcd.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table matched in-process evaluator: rows=16",
   "rowCount": 16,

@@ -1,6 +1,6 @@
 {
   "circuitName": "dlatch",
-  "circuitPath": "generated\\circ\\dlatch.circ",
+  "circuitPath": "generated/circ/dlatch.circ",
   "status": "PASS",
   "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
   "rowCount": 0,

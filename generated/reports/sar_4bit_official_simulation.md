@@ -1,6 +1,6 @@
 # Official Logisim simulation for sar_4bit
 
-- Circuit: generated\circ\sar_4bit.circ
+- Circuit: generated/circ/sar_4bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=64
 

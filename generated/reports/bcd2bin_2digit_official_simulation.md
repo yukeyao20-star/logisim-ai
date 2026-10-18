@@ -1,6 +1,6 @@
 # Official Logisim simulation for bcd2bin_2digit
 
-- Circuit: generated\circ\bcd2bin_2digit.circ
+- Circuit: generated/circ/bcd2bin_2digit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=256
 

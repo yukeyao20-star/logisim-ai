@@ -1,6 +1,6 @@
 {
   "circuitName": "adder_8bit",
-  "circuitPath": "generated\\circ\\adder_8bit.circ",
+  "circuitPath": "generated/circ/adder_8bit.circ",
   "status": "PASS",
   "detail": "[SKIP] too many inputs for exhaustive official simulation: 17",
   "rowCount": 0,

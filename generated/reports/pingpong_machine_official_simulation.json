@@ -1,0 +1,9 @@
+{
+  "circuitName": "pingpong_machine",
+  "circuitPath": "generated/circ/pingpong_machine.circ",
+  "status": "PASS",
+  "detail": "[SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors",
+  "rowCount": 0,
+  "rows": [
+  ]
+}

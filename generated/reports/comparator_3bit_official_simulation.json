@@ -1,6 +1,6 @@
 {
   "circuitName": "comparator_3bit",
-  "circuitPath": "generated\\circ\\comparator_3bit.circ",
+  "circuitPath": "generated/circ/comparator_3bit.circ",
   "status": "PASS",
   "detail": "[OK] official Logisim JAR truth table completed for native chip: rows=64",
   "rowCount": 64,

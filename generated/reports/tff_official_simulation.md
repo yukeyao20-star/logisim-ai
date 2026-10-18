@@ -1,6 +1,6 @@
 # Official Logisim simulation for tff
 
-- Circuit: generated\circ\tff.circ
+- Circuit: generated/circ/tff.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

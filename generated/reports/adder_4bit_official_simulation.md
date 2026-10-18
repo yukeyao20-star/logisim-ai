@@ -1,6 +1,6 @@
 # Official Logisim simulation for adder_4bit
 
-- Circuit: generated\circ\adder_4bit.circ
+- Circuit: generated/circ/adder_4bit.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=512
 

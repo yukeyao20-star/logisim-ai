@@ -1,6 +1,6 @@
 # Official Logisim simulation for accumulator_4bit
 
-- Circuit: generated\circ\accumulator_4bit.circ
+- Circuit: generated/circ/accumulator_4bit.circ
 - Status: PASS
 - Detail: [SKIP] sequential circuit (Memory/feedback); verify with clock-pulse vectors
 

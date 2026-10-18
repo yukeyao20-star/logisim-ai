@@ -1,6 +1,6 @@
 # Official Logisim simulation for logic_f_a0b0a1b1a2b2a3b3_not_and_xor
 
-- Circuit: generated\circ\logic_f_a0b0a1b1a2b2a3b3_not_and_xor.circ
+- Circuit: generated/circ/logic_f_a0b0a1b1a2b2a3b3_not_and_xor.circ
 - Status: PASS
 - Detail: [OK] official Logisim JAR truth table matched in-process evaluator: rows=256
 
