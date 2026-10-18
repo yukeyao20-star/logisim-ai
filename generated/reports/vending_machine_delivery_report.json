@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "自动售货机",
+  "request": "自动售货机控制器",
   "intent": "GATE_LEVEL_CIRCUIT",
   "implementationProfile": {
     "level": "GATE_LEVEL",
@@ -37,7 +37,7 @@
   "layoutAutoRepairApplied": false,
   "layoutAutoRepairResults": [],
   "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
-  "artifactCount": 8,
+  "artifactCount": 10,
   "artifacts": [
     {"kind": "circuit", "path": "generated/circ/vending_machine.circ", "exists": true},
     {"kind": "manifest_json", "path": "generated/reports/vending_machine_circuit_manifest.json", "exists": true},
@@ -46,6 +46,8 @@
     {"kind": "delivery_markdown", "path": "generated/reports/vending_machine_delivery_report.md", "exists": true},
     {"kind": "summary_json", "path": "generated/reports/vending_machine_generation_summary.json", "exists": true},
     {"kind": "summary_markdown", "path": "generated/reports/vending_machine_generation_summary.md", "exists": true},
-    {"kind": "artifact", "path": "generated/reports/vending_machine_multichip.md", "exists": true}
+    {"kind": "artifact", "path": "generated/reports/vending_machine_multichip.md", "exists": true},
+    {"kind": "artifact", "path": "generated/reports/vending_machine_official_simulation.json", "exists": true},
+    {"kind": "artifact", "path": "generated/reports/vending_machine_official_simulation.md", "exists": true}
   ]
 }

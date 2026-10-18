@@ -1,7 +1,7 @@
 # Generation summary for digital_clock
 
 - Request kind: natural_language
-- Request: 数字钟带整点报时
+- Request: 做一个数字时钟
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 6
+- Artifact count: 8
 
 ## Artifacts
 
@@ -29,3 +29,5 @@
 | generated/reports/digital_clock_generation_summary.json | true |
 | generated/reports/digital_clock_generation_summary.md | true |
 | generated/reports/digital_clock_multichip.md | true |
+| generated/reports/digital_clock_official_simulation.json | true |
+| generated/reports/digital_clock_official_simulation.md | true |

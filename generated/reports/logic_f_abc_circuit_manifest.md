@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=4427 |
+| circuit_non_empty | true | bytes=5680 |
 | round_trip_loadable | true | [OK] logic_f_abc.circ round-trip loaded with main circuit logic_f_abc |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] logic_f_abc.circ structure matches CircuitSpec |

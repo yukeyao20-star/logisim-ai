@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=65764 |
+| circuit_non_empty | true | bytes=63700 |
 | round_trip_loadable | true | [OK] vending_machine.circ round-trip loaded with main circuit vending_machine |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] vending_machine.circ structure matches CircuitSpec |

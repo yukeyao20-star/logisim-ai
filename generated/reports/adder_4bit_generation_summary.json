@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "4 bit adder",
+  "request": "设计一个四位二进制加法器",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -14,20 +14,20 @@
   "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
   "sourceJson": "",
   "circuitName": "adder_4bit",
-  "circuitPath": "generated\\circ\\adder_4bit.circ",
-  "manifestPath": "generated\\reports\\adder_4bit_circuit_manifest.md",
+  "circuitPath": "generated/circ/adder_4bit.circ",
+  "manifestPath": "generated/reports/adder_4bit_circuit_manifest.md",
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
   "artifactCount": 8,
   "artifacts": [
-    {"path": "generated\\circ\\adder_4bit.circ", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_circuit_manifest.json", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_circuit_manifest.md", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_generation_summary.json", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_generation_summary.md", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_multichip.md", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_official_simulation.json", "exists": true},
-    {"path": "generated\\reports\\adder_4bit_official_simulation.md", "exists": true}
+    {"path": "generated/circ/adder_4bit.circ", "exists": true},
+    {"path": "generated/reports/adder_4bit_circuit_manifest.json", "exists": true},
+    {"path": "generated/reports/adder_4bit_circuit_manifest.md", "exists": true},
+    {"path": "generated/reports/adder_4bit_generation_summary.json", "exists": true},
+    {"path": "generated/reports/adder_4bit_generation_summary.md", "exists": true},
+    {"path": "generated/reports/adder_4bit_multichip.md", "exists": true},
+    {"path": "generated/reports/adder_4bit_official_simulation.json", "exists": true},
+    {"path": "generated/reports/adder_4bit_official_simulation.md", "exists": true}
   ]
 }

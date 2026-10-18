@@ -1,7 +1,7 @@
 # Generation summary for vending_machine
 
 - Request kind: natural_language
-- Request: 自动售货机
+- Request: 自动售货机控制器
 - Description: Generated parameterized structural circuit
 - Intent: GATE_LEVEL_CIRCUIT
 - Intent explanation: Draw the requested circuit directly with primitive Logisim gates and components.
@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 6
+- Artifact count: 8
 
 ## Artifacts
 
@@ -29,3 +29,5 @@
 | generated/reports/vending_machine_generation_summary.json | true |
 | generated/reports/vending_machine_generation_summary.md | true |
 | generated/reports/vending_machine_multichip.md | true |
+| generated/reports/vending_machine_official_simulation.json | true |
+| generated/reports/vending_machine_official_simulation.md | true |

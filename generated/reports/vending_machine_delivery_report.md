@@ -1,7 +1,7 @@
 # Generation delivery report for vending_machine
 
 - Request kind: natural_language
-- Request: 自动售货机
+- Request: 自动售货机控制器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
@@ -29,7 +29,7 @@
 - Layout repair suggestions: 
 - Layout auto repair applied: false
 - Recommended actions: open_circuit, review_manifest, review_truth_table
-- Artifact count: 8
+- Artifact count: 10
 
 ## Artifacts
 
@@ -43,3 +43,5 @@
 | summary_json | generated/reports/vending_machine_generation_summary.json | true |
 | summary_markdown | generated/reports/vending_machine_generation_summary.md | true |
 | artifact | generated/reports/vending_machine_multichip.md | true |
+| artifact | generated/reports/vending_machine_official_simulation.json | true |
+| artifact | generated/reports/vending_machine_official_simulation.md | true |

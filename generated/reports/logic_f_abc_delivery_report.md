@@ -1,15 +1,15 @@
 # Generation delivery report for logic_f_abc
 
 - Request kind: natural_language
-- Request: 3 input nor
+- Request: 三人表决器
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
 - Package primitive: false
 - Routing primitive: primitive_gates
-- Circuit: generated\circ\logic_f_abc.circ
-- Summary: generated\reports\logic_f_abc_generation_summary.md
-- Manifest: generated\reports\logic_f_abc_circuit_manifest.md
+- Circuit: generated/circ/logic_f_abc.circ
+- Summary: generated/reports/logic_f_abc_generation_summary.md
+- Manifest: generated/reports/logic_f_abc_circuit_manifest.md
 - Complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
@@ -29,24 +29,28 @@
 - Layout repair suggestions: 
 - Layout auto repair applied: false
 - Recommended actions: open_circuit, review_manifest, review_truth_table
-- Artifact count: 15
+- Artifact count: 19
 
 ## Artifacts
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\logic_f_abc.circ | true |
-| manifest_json | generated\reports\logic_f_abc_circuit_manifest.json | true |
-| manifest_markdown | generated\reports\logic_f_abc_circuit_manifest.md | true |
-| truth_table_json | generated\reports\logic_f_abc_circuit_truth_table.json | true |
-| truth_table_markdown | generated\reports\logic_f_abc_circuit_truth_table.md | true |
-| delivery_json | generated\reports\logic_f_abc_delivery_report.json | true |
-| delivery_markdown | generated\reports\logic_f_abc_delivery_report.md | true |
-| summary_json | generated\reports\logic_f_abc_generation_summary.json | true |
-| summary_markdown | generated\reports\logic_f_abc_generation_summary.md | true |
-| manifest_json | generated\reports\logic_f_abc_xor_circuit_manifest.json | true |
-| manifest_markdown | generated\reports\logic_f_abc_xor_circuit_manifest.md | true |
-| truth_table_json | generated\reports\logic_f_abc_xor_circuit_truth_table.json | true |
-| truth_table_markdown | generated\reports\logic_f_abc_xor_circuit_truth_table.md | true |
-| summary_json | generated\reports\logic_f_abc_xor_generation_summary.json | true |
-| summary_markdown | generated\reports\logic_f_abc_xor_generation_summary.md | true |
+| circuit | generated/circ/logic_f_abc.circ | true |
+| manifest_json | generated/reports/logic_f_abc_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/logic_f_abc_circuit_manifest.md | true |
+| truth_table_json | generated/reports/logic_f_abc_circuit_truth_table.json | true |
+| truth_table_markdown | generated/reports/logic_f_abc_circuit_truth_table.md | true |
+| delivery_json | generated/reports/logic_f_abc_delivery_report.json | true |
+| delivery_markdown | generated/reports/logic_f_abc_delivery_report.md | true |
+| summary_json | generated/reports/logic_f_abc_generation_summary.json | true |
+| summary_markdown | generated/reports/logic_f_abc_generation_summary.md | true |
+| artifact | generated/reports/logic_f_abc_official_simulation.json | true |
+| artifact | generated/reports/logic_f_abc_official_simulation.md | true |
+| manifest_json | generated/reports/logic_f_abc_xor_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/logic_f_abc_xor_circuit_manifest.md | true |
+| truth_table_json | generated/reports/logic_f_abc_xor_circuit_truth_table.json | true |
+| truth_table_markdown | generated/reports/logic_f_abc_xor_circuit_truth_table.md | true |
+| summary_json | generated/reports/logic_f_abc_xor_generation_summary.json | true |
+| summary_markdown | generated/reports/logic_f_abc_xor_generation_summary.md | true |
+| artifact | generated/reports/logic_f_abc_xor_official_simulation.json | true |
+| artifact | generated/reports/logic_f_abc_xor_official_simulation.md | true |

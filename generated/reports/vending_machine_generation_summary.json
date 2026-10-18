@@ -1,6 +1,6 @@
 {
   "requestKind": "natural_language",
-  "request": "自动售货机",
+  "request": "自动售货机控制器",
   "description": "Generated parameterized structural circuit",
   "intent": "GATE_LEVEL_CIRCUIT",
   "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
@@ -19,13 +19,15 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 6,
+  "artifactCount": 8,
   "artifacts": [
     {"path": "generated/circ/vending_machine.circ", "exists": true},
     {"path": "generated/reports/vending_machine_circuit_manifest.json", "exists": true},
     {"path": "generated/reports/vending_machine_circuit_manifest.md", "exists": true},
     {"path": "generated/reports/vending_machine_generation_summary.json", "exists": true},
     {"path": "generated/reports/vending_machine_generation_summary.md", "exists": true},
-    {"path": "generated/reports/vending_machine_multichip.md", "exists": true}
+    {"path": "generated/reports/vending_machine_multichip.md", "exists": true},
+    {"path": "generated/reports/vending_machine_official_simulation.json", "exists": true},
+    {"path": "generated/reports/vending_machine_official_simulation.md", "exists": true}
   ]
 }

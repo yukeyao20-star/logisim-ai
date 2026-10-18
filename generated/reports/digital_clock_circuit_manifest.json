@@ -5,11 +5,11 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=50072"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=47731"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] digital_clock.circ round-trip loaded with main circuit digital_clock"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] digital_clock.circ structure matches CircuitSpec"},
-    {"name": "layout_clean", "passed": true, "detail": "[OK] digital_clock.circ static layout checks passed"},
+    {"name": "layout_clean", "passed": true, "detail": "[FAIL] digital_clock.circ\n - Small components are too close in circuit digital_clock at (1190,1010) and (1220,1000): Tunnel and Pin\n - Small components are too close in circuit digital_clock at (1640,690) and (1640,700): Tunnel and Pin\n - Small components are too close in circuit digital_clock at (1710,650) and (1760,650): Pin and Tunnel\n - Small components are too close in circuit digital_clock at (1780,600) and (1810,590): Pin and Tunnel\n - Tunnel TQ1k is too close to external pin Q11 on the same row: (1640,650) vs (1710,650)\n - Tunnel TQ10 is too close to external pin Q11 on the same row: (1760,650) vs (1710,650)"},
     {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
   ],
   "artifacts": [
