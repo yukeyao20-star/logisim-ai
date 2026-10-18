@@ -232,6 +232,12 @@ public final class NaturalLanguageCircuitPlanner {
    */
   static java.util.List<String> nearestSupported(String query) {
     String q = query.toLowerCase(java.util.Locale.ROOT).replaceAll("\\s+", "");
+    // High-frequency textbook synonyms: align the query vocabulary with the
+    // catalog vocabulary before bigram matching ("红外遥控解码" then shares
+    // "译码" with the decoder entry).
+    q = q.replace("解码", "译码").replace("数模", "DAC")
+        .replace("模数", "ADC").replace(" weighting", "weighting")
+        .replace("报警", "报警").replace("提醒", "报警");
     if (q.length() < 2) {
       return java.util.List.of();
     }
