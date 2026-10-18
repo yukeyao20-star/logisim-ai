@@ -119,8 +119,11 @@ public final class CircuitCatalog {
       }
       if (spec) withSpec++;
       if (svg) withSvg++;
+      boolean evidence = new File("generated/reports/" + stem
+          + "_official_simulation.md").exists();
       rows.add("| " + stem + " | " + inferKind(stem) + " | " + (spec ? "spec ✓" : "—")
           + " | " + layout + " | "
+          + (evidence ? "[证据](official_simulation)" : "—") + " | "
           + (svg ? "[查看](../circ/" + stem + ".svg)" : "—") + " |");
     }
     rows.sort(String.CASE_INSENSITIVE_ORDER);
@@ -132,7 +135,7 @@ public final class CircuitCatalog {
         .append(clean).append(" 个布局 0 警告。\n\n");
     sb.append("所有电路均可由自然语言重新生成（见各电路的 spec JSON），")
         .append("并经官方 Logisim JAR 真值表/时钟向量验证（experiment 13 报告）。\n\n");
-    sb.append("| 电路 | 类型 | spec | 布局 | 可视化 |\n|---|---|---|---|---|\n");
+    sb.append("| 电路 | 类型 | spec | 布局 | 官方证据 | 可视化 |\n|---|---|---|---|---|---|\n");
     for (String row : rows) {
       sb.append(row).append("\n");
     }
