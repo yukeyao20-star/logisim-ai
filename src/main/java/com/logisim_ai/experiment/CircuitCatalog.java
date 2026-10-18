@@ -78,6 +78,16 @@ public final class CircuitCatalog {
     if (stem.contains("clock") || stem.contains("watch")) {
       return "时钟/计时";
     }
+    if (stem.startsWith("ttl_")) {
+      return "TTL 芯片";
+    }
+    if (stem.contains("tristate")) {
+      return "三态";
+    }
+    if (stem.contains("nand") || stem.contains("xor") || stem.contains("and_gate")
+        || stem.equals("or_gate")) {
+      return "综合逻辑";
+    }
     if (stem.equals("and_gate") || stem.equals("or_gate") || stem.equals("jk_flipflop")
         || stem.equals("jkff") || stem.equals("tff") || stem.equals("dff")) {
       return "基础门/触发器";
