@@ -52,15 +52,6 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="dff"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(1060,100)" name="Pin">
-      <a name="appearance" val="classic"/>
-      <a name="facing" val="west"/>
-      <a name="label" val="Q"/>
-      <a name="type" val="output"/>
-    </comp>
-    <comp lib="1" loc="(1060,100)" name="Tunnel">
-      <a name="label" val="TQ3"/>
-    </comp>
     <comp lib="1" loc="(310,100)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="CLK"/>
@@ -97,14 +88,23 @@
     <comp lib="1" loc="(550,300)" name="Tunnel">
       <a name="label" val="TQ4"/>
     </comp>
-    <comp lib="1" loc="(990,150)" name="Pin">
+    <comp lib="1" loc="(895,150)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="nQ"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="1" loc="(990,150)" name="Tunnel">
+    <comp lib="1" loc="(895,150)" name="Tunnel">
       <a name="label" val="TQ4"/>
+    </comp>
+    <comp lib="1" loc="(965,100)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="Q"/>
+      <a name="type" val="output"/>
+    </comp>
+    <comp lib="1" loc="(965,100)" name="Tunnel">
+      <a name="label" val="TQ3"/>
     </comp>
     <comp lib="6" loc="(500,250)" name="D Flip-Flop">
       <a name="appearance" val="logisim_evolution"/>

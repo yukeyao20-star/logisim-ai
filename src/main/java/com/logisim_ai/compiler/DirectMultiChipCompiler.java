@@ -123,9 +123,17 @@ public final class DirectMultiChipCompiler {
         }
         Location loc = Location.create(cursor, ROW_CENTER_Y + row * ROW_GAP, true);
         Component comp = factory.createComponent(loc, attrs);
+        // Footprint-aware pitch: advance by this component's real half-width
+        // plus the next component's half-width (approximated from library)
+        // so a wide Memory chip never overlaps a following gate's endpoints.
+        // Fixed pitch (gate 120 / other 260) let a gate land inside a
+        // flip-flop's box after the set/clear optimization reshuffled the
+        // component order (round 67) — two components' endpoints then
+        // coincided and cross-wired two nets (digital_clock regression).
+        int halfW = footprintHalfWidth(cs.libraryName(), cs.factoryName());
         positioned.put(cs.id(), comp);
         mutation.add(comp);
-        cursor += cs.libraryName().equals("Gates") ? 120 : 260;
+        cursor += halfW * 2 + 48;
         rowCount++;
         prevRowMaxX = Math.max(prevRowMaxX, cursor);
       }
@@ -260,6 +268,18 @@ public final class DirectMultiChipCompiler {
     segments.add(new AutoLayoutPolicy.WireSegment(corner1, corner2));
     segments.add(new AutoLayoutPolicy.WireSegment(corner2, to));
     return segments;
+  }
+
+  /** Approximate half-width of a component for placement pitch. */
+  private static int footprintHalfWidth(String libraryName, String factoryName) {
+    if ("Gates".equals(libraryName)) {
+      return switch (factoryName) {
+        case "NOT Gate" -> 21;
+        default -> 36; // two-input gates (72px wide)
+      };
+    }
+    // Memory flip-flops and other wide chips
+    return 60;
   }
 
   private static Location endpointLocation(

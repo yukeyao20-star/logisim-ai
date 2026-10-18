@@ -52,16 +52,6 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="ram_chip"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <comp lib="1" loc="(1060,100)" name="Pin">
-      <a name="appearance" val="classic"/>
-      <a name="facing" val="west"/>
-      <a name="label" val="DOUT"/>
-      <a name="type" val="output"/>
-      <a name="width" val="8"/>
-    </comp>
-    <comp lib="1" loc="(1060,100)" name="Tunnel">
-      <a name="label" val="TQ2"/>
-    </comp>
     <comp lib="1" loc="(310,100)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="label" val="ADR"/>
@@ -92,8 +82,8 @@
     <comp lib="1" loc="(310,250)" name="Tunnel">
       <a name="label" val="TQ4"/>
     </comp>
-    <comp lib="1" loc="(310,300)" name="Clock">
-      <a name="appearance" val="NewPins"/>
+    <comp lib="1" loc="(310,300)" name="Pin">
+      <a name="appearance" val="classic"/>
       <a name="label" val="CLK"/>
     </comp>
     <comp lib="1" loc="(310,300)" name="Tunnel">
@@ -116,6 +106,16 @@
     </comp>
     <comp lib="1" loc="(740,340)" name="Tunnel">
       <a name="label" val="TQ1"/>
+    </comp>
+    <comp lib="1" loc="(965,100)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="DOUT"/>
+      <a name="type" val="output"/>
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="1" loc="(965,100)" name="Tunnel">
+      <a name="label" val="TQ2"/>
     </comp>
     <comp lib="6" loc="(500,250)" name="RAM">
       <a name="appearance" val="logisim_evolution"/>
