@@ -1,15 +1,15 @@
 # Generation delivery report for digital_clock
 
 - Request kind: natural_language
-- Request: 数字钟
+- Request: 数字钟带整点报时
 - Intent: GATE_LEVEL_CIRCUIT
 - Implementation level: GATE_LEVEL
 - Target package: 
 - Package primitive: false
 - Routing primitive: primitive_gates
-- Circuit: generated\circ\digital_clock.circ
-- Summary: generated\reports\digital_clock_generation_summary.md
-- Manifest: generated\reports\digital_clock_circuit_manifest.md
+- Circuit: generated/circ/digital_clock.circ
+- Summary: generated/reports/digital_clock_generation_summary.md
+- Manifest: generated/reports/digital_clock_circuit_manifest.md
 - Complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
@@ -35,11 +35,11 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\digital_clock.circ | true |
-| manifest_json | generated\reports\digital_clock_circuit_manifest.json | true |
-| manifest_markdown | generated\reports\digital_clock_circuit_manifest.md | true |
-| delivery_json | generated\reports\digital_clock_delivery_report.json | true |
-| delivery_markdown | generated\reports\digital_clock_delivery_report.md | true |
-| summary_json | generated\reports\digital_clock_generation_summary.json | true |
-| summary_markdown | generated\reports\digital_clock_generation_summary.md | true |
-| artifact | generated\reports\digital_clock_multichip.md | true |
+| circuit | generated/circ/digital_clock.circ | true |
+| manifest_json | generated/reports/digital_clock_circuit_manifest.json | true |
+| manifest_markdown | generated/reports/digital_clock_circuit_manifest.md | true |
+| delivery_json | generated/reports/digital_clock_delivery_report.json | true |
+| delivery_markdown | generated/reports/digital_clock_delivery_report.md | true |
+| summary_json | generated/reports/digital_clock_generation_summary.json | true |
+| summary_markdown | generated/reports/digital_clock_generation_summary.md | true |
+| artifact | generated/reports/digital_clock_multichip.md | true |

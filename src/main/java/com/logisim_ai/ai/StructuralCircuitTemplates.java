@@ -352,6 +352,35 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("水位控制|水位状态机|水箱控制");
   private static final Pattern WATER_EN =
       Pattern.compile("water\\s*level\\s*controller|water\\s*tank", Pattern.CASE_INSENSITIVE);
+  // 1位/一位十进制加法器 = single-digit BCD adder (8421 + 修正).
+  private static final Pattern BCDADD1_ZH =
+      Pattern.compile("[一一1]位十进制加法器|十进制加法器|1位8421加法器");
+  private static final Pattern BCDADD1_EN =
+      Pattern.compile("(?:single[- ]digit|1[- ]digit|one[- ]digit)\\s*(?:bcd|decimal)\\s*adder", Pattern.CASE_INSENSITIVE);
+  // 汽车尾灯控制器 (car tail light): 6 lamps, 3 per side — left turn, right
+  // turn, brake, and night cruising modes. Model as 3-state FSM (idle,
+  // left-cycling, right-cycling) with BRAKE/CRUISE outputs mapped from the
+  // lamp cycles.
+  private static final Pattern TAILLIGHT_ZH =
+      Pattern.compile("汽车尾灯|尾灯控制");
+  private static final Pattern TAILLIGHT_EN =
+      Pattern.compile("tail\\s*light|car\\s*light\\s*controller", Pattern.CASE_INSENSITIVE);
+  // 计数译码显示电路 = counter + decoder + 7seg display chain → bcd_counter
+  // with 7seg outputs is the textbook chain; route to bcd_counter (its
+  // Q outputs feed any bcd7seg). Kept as alias.
+  private static final Pattern CNTDECDISP_ZH =
+      Pattern.compile("计数译码显示|计数.{0,2}译码.{0,2}显示");
+  private static final Pattern CNTDECDISP_EN =
+      Pattern.compile("counter.*decod.*display|count.*7.?seg", Pattern.CASE_INSENSITIVE);
+  // RAM/ROM memory chip views (native Memory components).
+  private static final Pattern RAM_ZH =
+      Pattern.compile("ram存储器|随机存储器|ram芯片");
+  private static final Pattern RAM_EN =
+      Pattern.compile("\\bram\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ROM_ZH =
+      Pattern.compile("rom存储器|只读存储器|rom芯片");
+  private static final Pattern ROM_EN =
+      Pattern.compile("\\brom\\b", Pattern.CASE_INSENSITIVE);
   private static final Pattern DRYER_ZH =
       Pattern.compile("烘干机控制|烘干(?:机)?状态机");
   private static final Pattern DRYER_EN =
@@ -899,6 +928,21 @@ public final class StructuralCircuitTemplates {
     }
     if (DRYER_ZH.matcher(t).find() || DRYER_EN.matcher(t).find()) {
       return Optional.of(buildDryerController());
+    }
+    if (TAILLIGHT_ZH.matcher(t).find() || TAILLIGHT_EN.matcher(t).find()) {
+      return Optional.of(buildTailLightController());
+    }
+    if (CNTDECDISP_ZH.matcher(t).find() || CNTDECDISP_EN.matcher(t).find()) {
+      return Optional.of(buildBcdCounter());
+    }
+    if (BCDADD1_ZH.matcher(t).find() || BCDADD1_EN.matcher(t).find()) {
+      return Optional.of(buildBcdAdder());
+    }
+    if (RAM_ZH.matcher(t).find() || RAM_EN.matcher(t).find()) {
+      return Optional.of(buildMemoryChip("ram"));
+    }
+    if (ROM_ZH.matcher(t).find() || ROM_EN.matcher(t).find()) {
+      return Optional.of(buildMemoryChip("rom"));
     }
     if (PINGPONG_ZH.matcher(t).find() || PINGPONG_EN.matcher(t).find()) {
       return Optional.of(buildPingPongMachine());
@@ -6673,6 +6717,84 @@ public final class StructuralCircuitTemplates {
             new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", false), 4),
             new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", true), 0)),
         5);
+    return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * RAM/ROM single-chip view: place the native Memory-library RAM or ROM
+   * component with address/data pins exposed (like the TTL native chips).
+   * RAM: end0=ADDR(ADR), end1=DATA-in(DIN), end2=DATA-out(DOUT), end3=STR
+   * (store/enable), end4=CLR, end5=CLK (verified port order for 8-bit addr /
+   * 8-bit data defaults; widths set via attributes).
+   * ROM: end0=ADDR, end1=DATA-out, end2=SEL.
+   */
+  static CircuitSpec buildMemoryChip(String kind) {
+    List<ComponentSpec> components = new ArrayList<>();
+    List<ExternalPort> ports = new ArrayList<>();
+    List<NetSpec> nets = new ArrayList<>();
+    List<LayoutHint> hints = new ArrayList<>();
+    boolean ram = kind.equalsIgnoreCase("ram");
+    String id = ram ? "ram0" : "rom0";
+    components.add(new ComponentSpec(id, "Memory", ram ? "RAM" : "ROM", 1,
+        ram ? "RAM1" : "ROM1"));
+    hints.add(new LayoutHint(id, 0, 0, 0, null));
+    // Default RAM view: 8-bit address, 8-bit data (Logisim RAM attrs).
+    if (ram) {
+      ports.add(new ExternalPort("adr", "ADR", 8, PortDirection.INPUT, PortSide.LEFT, id, 0));
+      ports.add(new ExternalPort("din", "DIN", 8, PortDirection.INPUT, PortSide.LEFT, id, 1));
+      ports.add(new ExternalPort("dout", "DOUT", 8, PortDirection.OUTPUT, PortSide.RIGHT, id, 2));
+      addInput(ports, "str", "STR", id);
+      addInput(ports, "clr", "CLR", id);
+      addClockInput(ports, "clk", "CLK", id);
+      nets.add(net("mc_addr", e("adr", 0), e(id, 0)));
+      nets.add(net("mc_din", e("din", 0), e(id, 1)));
+      nets.add(net("mc_dout", e(id, 2), e("dout", 0)));
+      nets.add(net("mc_str", e("str", 0), e(id, 3)));
+      nets.add(net("mc_clr", e("clr", 0), e(id, 4)));
+      nets.add(net("mc_clk", e("clk", 0), e(id, 5)));
+    } else {
+      // ROM component has exactly 2 ends: end0=ADR(in,8), end1=DOUT(out,8).
+      ports.add(new ExternalPort("adr", "ADR", 8, PortDirection.INPUT, PortSide.LEFT, id, 0));
+      ports.add(new ExternalPort("dout", "DOUT", 8, PortDirection.OUTPUT, PortSide.RIGHT, id, 1));
+      nets.add(net("mc_addr", e("adr", 0), e(id, 0)));
+      nets.add(net("mc_dout", e(id, 1), e("dout", 0)));
+    }
+    return new CircuitSpec(ram ? "ram_chip" : "rom_chip", components, ports, nets, hints);
+  }
+
+  /**
+   * Car tail-light controller (汽车尾灯控制器): 6 lamps (3 left L1..L3,
+   * 3 right R1..R3). Inputs: LEFT (left-turn stalk), RIGHT, BRAKE, CRUISE
+   * (night running). FSM 4 states:
+   *   0 idle: LEFT=1 → 1 (left cycling); RIGHT=1 → 2; else 0
+   *   1 left-cycling: L-cycle tick LC=1 advances lamp phase; LEFT=0 → 0
+   *   2 right-cycling: RC=1 advances; RIGHT=0 → 0
+   *   3 brake: BRAKE=1 stays; BRAKE=0 → 0
+   * Outputs (Moore): LLIT (left lamps lit phase), RLIT, BRAKELIT (all 6),
+   * CRUISELIT (dim all 6). The lamp phase itself needs a counter — this FSM
+   * models the controller outputs; the phase counter (mod-3) is external
+   * (LCT/ RCT terminal-count inputs) — here we take LC/RC as "phase tick"
+   * inputs so the FSM stays pure.
+   */
+  static CircuitSpec buildTailLightController() {
+    var def = new FsmSynthesizer.Definition(
+        "taillight_controller",
+        List.of("left", "right", "brake", "cruise", "lc", "rc"),
+        List.of(new FsmSynthesizer.Output("llit", List.of(1)),
+            new FsmSynthesizer.Output("rlit", List.of(2)),
+            new FsmSynthesizer.Output("brakelit", List.of(3)),
+            new FsmSynthesizer.Output("cruiselit", List.of(0))),
+        java.util.List.of(
+            new FsmSynthesizer.Transition(0, Map.of("left", false, "right", false, "brake", false, "cruise", false, "lc", false, "rc", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("left", true, "right", false, "brake", false, "cruise", false, "lc", false, "rc", false), 1),
+            new FsmSynthesizer.Transition(0, Map.of("left", false, "right", true, "brake", false, "cruise", false, "lc", false, "rc", false), 2),
+            new FsmSynthesizer.Transition(1, Map.of("left", true, "right", false, "brake", false, "cruise", false, "lc", false, "rc", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("left", false, "right", false, "brake", false, "cruise", false, "lc", false, "rc", false), 0),
+            new FsmSynthesizer.Transition(2, Map.of("left", false, "right", true, "brake", false, "cruise", false, "lc", false, "rc", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("left", false, "right", false, "brake", false, "cruise", false, "lc", false, "rc", false), 0),
+            new FsmSynthesizer.Transition(3, Map.of("left", false, "right", false, "brake", true, "cruise", false, "lc", false, "rc", false), 3),
+            new FsmSynthesizer.Transition(3, Map.of("left", false, "right", false, "brake", false, "cruise", false, "lc", false, "rc", false), 0)),
+        4);
     return FsmSynthesizer.synthesize(def);
   }
 

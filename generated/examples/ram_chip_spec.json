@@ -1,0 +1,25 @@
+{
+  "name": "ram_chip",
+  "components": [
+    {"id": "ram0", "library": "Memory", "factory": "RAM", "bitWidth": 1, "label": "RAM1"}
+  ],
+  "externalPorts": [
+    {"id": "adr", "label": "ADR", "bitWidth": 8, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ram0", "targetEndIndex": 0},
+    {"id": "din", "label": "DIN", "bitWidth": 8, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ram0", "targetEndIndex": 1},
+    {"id": "dout", "label": "DOUT", "bitWidth": 8, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "ram0", "targetEndIndex": 2},
+    {"id": "str", "label": "STR", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ram0", "targetEndIndex": 0},
+    {"id": "clr", "label": "CLR", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ram0", "targetEndIndex": 0},
+    {"id": "clk", "label": "CLK", "bitWidth": 1, "direction": "INPUT", "side": "LEFT", "targetComponentId": "ram0", "targetEndIndex": 0}
+  ],
+  "nets": [
+    {"id": "mc_addr", "endpoints": [{"componentId": "adr", "endIndex": 0}, {"componentId": "ram0", "endIndex": 0}]},
+    {"id": "mc_din", "endpoints": [{"componentId": "din", "endIndex": 0}, {"componentId": "ram0", "endIndex": 1}]},
+    {"id": "mc_dout", "endpoints": [{"componentId": "ram0", "endIndex": 2}, {"componentId": "dout", "endIndex": 0}]},
+    {"id": "mc_str", "endpoints": [{"componentId": "str", "endIndex": 0}, {"componentId": "ram0", "endIndex": 3}]},
+    {"id": "mc_clr", "endpoints": [{"componentId": "clr", "endIndex": 0}, {"componentId": "ram0", "endIndex": 4}]},
+    {"id": "mc_clk", "endpoints": [{"componentId": "clk", "endIndex": 0}, {"componentId": "ram0", "endIndex": 5}]}
+  ],
+  "layoutHints": [
+    {"componentId": "ram0", "rank": 0, "column": 0, "row": 0, "side": null}
+  ]
+}

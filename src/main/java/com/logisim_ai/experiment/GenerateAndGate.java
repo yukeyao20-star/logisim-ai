@@ -327,6 +327,8 @@ public final class GenerateAndGate {
         || spec.name().equals("water_level_controller")
         || spec.name().equals("dryer_controller")
         || spec.name().equals("pingpong_machine")
+        || spec.name().equals("ram_chip")
+        || spec.name().equals("rom_chip")
         || spec.name().startsWith("bcd2bin_")
         || spec.name().startsWith("bin2bcd")
         || spec.name().equals("tristate_buffer")

@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=51485 |
+| circuit_non_empty | true | bytes=50072 |
 | round_trip_loadable | true | [OK] digital_clock.circ round-trip loaded with main circuit digital_clock |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] digital_clock.circ structure matches CircuitSpec |
@@ -20,4 +20,4 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\digital_clock.circ | true |
+| circuit | generated/circ/digital_clock.circ | true |

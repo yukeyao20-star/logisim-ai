@@ -1,0 +1,19 @@
+{
+  "circuitName": "two_bit_ripple_adder",
+  "complete": true,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=3492"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] two_bit_ripple_adder.circ round-trip loaded with main circuit two_bit_ripple_adder"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] two_bit_ripple_adder.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[OK] two_bit_ripple_adder.circ static layout checks passed"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated/circ/two_bit_ripple_adder.circ", "exists": true}
+  ],
+  "issues": []
+}

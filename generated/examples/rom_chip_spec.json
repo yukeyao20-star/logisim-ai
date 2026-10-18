@@ -1,0 +1,17 @@
+{
+  "name": "rom_chip",
+  "components": [
+    {"id": "rom0", "library": "Memory", "factory": "ROM", "bitWidth": 1, "label": "ROM1"}
+  ],
+  "externalPorts": [
+    {"id": "adr", "label": "ADR", "bitWidth": 8, "direction": "INPUT", "side": "LEFT", "targetComponentId": "rom0", "targetEndIndex": 0},
+    {"id": "dout", "label": "DOUT", "bitWidth": 8, "direction": "OUTPUT", "side": "RIGHT", "targetComponentId": "rom0", "targetEndIndex": 1}
+  ],
+  "nets": [
+    {"id": "mc_addr", "endpoints": [{"componentId": "adr", "endIndex": 0}, {"componentId": "rom0", "endIndex": 0}]},
+    {"id": "mc_dout", "endpoints": [{"componentId": "rom0", "endIndex": 1}, {"componentId": "dout", "endIndex": 0}]}
+  ],
+  "layoutHints": [
+    {"componentId": "rom0", "rank": 0, "column": 0, "row": 0, "side": null}
+  ]
+}

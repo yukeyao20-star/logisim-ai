@@ -1835,6 +1835,8 @@ public final class BooleanSynthesisRegression {
         "water level controller", "water tank controller",
         "dryer controller", "clothes dryer", "ping pong game machine",
         "ping pong referee", "table tennis machine",
+        "ram memory", "rom memory", "1 digit decimal adder",
+        "car tail light controller", "counter decoder display circuit",
         "two's complement to sign magnitude", "sign magnitude converter",
         "bcd to hex", "binary to decimal", "quiz buzzer",
         "binary to decimal converter",

@@ -1,0 +1,31 @@
+{
+  "requestKind": "natural_language",
+  "request": "rom存储器",
+  "description": "Generated parameterized structural circuit",
+  "intent": "GATE_LEVEL_CIRCUIT",
+  "intentExplanation": "Draw the requested circuit directly with primitive Logisim gates and components.",
+  "implementationProfile": {
+    "level": "GATE_LEVEL",
+    "targetPackage": "",
+    "packagePrimitive": false,
+    "routingPrimitive": "primitive_gates"
+  },
+  "recommendedNextAction": "Open the .circ in Logisim-evolution for visual inspection, then review manifest and truth-table artifacts.",
+  "recommendedActions": ["open_circuit", "review_manifest", "review_truth_table"],
+  "sourceJson": "",
+  "circuitName": "rom_chip",
+  "circuitPath": "generated/circ/rom_chip.circ",
+  "manifestPath": "generated/reports/rom_chip_circuit_manifest.md",
+  "manifestComplete": true,
+  "manifestCheckCount": 7,
+  "manifestIssueCount": 0,
+  "artifactCount": 6,
+  "artifacts": [
+    {"path": "generated/circ/rom_chip.circ", "exists": true},
+    {"path": "generated/reports/rom_chip_circuit_manifest.json", "exists": true},
+    {"path": "generated/reports/rom_chip_circuit_manifest.md", "exists": true},
+    {"path": "generated/reports/rom_chip_generation_summary.json", "exists": true},
+    {"path": "generated/reports/rom_chip_generation_summary.md", "exists": true},
+    {"path": "generated/reports/rom_chip_multichip.md", "exists": true}
+  ]
+}

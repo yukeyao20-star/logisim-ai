@@ -1,0 +1,19 @@
+{
+  "circuitName": "ram_chip",
+  "complete": true,
+  "artifactCount": 1,
+  "checkCount": 7,
+  "checks": [
+    {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=4048"},
+    {"name": "round_trip_loadable", "passed": true, "detail": "[OK] ram_chip.circ round-trip loaded with main circuit ram_chip"},
+    {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
+    {"name": "structure_matches_spec", "passed": true, "detail": "[OK] ram_chip.circ structure matches CircuitSpec"},
+    {"name": "layout_clean", "passed": true, "detail": "[OK] ram_chip.circ static layout checks passed"},
+    {"name": "truth_table_evidence", "passed": true, "detail": "[SKIP] native TTL chip present; in-process truth table only covers primitive gates"}
+  ],
+  "artifacts": [
+    {"kind": "circuit", "path": "generated/circ/ram_chip.circ", "exists": true}
+  ],
+  "issues": []
+}
