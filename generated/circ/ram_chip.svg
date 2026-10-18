@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="855" height="380" viewBox="280 70 855 380">
+<rect x="280" y="70" width="100%" height="100%" fill="white"/>
+<rect x="295" y="88" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin ADR</text>
+<rect x="290" y="88" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="295" y="138" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin DIN</text>
+<rect x="290" y="138" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ1</text>
+<rect x="295" y="188" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="204" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin STR</text>
+<rect x="290" y="188" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="204" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ3</text>
+<rect x="295" y="238" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin CLR</text>
+<rect x="290" y="238" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ4</text>
+<rect x="295" y="288" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="304" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin CLK</text>
+<rect x="290" y="288" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="304" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="480" y="248" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="500" y="264" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="480" y="288" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="500" y="304" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ4</text>
+<rect x="480" y="298" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="500" y="314" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ3</text>
+<rect x="480" y="308" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="500" y="324" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="480" y="328" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="500" y="344" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ2</text>
+<rect x="720" y="328" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="740" y="344" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ1</text>
+<rect x="950" y="88" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="965" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin DOUT</text>
+<rect x="945" y="88" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="965" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ2</text>
+<rect x="445" y="226" width="110" height="48" fill="#cf222e22" stroke="#cf222e" stroke-width="1.5" rx="4"/>
+<text x="500" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">RAM RAM1</text>
+</svg>

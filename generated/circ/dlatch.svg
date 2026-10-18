@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="310" viewBox="280 70 1260 310">
+<rect x="280" y="70" width="100%" height="100%" fill="white"/>
+<line x1="500" y1="170" x2="500" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<line x1="590" y1="170" x2="590" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<line x1="710" y1="170" x2="710" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<line x1="830" y1="170" x2="830" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<line x1="950" y1="170" x2="950" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<rect x="1285" y="138" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="1300" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin nQ</text>
+<rect x="1280" y="138" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="1300" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="1355" y="88" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="1370" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin Q</text>
+<rect x="1350" y="88" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="1370" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="295" y="88" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin D</text>
+<rect x="290" y="88" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="295" y="138" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin EN</text>
+<rect x="290" y="138" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ2</text>
+<rect x="450" y="238" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="470" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="480" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="500" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ1</text>
+<rect x="510" y="218" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="530" y="234" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ2</text>
+<rect x="510" y="258" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="530" y="274" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="570" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="590" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ3</text>
+<rect x="630" y="218" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="650" y="234" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ2</text>
+<rect x="630" y="258" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="650" y="274" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ1</text>
+<rect x="690" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="710" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ4</text>
+<rect x="750" y="218" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="770" y="234" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ3</text>
+<rect x="750" y="258" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="770" y="274" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="810" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="830" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="870" y="218" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="890" y="234" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ4</text>
+<rect x="870" y="258" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="890" y="274" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="930" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="950" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="479" y="226" width="42" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="500" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">NOT Gate DN</text>
+<rect x="554" y="226" width="72" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="590" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">NAND Gate U1</text>
+<rect x="674" y="226" width="72" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="710" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">NAND Gate U2</text>
+<rect x="794" y="226" width="72" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="830" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">NAND Gate U3</text>
+<rect x="914" y="226" width="72" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="950" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">NAND Gate U4</text>
+</svg>

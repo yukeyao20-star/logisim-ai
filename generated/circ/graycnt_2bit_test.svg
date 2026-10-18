@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1355" height="350" viewBox="280 70 1355 350">
+<rect x="280" y="70" width="100%" height="100%" fill="white"/>
+<line x1="1045" y1="170" x2="1045" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<line x1="835" y1="170" x2="835" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<line x1="925" y1="170" x2="925" y2="250" stroke="#1a7f37" stroke-width="2"/>
+<rect x="1025" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="1045" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ4</text>
+<rect x="1240" y="238" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="1255" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin Q1</text>
+<rect x="1235" y="238" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="1255" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="1310" y="188" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="1325" y="204" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin G1</text>
+<rect x="1305" y="188" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="1325" y="204" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="1380" y="138" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="1395" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin Q0</text>
+<rect x="1375" y="138" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="1395" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="1450" y="88" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="1465" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin G0</text>
+<rect x="1445" y="88" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="1465" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ4</text>
+<rect x="295" y="88" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin CLK</text>
+<rect x="290" y="88" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="104" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="295" y="138" width="30" height="24" fill="#8250df22" stroke="#8250df" stroke-width="1.5" rx="4"/>
+<text x="310" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Pin RST</text>
+<rect x="290" y="138" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="310" y="154" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ1</text>
+<rect x="470" y="248" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="490" y="264" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ2</text>
+<rect x="470" y="288" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="490" y="304" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="500" y="298" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="520" y="314" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ1</text>
+<rect x="530" y="248" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="550" y="264" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="635" y="248" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="655" y="264" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ3</text>
+<rect x="635" y="288" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="655" y="304" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ0</text>
+<rect x="665" y="298" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="685" y="314" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ1</text>
+<rect x="695" y="248" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="715" y="264" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="785" y="238" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="805" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="815" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="835" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ2</text>
+<rect x="845" y="218" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="865" y="234" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="845" y="258" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="865" y="274" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="905" y="158" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="925" y="174" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ3</text>
+<rect x="965" y="218" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="985" y="234" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ5</text>
+<rect x="965" y="258" width="40" height="24" fill="#9a670022" stroke="#9a6700" stroke-width="1.5" rx="4"/>
+<text x="985" y="274" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">Tunnel TQ6</text>
+<rect x="1009" y="226" width="72" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="1045" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">XOR Gate G3</text>
+<rect x="814" y="226" width="42" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="835" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">NOT Gate N1</text>
+<rect x="889" y="226" width="72" height="48" fill="#0969da22" stroke="#0969da" stroke-width="1.5" rx="4"/>
+<text x="925" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">XOR Gate X2</text>
+<rect x="445" y="226" width="110" height="48" fill="#cf222e22" stroke="#cf222e" stroke-width="1.5" rx="4"/>
+<text x="500" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">D Flip-Flop U1</text>
+<rect x="610" y="226" width="110" height="48" fill="#cf222e22" stroke="#cf222e" stroke-width="1.5" rx="4"/>
+<text x="665" y="254" font-family="monospace" font-size="11" fill="#24292f" text-anchor="middle">D Flip-Flop U2</text>
+</svg>

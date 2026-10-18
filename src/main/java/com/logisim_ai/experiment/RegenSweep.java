@@ -56,6 +56,15 @@ public class RegenSweep {
         new java.io.File("generated/reports/" + stem + "_regen_flag.txt").delete();
         done++;
         var report = com.logisim_ai.validation.CircuitLayoutInspector.inspect(new File(out));
+        // Render an SVG companion so every circuit is viewable in a browser.
+        try {
+          String svg = CircSvg.render(
+              java.nio.file.Files.readString(java.nio.file.Path.of(out)));
+          java.nio.file.Files.writeString(
+              java.nio.file.Path.of("generated/circ/" + stem + ".svg"), svg);
+        } catch (Exception ignored) {
+          // SVG is a convenience artifact; never fail the sweep on it.
+        }
         if (report.issues().isEmpty()) {
           cleanAfter++;
         } else {
