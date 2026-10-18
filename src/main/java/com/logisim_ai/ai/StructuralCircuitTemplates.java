@@ -74,9 +74,12 @@ public final class StructuralCircuitTemplates {
   private static final Pattern UDCNT_EN_BARE =
       Pattern.compile("up[- ]?down\\s*counter|bidirectional\\s*counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern MODCNT_ZH =
-      Pattern.compile("模([0-9一二三四五六七八九十两]{1,2})计数器|([0-9一二三四五六七八九十两]{1,2})进制计数器");
+      Pattern.compile("模([0-9一二三四五六七八九十两百]{1,4})计数器|(?<![0-9])(?:([0-9]{1,3})|([一二三四五六七八九十两百]{1,5}))进制计数器");
+  // 十进制加法计数器 / 加法计数器 phrasing (BCD counter with 加法 infix).
+  private static final Pattern CNTADD_ZH =
+      Pattern.compile("(?:二进制|十进制)?加法计数器|加法计数电路");
   private static final Pattern MODCNT_EN =
-      Pattern.compile("mod[- ]?(\\d{1,2})\\s*counter", Pattern.CASE_INSENSITIVE);
+      Pattern.compile("mod[- ]?(\\d{1,3})\\s*counter", Pattern.CASE_INSENSITIVE);
   private static final Pattern PARITY_ZH =
       Pattern.compile("([0-9一二三四五六七八九十两]{1,3})\\s*(?:bit|位)\\s*(?:奇偶校验器|奇偶校验|偶校验器|奇校验器)");
   private static final Pattern PARITY_EN =
@@ -871,9 +874,15 @@ public final class StructuralCircuitTemplates {
     // 二进制计数器 and 十进制计数器 before reaching here).
     Matcher modzh = MODCNT_ZH.matcher(t);
     Matcher moden = MODCNT_EN.matcher(t);
+    if (CNTADD_ZH.matcher(t).find()) {
+      // 加法计数器: 二进制→binary up counter; 十进制→BCD counter.
+      return Optional.of(t.contains("十进制") ? buildBcdCounter() : buildCounter(4));
+    }
     if (modzh.find()) {
-      Integer n = modzh.group(1) != null ? chineseToInt(modzh.group(1)) : chineseToInt(modzh.group(2));
-      if (n != null && n != 2 && n != 10) {
+      Integer n = modzh.group(1) != null ? chineseToInt(modzh.group(1))
+          : modzh.group(2) != null ? Integer.parseInt(modzh.group(2))
+          : chineseToInt(modzh.group(3));
+      if (n != null && n >= 2 && n <= 256 && n != 2 && n != 10) {
         return Optional.of(buildModCounter(n));
       }
     }
@@ -4950,6 +4959,26 @@ public final class StructuralCircuitTemplates {
     };
     if (simple != null) {
       return simple;
+    }
+    // 百 composition: 一百=100, 一百二十八=128 (up to 255).
+    java.util.regex.Matcher hund =
+        java.util.regex.Pattern.compile("^([一二两三四五六七八九]?)百([一二三四五六七八九十]*)$")
+            .matcher(s);
+    if (hund.matches()) {
+        int h = hund.group(1).isEmpty() || hund.group(1).equals("一") ? 100
+            : switch (hund.group(1)) {
+                case "二", "两" -> 200;
+                default -> 0;
+            };
+        if (h == 0) {
+            return null;
+        }
+        String rest = hund.group(2);
+        if (rest.isEmpty()) {
+            return h;
+        }
+        Integer r = chineseToInt(rest);
+        return r == null ? null : h + r;
     }
     // Two-digit composition: 三十=30, 四十五=45, 九十九=99 (up to 99).
     java.util.regex.Matcher tens =

@@ -1840,6 +1840,7 @@ public final class BooleanSynthesisRegression {
         "flash adc", "comparator type adc",
         "24 second timer", "shot clock", "elevator up down",
         "water tower control", "color light loop", "ward call system",
+        "mod 128 counter", "100进制计数器", "十进制加法计数器",
         "two's complement to sign magnitude", "sign magnitude converter",
         "bcd to hex", "binary to decimal", "quiz buzzer",
         "binary to decimal converter",
