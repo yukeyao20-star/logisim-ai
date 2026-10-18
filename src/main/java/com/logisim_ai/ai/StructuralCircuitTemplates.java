@@ -411,6 +411,13 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("color(?:ful)?\\s*light\\s*(?:loop|cycle|control)", Pattern.CASE_INSENSITIVE);
   // 病房呼叫系统 = ward call: k rooms → priority encoder + latch. The
   // textbook build is 编码器+锁存+显示 → route to encoder8to3 (8 beds).
+  // Bare 状态机/state machine → canonical generic FSM (a two-button walk
+  // counter). Also covers moore/mealy phrasing (the synthesizer emits Moore;
+  // Mealy requests get the closest gate-level machine).
+  private static final Pattern FSM_ZH =
+      Pattern.compile("状态机|状态转移电路|时序逻辑电路");
+  private static final Pattern FSM_EN =
+      Pattern.compile("state\\s*machine|moore\\s*machine|mealy\\s*machine|sequential\\s*logic", Pattern.CASE_INSENSITIVE);
   private static final Pattern WARD_ZH =
       Pattern.compile("病房呼叫|呼叫系统|呼叫器");
   private static final Pattern WARD_EN =
@@ -1003,6 +1010,9 @@ public final class StructuralCircuitTemplates {
     }
     if (WARD_ZH.matcher(t).find() || WARD_EN.matcher(t).find()) {
       return Optional.of(buildEncoder8to3());
+    }
+    if (FSM_ZH.matcher(t).find() || FSM_EN.matcher(t).find()) {
+      return Optional.of(buildGenericFsm());
     }
     if (ROM_ZH.matcher(t).find() || ROM_EN.matcher(t).find()) {
       return Optional.of(buildMemoryChip("rom"));
@@ -6904,6 +6914,36 @@ public final class StructuralCircuitTemplates {
       nets.add(net("mc_dout", e(id, 1), e("dout", 0)));
     }
     return new CircuitSpec(ram ? "ram_chip" : "rom_chip", components, ports, nets, hints);
+  }
+
+  /**
+   * Canonical generic FSM (通用状态机): 4-state Moore machine used as the
+   * answer to bare "状态机 / state machine" requests. Inputs A, B; output Z
+   * high in states 2 and 3 (Z = Q1). Behavior: A=1 advances, B=1 rewinds,
+   * both hold — a two-button walk counter.
+   *   s0: A→1, else 0
+   *   s1: A→2, B→0, else 1
+   *   s2: A→3, B→1, else 2
+   *   s3: B→2, else 3
+   */
+  static CircuitSpec buildGenericFsm() {
+    var def = new FsmSynthesizer.Definition(
+        "generic_fsm",
+        List.of("a", "b"),
+        List.of(new FsmSynthesizer.Output("z", List.of(2, 3))),
+        java.util.List.of(
+            new FsmSynthesizer.Transition(0, Map.of("a", false, "b", false), 0),
+            new FsmSynthesizer.Transition(0, Map.of("a", true, "b", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("a", false, "b", false), 1),
+            new FsmSynthesizer.Transition(1, Map.of("a", true, "b", false), 2),
+            new FsmSynthesizer.Transition(1, Map.of("a", false, "b", true), 0),
+            new FsmSynthesizer.Transition(2, Map.of("a", false, "b", false), 2),
+            new FsmSynthesizer.Transition(2, Map.of("a", true, "b", false), 3),
+            new FsmSynthesizer.Transition(2, Map.of("a", false, "b", true), 1),
+            new FsmSynthesizer.Transition(3, Map.of("a", false, "b", false), 3),
+            new FsmSynthesizer.Transition(3, Map.of("a", false, "b", true), 2)),
+        4);
+    return FsmSynthesizer.synthesize(def);
   }
 
   /**

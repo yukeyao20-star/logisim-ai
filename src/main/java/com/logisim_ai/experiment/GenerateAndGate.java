@@ -330,6 +330,7 @@ public final class GenerateAndGate {
         || spec.name().equals("ram_chip")
         || spec.name().equals("rom_chip")
         || spec.name().startsWith("flash_adc")
+        || spec.name().equals("generic_fsm")
         || spec.name().startsWith("bcd2bin_")
         || spec.name().startsWith("bin2bcd")
         || spec.name().equals("tristate_buffer")
