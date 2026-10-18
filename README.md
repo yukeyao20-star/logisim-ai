@@ -12,14 +12,32 @@
 
 ## 快速开始（发布包，解压即用）
 
-从 [Releases](../../releases) 下载 `logisim-ai-0.73.zip`（49 MB），解压后：
+从 [Releases](../../releases) 下载 `logisim-ai-0.73.zip`（49 MB），解压。要求仅 **JDK 21+**（`java -version` 显示 21 或更高）。
 
-```bash
-bin/logisim-ai "设计一个四位二进制加法器"     # NL 生成
-bin/logisim-ai 9 myspec.json out.circ         # JSON IR 生成
+### Windows
+
+```bat
+cd logisim-ai-0.73
+bin\logisim-ai.bat "设计一个四位二进制加法器"
+bin\logisim-ai.bat 9 myspec.json out.circ
 ```
 
-要求仅 **JDK 21+**。产物在 `generated/circ/`，含验证报告与 SVG 可视化。
+- `cmd` 或 PowerShell 均可；中文输出乱码时先执行 `chcp 65001`。
+- 未设置 `JAVA_HOME` 时，确保 JDK 21 的 `bin` 目录在 `PATH` 中。
+
+### macOS / Linux
+
+```bash
+cd logisim-ai-0.73
+chmod +x bin/logisim-ai            # 若解压后没有执行权限
+./bin/logisim-ai "设计一个四位二进制加法器"
+./bin/logisim-ai 9 myspec.json out.circ
+```
+
+- macOS 可用 `export JAVA_HOME=$(/usr/libexec/java_home -v 21)` 指定 JDK。
+- Linux 可用 `export JAVA_HOME=/path/to/jdk-21`。
+
+两个命令的产物都在 `generated/circ/`，含验证报告与 SVG 可视化。
 
 ## 两条统一接入接口
 
@@ -41,10 +59,14 @@ bin/logisim-ai 9 myspec.json out.circ         # JSON IR 生成
 ## 从源码构建
 
 ```bash
-# 要求 JDK 21 + Gradle（或用自带 .gradle-local/gradle-9.6.0）
-gradle compileJava --no-daemon
-# Windows/Linux 命令差异见 AGENTS.md（双系统支持）
-python3 scripts/build_release.py    # 打包 release zip
+# 要求 JDK 21
+# Windows:
+.gradle-local\gradle-9.6.0\bin\gradle.bat compileJava --no-daemon
+# macOS / Linux:
+export JAVA_HOME=/path/to/jdk-21
+.gradle-local/gradle-9.6.0/bin/gradle -Dorg.gradle.java.home="$JAVA_HOME" compileJava --no-daemon
+# 打包 release zip（三系统通用；Windows 上用 python，macOS/Linux 上用 python3）
+python3 scripts/build_release.py
 ```
 
 ## 文档
