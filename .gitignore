@@ -10,7 +10,6 @@ build/
 
 # Agent/tool state
 .agents/
-.claude/
 .codex/
 temp/
 
