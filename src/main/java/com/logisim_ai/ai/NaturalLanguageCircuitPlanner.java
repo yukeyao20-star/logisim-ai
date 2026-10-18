@@ -212,7 +212,11 @@ public final class NaturalLanguageCircuitPlanner {
     }
     return new PlanningReport(
         null,
-        "No supported template or Boolean expression matched this request.",
+        "No supported template or Boolean expression matched this request."
+            + " 支持范围: 组合逻辑(加/减/乘/除/比较/编码/译码/选择/分配/码转换),"
+            + " 时序(计数器/寄存器/移位/FSM 控制器), 门级 flash ADC, RAM/ROM 视图,"
+            + " 布尔表达式/NAND/TTL 映射, 最小项列表。"
+            + " 不支持: 模拟前端(ADC/DAC 电阻网络), CPU 整机, 音频/传感器类。",
         supportedCircuits());
   }
 
