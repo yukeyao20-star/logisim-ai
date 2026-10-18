@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=274711 |
+| circuit_non_empty | true | bytes=267070 |
 | round_trip_loadable | true | [OK] multiplier_8x8.circ round-trip loaded with main circuit multiplier_8x8 |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] multiplier_8x8.circ structure matches CircuitSpec |
@@ -20,4 +20,4 @@
 
 | Kind | Path | Exists |
 | --- | --- | --- |
-| circuit | generated\circ\multiplier_8x8.circ | true |
+| circuit | generated/circ/multiplier_8x8.circ | true |
