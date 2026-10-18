@@ -1837,6 +1837,7 @@ public final class BooleanSynthesisRegression {
         "ping pong referee", "table tennis machine",
         "ram memory", "rom memory", "1 digit decimal adder",
         "car tail light controller", "counter decoder display circuit",
+        "flash adc", "comparator type adc",
         "two's complement to sign magnitude", "sign magnitude converter",
         "bcd to hex", "binary to decimal", "quiz buzzer",
         "binary to decimal converter",

@@ -381,6 +381,11 @@ public final class StructuralCircuitTemplates {
       Pattern.compile("rom存储器|只读存储器|rom芯片");
   private static final Pattern ROM_EN =
       Pattern.compile("\\brom\\b", Pattern.CASE_INSENSITIVE);
+  // 比较器型ADC / flash ADC: thermometer inputs + priority encoder (gate level).
+  private static final Pattern ADC_ZH =
+      Pattern.compile("比较器型\\s*ad[cd]|flash\\s*ad[cd]|门级模数转换");
+  private static final Pattern ADC_EN =
+      Pattern.compile("flash\\s*ad(?:c|con)|comparator\\s*type\\s*ad[cd]|comparator\\s*ad[cd]", Pattern.CASE_INSENSITIVE);
   private static final Pattern DRYER_ZH =
       Pattern.compile("烘干机控制|烘干(?:机)?状态机");
   private static final Pattern DRYER_EN =
@@ -512,6 +517,7 @@ public final class StructuralCircuitTemplates {
         "Water level controller 水位控制器 (注水/满/排水 FSM)",
         "Clothes dryer 烘干机控制器 (加热/滚筒/冷却 FSM)",
         "Ping-pong machine 乒乓球游戏机 (发球/回球/失误判分 FSM)",
+        "Flash ADC 比较器型模数转换器 (3位, 温度计码→优先编码, 门级)",
         "101 sequence detector 101序列检测器",
         "1101 sequence detector 1101序列检测器",
         "LFSR 线性反馈移位寄存器/伪随机数",
@@ -940,6 +946,9 @@ public final class StructuralCircuitTemplates {
     }
     if (RAM_ZH.matcher(t).find() || RAM_EN.matcher(t).find()) {
       return Optional.of(buildMemoryChip("ram"));
+    }
+    if (ADC_ZH.matcher(t).find() || ADC_EN.matcher(t).find()) {
+      return Optional.of(buildFlashAdc());
     }
     if (ROM_ZH.matcher(t).find() || ROM_EN.matcher(t).find()) {
       return Optional.of(buildMemoryChip("rom"));
@@ -6718,6 +6727,67 @@ public final class StructuralCircuitTemplates {
             new FsmSynthesizer.Transition(4, Map.of("start", false, "fill", false, "empty", false, "ag4", false, "sp4", true), 0)),
         5);
     return FsmSynthesizer.synthesize(def);
+  }
+
+  /**
+   * 3-bit flash ADC (比较器型模数转换器): thermometer-code inputs V0..V6
+   * (V_k = "Vin > Vref_k", the comparators themselves are analog) feeding the
+   * 8-to-3 priority encoder → binary D2..D0. This is the textbook gate-level
+   * ADC exercise; the analog front-end is out of scope by construction.
+   */
+  static CircuitSpec buildFlashAdc() {
+    // Reuse the 8-to-3 priority encoder's gate structure as-is. The encoder's
+    // inputs (i0..i7) are reinterpreted as the thermometer lines V0..V7 and
+    // its outputs keep their ids/labels — only the input port ids/labels are
+    // renamed, and the net endpoints follow the same map.
+    CircuitSpec enc = buildEncoder8to3();
+    // Flash-ADC mapping: V_k is the comparator against threshold k (V0 =
+    // ground-level, always-true in a real ADC) and feeds encoder input i_k.
+    // Then D = highest active index = (thermometer height - 1), and GS = any
+    // comparator active. Ids rename 1:1 (i_k → v_k) regardless of the
+    // encoder's port ORDER, so the semantics follow priority, not position.
+    Map<String, String> inputRename = new java.util.LinkedHashMap<>();
+    for (ExternalPort p : enc.externalPorts()) {
+      if (p.direction() == PortDirection.INPUT) {
+        int k = Integer.parseInt(p.id().substring(1));
+        inputRename.put(p.id(), "v" + k);
+      }
+    }
+    List<ExternalPort> ports = new ArrayList<>();
+    for (ExternalPort p : enc.externalPorts()) {
+      String newId = inputRename.getOrDefault(p.id(), p.id());
+      if (p.direction() == PortDirection.INPUT) {
+        ports.add(new ExternalPort(newId, newId.toUpperCase(), 1,
+            PortDirection.INPUT, PortSide.LEFT, p.targetComponentId(),
+            p.targetEndIndex(), p.clock()));
+      } else {
+        // ADC semantics: Y2→D2 (MSB), Y1→D1, Y0→D0, G→GS (group signal).
+        String lbl = switch (p.label()) {
+          case "Y2" -> "D2";
+          case "Y1" -> "D1";
+          case "Y0" -> "D0";
+          case "G" -> "GS";
+          default -> p.label();
+        };
+        ports.add(new ExternalPort(p.id(), lbl, 1, PortDirection.OUTPUT,
+            PortSide.RIGHT, p.targetComponentId(), p.targetEndIndex()));
+      }
+    }
+    List<NetSpec> nets = new ArrayList<>();
+    for (NetSpec n : enc.nets()) {
+      List<EndpointRef> eps = new ArrayList<>();
+      for (EndpointRef e : n.endpoints()) {
+        String renamed = inputRename.get(e.componentId());
+        eps.add(renamed != null ? new EndpointRef(renamed, e.endIndex()) : e);
+      }
+      result_nets_add(nets, n.id(), eps);
+    }
+    return new CircuitSpec("flash_adc_3bit", enc.components(), ports, nets,
+        enc.layoutHints());
+  }
+
+  private static void result_nets_add(List<NetSpec> nets, String id, List<EndpointRef> eps) {
+    nets.add(new NetSpec(id, eps));
   }
 
   /**
