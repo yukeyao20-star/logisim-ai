@@ -28,6 +28,14 @@ public final class CircuitCatalog {
         || stem.contains("bcd_counter")) {
       return "计数器";
     }
+    if (stem.contains("washing") || stem.contains("vending") || stem.contains("elevator")
+        || stem.contains("water") || stem.contains("dryer") || stem.contains("pingpong")
+        || stem.contains("taillight") || stem.contains("door") || stem.contains("stepper")
+        || stem.contains("traffic") || stem.contains("oneshot") || stem.contains("debouncer")
+        || stem.contains("edge_detector") || stem.contains("stopwatch")
+        || stem.contains("freq_meter") || stem.contains("countdown")) {
+      return "控制器";
+    }
     if (stem.contains("adder") || stem.contains("subtractor") || stem.contains("multiplier")
         || stem.contains("divider") || stem.contains("satadd") || stem.contains("squarer")
         || stem.contains("mac") || stem.contains("accumulator")) {
@@ -49,14 +57,6 @@ public final class CircuitCatalog {
     }
     if (stem.contains("7seg") || stem.contains("display")) {
       return "显示";
-    }
-    if (stem.contains("washing") || stem.contains("vending") || stem.contains("elevator")
-        || stem.contains("water") || stem.contains("dryer") || stem.contains("pingpong")
-        || stem.contains("taillight") || stem.contains("door") || stem.contains("stepper")
-        || stem.contains("traffic") || stem.contains("oneshot") || stem.contains("debouncer")
-        || stem.contains("edge_detector") || stem.contains("stopwatch")
-        || stem.contains("freq_meter") || stem.contains("countdown")) {
-      return "控制器";
     }
     if (stem.contains("ram") || stem.contains("rom") || stem.contains("adc")) {
       return "芯片视图";

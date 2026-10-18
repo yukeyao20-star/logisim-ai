@@ -158,7 +158,7 @@
 | oneshot_4clk | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/oneshot_4clk.svg) |
 | parity_4bit | 比较/校验 | spec ✓ | ✅ 0 警告 | [查看](../circ/parity_4bit.svg) |
 | parity_8bit | 比较/校验 | spec ✓ | ✅ 0 警告 | [查看](../circ/parity_8bit.svg) |
-| pingpong_machine | 运算 | spec ✓ | ✅ 0 警告 | [查看](../circ/pingpong_machine.svg) |
+| pingpong_machine | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/pingpong_machine.svg) |
 | piso_4bit | 寄存/触发 | spec ✓ | ✅ 0 警告 | [查看](../circ/piso_4bit.svg) |
 | ram_chip | 芯片视图 | spec ✓ | ✅ 0 警告 | [查看](../circ/ram_chip.svg) |
 | register_4bit | 寄存/触发 | spec ✓ | ✅ 0 警告 | [查看](../circ/register_4bit.svg) |
@@ -251,6 +251,6 @@
 | two_bit_ripple_adder | 运算 | — | ✅ 0 警告 | — |
 | twoscomp_4bit | 码转换 | spec ✓ | ✅ 0 警告 | [查看](../circ/twoscomp_4bit.svg) |
 | updown_counter_4bit | 计数器 | spec ✓ | ✅ 0 警告 | [查看](../circ/updown_counter_4bit.svg) |
-| vending_machine | 运算 | spec ✓ | ✅ 0 警告 | [查看](../circ/vending_machine.svg) |
-| washing_machine | 运算 | spec ✓ | ✅ 0 警告 | [查看](../circ/washing_machine.svg) |
+| vending_machine | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/vending_machine.svg) |
+| washing_machine | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/washing_machine.svg) |
 | water_level_controller | 控制器 | spec ✓ | ✅ 0 警告 | [查看](../circ/water_level_controller.svg) |
