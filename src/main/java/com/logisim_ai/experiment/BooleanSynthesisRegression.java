@@ -1838,6 +1838,8 @@ public final class BooleanSynthesisRegression {
         "ram memory", "rom memory", "1 digit decimal adder",
         "car tail light controller", "counter decoder display circuit",
         "flash adc", "comparator type adc",
+        "24 second timer", "shot clock", "elevator up down",
+        "water tower control", "color light loop", "ward call system",
         "two's complement to sign magnitude", "sign magnitude converter",
         "bcd to hex", "binary to decimal", "quiz buzzer",
         "binary to decimal converter",

@@ -384,6 +384,36 @@ public final class StructuralCircuitTemplates {
   // 比较器型ADC / flash ADC: thermometer inputs + priority encoder (gate level).
   private static final Pattern ADC_ZH =
       Pattern.compile("比较器型\\s*ad[cd]|flash\\s*ad[cd]|门级模数转换");
+  // 24秒计时器/篮球进攻计时: mod-25 counter (0..23 wrap), TC = 24s tick.
+  private static final Pattern SHOTCLOCK_ZH =
+      Pattern.compile("24秒(?:计时|计数|进攻)?|篮球(?:比赛)?计分|进攻计时");
+  private static final Pattern SHOTCLOCK_EN =
+      Pattern.compile("shot\\s*clock|basketball\\s*scor", Pattern.CASE_INSENSITIVE);
+  // 电梯上行下行 = up/down elevator → existing updown? It's a counter alias
+  // or the elevator FSM; "上行/下行" phrasing maps to the elevator FSM.
+  private static final Pattern ELEV_UD_ZH =
+      Pattern.compile("电梯上行|电梯下行|电梯上楼下楼");
+  private static final Pattern ELEV_UD_EN =
+      Pattern.compile("elevator\\s*(?:up|down)", Pattern.CASE_INSENSITIVE);
+  // 水塔水位自动控制 = water tower auto-control → water_level_controller.
+  private static final Pattern WATERTOWER_ZH =
+      Pattern.compile("水塔水位|水位自动控制|水位自动");
+  private static final Pattern WATERTOWER_EN =
+      Pattern.compile("water\\s*tower", Pattern.CASE_INSENSITIVE);
+  // 彩灯循环控制 = running lights → ring counter (existing 流水灯 alias
+  // misses 循环控制 phrasing).
+  private static final Pattern CAMP_ZH =
+      Pattern.compile("彩灯循环|循环彩灯|彩灯控制");
+  private static final Pattern CAMP_EN =
+      Pattern.compile("color(?:ful)?\\s*light\\s*(?:loop|cycle|control)", Pattern.CASE_INSENSITIVE);
+  // 病房呼叫系统 = ward call: k rooms → priority encoder + latch. The
+  // textbook build is 编码器+锁存+显示 → route to encoder8to3 (8 beds).
+  private static final Pattern WARD_ZH =
+      Pattern.compile("病房呼叫|呼叫系统|呼叫器");
+  private static final Pattern WARD_EN =
+      Pattern.compile("ward\\s*call|hospital\\s*call", Pattern.CASE_INSENSITIVE);
+  // 公交车报站器 = bus announcer: needs audio — honest mismatch. No alias;
+  // leave to planner's suggestion list. (documented boundary)
   private static final Pattern ADC_EN =
       Pattern.compile("flash\\s*ad(?:c|con)|comparator\\s*type\\s*ad[cd]|comparator\\s*ad[cd]", Pattern.CASE_INSENSITIVE);
   private static final Pattern DRYER_ZH =
@@ -949,6 +979,21 @@ public final class StructuralCircuitTemplates {
     }
     if (ADC_ZH.matcher(t).find() || ADC_EN.matcher(t).find()) {
       return Optional.of(buildFlashAdc());
+    }
+    if (SHOTCLOCK_ZH.matcher(t).find() || SHOTCLOCK_EN.matcher(t).find()) {
+      return Optional.of(buildModCounter(25));
+    }
+    if (ELEV_UD_ZH.matcher(t).find() || ELEV_UD_EN.matcher(t).find()) {
+      return Optional.of(buildElevatorController());
+    }
+    if (WATERTOWER_ZH.matcher(t).find() || WATERTOWER_EN.matcher(t).find()) {
+      return Optional.of(buildWaterLevelController());
+    }
+    if (CAMP_ZH.matcher(t).find() || CAMP_EN.matcher(t).find()) {
+      return Optional.of(buildRingCounter());
+    }
+    if (WARD_ZH.matcher(t).find() || WARD_EN.matcher(t).find()) {
+      return Optional.of(buildEncoder8to3());
     }
     if (ROM_ZH.matcher(t).find() || ROM_EN.matcher(t).find()) {
       return Optional.of(buildMemoryChip("rom"));
