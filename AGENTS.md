@@ -51,7 +51,10 @@ java -cp "build/classes/java/main:third_party/logisim-evolution/build/libs/logis
 | 13 | **Official Logisim JAR simulation** — runs real `logisim-evolution-4.1.0-all.jar` truth tables on generated `.circ` files |
 | 14 | **Native TTL chip view** — `... GenerateAndGate 14 74160` or NL `生成 74160` places any of the 62 catalog chips with per-port pins |
 
-**Tooling**: `CircSvg <in.circ> [out.svg|out.png]` renders any generated circuit to browser-viewable SVG or PNG (component boxes color-coded by type, wires, labels) — no GUI needed; every regenerated circuit gets a companion `.svg` via RegenSweep.
+**Tooling** (all in `experiment/`):
+- `CircSvg <in.circ> [out.svg|out.png]` — renders any generated circuit to browser-viewable SVG or PNG (component boxes color-coded by type, wires, labels); no GUI needed; RegenSweep writes a companion `.svg` per circuit, and the PNG feeds GLM visual layout evaluation.
+- `CircuitCatalog` — regenerates `generated/reports/circuit_catalog.md`, the six-column index of all circuits (name/type/spec/layout/evidence/SVG); RegenSweep refreshes it automatically.
+- `RegenSweep` — batch-regenerates every spec-backed circuit (re-persisting specs), renders SVGs, refreshes the catalog; the one-command maintenance entry.
 
 **NL capability snapshot (rounds 59–70)**: generic FSM synthesizer (`ai/FsmSynthesizer`, transition table → gate-level, auto self-loops for uncovered pairs; 14 controllers — vending/elevator/stepper/washing/door/water/dryer/pingpong/tail-light/generic FSM/etc.), RAM/ROM single-chip views, gate-level flash ADC, sign-magnitude converter, Chinese-numeral hundreds parsing (`一百二十八进制计数器`), ~140/163 real-world query coverage with explicit capability-boundary diagnostics. All outputs verified by official JAR vectors; square layout for multi-row gate-only circuits (`forceTunnels`), staircase for FF-mixed. See `docs/HANDOFF_146` and round notes in `docs/07_轮次进展与待决问题.md`.
 
