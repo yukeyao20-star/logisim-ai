@@ -3268,7 +3268,7 @@ public final class BooleanSynthesisRegression {
           || !gateFootprintDeliveryJson.contains("\"action\": \"avoid_reserved_areas\"")
           || !gateFootprintDeliveryJson.contains("\"targetType\": \"RESERVED_AREA_INTRUSION\"")
           || !gateFootprintDeliveryJson.contains("component=AND Gate")
-          || !gateFootprintDeliveryJson.contains("connectionPoints=3")
+          || !gateFootprintDeliveryJson.contains("connectionPoints=5")
           || !gateFootprintDeliveryJson.contains("x1=370")
           || !gateFootprintDeliveryJson.contains("x2=430")
           || !gateFootprintDeliveryMarkdown.contains("- Layout reserved area intrusion count: 1")
@@ -3733,7 +3733,7 @@ public final class BooleanSynthesisRegression {
           || gateFootprintReport.repairPlans().stream().noneMatch(plan ->
               plan.action().equals("avoid_reserved_areas")
                   && plan.parameters().contains("component=AND Gate")
-                  && plan.parameters().contains("connectionPoints=3")
+                  && plan.parameters().contains("connectionPoints=5")
                   && plan.parameters().contains("x1=370")
                   && plan.parameters().contains("x2=430"))) {
         throw new IllegalStateException("Expected one AND gate footprint intrusion: "
