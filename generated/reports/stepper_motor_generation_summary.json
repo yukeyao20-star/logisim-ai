@@ -19,10 +19,13 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 3,
+  "artifactCount": 6,
   "artifacts": [
     {"path": "generated/circ/stepper_motor.circ", "exists": true},
     {"path": "generated/reports/stepper_motor_circuit_manifest.json", "exists": true},
-    {"path": "generated/reports/stepper_motor_circuit_manifest.md", "exists": true}
+    {"path": "generated/reports/stepper_motor_circuit_manifest.md", "exists": true},
+    {"path": "generated/reports/stepper_motor_generation_summary.json", "exists": true},
+    {"path": "generated/reports/stepper_motor_generation_summary.md", "exists": true},
+    {"path": "generated/reports/stepper_motor_multichip.md", "exists": true}
   ]
 }

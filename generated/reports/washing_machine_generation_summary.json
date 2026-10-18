@@ -19,10 +19,13 @@
   "manifestComplete": true,
   "manifestCheckCount": 7,
   "manifestIssueCount": 0,
-  "artifactCount": 3,
+  "artifactCount": 6,
   "artifacts": [
     {"path": "generated/circ/washing_machine.circ", "exists": true},
     {"path": "generated/reports/washing_machine_circuit_manifest.json", "exists": true},
-    {"path": "generated/reports/washing_machine_circuit_manifest.md", "exists": true}
+    {"path": "generated/reports/washing_machine_circuit_manifest.md", "exists": true},
+    {"path": "generated/reports/washing_machine_generation_summary.json", "exists": true},
+    {"path": "generated/reports/washing_machine_generation_summary.md", "exists": true},
+    {"path": "generated/reports/washing_machine_multichip.md", "exists": true}
   ]
 }

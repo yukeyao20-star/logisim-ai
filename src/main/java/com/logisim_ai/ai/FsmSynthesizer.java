@@ -213,7 +213,9 @@ public final class FsmSynthesizer {
 
     // ---- Next-state terms: for each (from, inputs) build the product term,
     // then OR the terms of each flip-flop's D input. ----
-    // termOuts keyed by toState bit -> list of driven sources for D_i.
+    // Self-loop transitions (fromState == toState, explicit or auto-filled)
+    // are skipped: a D-FF naturally holds its value when no set-term fires,
+    // so their product terms are pure area. D_i = Q_i OR (set terms).
     Map<Integer, List<SignalSource>> dTerms = new LinkedHashMap<>();
     // Moore output minterms: output name -> list of state-chain sources.
     Map<String, List<SignalSource>> stateMinterms = new LinkedHashMap<>();
@@ -259,6 +261,11 @@ public final class FsmSynthesizer {
       for (Map.Entry<Map<String, Boolean>, Integer> toEntry
           : fromEntry.getValue().entrySet()) {
         int toState = toEntry.getValue();
+        if (toState == fromState) {
+          continue; // self-loop: hold semantics, no term needed
+        }
+        // Per-bit product term: the same term drives set_i when toState bit
+        // i is 1, clear_i when it is 0.
         List<SignalSource> termInputs = new ArrayList<>(stateLits);
         for (Map.Entry<String, Boolean> ie : toEntry.getKey().entrySet()) {
           String key = Boolean.TRUE.equals(ie.getValue()) ? ie.getKey() : "n" + ie.getKey();
@@ -292,38 +299,103 @@ public final class FsmSynthesizer {
     // Group per bit first: D_i drives one flip-flop, so all terms of all
     // states with bit i set share a single net (multi-driver otherwise).
     List<List<SignalSource>> perBit = new ArrayList<>();
+    List<List<Integer>> perBitToState = new ArrayList<>();
     for (int i = 0; i < bits; i++) {
       perBit.add(new ArrayList<>());
+      perBitToState.add(new ArrayList<>());
     }
     for (Map.Entry<Integer, List<SignalSource>> entry : dTerms.entrySet()) {
       int toState = entry.getKey();
       for (int i = 0; i < bits; i++) {
-        if (((toState >> i) & 1) == 1) {
-          perBit.get(i).addAll(entry.getValue());
+        // Every set-transition term drives BOTH set_i (bit=1) and clear_i
+        // (bit=0) sides — register which toState each term came from.
+        perBit.get(i).addAll(entry.getValue());
+        for (int t = 0; t < entry.getValue().size(); t++) {
+          perBitToState.get(i).add(toState);
         }
       }
     }
     for (int i = 0; i < bits; i++) {
       List<SignalSource> terms = perBit.get(i);
+      SignalSource hold = literal.get("q" + i);
       if (terms.isEmpty()) {
+        nets.add(net("fsm_d" + i, hold.toRef(), e(fp + i, 0)));
         continue;
       }
-      String dNet = "fsm_d" + i;
-      if (terms.size() == 1) {
-        nets.add(net(dNet, terms.get(0).toRef(), e(fp + i, 0)));
-      } else {
-        String acc = terms.get(0).componentId();
-        for (int k = 1; k < terms.size(); k++) {
+      // Each term's toState decides set vs clear for bit i.
+      List<Integer> toStates = perBitToState.get(i);
+      List<SignalSource> setSources = new ArrayList<>();
+      List<SignalSource> clearSources = new ArrayList<>();
+      for (int k = 0; k < terms.size(); k++) {
+        if (((toStates.get(k) >> i) & 1) == 1) {
+          setSources.add(terms.get(k));
+        } else {
+          clearSources.add(terms.get(k));
+        }
+      }
+      // setOrc = OR(setSources); clrOrc = OR(clearSources) (may be empty).
+      String setOrc = null;
+      if (!setSources.isEmpty()) {
+        setOrc = setSources.get(0).componentId();
+        for (int k = 1; k < setSources.size(); k++) {
           String gate = op + gateSeq;
           components.add(new ComponentSpec(gate, "Gates", "OR Gate", 1, "O" + gateSeq));
           hints.add(new LayoutHint(gate, bits + 3, 0, i * 4 + k, null));
-          nets.add(net("fsm_oa" + gateSeq, new EndpointRef(acc, 0), e(gate, 1)));
-          nets.add(net("fsm_ob" + gateSeq, terms.get(k).toRef(), e(gate, 2)));
-          acc = gate;
+          nets.add(net("fsm_oa" + gateSeq, new EndpointRef(setOrc, 0), e(gate, 1)));
+          nets.add(net("fsm_ob" + gateSeq, setSources.get(k).toRef(), e(gate, 2)));
+          setOrc = gate;
           gateSeq++;
         }
-        nets.add(net(dNet, new EndpointRef(acc, 0), e(fp + i, 0)));
       }
+      String dDriver;
+      if (clearSources.isEmpty()) {
+        // D_i = Q_i OR set (or just Q/set when one side missing).
+        if (setOrc == null) {
+          dDriver = hold.componentId();
+        } else {
+          String gate = op + gateSeq;
+          components.add(new ComponentSpec(gate, "Gates", "OR Gate", 1, "O" + gateSeq));
+          hints.add(new LayoutHint(gate, bits + 3, 0, i * 4, null));
+          nets.add(net("fsm_oa" + gateSeq, hold.toRef(), e(gate, 1)));
+          nets.add(net("fsm_ob" + gateSeq, new EndpointRef(setOrc, 0), e(gate, 2)));
+          dDriver = gate;
+          gateSeq++;
+        }
+      } else {
+        // clrInv = NOT(OR(clear)); holdAnd = Q_i AND clrInv;
+        // D_i = set OR holdAnd (set may be empty → just holdAnd).
+        String clrOrc = clearSources.get(0).componentId();
+        for (int k = 1; k < clearSources.size(); k++) {
+          String gate = op + gateSeq;
+          components.add(new ComponentSpec(gate, "Gates", "OR Gate", 1, "O" + gateSeq));
+          hints.add(new LayoutHint(gate, bits + 3, 0, i * 4 + k, null));
+          nets.add(net("fsm_oa" + gateSeq, new EndpointRef(clrOrc, 0), e(gate, 1)));
+          nets.add(net("fsm_ob" + gateSeq, clearSources.get(k).toRef(), e(gate, 2)));
+          clrOrc = gate;
+          gateSeq++;
+        }
+        String clrInv = op + "n" + i;
+        components.add(new ComponentSpec(clrInv, "Gates", "NOT Gate", 1, "NC" + i));
+        hints.add(new LayoutHint(clrInv, bits + 4, 0, i, null));
+        nets.add(net("fsm_ci" + i, new EndpointRef(clrOrc, 0), e(clrInv, 1)));
+        String holdAnd = ap + "h" + i;
+        components.add(new ComponentSpec(holdAnd, "Gates", "AND Gate", 1, "AH" + i));
+        hints.add(new LayoutHint(holdAnd, bits + 4, 0, i + bits, null));
+        nets.add(net("fsm_ha" + i, hold.toRef(), e(holdAnd, 1)));
+        nets.add(net("fsm_hb" + i, new EndpointRef(clrInv, 0), e(holdAnd, 2)));
+        if (setOrc == null) {
+          dDriver = holdAnd;
+        } else {
+          String gate = op + gateSeq;
+          components.add(new ComponentSpec(gate, "Gates", "OR Gate", 1, "O" + gateSeq));
+          hints.add(new LayoutHint(gate, bits + 4, 0, i * 4, null));
+          nets.add(net("fsm_oa" + gateSeq, new EndpointRef(setOrc, 0), e(gate, 1)));
+          nets.add(net("fsm_ob" + gateSeq, new EndpointRef(holdAnd, 0), e(gate, 2)));
+          dDriver = gate;
+          gateSeq++;
+        }
+      }
+      nets.add(net("fsm_d" + i, new EndpointRef(dDriver, 0), e(fp + i, 0)));
     }
 
     // ---- Moore outputs: OR over the state minterms ----

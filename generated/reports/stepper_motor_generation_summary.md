@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 3
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,3 +26,6 @@
 | generated/circ/stepper_motor.circ | true |
 | generated/reports/stepper_motor_circuit_manifest.json | true |
 | generated/reports/stepper_motor_circuit_manifest.md | true |
+| generated/reports/stepper_motor_generation_summary.json | true |
+| generated/reports/stepper_motor_generation_summary.md | true |
+| generated/reports/stepper_motor_multichip.md | true |

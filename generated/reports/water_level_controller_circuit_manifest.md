@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=35506 |
+| circuit_non_empty | true | bytes=18299 |
 | round_trip_loadable | true | [OK] water_level_controller.circ round-trip loaded with main circuit water_level_controller |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] water_level_controller.circ structure matches CircuitSpec |

@@ -1,8 +1,8 @@
 # Multi-chip circuit vending_machine
 
 - Circuit: generated/circ/vending_machine.circ
-- Components: 110
-- Nets: 219
+- Components: 141
+- Nets: 278
 
 ## Components
 
@@ -30,12 +30,12 @@
 | fa11 | AND Gate | A11 |
 | fa12 | AND Gate | A12 |
 | fa13 | AND Gate | A13 |
-| fa14 | AND Gate | A14 |
-| fa15 | AND Gate | A15 |
+| fa14 | AND Gate | M14 |
+| fa15 | AND Gate | M15 |
 | fa16 | AND Gate | A16 |
 | fa17 | AND Gate | A17 |
-| fa18 | AND Gate | M18 |
-| fa19 | AND Gate | M19 |
+| fa18 | AND Gate | A18 |
+| fa19 | AND Gate | A19 |
 | fa20 | AND Gate | A20 |
 | fa21 | AND Gate | A21 |
 | fa22 | AND Gate | A22 |
@@ -44,22 +44,22 @@
 | fa25 | AND Gate | A25 |
 | fa26 | AND Gate | A26 |
 | fa27 | AND Gate | A27 |
-| fa28 | AND Gate | A28 |
-| fa29 | AND Gate | A29 |
+| fa28 | AND Gate | M28 |
+| fa29 | AND Gate | M29 |
 | fa30 | AND Gate | A30 |
 | fa31 | AND Gate | A31 |
 | fa32 | AND Gate | A32 |
 | fa33 | AND Gate | A33 |
 | fa34 | AND Gate | A34 |
 | fa35 | AND Gate | A35 |
-| fa36 | AND Gate | M36 |
-| fa37 | AND Gate | M37 |
+| fa36 | AND Gate | A36 |
+| fa37 | AND Gate | A37 |
 | fa38 | AND Gate | A38 |
 | fa39 | AND Gate | A39 |
 | fa40 | AND Gate | A40 |
 | fa41 | AND Gate | A41 |
-| fa42 | AND Gate | A42 |
-| fa43 | AND Gate | A43 |
+| fa42 | AND Gate | M42 |
+| fa43 | AND Gate | M43 |
 | fa44 | AND Gate | A44 |
 | fa45 | AND Gate | A45 |
 | fa46 | AND Gate | A46 |
@@ -70,14 +70,14 @@
 | fa51 | AND Gate | A51 |
 | fa52 | AND Gate | A52 |
 | fa53 | AND Gate | A53 |
-| fa54 | AND Gate | M54 |
-| fa55 | AND Gate | M55 |
+| fa54 | AND Gate | A54 |
+| fa55 | AND Gate | A55 |
 | fa56 | AND Gate | A56 |
 | fa57 | AND Gate | A57 |
 | fa58 | AND Gate | A58 |
 | fa59 | AND Gate | A59 |
-| fa60 | AND Gate | A60 |
-| fa61 | AND Gate | A61 |
+| fa60 | AND Gate | M60 |
+| fa61 | AND Gate | M61 |
 | fa62 | AND Gate | A62 |
 | fa63 | AND Gate | A63 |
 | fa64 | AND Gate | A64 |
@@ -88,27 +88,29 @@
 | fa69 | AND Gate | A69 |
 | fa70 | AND Gate | A70 |
 | fa71 | AND Gate | A71 |
-| fa72 | AND Gate | M72 |
-| fa73 | AND Gate | M73 |
+| fa72 | AND Gate | A72 |
+| fa73 | AND Gate | A73 |
 | fa74 | AND Gate | A74 |
 | fa75 | AND Gate | A75 |
 | fa76 | AND Gate | A76 |
 | fa77 | AND Gate | A77 |
-| fa78 | AND Gate | A78 |
-| fa79 | AND Gate | A79 |
-| fa80 | AND Gate | A80 |
-| fa81 | AND Gate | A81 |
-| fa82 | AND Gate | A82 |
-| fa83 | AND Gate | A83 |
-| fa84 | AND Gate | A84 |
-| fa85 | AND Gate | A85 |
-| fa86 | AND Gate | A86 |
-| fa87 | AND Gate | A87 |
-| fa88 | AND Gate | A88 |
-| fa89 | AND Gate | A89 |
+| fo78 | OR Gate | O78 |
+| fo79 | OR Gate | O79 |
+| fo80 | OR Gate | O80 |
+| fo81 | OR Gate | O81 |
+| fo82 | OR Gate | O82 |
+| fo83 | OR Gate | O83 |
+| fo84 | OR Gate | O84 |
+| fo85 | OR Gate | O85 |
+| fo86 | OR Gate | O86 |
+| fo87 | OR Gate | O87 |
+| fo88 | OR Gate | O88 |
+| fo89 | OR Gate | O89 |
 | fo90 | OR Gate | O90 |
 | fo91 | OR Gate | O91 |
 | fo92 | OR Gate | O92 |
+| fon0 | NOT Gate | NC0 |
+| fah0 | AND Gate | AH0 |
 | fo93 | OR Gate | O93 |
 | fo94 | OR Gate | O94 |
 | fo95 | OR Gate | O95 |
@@ -117,4 +119,33 @@
 | fo98 | OR Gate | O98 |
 | fo99 | OR Gate | O99 |
 | fo100 | OR Gate | O100 |
-| fo101 | OR Gate | Ofo101 |
+| fo101 | OR Gate | O101 |
+| fo102 | OR Gate | O102 |
+| fo103 | OR Gate | O103 |
+| fo104 | OR Gate | O104 |
+| fo105 | OR Gate | O105 |
+| fo106 | OR Gate | O106 |
+| fo107 | OR Gate | O107 |
+| fo108 | OR Gate | O108 |
+| fon1 | NOT Gate | NC1 |
+| fah1 | AND Gate | AH1 |
+| fo109 | OR Gate | O109 |
+| fo110 | OR Gate | O110 |
+| fo111 | OR Gate | O111 |
+| fo112 | OR Gate | O112 |
+| fo113 | OR Gate | O113 |
+| fo114 | OR Gate | O114 |
+| fo115 | OR Gate | O115 |
+| fo116 | OR Gate | O116 |
+| fo117 | OR Gate | O117 |
+| fo118 | OR Gate | O118 |
+| fo119 | OR Gate | O119 |
+| fo120 | OR Gate | O120 |
+| fo121 | OR Gate | O121 |
+| fo122 | OR Gate | O122 |
+| fo123 | OR Gate | O123 |
+| fo124 | OR Gate | O124 |
+| fon2 | NOT Gate | NC2 |
+| fah2 | AND Gate | AH2 |
+| fo125 | OR Gate | O125 |
+| fo126 | OR Gate | Ofo126 |

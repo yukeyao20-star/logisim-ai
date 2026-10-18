@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 3
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,3 +26,6 @@
 | generated/circ/washing_machine.circ | true |
 | generated/reports/washing_machine_circuit_manifest.json | true |
 | generated/reports/washing_machine_circuit_manifest.md | true |
+| generated/reports/washing_machine_generation_summary.json | true |
+| generated/reports/washing_machine_generation_summary.md | true |
+| generated/reports/washing_machine_multichip.md | true |

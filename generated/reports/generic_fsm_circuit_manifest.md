@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=35004 |
+| circuit_non_empty | true | bytes=22106 |
 | round_trip_loadable | true | [OK] generic_fsm.circ round-trip loaded with main circuit generic_fsm |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] generic_fsm.circ structure matches CircuitSpec |

@@ -5,7 +5,7 @@
   "checkCount": 7,
   "checks": [
     {"name": "circuit_exists", "passed": true, "detail": "circuit file exists"},
-    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=35794"},
+    {"name": "circuit_non_empty", "passed": true, "detail": "bytes=18493"},
     {"name": "round_trip_loadable", "passed": true, "detail": "[OK] dryer_controller.circ round-trip loaded with main circuit dryer_controller"},
     {"name": "semantic_valid", "passed": true, "detail": "[OK] CircuitSpec semantic validation passed"},
     {"name": "structure_matches_spec", "passed": true, "detail": "[OK] dryer_controller.circ structure matches CircuitSpec"},

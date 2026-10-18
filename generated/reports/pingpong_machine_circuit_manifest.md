@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=112874 |
+| circuit_non_empty | true | bytes=63993 |
 | round_trip_loadable | true | [OK] pingpong_machine.circ round-trip loaded with main circuit pingpong_machine |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] pingpong_machine.circ structure matches CircuitSpec |

@@ -9,7 +9,7 @@
 | Check | Passed | Detail |
 | --- | --- | --- |
 | circuit_exists | true | circuit file exists |
-| circuit_non_empty | true | bytes=35794 |
+| circuit_non_empty | true | bytes=18493 |
 | round_trip_loadable | true | [OK] dryer_controller.circ round-trip loaded with main circuit dryer_controller |
 | semantic_valid | true | [OK] CircuitSpec semantic validation passed |
 | structure_matches_spec | true | [OK] dryer_controller.circ structure matches CircuitSpec |

@@ -17,7 +17,7 @@
 - Manifest complete: true
 - Manifest check count: 7
 - Manifest issue count: 0
-- Artifact count: 3
+- Artifact count: 6
 
 ## Artifacts
 
@@ -26,3 +26,6 @@
 | generated/circ/elevator_controller.circ | true |
 | generated/reports/elevator_controller_circuit_manifest.json | true |
 | generated/reports/elevator_controller_circuit_manifest.md | true |
+| generated/reports/elevator_controller_generation_summary.json | true |
+| generated/reports/elevator_controller_generation_summary.md | true |
+| generated/reports/elevator_controller_multichip.md | true |
