@@ -1,0 +1,50 @@
+# Generation summary for logic_multi_sum_carry_ab_xor_ttl
+
+- Request kind: natural_language_ttl_dip
+- Request: SUM=A xor B; CARRY=A and B use TTL chips
+- Description: Synthesized Boolean function into mixed TTL-labeled CircuitSpec
+- Intent: CHIP_LEVEL_CIRCUIT_IMPLEMENTATION
+- Intent explanation: Draw the requested circuit using chip/package-level parts or labeled TTL package gates where possible.
+- Recommended next action: Open the .circ for a visual editability check, then review the TTL BOM, pin map, DIP layout, and behavior reports.
+- Recommended action ids: open_circuit, review_manifest, review_ttl_bom, review_pinmap, review_ttl_dip_layout, review_behavior_report
+- Source JSON: 
+- Circuit: generated/circ/logic_multi_sum_carry_ab_xor_ttl_dip_subckt.circ
+- Manifest: generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_subckt_manifest.md
+- Manifest complete: true
+- Manifest check count: 5
+- Manifest issue count: 0
+- Artifact count: 29
+
+## Artifacts
+
+| Path | Exists |
+| --- | --- |
+| generated/circ/logic_multi_sum_carry_ab_xor_ttl_dip_subckt.circ | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7408_bom.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7408_bom.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7408_mapping.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7408_mapping.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7486_bom.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7486_bom.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7486_mapping.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_7486_mapping.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_manifest.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_manifest.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_truth_table.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_circuit_truth_table.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_generation_summary.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_generation_summary.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_official_simulation.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_official_simulation.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_bom.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_bom.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_layout.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_layout.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_subckt_behavior.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_subckt_behavior.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_subckt_manifest.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_subckt_manifest.md | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_subckt_pinmap.json | true |
+| generated/reports/logic_multi_sum_carry_ab_xor_ttl_ttl_dip_subckt_pinmap.md | true |

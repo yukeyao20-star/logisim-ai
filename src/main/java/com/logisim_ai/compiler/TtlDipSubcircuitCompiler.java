@@ -80,7 +80,7 @@ public final class TtlDipSubcircuitCompiler {
       writePinMapReports(spec, outputFile, pinMap);
       TtlDipPinMapInspector.requireConsistent(spec, outputFile);
       TtlDipBehaviorInspector.writeReports(spec, outputFile);
-      saveAndVerify(loader, file, outputFile);
+      saveAndVerify(loader, file, outputFile, spec);
       TtlDipArtifactManifest.writeReports(spec, outputFile);
     } finally {
       try {
@@ -438,7 +438,8 @@ public final class TtlDipSubcircuitCompiler {
     return result;
   }
 
-  private static void saveAndVerify(Loader loader, LogisimFile file, File outputFile) throws Exception {
+  private static void saveAndVerify(
+      Loader loader, LogisimFile file, File outputFile, CircuitSpec spec) throws Exception {
     File parent = outputFile.getParentFile();
     if (parent != null && !parent.exists()) {
       parent.mkdirs();
@@ -459,7 +460,7 @@ public final class TtlDipSubcircuitCompiler {
       }
     }
     CircuitLayoutInspector.requireClean(outputFile);
-    TtlDipSubcircuitInspector.requireClean(outputFile);
+    TtlDipSubcircuitInspector.requireClean(outputFile, spec);
   }
 
   private static void writePinMapReports(

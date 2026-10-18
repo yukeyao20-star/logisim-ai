@@ -27,7 +27,8 @@ public final class TtlDipSubcircuitInspector {
 
   private TtlDipSubcircuitInspector() {}
 
-  public static Report inspect(File circFile) throws java.io.IOException {
+  public static Report inspect(File circFile, com.logisim_ai.ir.CircuitSpec spec)
+      throws java.io.IOException {
     String xml = Files.readString(circFile.toPath(), StandardCharsets.UTF_8);
     List<String> issues = new ArrayList<>();
     Map<String, String> circuits = circuits(xml);
@@ -73,20 +74,28 @@ public final class TtlDipSubcircuitInspector {
       }
     }
 
-    if (!mainXml.contains("label\" val=\"A\"")
-        || !mainXml.contains("label\" val=\"B\"")
-        || !mainXml.contains("label\" val=\"Cin\"")
-        || !mainXml.contains("label\" val=\"SUM\"")
-        || !mainXml.contains("label\" val=\"Cout\"")) {
-      issues.add("Main circuit is missing expected full-adder external ports A/B/Cin/SUM/Cout.");
+    // External ports are query-specific (the canonical full adder expects
+    // A/B/Cin/SUM/Cout; a 2-chip XOR/AND query has A/B/SUM/CARRY). Require
+    // the spec's own port labels to appear in the main circuit.
+    if (spec != null) {
+      for (var p : spec.externalPorts()) {
+        if (!mainXml.contains("label\" val=\"" + p.label() + "\"")) {
+          issues.add("Main circuit is missing external port label: " + p.label());
+        }
+      }
     }
     inspectPinMap(circFile, topChips, issues);
 
     return new Report(circFile.getName(), issues);
   }
 
-  public static void requireClean(File circFile) throws java.io.IOException {
-    Report report = inspect(circFile);
+  public static Report inspect(File circFile) throws java.io.IOException {
+    return inspect(circFile, null);
+  }
+
+  public static void requireClean(File circFile, com.logisim_ai.ir.CircuitSpec spec)
+      throws java.io.IOException {
+    Report report = inspect(circFile, spec);
     if (!report.clean()) {
       throw new IllegalStateException(report.toHumanString());
     }
@@ -170,15 +179,16 @@ public final class TtlDipSubcircuitInspector {
         issues.add("Pin map report lacks bindings for " + chipId);
       }
     }
-    for (String required : List.of(
-        "\"chipId\": \"U1\"",
-        "\"pinNumber\": 1",
-        "\"pinNumber\": 14",
-        "\"chipId\": \"U2\"",
-        "\"chipId\": \"U3\"",
-        "\"endIndex\"")) {
-      if (!json.contains(required)) {
-        issues.add("Pin map report lacks required token: " + required);
+    // Chip ids are derived from the top circuit's own chips (a full adder
+    // has U1..U3; a 2-chip query like SUM=A xor B; CARRY=A and B has U1..U2).
+    java.util.List<String> required = new java.util.ArrayList<>(java.util.List.of(
+        "\"pinNumber\": 1", "\"pinNumber\": 14", "\"endIndex\""));
+    for (ParsedComp chip : topChips) {
+      required.add("\"chipId\": \"" + chip.name().substring(0, chip.name().indexOf('_')) + "\"");
+    }
+    for (String token : required) {
+      if (!json.contains(token)) {
+        issues.add("Pin map report lacks required token: " + token);
       }
     }
   }

@@ -1,0 +1,13 @@
+{
+  "circuitName": "logic_multi_sum_carry_ab_xor_ttl",
+  "circuitFile": "generated/circ/logic_multi_sum_carry_ab_xor_ttl_dip_subckt.circ",
+  "pinMapConsistent": true,
+  "rowCount": 4,
+  "rows": [
+    {"inputs": {"a": false, "b": false}, "outputs": {"sum": false, "carry": false}},
+    {"inputs": {"a": false, "b": true}, "outputs": {"sum": true, "carry": false}},
+    {"inputs": {"a": true, "b": false}, "outputs": {"sum": true, "carry": false}},
+    {"inputs": {"a": true, "b": true}, "outputs": {"sum": false, "carry": true}}
+  ],
+  "issues": []
+}
