@@ -78,6 +78,11 @@ public class RegenSweep {
         + " stillDirty=" + stillDirty.size() + " failed=" + failed.size());
     stillDirty.stream().limit(15).forEach(s -> System.out.println("  dirty: " + s));
     failed.stream().limit(10).forEach(s -> System.out.println("  failed: " + s));
+    try {
+      CircuitCatalog.main(new String[0]);
+    } catch (Exception e) {
+      System.out.println("  catalog refresh failed: " + e.getMessage());
+    }
     System.exit(0);
   }
 }
