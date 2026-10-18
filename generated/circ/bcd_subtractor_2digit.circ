@@ -1723,42 +1723,42 @@
     <comp lib="1" loc="(980,590)" name="Tunnel">
       <a name="label" val="TQ13"/>
     </comp>
-    <comp lib="2" loc="(1040,250)" name="XOR Gate"/>
-    <comp lib="2" loc="(1070,3190)" name="XOR Gate"/>
-    <comp lib="2" loc="(1070,4030)" name="XOR Gate"/>
-    <comp lib="2" loc="(1100,1090)" name="NOT Gate">
-      <a name="label" val="NBIN"/>
+    <comp lib="2" loc="(1040,250)" name="XOR Gate">
+      <a name="label" val="X11"/>
     </comp>
-    <comp lib="2" loc="(1100,1510)" name="OR Gate">
-      <a name="label" val="G32"/>
+    <comp lib="2" loc="(1070,3190)" name="XOR Gate">
+      <a name="label" val="S11"/>
     </comp>
-    <comp lib="2" loc="(1100,1930)" name="OR Gate"/>
-    <comp lib="2" loc="(1100,2350)" name="XOR Gate"/>
+    <comp lib="2" loc="(1070,4030)" name="XOR Gate">
+      <a name="label" val="X31"/>
+    </comp>
+    <comp lib="2" loc="(1100,1090)" name="NOT Gate"/>
+    <comp lib="2" loc="(1100,1510)" name="OR Gate"/>
+    <comp lib="2" loc="(1100,1930)" name="OR Gate">
+      <a name="label" val="G34"/>
+    </comp>
+    <comp lib="2" loc="(1100,2350)" name="XOR Gate">
+      <a name="label" val="S42"/>
+    </comp>
     <comp lib="2" loc="(1100,2770)" name="XOR Gate">
       <a name="label" val="S44"/>
     </comp>
-    <comp lib="2" loc="(1100,3610)" name="XOR Gate"/>
+    <comp lib="2" loc="(1100,3610)" name="XOR Gate">
+      <a name="label" val="S13"/>
+    </comp>
     <comp lib="2" loc="(1100,4450)" name="XOR Gate"/>
     <comp lib="2" loc="(1100,4870)" name="OR Gate">
       <a name="label" val="B2J22"/>
     </comp>
     <comp lib="2" loc="(1100,5290)" name="AND Gate"/>
-    <comp lib="2" loc="(1100,5710)" name="AND Gate">
-      <a name="label" val="A44"/>
+    <comp lib="2" loc="(1100,5710)" name="AND Gate"/>
+    <comp lib="2" loc="(1100,670)" name="XOR Gate"/>
+    <comp lib="2" loc="(1160,250)" name="XOR Gate"/>
+    <comp lib="2" loc="(1190,1090)" name="XOR Gate"/>
+    <comp lib="2" loc="(1190,3190)" name="AND Gate"/>
+    <comp lib="2" loc="(1190,4030)" name="XOR Gate">
+      <a name="label" val="S31"/>
     </comp>
-    <comp lib="2" loc="(1100,670)" name="XOR Gate">
-      <a name="label" val="X13"/>
-    </comp>
-    <comp lib="2" loc="(1160,250)" name="XOR Gate">
-      <a name="label" val="S11"/>
-    </comp>
-    <comp lib="2" loc="(1190,1090)" name="XOR Gate">
-      <a name="label" val="X31"/>
-    </comp>
-    <comp lib="2" loc="(1190,3190)" name="AND Gate">
-      <a name="label" val="A11"/>
-    </comp>
-    <comp lib="2" loc="(1190,4030)" name="XOR Gate"/>
     <comp lib="2" loc="(1220,1510)" name="XOR Gate">
       <a name="label" val="X33"/>
     </comp>
@@ -1768,11 +1768,11 @@
     <comp lib="2" loc="(1220,2350)" name="AND Gate">
       <a name="label" val="A42"/>
     </comp>
-    <comp lib="2" loc="(1220,2770)" name="AND Gate"/>
-    <comp lib="2" loc="(1220,3610)" name="AND Gate"/>
-    <comp lib="2" loc="(1220,4450)" name="XOR Gate">
-      <a name="label" val="S33"/>
+    <comp lib="2" loc="(1220,2770)" name="AND Gate">
+      <a name="label" val="A44"/>
     </comp>
+    <comp lib="2" loc="(1220,3610)" name="AND Gate"/>
+    <comp lib="2" loc="(1220,4450)" name="XOR Gate"/>
     <comp lib="2" loc="(1220,4870)" name="AND Gate">
       <a name="label" val="B2K22"/>
     </comp>
@@ -1780,18 +1780,18 @@
     <comp lib="2" loc="(1220,5710)" name="AND Gate">
       <a name="label" val="B44"/>
     </comp>
-    <comp lib="2" loc="(1220,670)" name="XOR Gate">
-      <a name="label" val="S13"/>
+    <comp lib="2" loc="(1220,670)" name="XOR Gate"/>
+    <comp lib="2" loc="(1280,250)" name="AND Gate">
+      <a name="label" val="A11"/>
     </comp>
-    <comp lib="2" loc="(1280,250)" name="AND Gate"/>
-    <comp lib="2" loc="(1310,1090)" name="XOR Gate">
-      <a name="label" val="S31"/>
+    <comp lib="2" loc="(1310,1090)" name="XOR Gate"/>
+    <comp lib="2" loc="(1310,3190)" name="AND Gate"/>
+    <comp lib="2" loc="(1310,4030)" name="AND Gate">
+      <a name="label" val="A31"/>
     </comp>
-    <comp lib="2" loc="(1310,3190)" name="AND Gate">
-      <a name="label" val="B11"/>
+    <comp lib="2" loc="(1340,1510)" name="XOR Gate">
+      <a name="label" val="S33"/>
     </comp>
-    <comp lib="2" loc="(1310,4030)" name="AND Gate"/>
-    <comp lib="2" loc="(1340,1510)" name="XOR Gate"/>
     <comp lib="2" loc="(1340,1930)" name="AND Gate">
       <a name="label" val="B2K9"/>
     </comp>
@@ -1802,60 +1802,60 @@
     <comp lib="2" loc="(1340,3610)" name="AND Gate">
       <a name="label" val="B13"/>
     </comp>
-    <comp lib="2" loc="(1340,4450)" name="AND Gate"/>
+    <comp lib="2" loc="(1340,4450)" name="AND Gate">
+      <a name="label" val="A33"/>
+    </comp>
     <comp lib="2" loc="(1340,4870)" name="OR Gate">
       <a name="label" val="B2L22"/>
     </comp>
-    <comp lib="2" loc="(1340,5290)" name="OR Gate"/>
+    <comp lib="2" loc="(1340,5290)" name="OR Gate">
+      <a name="label" val="C42"/>
+    </comp>
     <comp lib="2" loc="(1340,5710)" name="OR Gate"/>
     <comp lib="2" loc="(1340,670)" name="AND Gate">
       <a name="label" val="A13"/>
     </comp>
-    <comp lib="2" loc="(1400,250)" name="AND Gate"/>
-    <comp lib="2" loc="(1430,1090)" name="AND Gate">
-      <a name="label" val="A31"/>
+    <comp lib="2" loc="(1400,250)" name="AND Gate">
+      <a name="label" val="B11"/>
     </comp>
-    <comp lib="2" loc="(1430,3190)" name="OR Gate">
-      <a name="label" val="C11"/>
+    <comp lib="2" loc="(1430,1090)" name="AND Gate"/>
+    <comp lib="2" loc="(1430,3190)" name="OR Gate"/>
+    <comp lib="2" loc="(1430,4030)" name="AND Gate">
+      <a name="label" val="B31"/>
     </comp>
-    <comp lib="2" loc="(1430,4030)" name="AND Gate"/>
-    <comp lib="2" loc="(1460,1510)" name="AND Gate">
-      <a name="label" val="A33"/>
-    </comp>
+    <comp lib="2" loc="(1460,1510)" name="AND Gate"/>
     <comp lib="2" loc="(1460,1930)" name="OR Gate">
       <a name="label" val="B2L9"/>
     </comp>
-    <comp lib="2" loc="(1460,2350)" name="OR Gate">
-      <a name="label" val="C42"/>
-    </comp>
+    <comp lib="2" loc="(1460,2350)" name="OR Gate"/>
     <comp lib="2" loc="(1460,2770)" name="OR Gate">
       <a name="label" val="C44"/>
     </comp>
-    <comp lib="2" loc="(1460,3610)" name="OR Gate">
-      <a name="label" val="C13"/>
+    <comp lib="2" loc="(1460,3610)" name="OR Gate"/>
+    <comp lib="2" loc="(1460,4450)" name="AND Gate">
+      <a name="label" val="B33"/>
     </comp>
-    <comp lib="2" loc="(1460,4450)" name="AND Gate"/>
     <comp lib="2" loc="(1460,4870)" name="OR Gate">
       <a name="label" val="B2T22"/>
     </comp>
-    <comp lib="2" loc="(1460,5290)" name="OR Gate"/>
+    <comp lib="2" loc="(1460,5290)" name="OR Gate">
+      <a name="label" val="G42"/>
+    </comp>
     <comp lib="2" loc="(1460,5710)" name="OR Gate"/>
     <comp lib="2" loc="(1460,670)" name="AND Gate"/>
-    <comp lib="2" loc="(1520,250)" name="OR Gate"/>
-    <comp lib="2" loc="(1550,1090)" name="AND Gate">
-      <a name="label" val="B31"/>
+    <comp lib="2" loc="(1520,250)" name="OR Gate">
+      <a name="label" val="C11"/>
     </comp>
+    <comp lib="2" loc="(1550,1090)" name="AND Gate"/>
     <comp lib="2" loc="(1550,3190)" name="OR Gate"/>
-    <comp lib="2" loc="(1550,4030)" name="OR Gate"/>
-    <comp lib="2" loc="(1580,1510)" name="AND Gate">
-      <a name="label" val="B33"/>
+    <comp lib="2" loc="(1550,4030)" name="OR Gate">
+      <a name="label" val="C31"/>
     </comp>
+    <comp lib="2" loc="(1580,1510)" name="AND Gate"/>
     <comp lib="2" loc="(1580,1930)" name="OR Gate">
       <a name="label" val="B2T9"/>
     </comp>
-    <comp lib="2" loc="(1580,2350)" name="OR Gate">
-      <a name="label" val="G42"/>
-    </comp>
+    <comp lib="2" loc="(1580,2350)" name="OR Gate"/>
     <comp lib="2" loc="(1580,2770)" name="OR Gate">
       <a name="label" val="G44"/>
     </comp>
@@ -1866,15 +1866,17 @@
     <comp lib="2" loc="(1580,4870)" name="XOR Gate">
       <a name="label" val="X41"/>
     </comp>
-    <comp lib="2" loc="(1580,5290)" name="XOR Gate"/>
+    <comp lib="2" loc="(1580,5290)" name="XOR Gate">
+      <a name="label" val="X43"/>
+    </comp>
     <comp lib="2" loc="(1580,5710)" name="NOT Gate"/>
-    <comp lib="2" loc="(1580,670)" name="OR Gate"/>
+    <comp lib="2" loc="(1580,670)" name="OR Gate">
+      <a name="label" val="C13"/>
+    </comp>
     <comp lib="2" loc="(1640,250)" name="OR Gate">
       <a name="label" val="G11"/>
     </comp>
-    <comp lib="2" loc="(1670,1090)" name="OR Gate">
-      <a name="label" val="C31"/>
-    </comp>
+    <comp lib="2" loc="(1670,1090)" name="OR Gate"/>
     <comp lib="2" loc="(1670,3190)" name="XOR Gate"/>
     <comp lib="2" loc="(1670,4030)" name="OR Gate">
       <a name="label" val="G31"/>
@@ -1883,16 +1885,14 @@
       <a name="label" val="C33"/>
     </comp>
     <comp lib="2" loc="(1700,1930)" name="XOR Gate"/>
-    <comp lib="2" loc="(1700,2350)" name="XOR Gate">
-      <a name="label" val="X43"/>
-    </comp>
+    <comp lib="2" loc="(1700,2350)" name="XOR Gate"/>
     <comp lib="2" loc="(1700,2770)" name="NOT Gate">
       <a name="label" val="NB"/>
     </comp>
-    <comp lib="2" loc="(1700,3610)" name="XOR Gate">
-      <a name="label" val="X14"/>
+    <comp lib="2" loc="(1700,3610)" name="XOR Gate"/>
+    <comp lib="2" loc="(1700,4450)" name="OR Gate">
+      <a name="label" val="G33"/>
     </comp>
-    <comp lib="2" loc="(1700,4450)" name="OR Gate"/>
     <comp lib="2" loc="(1700,4870)" name="XOR Gate"/>
     <comp lib="2" loc="(1700,5290)" name="XOR Gate">
       <a name="label" val="S43"/>
@@ -1905,83 +1905,81 @@
     <comp lib="2" loc="(1790,2770)" name="NOT Gate">
       <a name="label" val="N1"/>
     </comp>
-    <comp lib="2" loc="(1790,3190)" name="XOR Gate"/>
-    <comp lib="2" loc="(1790,4030)" name="XOR Gate">
-      <a name="label" val="X32"/>
+    <comp lib="2" loc="(1790,3190)" name="XOR Gate">
+      <a name="label" val="S12"/>
     </comp>
-    <comp lib="2" loc="(1820,1510)" name="OR Gate">
-      <a name="label" val="G33"/>
-    </comp>
+    <comp lib="2" loc="(1790,4030)" name="XOR Gate"/>
+    <comp lib="2" loc="(1820,1510)" name="OR Gate"/>
     <comp lib="2" loc="(1820,1930)" name="XOR Gate">
       <a name="label" val="S41"/>
     </comp>
     <comp lib="2" loc="(1820,2350)" name="XOR Gate"/>
     <comp lib="2" loc="(1820,3610)" name="XOR Gate"/>
-    <comp lib="2" loc="(1820,4450)" name="XOR Gate"/>
-    <comp lib="2" loc="(1820,4870)" name="AND Gate">
-      <a name="label" val="A41"/>
+    <comp lib="2" loc="(1820,4450)" name="XOR Gate">
+      <a name="label" val="X34"/>
     </comp>
+    <comp lib="2" loc="(1820,4870)" name="AND Gate"/>
     <comp lib="2" loc="(1820,5290)" name="AND Gate"/>
-    <comp lib="2" loc="(1820,670)" name="XOR Gate"/>
+    <comp lib="2" loc="(1820,670)" name="XOR Gate">
+      <a name="label" val="X14"/>
+    </comp>
     <comp lib="2" loc="(500,1090)" name="XOR Gate">
       <a name="label" val="S14"/>
     </comp>
-    <comp lib="2" loc="(500,1510)" name="XOR Gate"/>
-    <comp lib="2" loc="(500,1930)" name="XOR Gate">
-      <a name="label" val="X34"/>
+    <comp lib="2" loc="(500,1510)" name="XOR Gate">
+      <a name="label" val="X32"/>
     </comp>
-    <comp lib="2" loc="(500,2350)" name="AND Gate"/>
+    <comp lib="2" loc="(500,1930)" name="XOR Gate"/>
+    <comp lib="2" loc="(500,2350)" name="AND Gate">
+      <a name="label" val="A41"/>
+    </comp>
     <comp lib="2" loc="(500,250)" name="NOT Gate"/>
     <comp lib="2" loc="(500,2770)" name="AND Gate">
       <a name="label" val="A43"/>
     </comp>
-    <comp lib="2" loc="(500,3190)" name="XOR Gate">
-      <a name="label" val="X2"/>
-    </comp>
-    <comp lib="2" loc="(500,3610)" name="AND Gate">
-      <a name="label" val="A12"/>
-    </comp>
-    <comp lib="2" loc="(500,4030)" name="AND Gate"/>
-    <comp lib="2" loc="(500,4450)" name="XOR Gate"/>
-    <comp lib="2" loc="(500,4870)" name="XOR Gate"/>
-    <comp lib="2" loc="(500,5290)" name="AND Gate">
-      <a name="label" val="B41"/>
-    </comp>
-    <comp lib="2" loc="(500,5710)" name="AND Gate">
-      <a name="label" val="B43"/>
-    </comp>
-    <comp lib="2" loc="(500,670)" name="XOR Gate">
-      <a name="label" val="S12"/>
-    </comp>
-    <comp lib="2" loc="(590,250)" name="XOR Gate"/>
-    <comp lib="2" loc="(620,1090)" name="AND Gate">
+    <comp lib="2" loc="(500,3190)" name="XOR Gate"/>
+    <comp lib="2" loc="(500,3610)" name="AND Gate"/>
+    <comp lib="2" loc="(500,4030)" name="AND Gate">
       <a name="label" val="A14"/>
     </comp>
+    <comp lib="2" loc="(500,4450)" name="XOR Gate"/>
+    <comp lib="2" loc="(500,4870)" name="XOR Gate"/>
+    <comp lib="2" loc="(500,5290)" name="AND Gate"/>
+    <comp lib="2" loc="(500,5710)" name="AND Gate"/>
+    <comp lib="2" loc="(500,670)" name="XOR Gate"/>
+    <comp lib="2" loc="(590,250)" name="XOR Gate">
+      <a name="label" val="X2"/>
+    </comp>
+    <comp lib="2" loc="(620,1090)" name="AND Gate"/>
     <comp lib="2" loc="(620,1510)" name="XOR Gate">
       <a name="label" val="S32"/>
     </comp>
     <comp lib="2" loc="(620,1930)" name="XOR Gate">
       <a name="label" val="S34"/>
     </comp>
-    <comp lib="2" loc="(620,2350)" name="AND Gate"/>
-    <comp lib="2" loc="(620,2770)" name="AND Gate"/>
-    <comp lib="2" loc="(620,3190)" name="OR Gate">
-      <a name="label" val="O1"/>
+    <comp lib="2" loc="(620,2350)" name="AND Gate">
+      <a name="label" val="B41"/>
     </comp>
-    <comp lib="2" loc="(620,3610)" name="AND Gate">
-      <a name="label" val="B12"/>
+    <comp lib="2" loc="(620,2770)" name="AND Gate">
+      <a name="label" val="B43"/>
     </comp>
+    <comp lib="2" loc="(620,3190)" name="OR Gate"/>
+    <comp lib="2" loc="(620,3610)" name="AND Gate"/>
     <comp lib="2" loc="(620,4030)" name="AND Gate">
       <a name="label" val="B14"/>
     </comp>
     <comp lib="2" loc="(620,4450)" name="AND Gate"/>
     <comp lib="2" loc="(620,4870)" name="AND Gate"/>
-    <comp lib="2" loc="(620,5290)" name="OR Gate">
-      <a name="label" val="C41"/>
+    <comp lib="2" loc="(620,5290)" name="OR Gate"/>
+    <comp lib="2" loc="(620,5710)" name="OR Gate">
+      <a name="label" val="C43"/>
     </comp>
-    <comp lib="2" loc="(620,5710)" name="OR Gate"/>
-    <comp lib="2" loc="(620,670)" name="AND Gate"/>
-    <comp lib="2" loc="(710,250)" name="OR Gate"/>
+    <comp lib="2" loc="(620,670)" name="AND Gate">
+      <a name="label" val="A12"/>
+    </comp>
+    <comp lib="2" loc="(710,250)" name="OR Gate">
+      <a name="label" val="O1"/>
+    </comp>
     <comp lib="2" loc="(740,1090)" name="AND Gate"/>
     <comp lib="2" loc="(740,1510)" name="AND Gate">
       <a name="label" val="A32"/>
@@ -1989,37 +1987,43 @@
     <comp lib="2" loc="(740,1930)" name="AND Gate">
       <a name="label" val="A34"/>
     </comp>
-    <comp lib="2" loc="(740,2350)" name="OR Gate"/>
-    <comp lib="2" loc="(740,2770)" name="OR Gate">
-      <a name="label" val="C43"/>
+    <comp lib="2" loc="(740,2350)" name="OR Gate">
+      <a name="label" val="C41"/>
     </comp>
+    <comp lib="2" loc="(740,2770)" name="OR Gate"/>
     <comp lib="2" loc="(740,3190)" name="XOR Gate">
       <a name="label" val="X3"/>
     </comp>
-    <comp lib="2" loc="(740,3610)" name="OR Gate"/>
-    <comp lib="2" loc="(740,4030)" name="OR Gate">
-      <a name="label" val="C14"/>
+    <comp lib="2" loc="(740,3610)" name="OR Gate">
+      <a name="label" val="C12"/>
     </comp>
-    <comp lib="2" loc="(740,4450)" name="AND Gate"/>
-    <comp lib="2" loc="(740,4870)" name="AND Gate"/>
-    <comp lib="2" loc="(740,5290)" name="OR Gate"/>
-    <comp lib="2" loc="(740,5710)" name="OR Gate">
-      <a name="label" val="G43"/>
-    </comp>
-    <comp lib="2" loc="(740,670)" name="AND Gate"/>
-    <comp lib="2" loc="(830,250)" name="XOR Gate"/>
-    <comp lib="2" loc="(860,1090)" name="OR Gate"/>
-    <comp lib="2" loc="(860,1510)" name="AND Gate">
+    <comp lib="2" loc="(740,4030)" name="OR Gate"/>
+    <comp lib="2" loc="(740,4450)" name="AND Gate">
       <a name="label" val="B32"/>
     </comp>
+    <comp lib="2" loc="(740,4870)" name="AND Gate"/>
+    <comp lib="2" loc="(740,5290)" name="OR Gate"/>
+    <comp lib="2" loc="(740,5710)" name="OR Gate"/>
+    <comp lib="2" loc="(740,670)" name="AND Gate">
+      <a name="label" val="B12"/>
+    </comp>
+    <comp lib="2" loc="(830,250)" name="XOR Gate"/>
+    <comp lib="2" loc="(860,1090)" name="OR Gate">
+      <a name="label" val="C14"/>
+    </comp>
+    <comp lib="2" loc="(860,1510)" name="AND Gate"/>
     <comp lib="2" loc="(860,1930)" name="AND Gate">
       <a name="label" val="B34"/>
     </comp>
     <comp lib="2" loc="(860,2350)" name="OR Gate">
       <a name="label" val="G41"/>
     </comp>
-    <comp lib="2" loc="(860,2770)" name="OR Gate"/>
-    <comp lib="2" loc="(860,3190)" name="NOT Gate"/>
+    <comp lib="2" loc="(860,2770)" name="OR Gate">
+      <a name="label" val="G43"/>
+    </comp>
+    <comp lib="2" loc="(860,3190)" name="NOT Gate">
+      <a name="label" val="N2"/>
+    </comp>
     <comp lib="2" loc="(860,3610)" name="OR Gate">
       <a name="label" val="G12"/>
     </comp>
@@ -2027,40 +2031,36 @@
     <comp lib="2" loc="(860,4450)" name="OR Gate">
       <a name="label" val="C32"/>
     </comp>
-    <comp lib="2" loc="(860,4870)" name="OR Gate">
-      <a name="label" val="C34"/>
-    </comp>
+    <comp lib="2" loc="(860,4870)" name="OR Gate"/>
     <comp lib="2" loc="(860,5290)" name="XOR Gate"/>
     <comp lib="2" loc="(860,5710)" name="XOR Gate">
       <a name="label" val="X44"/>
     </comp>
-    <comp lib="2" loc="(860,670)" name="OR Gate">
-      <a name="label" val="C12"/>
-    </comp>
-    <comp lib="2" loc="(950,250)" name="NOT Gate">
-      <a name="label" val="N2"/>
-    </comp>
-    <comp lib="2" loc="(950,3190)" name="XOR Gate">
-      <a name="label" val="X11"/>
-    </comp>
+    <comp lib="2" loc="(860,670)" name="OR Gate"/>
+    <comp lib="2" loc="(950,250)" name="NOT Gate"/>
+    <comp lib="2" loc="(950,3190)" name="XOR Gate"/>
     <comp lib="2" loc="(980,1090)" name="OR Gate">
       <a name="label" val="G14"/>
     </comp>
     <comp lib="2" loc="(980,1510)" name="OR Gate"/>
-    <comp lib="2" loc="(980,1930)" name="OR Gate"/>
+    <comp lib="2" loc="(980,1930)" name="OR Gate">
+      <a name="label" val="C34"/>
+    </comp>
     <comp lib="2" loc="(980,2350)" name="XOR Gate">
       <a name="label" val="X42"/>
     </comp>
     <comp lib="2" loc="(980,2770)" name="XOR Gate"/>
-    <comp lib="2" loc="(980,3610)" name="XOR Gate"/>
-    <comp lib="2" loc="(980,4030)" name="NOT Gate"/>
-    <comp lib="2" loc="(980,4450)" name="OR Gate"/>
-    <comp lib="2" loc="(980,4870)" name="OR Gate">
-      <a name="label" val="G34"/>
+    <comp lib="2" loc="(980,3610)" name="XOR Gate">
+      <a name="label" val="X13"/>
     </comp>
-    <comp lib="2" loc="(980,5290)" name="XOR Gate">
-      <a name="label" val="S42"/>
+    <comp lib="2" loc="(980,4030)" name="NOT Gate">
+      <a name="label" val="NBIN"/>
     </comp>
+    <comp lib="2" loc="(980,4450)" name="OR Gate">
+      <a name="label" val="G32"/>
+    </comp>
+    <comp lib="2" loc="(980,4870)" name="OR Gate"/>
+    <comp lib="2" loc="(980,5290)" name="XOR Gate"/>
     <comp lib="2" loc="(980,5710)" name="XOR Gate"/>
     <comp lib="2" loc="(980,670)" name="OR Gate"/>
     <wire from="(1040,170)" to="(1040,250)"/>
