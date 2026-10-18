@@ -210,14 +210,58 @@ public final class NaturalLanguageCircuitPlanner {
           directTtlMismatchDiagnostic(strategy),
           directTtlMismatchSuggestions(strategy));
     }
+    java.util.List<String> nearest = nearestSupported(normalized);
+    String hint = nearest.isEmpty() ? ""
+        : " 相近的已支持查询: " + String.join(" / ", nearest);
     return new PlanningReport(
         null,
         "No supported template or Boolean expression matched this request."
             + " 支持范围: 组合逻辑(加/减/乘/除/比较/编码/译码/选择/分配/码转换),"
             + " 时序(计数器/寄存器/移位/FSM 控制器), 门级 flash ADC, RAM/ROM 视图,"
             + " 布尔表达式/NAND/TTL 映射, 最小项列表。"
-            + " 不支持: 模拟前端(ADC/DAC 电阻网络), CPU 整机, 音频/传感器类。",
+            + " 不支持: 模拟前端(ADC/DAC 电阻网络), CPU 整机, 音频/传感器类。"
+            + hint,
         supportedCircuits());
+  }
+
+  /**
+   * Finds the supported circuit names most similar to an unmatched query by
+   * shared character bigram count — a cheap nearest-neighbor over the
+   * structural catalog, so "数字式温度计" surfaces 温度/传感-adjacent names
+   * like 频率计/水位控制器 when they share tokens (e.g. "计"/"器").
+   */
+  static java.util.List<String> nearestSupported(String query) {
+    String q = query.toLowerCase(java.util.Locale.ROOT).replaceAll("\\s+", "");
+    if (q.length() < 2) {
+      return java.util.List.of();
+    }
+    java.util.Set<String> qGrams = bigrams(q);
+    String best = null;
+    double bestScore = 0;
+    for (String candidate : supportedCircuits()) {
+      String c = candidate.toLowerCase(java.util.Locale.ROOT);
+      java.util.Set<String> cGrams = bigrams(c);
+      int shared = 0;
+      for (String g : qGrams) {
+        if (cGrams.contains(g)) {
+          shared++;
+        }
+      }
+      double score = (double) shared / Math.max(1, qGrams.size());
+      if (score > bestScore && score >= 0.2) {
+        bestScore = score;
+        best = candidate;
+      }
+    }
+    return best == null ? java.util.List.of() : java.util.List.of(best);
+  }
+
+  private static java.util.Set<String> bigrams(String s) {
+    java.util.Set<String> grams = new java.util.HashSet<>();
+    for (int i = 0; i + 2 <= s.length(); i++) {
+      grams.add(s.substring(i, i + 2));
+    }
+    return grams;
   }
 
   public static List<String> supportedCircuits() {
