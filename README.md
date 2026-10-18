@@ -43,10 +43,10 @@ chmod +x bin/logisim-ai            # 若解压后没有执行权限
 
 | 接口 | 适用 | 说明 |
 |---|---|---|
-| **A. 自然语言 CLI** | 本机 / 能访问仓库的 agent（Claude Code、Codex CLI 等） | `experiment 8`；agent 读 `AGENTS.md` 自主工作 |
-| **B. JSON IR 契约** | GPT 网页订阅等无法访问文件系统的 AI | AI 按 `docs/JSON_IR_SCHEMA_025.md` 输出 JSON → 本机 `experiment 9` 编译 |
+| **A. 自然语言 CLI** | 本机 / 能访问仓库的 agent（Codex CLI 等 CLI agent 均可） | `experiment 8`；agent 读 `AGENTS.md` 自主工作 |
+| **B. JSON IR 契约** | GPT 网页订阅等无法访问文件系统的 AI | AI 按 JSON IR 契约输出 JSON → 本机 `experiment 9` 编译（schema 见发布包 `docs/JSON_IR_SCHEMA_025.md`） |
 
-完整接入矩阵（含客户端 agent / 自有程序 / MCP 现状）：**[docs/80_接入指南.md](docs/80_接入指南.md)**
+接入说明与按 agent 类型的完整矩阵见发布包 `docs/80_接入指南.md`。
 
 ## 能力面
 
@@ -73,12 +73,10 @@ python3 scripts/build_release.py
 
 | 文档 | 内容 |
 |---|---|
-| [docs/80_接入指南.md](docs/80_接入指南.md) | **接入入口**：两条接口 + 按 agent 类型矩阵 + 发布包说明 |
-| [docs/JSON_IR_SCHEMA_025.md](docs/JSON_IR_SCHEMA_025.md) | JSON IR 契约（接口 B 协议） |
 | [AGENTS.md](AGENTS.md) | agent 操作手册（构建/命令/工具/验证协议） |
 | [generated/reports/circuit_catalog.md](generated/reports/circuit_catalog.md) | 全库 248 电路目录（类型/spec/布局/证据/SVG 五列索引） |
-| [docs/07_轮次进展与待决问题.md](docs/07_轮次进展与待决问题.md) | 73 轮完整开发史（含终局清单核对） |
-| [docs/HANDOFF_146_通用生成能力冲刺.md](docs/HANDOFF_146_通用生成能力冲刺.md) | 最新交接（FSM 引擎时代） |
+
+接入指南、JSON IR 契约与开发历史随发布包提供（`docs/` 目录）。
 
 ## 架构一句话
 

@@ -147,7 +147,7 @@ Tool configs live in the **global** files below, not in this repo. This project 
 - **Where configured**: `~/.config/opencode/opencode.json` (global `mcp.zai-vision-mcp`), backed by Zhipu's official `@z_ai/mcp-server`.
 - **Model**: free `glm-4.1v-thinking-flash` (`Z_AI_VISION_MODEL`; the intended `glm-4.6v-flash` is frequently HTTP-429 rate-limited, so it is NOT the default).
 - **Auth**: `Z_AI_API_KEY` env var (user-level `setx`), plus `Z_AI_MODE=ZHIPU`.
-- **Usage rule**: whenever a task needs to observe a visual result — `.circ` in the Logisim GUI, a screenshot, chart, generated image, or rendered output — call the MCP vision tool (e.g. `image_analysis`, `extract_text_from_screenshot`, `diagnose_error_screenshot`) with the image path/URL. Treat MCP output as visual evidence, then continue reasoning with the main model. If MCP is unavailable (e.g. Claude Desktop / Codex), fall back to the Qwen CLI helper `%USERPROFILE%\.claude\tools\vision.js` (`DASHSCOPE_API_KEY`).
+- **Usage rule**: whenever a task needs to observe a visual result — `.circ` in the Logisim GUI, a screenshot, chart, generated image, or rendered output — call the MCP vision tool (e.g. `image_analysis`, `extract_text_from_screenshot`, `diagnose_error_screenshot`) with the image path/URL. Treat MCP output as visual evidence, then continue reasoning with the main model. If MCP is unavailable, fall back to the Qwen CLI vision helper (`DASHSCOPE_API_KEY`).
 - **To switch model back to 4.6v-flash** once it stops rate-limiting: edit `Z_AI_VISION_MODEL` in the global opencode.json.
 
 ### Java LSP (jdtls) + Kotlin DSL (kotlin-ls)
